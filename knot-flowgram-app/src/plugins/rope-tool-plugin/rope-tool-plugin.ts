@@ -29,6 +29,7 @@ import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 import { getTool, setTool, onToolChange } from '../../components/toolbar/tool-store';
+import { setChain } from '../../components/knot-chain-card/chain-store';
 import { KnotToolbar } from '../../components/toolbar';
 
 export interface RopeToolPluginOptions {}
@@ -351,6 +352,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
             if (drag!.knotted && isLast) setEdgeFixed(prev, toId);
             prev = toId;
           });
+          // 串链完成 → 链卡浮现（之定：绳串联后才出现线性关系卡片）
+          setChain([drag.fromId, ...drag.chain]);
         }
         drag = null;
       };

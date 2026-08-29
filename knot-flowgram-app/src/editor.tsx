@@ -12,7 +12,7 @@ import './styles/index.css';
 import { nodeRegistries } from './nodes';
 import { useEditorProps } from './hooks';
 import { FocusProvider } from './context/focus-context';
-import { KnotGeneratePanel } from './components/knot-generate';
+import { KnotChainCard } from './components/knot-chain-card';
 import { KnotEmptySlots } from './components/knot-edge';
 import { LinearFlowView } from './components/knot-linear/linear-flow';
 import { assetsToWorkflowJSON, AssetItem } from './services/asset-sync';
@@ -65,7 +65,7 @@ export const Editor = () => {
               onFocusKnot={focusKnotFromLinear}
             />
             <KnotEmptySlots />
-            <KnotGeneratePanel />
+            <KnotChainCard />
             {/* 三态切换：同一平面浮沉（选中浮现/另一个下沉）+ 共存 */}
             <div className="knot-view-switch">
               <button

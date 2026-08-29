@@ -1,0 +1,85 @@
+/* 链卡：串链后出现的线性关系卡片（克制，轻浮层） */
+.knot-chain-card {
+  position: fixed;
+  bottom: 108px;
+  right: 24px;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  padding: 12px 14px;
+  z-index: 40;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.knot-chain-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.knot-chain-card__title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+.knot-chain-card__close {
+  border: none;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px;
+}
+
+.knot-chain-card__close:hover {
+  color: #ff9500;
+}
+
+.knot-chain-card__path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.knot-chain-card__item {
+  color: #333;
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knot-chain-card__arrow {
+  color: #ff9500;
+  flex-shrink: 0;
+}
+
+.knot-chain-card__error {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.knot-chain-card__grow {
+  width: 100%;
+  border: 1.5px dashed #d8d8d8;
+  background: transparent;
+  color: #888;
+  font-size: 12px;
+  padding: 7px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.knot-chain-card__grow:hover {
+  border-color: #ff9500;
+  color: #ff9500;
+}

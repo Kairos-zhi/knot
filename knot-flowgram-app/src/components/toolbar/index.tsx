@@ -8,10 +8,8 @@ import { getTool, setTool, onToolChange, ToolType, TOOL_HOTKEYS } from './tool-s
 import './toolbar.css';
 
 const TOOLS: { type: ToolType; label: string; icon: string; hotkey: string; title: string }[] = [
-  { type: 'hand', label: '手', icon: '✋', hotkey: 'H', title: '手：在空间里行走（按住拖=平移视野；空格=临时手）' },
-  { type: 'stick', label: '棍子', icon: '●', hotkey: 'V', title: '棍子：移动/选择（PS V：单击选中，按住直接拖，双击展开内容）' },
-  { type: 'rope', label: '绳子', icon: '〜', hotkey: 'R', title: '绳子：连接（从结拖出绳头串链）' },
-  { type: 'scissors', label: '剪刀', icon: '✂', hotkey: 'C', title: '剪刀：断开（点绳剪断/点结解绳）' },
+  { type: 'rope', label: '绳子', icon: '〜', hotkey: 'R', title: '绳子：从结拖出绳头串链（串成后出现链卡）' },
+  { type: 'scissors', label: '剪刀', icon: '✂', hotkey: 'C', title: '剪刀：点绳剪断/点结解绳' },
 ];
 
 export const KnotToolbar: React.FC = () => {
