@@ -4,13 +4,38 @@
     {
       "id": "asset_knot_contentpack",
       "title": "knot 完整内容包（v6）",
-      "summary": "语义场内核定案（打结=编码/勾选=可见集/生成=解码+追加）、范式定案（结=位置×协作单元×资产）、产品 slogan 定调（语义驱动·敏捷开发·主动协作）、行业对齐三线调研锚点",
+      "summary": "knot 完整内容包（v6）",
       "src": "kairos-oracle/Knot_完整内容包.md",
       "chain_id": "chain_core",
       "position": {
         "x": 130,
         "y": -4.618527782440651e-14
-      }
+      },
+      "blocks": [
+        {
+          "id": "b_title",
+          "source": "manual",
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "provenance": [],
+          "content": "knot 完整内容包（v6）"
+        },
+        {
+          "id": "b_summary",
+          "source": "manual",
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "provenance": [],
+          "content": "语义场内核定案（打结=编码/勾选=可见集/生成=解码+追加）、范式定案（结=位置×协作单元×资产）、产品 slogan 定调（语义驱动·敏捷开发·主动协作）、行业对齐三线调研锚点"
+        },
+        {
+          "id": "b1",
+          "source": "generated",
+          "timestamp": "2026-08-29T19:15:20.780Z",
+          "provenance": [
+            "asset_knot_contentpack"
+          ],
+          "content": "续长：基于「knot 完整内容包（v6） / 语义场内核定案（打结=编码/勾选=可见集/生成=解码+追加）、范式定案（结=位置×协作…」的进一步展开。[TODO] 接入 LLM 后此处为真实续写，provenance 记录来源 V_b。"
+        }
+      ]
     },
     {
       "id": "asset_knot_form_spec",

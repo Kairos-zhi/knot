@@ -182,3 +182,96 @@
 .knot-node--far .knot-node__title {
   font-size: 11px;
 }
+
+/* ---- 生长态：块列表 / 细分隔 / 续长入口 / 逐块流入 ----
+   形态参考：星际拓荒谣言板渐进揭示、Gorogoa 层叠、Disco 思想内阁内化进度；
+   克制风：低对比细分隔、虚线「+」与 ? 位同族、单强调色 #ff9500 只给生成态。 */
+
+.knot-node__blocks {
+  display: flex;
+  flex-direction: column;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.knot-node__block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #efefef;
+  border-radius: 4px;
+}
+
+.knot-node__block + .knot-node__block {
+  margin-top: 6px;
+}
+
+/* 块间细分隔（低对比，不吵） */
+.knot-node__block-divider {
+  height: 1px;
+  background: #f0f0f0;
+  margin-bottom: 6px;
+  display: none; /* 分隔由卡片间距+浅边框承担，divider 仅作结构语义保留 */
+}
+
+.knot-node__block-content {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.knot-node__block-meta {
+  font-size: 10px;
+  color: #bbb;
+  opacity: 0.8;
+}
+
+/* 生成中逐块流入（打字机即打结）：淡入 + 尾部光标 */
+.knot-node__block--streaming {
+  border-color: rgba(255, 149, 0, 0.35);
+  animation: knot-block-fadein 0.2s ease;
+}
+
+.knot-node__block--streaming .knot-node__block-content::after {
+  content: '▍';
+  color: #ff9500;
+  animation: knot-caret-blink 0.9s steps(1) infinite;
+}
+
+@keyframes knot-block-fadein {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes knot-caret-blink {
+  0%, 60% { opacity: 1; }
+  61%, 100% { opacity: 0; }
+}
+
+/* 续长入口：虚线「+」按钮（与 ? 位视觉同族——显式空白，有引力但不吵） */
+.knot-node__grow {
+  width: 100%;
+  padding: 5px 0;
+  background: transparent;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.knot-node__grow:hover:not(:disabled) {
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+.knot-node__grow:disabled {
+  cursor: default;
+  color: #ff9500;
+  border-color: rgba(255, 149, 0, 0.4);
+}

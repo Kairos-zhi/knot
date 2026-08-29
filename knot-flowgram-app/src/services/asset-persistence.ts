@@ -9,8 +9,9 @@
  */
 import { WorkflowDocument } from '@flowgram.ai/free-layout-editor';
 import { AssetItem } from './asset-sync';
+import { KnotBlock } from '../knot-model';
 
-const LS_KEY = 'knot:canvas:v1';
+const LS_KEY = 'knot:canvas:v2';
 const WRITE_URL = 'http://localhost:3101/write';
 
 export interface AssetWithPosition extends AssetItem {
@@ -34,7 +35,7 @@ export function serializeCanvas(document: WorkflowDocument): CanvasSnapshot {
     const json = n.toJSON() as {
       type?: string;
       id: string;
-      data?: { title?: string; summary?: string; src?: string; chain_id?: string };
+      data?: { title?: string; summary?: string; src?: string; chain_id?: string; blocks?: KnotBlock[] };
       meta?: { position?: { x: number; y: number } };
     };
     if (json.type === 'knot') {
@@ -45,6 +46,7 @@ export function serializeCanvas(document: WorkflowDocument): CanvasSnapshot {
         src: json.data?.src ?? '',
         chain_id: json.data?.chain_id ?? '',
         position: json.meta?.position,
+        blocks: json.data?.blocks,
       });
     }
   });

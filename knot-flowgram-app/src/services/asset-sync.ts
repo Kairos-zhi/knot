@@ -13,6 +13,7 @@
 import { FlowDocumentJSON } from '../typings';
 import { KNOT_INPUT_PORT, KNOT_OUTPUT_PORT } from '../components/knot-edge/ports';
 import { WorkflowDocument, WorkflowNodeEntity } from '@flowgram.ai/free-layout-editor';
+import { KnotBlock } from '../knot-model';
 
 export interface AssetItem {
   id: string;
@@ -22,7 +23,18 @@ export interface AssetItem {
   chain_id: string;
   /** 画布位置（写回后保留拖拽布局；缺省用网格排布） */
   position?: { x: number; y: number };
+  /** 有序块序列（生长态；id 稳定） */
+  blocks?: KnotBlock[];
 }
+
+const assetData = (a: AssetItem) => ({
+  title: a.title,
+  summary: a.summary,
+  token: Math.max(64, Math.round(a.summary.length * 2.5)),
+  src: a.src,
+  chain_id: a.chain_id,
+  blocks: a.blocks,
+});
 
 /** 资产 → 结的初始画布数据（全量投影） */
 export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
@@ -31,13 +43,7 @@ export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
     nodes: assets.map((a, i) => ({
       id: a.id,
       type: 'knot',
-      data: {
-        title: a.title,
-        summary: a.summary,
-        token: Math.max(64, Math.round(a.summary.length * 2.5)),
-        src: a.src,
-        chain_id: a.chain_id,
-      },
+      data: assetData(a),
       meta: {
         // 有写回位置用写回位置，否则简单网格排布（后续语义场布局接管重排）
         position: a.position ?? {
@@ -85,13 +91,7 @@ export function applyAssetDiff(
         y: 120 + existing.size * 220,
       }, {
         id: a.id,
-        data: {
-          title: a.title,
-          summary: a.summary,
-          token: Math.max(64, Math.round(a.summary.length * 2.5)),
-          src: a.src,
-          chain_id: a.chain_id,
-        },
+        data: assetData(a),
         meta: { defaultPorts: [KNOT_INPUT_PORT, KNOT_OUTPUT_PORT] },
       });
       result.added.push(a.id);
@@ -108,13 +108,7 @@ export function applyAssetDiff(
           y: 120 + existing.size * 220,
         }, {
           id: a.id,
-          data: {
-            title: a.title,
-            summary: a.summary,
-            token: Math.max(64, Math.round(a.summary.length * 2.5)),
-            src: a.src,
-            chain_id: a.chain_id,
-          },
+          data: assetData(a),
           meta: { defaultPorts: [KNOT_INPUT_PORT, KNOT_OUTPUT_PORT] },
         });
         result.updated.push(a.id);

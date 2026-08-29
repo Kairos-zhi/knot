@@ -3,6 +3,12 @@
  * 折叠=圆点+标签，展开=卡片
  * 焦点高亮（星标），勾选挂点，语义距离（近实/中淡/远虚）
  *
+ * 阶段 3 P0 生长态（红队 3.3 + 游戏调研形态）：
+ *  - 展开态=有序块列表，块间细分隔（低对比不吵）
+ *  - 续长入口=展开卡片底部虚线「+」按钮（与 ? 位视觉同族，星际拓荒显式空白）
+ *  - 生成中逐块流入（打字机即打结，Citizen Sleeper 时钟/Disco 思想内阁的渐进生长）
+ *  - 折叠=显示首块摘要（背书④可展开）
+ *
  * 签名对齐模板 CommentRender：props = { node }（WorkflowNodeEntity），
  * 业务数据经 node.toJSON().data 读取；选中/ref 经 useNodeRender 获取。
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
@@ -10,9 +16,15 @@
  */
 import React, { useState } from 'react';
 import { FC } from 'react';
-import { useNodeRender, WorkflowNodeEntity } from '@flowgram.ai/free-layout-editor';
+import {
+  FlowNodeFormData,
+  FormModelV2,
+  useNodeRender,
+  WorkflowNodeEntity,
+} from '@flowgram.ai/free-layout-editor';
 
-import { KnotNode } from '../../knot-model';
+import { KnotNode, KnotBlock, getBlocks, nextBlockId } from '../../knot-model';
+import { grow } from '../../services/generate';
 import { useSelection } from '../../context/selection-context';
 import { useFocus } from '../../context/focus-context';
 
@@ -26,6 +38,8 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const { node } = props;
   const { selected: isFocused, selectNode, nodeRef } = useNodeRender();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isGrowing, setIsGrowing] = useState(false);
+  const [streamingText, setStreamingText] = useState<string | null>(null);
 
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
@@ -36,6 +50,7 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
     src: '',
     chain_id: '',
   };
+  const blocks = getBlocks(data);
 
   // 勾选状态（可见集 V_b）
   const selectionCtx = useSelection();
@@ -60,6 +75,35 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
     toggleCheck(id);
   };
 
+  /** 续长：以该结为 V_b 触发生成，新块接尾（生成中逐块流入可见） */
+  const handleGrow = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isGrowing) return;
+    setIsGrowing(true);
+    setStreamingText('');
+    try {
+      const result = await grow(id, blocks, (text) => setStreamingText(text));
+      const newBlock: KnotBlock = {
+        id: nextBlockId(blocks),
+        source: 'generated',
+        timestamp: result.timestamp,
+        provenance: result.provenance,
+        content: result.content,
+      };
+      // 写回节点数据：blocks 尾部增块（id 稳定）；同步 title/summary 兼容字段
+      // 姿势对齐模板：FlowNodeFormData → getFormModel → setValueIn（字段路径=data 直接键）
+      const formModel = node.getData(FlowNodeFormData).getFormModel<FormModelV2>();
+      const next = [...blocks, newBlock];
+      if (formModel) {
+        formModel.setValueIn('blocks', next);
+        formModel.setValueIn('summary', next[0]?.content ?? data.summary);
+      }
+    } finally {
+      setIsGrowing(false);
+      setStreamingText(null);
+    }
+  };
+
   return (
     <div
       ref={nodeRef}
@@ -80,16 +124,16 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         />
       </div>
 
-      {/* 折叠态：圆点+标签 */}
+      {/* 折叠态：圆点+首块摘要标签（背书④可展开） */}
       {!isExpanded && (
         <div className="knot-node__collapsed" onClick={handleToggleExpand}>
           <div className="knot-node__dot" />
-          <div className="knot-node__title">{data.title}</div>
+          <div className="knot-node__title">{blocks[0]?.content ?? data.title}</div>
           {isFocused && <div className="knot-node__focus-star">★</div>}
         </div>
       )}
 
-      {/* 展开态：卡片 */}
+      {/* 展开态：卡片 = 有序块列表 + 续长入口 */}
       {isExpanded && (
         <div className="knot-node__expanded">
           <div className="knot-node__header">
@@ -99,7 +143,39 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
               ✕
             </button>
           </div>
-          <div className="knot-node__summary">{data.summary}</div>
+
+          {/* 块列表：块间细分隔（低对比不吵） */}
+          <div className="knot-node__blocks">
+            {blocks.map((b, i) => (
+              <div key={b.id} className="knot-node__block">
+                {i > 0 && <div className="knot-node__block-divider" />}
+                <div className="knot-node__block-content">{b.content}</div>
+                <div className="knot-node__block-meta">
+                  {b.source === 'generated' ? '生成' : '手写'}
+                  {b.provenance.length > 0 && ` ← ${b.provenance.join(', ')}`}
+                </div>
+              </div>
+            ))}
+            {/* 生成中：逐块流入（打字机即打结） */}
+            {streamingText !== null && (
+              <div className="knot-node__block knot-node__block--streaming">
+                <div className="knot-node__block-divider" />
+                <div className="knot-node__block-content">{streamingText}</div>
+                <div className="knot-node__block-meta">生成中…</div>
+              </div>
+            )}
+          </div>
+
+          {/* 续长入口：虚线「+」按钮（与 ? 位视觉同族） */}
+          <button
+            className="knot-node__grow"
+            onClick={handleGrow}
+            disabled={isGrowing}
+            title="以该结为 V_b 续长（生成新块接尾）"
+          >
+            {isGrowing ? '生长中…' : '+ 续长'}
+          </button>
+
           <div className="knot-node__meta">
             <span className="knot-node__token">token: {data.token}</span>
             <span className="knot-node__src">来自: {data.src}</span>
