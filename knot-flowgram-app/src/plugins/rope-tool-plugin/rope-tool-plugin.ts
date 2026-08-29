@@ -96,11 +96,11 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       const toolbarRoot: Root = createRoot(toolbarHost);
       toolbarRoot.render(React.createElement(KnotToolbar));
 
-      // ===== 虚线预览 SVG（playground 坐标系，挂 pipelineNode） =====
+      // ===== 虚线预览 SVG（屏幕坐标：fixed 挂 body，鼠标 clientX/Y 直出，不随画布滚动缩放偏移） =====
       const previewSvg = window.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       previewSvg.setAttribute('class', 'knot-rope-preview');
       previewSvg.style.cssText =
-        'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;display:none;overflow:visible;z-index:5;';
+        'position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;display:none;overflow:visible;z-index:9999;';
       const previewPath = window.document.createElementNS('http://www.w3.org/2000/svg', 'path');
       previewPath.setAttribute('fill', 'none');
       previewPath.setAttribute('stroke', '#999999');
@@ -112,7 +112,17 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       previewDot.setAttribute('r', '4');
       previewDot.setAttribute('fill', '#ff9500');
       previewSvg.appendChild(previewDot);
-      pipelineNode.appendChild(previewSvg);
+      window.document.body.appendChild(previewSvg);
+
+      /** 世界坐标 → 屏幕坐标（PlaygroundConfig.toFixedPos：画布位置转 window 位置） */
+      const toScreenPos = (p: Pos): Pos => {
+        try {
+          const f = ctx.playground.config.toFixedPos(p);
+          return { x: f.x, y: f.y };
+        } catch {
+          return p;
+        }
+      };
 
       // ===== 剪断反馈 flash 层 =====
       const flashSvg = window.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -157,16 +167,18 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
 
       const showPreview = (from: Pos, to: Pos) => {
         previewSvg.style.display = '';
-        previewPath.setAttribute('d', `M ${from.x} ${from.y} L ${to.x} ${to.y}`);
-        previewDot.setAttribute('cx', String(to.x));
-        previewDot.setAttribute('cy', String(to.y));
+        const fs = toScreenPos(from);
+        const ts = toScreenPos(to);
+        previewPath.setAttribute('d', `M ${fs.x} ${fs.y} L ${ts.x} ${ts.y}`);
+        previewDot.setAttribute('cx', String(ts.x));
+        previewDot.setAttribute('cy', String(ts.y));
       };
-      /** 绳头落脚点：绳子模式光标处始终可见（没拖时也显示，拿出来就有落点） */
-      const showDotOnly = (pos: Pos) => {
+      /** 绳头落脚点：绳子模式光标处始终可见（屏幕坐标直出，永远贴着光标） */
+      const showDotOnly = (sx: number, sy: number) => {
         previewSvg.style.display = '';
         previewPath.setAttribute('d', '');
-        previewDot.setAttribute('cx', String(pos.x));
-        previewDot.setAttribute('cy', String(pos.y));
+        previewDot.setAttribute('cx', String(sx));
+        previewDot.setAttribute('cy', String(sy));
       };
       const hidePreview = () => {
         previewSvg.style.display = 'none';
@@ -193,13 +205,24 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           if (!isKnotNode(ctx, toId)) return; // 错误沉默：不兼容的结不成绳
           const existing = linesManager.getLine({ from: fromId, to: toId });
           if (existing) return;
-          linesManager.createLine({
+          const line = linesManager.createLine({
             from: fromId,
             to: toId,
             fromPort: 'out',
             toPort: 'in',
             ...(fixed ? { data: { fixed: true } } : {}),
           });
+          // 游戏化表现：新绳「画出来」——flowing 虚线流动 600ms 后固定
+          if (line) {
+            line.flowing = true;
+            setTimeout(() => {
+              try {
+                line.flowing = false;
+              } catch {
+                // 绳已删除则忽略
+              }
+            }, 600);
+          }
         } catch {
           // 单条绳失败静默（错误沉默原则）
         }
@@ -410,9 +433,9 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           void line;
           return;
         }
-        // 绳子模式：光标处绳头落脚点常显（没拖时也看得见绳头——拿出来就有落点）
+        // 绳子模式：光标处绳头落脚点常显（屏幕坐标直出，永远贴着光标）
         if (getTool() === 'rope' && !drag) {
-          showDotOnly(toPlaygroundPos(e));
+          showDotOnly(e.clientX, e.clientY);
         }
       };
 

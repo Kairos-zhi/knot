@@ -1,4 +1,5 @@
-/* 链卡：串链后出现的线性关系卡片（克制，轻浮层） */
+/* 链卡：串链后出现的线性关系卡片（克制，轻浮层）
+   游戏化表现：从右下滑入+淡入（像从链尾长出来，第二弹模式9 生长轨迹） */
 .knot-chain-card {
   position: fixed;
   bottom: 108px;
@@ -11,6 +12,18 @@
   z-index: 40;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(8px);
+  animation: knot-chain-in 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes knot-chain-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .knot-chain-card__header {
