@@ -275,3 +275,26 @@
   color: #ff9500;
   border-color: rgba(255, 149, 0, 0.4);
 }
+
+/* ===== 工具三件套：吸附光晕 + 打结停留提示（P3.5d） ===== */
+/* 吸附成绳：绳头靠近（<120px）时的光晕——克制橙色呼吸，不吵 */
+.knot-node--attract {
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.18), 0 0 18px rgba(255, 149, 0, 0.35);
+  border-radius: 10px;
+  animation: knot-attract-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes knot-attract-pulse {
+  from {
+    box-shadow: 0 0 0 2px rgba(255, 149, 0, 0.14), 0 0 10px rgba(255, 149, 0, 0.25);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgba(255, 149, 0, 0.22), 0 0 22px rgba(255, 149, 0, 0.42);
+  }
+}
+
+/* 打结停留中：绳头停在结上（<300ms 计时期间）的轻提示 */
+.knot-node--knot-hover {
+  box-shadow: 0 0 0 2px rgba(255, 149, 0, 0.35);
+  border-radius: 10px;
+}

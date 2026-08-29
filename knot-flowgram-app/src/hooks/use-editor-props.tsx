@@ -33,6 +33,7 @@ import {
   createVariablePanelPlugin,
   createPanelManagerPlugin,
   createFocusLayoutPlugin,
+  createRopeToolPlugin,
 } from '../plugins';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
@@ -380,6 +381,9 @@ export function useEditorProps(
          * https://flowgram.ai/guide/runtime/introduction.html
          */
         createFocusLayoutPlugin({}),
+
+        /** 工具三件套：绳子+剪刀逻辑（棍子=默认现有行为） */
+        createRopeToolPlugin({}),
 
         createRuntimePlugin({
           mode: 'browser', // browser mode is for demo only!

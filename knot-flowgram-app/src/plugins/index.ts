@@ -8,3 +8,4 @@ export { createRuntimePlugin } from './runtime-plugin';
 export { createVariablePanelPlugin } from './variable-panel-plugin';
 export { createPanelManagerPlugin } from './panel-manager-plugin';
 export { createFocusLayoutPlugin } from './focus-layout-plugin';
+export { createRopeToolPlugin } from './rope-tool-plugin';

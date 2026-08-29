@@ -19,6 +19,17 @@ export const KnotLineRender: React.FC<LineRenderProps> = (props) => {
   const strokeWidth = selected ? 1.6 : 1;
   const stroke = selected ? '#ff9500' : color ?? '#b8b8b8';
 
+  // 打结（fixed）小结节：绳与目标结接触点附近的橙色圆点（比端口大）
+  const fixed = (line.lineData as { fixed?: boolean } | undefined)?.fixed === true;
+  let knotDot: { cx: number; cy: number } | null = null;
+  if (fixed) {
+    const nums = (bezierPath.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+    if (nums.length >= 2) {
+      // path 末点=绳与目标结的接触点（相对 bounds 坐标，加 PADDING 对齐 svg 偏移）
+      knotDot = { cx: nums[nums.length - 2] + PADDING, cy: nums[nums.length - 1] + PADDING };
+    }
+  }
+
   return (
     <div
       className="knot-edge"
@@ -38,6 +49,17 @@ export const KnotLineRender: React.FC<LineRenderProps> = (props) => {
           strokeWidth={strokeWidth}
           strokeDasharray={line.processing || line.flowing ? '6 4' : undefined}
         />
+        {knotDot && (
+          <circle
+            className="knot-edge__knot"
+            cx={knotDot.cx}
+            cy={knotDot.cy}
+            r={4.5}
+            fill="#ff9500"
+            stroke="#ffffff"
+            strokeWidth={1.2}
+          />
+        )}
       </svg>
     </div>
   );
