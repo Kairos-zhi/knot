@@ -1,0 +1,61 @@
+{
+  "note": "knot 资产清单：kairos-oracle 关键文档 → 结。资产是事实源，画布是投影。更新此文件后刷新页面即重新同步。",
+  "assets": [
+    {
+      "id": "asset_knot_contentpack",
+      "title": "knot 完整内容包（v6）",
+      "summary": "语义场内核定案（打结=编码/勾选=可见集/生成=解码+追加）、范式定案（结=位置×协作单元×资产）、产品 slogan 定调（语义驱动·敏捷开发·主动协作）、行业对齐三线调研锚点",
+      "src": "kairos-oracle/Knot_完整内容包.md",
+      "chain_id": "chain_core"
+    },
+    {
+      "id": "asset_knot_form_spec",
+      "title": "形式层设计规格 v1",
+      "summary": "13 条游戏交互模式→v1 六条取舍（近=重要/点开=看清/聚合=语义簇/焦点=组织中心/空白=吸引力/使用即加固）+ 焦点定义（选中即焦点）+ 机制背书四则（生长态/勾选粒度/生成自动成结/摘要可展开）",
+      "src": "kairos-oracle/knot形式层设计规格_v1.md",
+      "chain_id": "chain_spec"
+    },
+    {
+      "id": "asset_knot_collab_progress",
+      "title": "语义场内核·协作进度",
+      "summary": "同步 Oracle 的协作文档：8/30 操作序列同构/链路三层/对比锚定（Canva=作品/FlowGram=工具/knot=语义空间窗口）/embedding 表述修正/更新记录",
+      "src": "kairos-oracle/语义场内核_协作进度.md",
+      "chain_id": "chain_core"
+    },
+    {
+      "id": "asset_knot_cola",
+      "title": "技术线·Cola 深度拆解",
+      "summary": "机制层第一弹：Cola DLM 推理循环拆解——knot 操作流=Cola 机制的人可操作外置版；Text VAE≠embedding（修正：VAE 式可解码压缩表示）；block-causal 逐块推进=结间因果",
+      "src": "kairos-oracle/knot调研_技术线_第二弹_Cola深度拆解.md",
+      "chain_id": "chain_research"
+    },
+    {
+      "id": "asset_knot_canvas_eval",
+      "title": "画布基底评估：FlowGram vs infinite-canvas",
+      "summary": "评估结论：切换 FlowGram.AI 做底座——nodes/edges/ports/blocks=结绳模型天然对应，表单/变量/物料=机制层内建，free-auto-layout=语义场挂点，Coze Studio 生产背书",
+      "src": "kairos-oracle/画布基底评估_FlowGram_vs_infinite-canvas.md",
+      "chain_id": "chain_research"
+    },
+    {
+      "id": "asset_knot_game_research",
+      "title": "游戏行业 knot 表达范式（形态层）",
+      "summary": "11 案例 + 13 模式 + 6 图：Her Story 织网叙事/Baba Is You 规则即节点/Obra Dinn 推理板/Gorogoa 层叠拼图/死亡搁浅点赞防侵蚀/星际拓荒谣言板 UI/极乐迪斯科思想内阁",
+      "src": "kairos-oracle/游戏行业_knot表达范式_深度调研.md",
+      "chain_id": "chain_research"
+    },
+    {
+      "id": "asset_knot_position",
+      "title": "定位捍卫论证（五层）",
+      "summary": "knot=语义空间的 A2A 工作站（定位收口）；五层论证+预演反击表；社区=knot 范式的社会尺度双向飞轮",
+      "src": "kairos-oracle/knot定位捍卫_论证文档.md",
+      "chain_id": "chain_core"
+    },
+    {
+      "id": "asset_knot_session_notes",
+      "title": "8/30 凌晨对谈补录",
+      "summary": "两场妙记补录：游戏调研展示+关键决策提取；定位共识+叙事断点+决策权提案",
+      "src": "kairos-oracle/妙记补录_20260830凌晨两场.md",
+      "chain_id": "chain_core"
+    }
+  ]
+}

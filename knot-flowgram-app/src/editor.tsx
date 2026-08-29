@@ -13,7 +13,12 @@ import { useEditorProps } from './hooks';
 import { FocusProvider } from './context/focus-context';
 import { KnotGeneratePanel } from './components/knot-generate';
 import { KnotEmptySlots } from './components/knot-edge';
-import { knotInitialData } from './knot-initial';
+import { assetsToWorkflowJSON, AssetItem } from './services/asset-sync';
+import knotAssetsJson from './assets/knot-assets.json';
+
+// 资产 → 结（启动全量同步：画布是资产的投影）
+const knotAssets: AssetItem[] = (knotAssetsJson as { assets: AssetItem[] }).assets;
+const knotInitialData = assetsToWorkflowJSON(knotAssets);
 
 export const Editor = () => {
   const editorProps = useEditorProps(knotInitialData, nodeRegistries);
