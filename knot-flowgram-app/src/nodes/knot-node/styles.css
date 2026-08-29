@@ -1,0 +1,184 @@
+/**
+ * Knot 节点样式
+ * 疏离/克制/低信息密度，单强调色
+ */
+
+.knot-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.knot-node--collapsed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.knot-node__dot {
+  width: 8px;
+  height: 8px;
+  background: #999;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.knot-node__title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 焦点高亮：单色星标 */
+.knot-node__focus-star {
+  color: #ff9500;
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 1;
+}
+
+.knot-node--focused .knot-node__dot {
+  background: #ff9500;
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(255, 149, 0, 0.4);
+}
+
+.knot-node--focused {
+  border-color: #ff9500;
+  background: rgba(255, 149, 0, 0.02);
+}
+
+/* 展开态：卡片 */
+.knot-node--expanded {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px;
+  min-width: 260px;
+  border: 1px solid #d9d9d9;
+  background: #fafafa;
+}
+
+.knot-node__expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.knot-node__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.knot-node__title-expanded {
+  flex: 1;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.knot-node__close {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.knot-node__close:hover {
+  opacity: 1;
+}
+
+.knot-node__summary {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666;
+  max-height: 120px;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+.knot-node__meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #999;
+  opacity: 0.7;
+}
+
+.knot-node__token,
+.knot-node__src {
+  display: inline-block;
+}
+
+/* 勾选框容器 */
+.knot-node__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.knot-node__checkbox-input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #ff9500;
+}
+
+/* 响应式悬停 */
+.knot-node:hover {
+  border-color: #d9d9d9;
+}
+
+.knot-node--collapsed:hover {
+  background: #f9f9f9;
+}
+
+/* 语义距离三级（近=实/中=淡/远=虚，不堆色用疏密+虚实） */
+.knot-node--mid {
+  opacity: 0.72;
+}
+
+.knot-node--far {
+  opacity: 0.42;
+}
+
+.knot-node--far .knot-node__title {
+  font-size: 11px;
+}
