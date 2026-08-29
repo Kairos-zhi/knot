@@ -109,9 +109,23 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       previewSvg.appendChild(previewPath);
       // 绳头圆点（落脚点：绳拿出来就有，源头去向都可见）
       const previewDot = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      previewDot.setAttribute('r', '4');
+      previewDot.setAttribute('r', '5');
       previewDot.setAttribute('fill', '#ff9500');
       previewSvg.appendChild(previewDot);
+      // 绳头光晕（拖绳中呼吸脉动，「绳头在手」感）
+      const previewDotHalo = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      previewDotHalo.setAttribute('r', '11');
+      previewDotHalo.setAttribute('fill', 'none');
+      previewDotHalo.setAttribute('stroke', 'rgba(255,149,0,0.4)');
+      previewDotHalo.setAttribute('stroke-width', '1.5');
+      previewDotHalo.setAttribute('class', 'knot-rope-dot-halo');
+      previewSvg.appendChild(previewDotHalo);
+      // 已串序号徽章容器（串中即时反馈：1,2,3… 直接标在结上）
+      const badgeGroup = window.document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      previewSvg.appendChild(badgeGroup);
+      // 成链闪光容器（松手诞生反馈：链上结依次金圈扩散）
+      const bornGroup = window.document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      previewSvg.appendChild(bornGroup);
       window.document.body.appendChild(previewSvg);
 
       /** 世界坐标 → 屏幕坐标（PlaygroundConfig.toFixedPos：画布位置转 window 位置） */
@@ -172,6 +186,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         previewPath.setAttribute('d', `M ${fs.x} ${fs.y} L ${ts.x} ${ts.y}`);
         previewDot.setAttribute('cx', String(ts.x));
         previewDot.setAttribute('cy', String(ts.y));
+        previewDotHalo.setAttribute('cx', String(ts.x));
+        previewDotHalo.setAttribute('cy', String(ts.y));
       };
       /** 绳头落脚点：绳子模式光标处始终可见（屏幕坐标直出，永远贴着光标） */
       const showDotOnly = (sx: number, sy: number) => {
@@ -179,9 +195,68 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         previewPath.setAttribute('d', '');
         previewDot.setAttribute('cx', String(sx));
         previewDot.setAttribute('cy', String(sy));
+        previewDotHalo.setAttribute('cx', String(sx));
+        previewDotHalo.setAttribute('cy', String(sy));
       };
       const hidePreview = () => {
         previewSvg.style.display = 'none';
+        badgeGroup.replaceChildren();
+      };
+      /** 串中徽章：每个已串结上标序号（1,2,3…），屏幕坐标直出，串链全程可见 */
+      const syncBadges = (chain: string[], fromId: string) => {
+        badgeGroup.replaceChildren();
+        const draw = (nodeId: string, num: number) => {
+          const c = nodeCenter(ctx, nodeId);
+          if (!c) return;
+          const s = toScreenPos(c);
+          const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          const bg = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          bg.setAttribute('cx', String(s.x));
+          bg.setAttribute('cy', String(s.y - 34));
+          bg.setAttribute('r', '11');
+          bg.setAttribute('fill', '#ff9500');
+          bg.setAttribute('stroke', '#ffffff');
+          bg.setAttribute('stroke-width', '2');
+          bg.setAttribute('class', 'knot-rope-badge knot-rope-badge--pop');
+          const label = window.document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          label.setAttribute('x', String(s.x));
+          label.setAttribute('y', String(s.y - 30));
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('font-size', '11');
+          label.setAttribute('font-weight', '700');
+          label.setAttribute('fill', '#ffffff');
+          label.textContent = String(num);
+          g.appendChild(bg);
+          g.appendChild(label);
+          badgeGroup.appendChild(g);
+        };
+        draw(fromId, 0); // 起点：0 号徽章，绳的源头始终可见
+        chain.forEach((id, i) => draw(id, i + 1));
+      };
+      /** 成链诞生闪光：链上结依次金圈扩散（Roottrees 金框锁定级正反馈，橙色单色系） */
+      const chainBorn = (ids: string[]) => {
+        ids.forEach((id, i) => {
+          const c = nodeCenter(ctx, id);
+          if (!c) return;
+          const s = toScreenPos(c);
+          const ring = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          ring.setAttribute('cx', String(s.x));
+          ring.setAttribute('cy', String(s.y));
+          ring.setAttribute('r', '10');
+          ring.setAttribute('fill', 'none');
+          ring.setAttribute('stroke', 'rgba(255,149,0,0.85)');
+          ring.setAttribute('stroke-width', '3');
+          ring.setAttribute('class', 'knot-rope-born-ring');
+          ring.style.animationDelay = `${i * 90}ms`;
+          bornGroup.appendChild(ring);
+          setTimeout(() => ring.remove(), 1100 + i * 90);
+          // 结本体闪一次金框（错误沉默原则的反面：正确是响亮的）
+          const el = pipelineNode.querySelector(`[data-node-id="${id}"] .knot-node`) as HTMLElement | null;
+          if (el) {
+            setTimeout(() => el.classList.add('knot-node--born'), i * 90);
+            setTimeout(() => el.classList.remove('knot-node--born'), 900 + i * 90);
+          }
+        });
       };
 
       const setKnotVisual = (nodeId: string, on: boolean) => {
@@ -263,6 +338,9 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           e.stopPropagation();
           e.preventDefault();
           stickDrag = { nodeId, startPos: toPlaygroundPos(e), nodeStart: nodeCenter(ctx, nodeId) };
+          // 拖动中抬起感（卡片被拿起来，操作即反馈）
+          const dragEl = nodeEl.querySelector('.knot-node') as HTMLElement | null;
+          if (dragEl) dragEl.classList.add('knot-node--lifting');
           return;
         }
 
@@ -278,6 +356,13 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         drag = { fromId: nodeId, chain: [], dwellTimer: null, dwellTargetId: null, knotted: false, moved: false };
         const c = nodeCenter(ctx, nodeId);
         if (c) showPreview(c, toPlaygroundPos(e));
+        syncBadges([], nodeId); // 拖出瞬间：起点 0 号徽章立刻出现（绳的源头可见）
+        // 拖出瞬间源结轻弹（操作即反馈：绳头在手）
+        const srcEl = pipelineNode.querySelector(`[data-node-id="${nodeId}"] .knot-node`) as HTMLElement | null;
+        if (srcEl) {
+          srcEl.classList.add('knot-node--rope-source');
+          setTimeout(() => srcEl.classList.remove('knot-node--rope-source'), 700);
+        }
       };
 
       const onMouseMove = (e: MouseEvent) => {
@@ -319,10 +404,17 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         const near = nearestKnot(ctx, pos, drag.fromId, ATTRACT_DIST);
         setAttract(near?.id ?? null);
 
-        // 经过结记录（按序，去重；距离 <PASS_RADIUS 视为经过）
+        // 经过结记录（按序，去重；距离 <PASS_RADIUS 视为经过）——串中强反馈：
+        // 脉冲形变 + 序号徽章弹出 + 徽章全程挂住（解决「完全感知不到有没有串到」）
         const passed = nearestKnot(ctx, pos, drag.fromId, PASS_RADIUS);
         if (passed && drag.chain[drag.chain.length - 1] !== passed.id && !drag.chain.includes(passed.id)) {
           drag.chain.push(passed.id);
+          syncBadges(drag.chain, drag.fromId);
+          const passEl = pipelineNode.querySelector(`[data-node-id="${passed.id}"] .knot-node`) as HTMLElement | null;
+          if (passEl) {
+            passEl.classList.add('knot-node--strung');
+            setTimeout(() => passEl.classList.remove('knot-node--strung'), 600);
+          }
         }
 
         // 打结停留检测：绳头停在某结上 ≥300ms → 打结
@@ -358,6 +450,15 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           return;
         }
         if (stickDrag) {
+          const node = ctx.document.getNode(stickDrag.nodeId);
+          const el = node
+            ? (pipelineNode.querySelector(`[data-node-id="${node.id}"] .knot-node`) as HTMLElement | null)
+            : null;
+          if (el) {
+            el.classList.remove('knot-node--lifting');
+            el.classList.add('knot-node--dropped');
+            setTimeout(() => el.classList.remove('knot-node--dropped'), 350);
+          }
           stickDrag = null;
           return;
         }
@@ -375,6 +476,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
             if (drag!.knotted && isLast) setEdgeFixed(prev, toId);
             prev = toId;
           });
+          // 松手诞生反馈：链上结依次金圈扩散+金框闪（链的诞生一眼可见）
+          chainBorn([drag.fromId, ...drag.chain]);
           // 串链完成 → 链卡浮现（之定：绳串联后才出现线性关系卡片）
           setChain([drag.fromId, ...drag.chain]);
         }

@@ -46,23 +46,29 @@ export const LinearFlowView: React.FC<{
   return (
     <div className={`knot-linear mode-${mode}`} aria-hidden={mode === 'space' ? 'true' : undefined}>
       <div className="knot-linear__rail" />
-      {items.map((it) => (
-        <div
-          key={it.id}
-          className="knot-linear__item"
-          onClick={() => onFocusKnot(it.id)}
-          title="点击切到语义空间聚焦此结"
-        >
-          <div className="knot-linear__dot" />
-          <div className="knot-linear__body">
-            <div className="knot-linear__title">{it.title}</div>
-            <div className="knot-linear__meta">
-              {it.chain_id} · {it.src}
+      {items.map((it, idx) => {
+        const prev = items[idx - 1];
+        const newChain = !prev || prev.chain_id !== it.chain_id;
+        return (
+          <React.Fragment key={it.id}>
+            {newChain && (
+              <div className="knot-linear__chain-label">{it.chain_id || '未命名链'}</div>
+            )}
+            <div
+              className="knot-linear__item"
+              onClick={() => onFocusKnot(it.id)}
+              title="点击切到语义空间聚焦此结"
+            >
+              <div className="knot-linear__dot" />
+              <div className="knot-linear__body">
+                <div className="knot-linear__title">{it.title}</div>
+                <div className="knot-linear__meta">{it.src}</div>
+                <div className="knot-linear__preview">{it.preview}</div>
+              </div>
             </div>
-            <div className="knot-linear__preview">{it.preview}</div>
-          </div>
-        </div>
-      ))}
+          </React.Fragment>
+        );
+      })}
       <div className="knot-linear__tail">↓ 对话继续，流继续长</div>
     </div>
   );

@@ -46,6 +46,32 @@
   background: #e8e8e8;
 }
 
+/* 链分组标签（路径痕迹：同链相邻的视觉一眼可见） */
+.knot-linear__chain-label {
+  position: relative;
+  margin: 14px 0 4px 4px;
+  padding-left: 24px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #ff9500;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+.knot-linear__chain-label::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 14px;
+  height: 1px;
+  background: rgba(255, 149, 0, 0.4);
+}
+.knot-linear__item:first-of-type .knot-linear__chain-label,
+.knot-linear__chain-label:first-child {
+  margin-top: 4px;
+}
+
 .knot-linear__item {
   position: relative;
   display: flex;
