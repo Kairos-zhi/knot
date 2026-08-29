@@ -11,7 +11,7 @@ import { WorkflowDocument } from '@flowgram.ai/free-layout-editor';
 import { AssetItem } from './asset-sync';
 import { KnotBlock } from '../knot-model';
 
-const LS_KEY = 'knot:canvas:v2';
+const LS_KEY = 'knot:canvas:v3';
 const WRITE_URL = 'http://localhost:3101/write';
 
 export interface AssetWithPosition extends AssetItem {

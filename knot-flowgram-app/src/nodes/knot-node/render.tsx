@@ -14,7 +14,7 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FC } from 'react';
 import {
   FlowNodeFormData,
@@ -40,6 +40,11 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGrowing, setIsGrowing] = useState(false);
   const [streamingText, setStreamingText] = useState<string | null>(null);
+
+  // 失焦自动收起（之反馈：展开后点周围区域应自己收回去）
+  useEffect(() => {
+    if (!isFocused) setIsExpanded(false);
+  }, [isFocused]);
 
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
@@ -131,12 +136,19 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         />
       </div>
 
-      {/* 折叠态：圆点+首块摘要标签（背书④可展开） */}
+      {/* 折叠态：圆点+首块摘要 + 固定展开按钮 ▸（之反馈：不要隐藏双击，给固定形态按键） */}
       {!isExpanded && (
-        <div className="knot-node__collapsed" onClick={handleToggleExpand}>
+        <div className="knot-node__collapsed">
           <div className="knot-node__dot" />
           <div className="knot-node__title">{blocks[0]?.content ?? data.title}</div>
           {isFocused && <div className="knot-node__focus-star">★</div>}
+          <button
+            className="knot-node__expand-btn"
+            title="展开（也可以双击卡片）"
+            onClick={handleToggleExpand}
+          >
+            ▸
+          </button>
         </div>
       )}
 
@@ -146,8 +158,8 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
           <div className="knot-node__header">
             <div className="knot-node__title-expanded">{data.title}</div>
             {isFocused && <div className="knot-node__focus-star">★</div>}
-            <button className="knot-node__close" onClick={handleToggleExpand}>
-              ✕
+            <button className="knot-node__close" title="收起" onClick={handleToggleExpand}>
+              ▾
             </button>
           </div>
 

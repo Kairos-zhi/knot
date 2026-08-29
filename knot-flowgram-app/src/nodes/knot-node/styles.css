@@ -300,3 +300,21 @@
   box-shadow: 0 0 0 2px rgba(255, 149, 0, 0.35);
   border-radius: 10px;
 }
+
+/* 固定展开按钮（之反馈：给固定形态按键，不要隐藏双击） */
+.knot-node__expand-btn {
+  border: none;
+  background: transparent;
+  color: #bbb;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.knot-node__expand-btn:hover {
+  color: #ff9500;
+  background: rgba(255, 149, 0, 0.08);
+}

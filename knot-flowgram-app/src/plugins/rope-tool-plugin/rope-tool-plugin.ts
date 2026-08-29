@@ -106,6 +106,11 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       previewPath.setAttribute('stroke-width', '1');
       previewPath.setAttribute('stroke-dasharray', '6 4');
       previewSvg.appendChild(previewPath);
+      // 绳头圆点（落脚点：绳拿出来就有，源头去向都可见）
+      const previewDot = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      previewDot.setAttribute('r', '4');
+      previewDot.setAttribute('fill', '#ff9500');
+      previewSvg.appendChild(previewDot);
       pipelineNode.appendChild(previewSvg);
 
       // ===== 剪断反馈 flash 层 =====
@@ -152,6 +157,15 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       const showPreview = (from: Pos, to: Pos) => {
         previewSvg.style.display = '';
         previewPath.setAttribute('d', `M ${from.x} ${from.y} L ${to.x} ${to.y}`);
+        previewDot.setAttribute('cx', String(to.x));
+        previewDot.setAttribute('cy', String(to.y));
+      };
+      /** 绳头落脚点：绳子模式光标处始终可见（没拖时也显示，拿出来就有落点） */
+      const showDotOnly = (pos: Pos) => {
+        previewSvg.style.display = '';
+        previewPath.setAttribute('d', '');
+        previewDot.setAttribute('cx', String(pos.x));
+        previewDot.setAttribute('cy', String(pos.y));
       };
       const hidePreview = () => {
         previewSvg.style.display = 'none';
@@ -386,11 +400,17 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
 
       // ===== hover 提示（剪刀模式：绳高亮/结轻提示，纯 CSS class，克制） =====
       const onHoverMove = (e: MouseEvent) => {
-        if (getTool() !== 'scissors') return;
-        const pos = toPlaygroundPos(e);
-        const line = linesManager.getCloseInLineFromMousePos(pos, 10);
-        // FlowGram 自带 line hover 高亮（lineColor.hovered），此处无需额外处理
-        void line;
+        if (getTool() === 'scissors') {
+          const pos = toPlaygroundPos(e);
+          const line = linesManager.getCloseInLineFromMousePos(pos, 10);
+          // FlowGram 自带 line hover 高亮（lineColor.hovered），此处无需额外处理
+          void line;
+          return;
+        }
+        // 绳子模式：光标处绳头落脚点常显（没拖时也看得见绳头——拿出来就有落点）
+        if (getTool() === 'rope' && !drag) {
+          showDotOnly(toPlaygroundPos(e));
+        }
       };
 
       pipelineNode.addEventListener('mousedown', onMouseDown, true);
