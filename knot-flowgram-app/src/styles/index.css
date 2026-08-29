@@ -139,3 +139,16 @@ body[data-tool='scissors'] .knot-node:hover {
   border-color: #ff9500;
   opacity: 0.85;
 }
+
+/* 同一平面浮沉（之反馈）：选中浮现/另一个下沉 */
+.demo-container.mode-linear .gedit-flow-playground {
+  transform: scale(0.95);
+  filter: blur(2px);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+}
+
+.demo-container .gedit-flow-playground {
+  transition: transform 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+}

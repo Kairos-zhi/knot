@@ -16,7 +16,10 @@ interface LinearItem {
   preview: string;
 }
 
-export const LinearFlowView: React.FC<{ onFocusKnot: (id: string) => void }> = ({ onFocusKnot }) => {
+export const LinearFlowView: React.FC<{
+  mode: 'space' | 'linear' | 'both';
+  onFocusKnot: (id: string) => void;
+}> = ({ mode, onFocusKnot }) => {
   const document = useService(WorkflowDocument);
 
   const items: LinearItem[] = document
@@ -41,7 +44,7 @@ export const LinearFlowView: React.FC<{ onFocusKnot: (id: string) => void }> = (
     .sort((a, b) => (a.chain_id === b.chain_id ? 0 : a.chain_id < b.chain_id ? -1 : 1));
 
   return (
-    <div className="knot-linear">
+    <div className={`knot-linear mode-${mode}`} aria-hidden={mode === 'space' ? 'true' : undefined}>
       <div className="knot-linear__rail" />
       {items.map((it) => (
         <div

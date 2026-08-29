@@ -11,6 +11,30 @@
   border-radius: 10px;
   padding: 16px 14px;
   backdrop-filter: blur(6px);
+  transition: transform 0.35s ease, opacity 0.35s ease, filter 0.35s ease, left 0.35s ease, width 0.35s ease;
+}
+
+/* 语义空间浮现：线性流下沉（缩小+淡化+退后，不可交互） */
+.knot-linear.mode-space {
+  transform: translateX(-48px) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* 线性流浮现：居中大面板（时间轴成为主层） */
+.knot-linear.mode-linear {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 540px;
+  max-height: 78vh;
+  bottom: 120px;
+}
+
+/* 共存：左侧停靠（基础样式即此形态） */
+.knot-linear.mode-both {
+  transform: none;
+  opacity: 1;
 }
 
 .knot-linear__rail {

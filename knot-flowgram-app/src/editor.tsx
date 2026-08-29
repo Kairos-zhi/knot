@@ -33,7 +33,7 @@ const PersistenceBridge = () => {
   return null;
 };
 
-type ViewMode = 'linear' | 'space';
+type ViewMode = 'space' | 'linear' | 'both';
 
 export const Editor = () => {
   const editorProps = useEditorProps(knotInitialData, nodeRegistries);
@@ -56,26 +56,36 @@ export const Editor = () => {
       <FreeLayoutEditorProvider {...editorProps}>
         <PersistenceBridge />
         <FocusProvider>
-          <div className="demo-container">
+          <div className={`demo-container mode-${viewMode}`}>
             <DockedPanelLayer>
               <EditorRenderer className="demo-editor" />
             </DockedPanelLayer>
-            {viewMode === 'linear' && <LinearFlowView onFocusKnot={focusKnotFromLinear} />}
+            <LinearFlowView
+              mode={viewMode}
+              onFocusKnot={focusKnotFromLinear}
+            />
             <KnotEmptySlots />
             <KnotGeneratePanel />
-            {/* 双模式切换：先线性（源头），后非线性（语义空间） */}
+            {/* 三态切换：同一平面浮沉（选中浮现/另一个下沉）+ 共存 */}
             <div className="knot-view-switch">
               <button
                 className={`knot-view-switch__btn ${viewMode === 'linear' ? 'is-active' : ''}`}
                 onClick={() => setViewMode('linear')}
-                title="线性流：思考的源头（对话/文档的时间顺序）"
+                title="线性流浮现（时间轴），语义空间下沉"
               >
                 线性流
               </button>
               <button
+                className={`knot-view-switch__btn ${viewMode === 'both' ? 'is-active' : ''}`}
+                onClick={() => setViewMode('both')}
+                title="两种形态共存（线性流+语义空间同时可见）"
+              >
+                共存
+              </button>
+              <button
                 className={`knot-view-switch__btn ${viewMode === 'space' ? 'is-active' : ''}`}
                 onClick={() => setViewMode('space')}
-                title="语义空间：从流长出的网络（结+绳）"
+                title="语义空间浮现（结+绳网络），线性流下沉"
               >
                 语义空间
               </button>
