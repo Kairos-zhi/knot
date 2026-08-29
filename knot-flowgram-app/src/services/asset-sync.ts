@@ -36,14 +36,45 @@ const assetData = (a: AssetItem) => ({
   blocks: a.blocks,
 });
 
-/** 资产 → 结的初始画布数据（全量投影） */
+/** 资产 → 结的初始画布数据（全量投影，含按 chain_id 自动建绳：同链结链式相连） */
 export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
   const perRow = 3;
+  // 绳：同 chain_id 的结按序链式相连（v1 语义建绳最小版——「结+绳」网络形态立起来）
+  const edges: FlowDocumentJSON['edges'] = [];
+  const chains = new Map<string, string[]>();
+  assets.forEach((a) => {
+    const list = chains.get(a.chain_id) ?? [];
+    list.push(a.id);
+    chains.set(a.chain_id, list);
+  });
+  chains.forEach((ids) => {
+    for (let i = 0; i < ids.length - 1; i++) {
+      edges.push({
+        sourceNodeID: ids[i],
+        targetNodeID: ids[i + 1],
+        sourcePortID: 'out',
+        targetPortID: 'in',
+      });
+    }
+  });
+  // 按源分组排布：同 chain 的结空间相邻（源头感：同源长在一起，不是按列表顺序散开）
+  const chainOrder = [...new Set(assets.map((a) => a.chain_id))];
+  const grouped: AssetItem[] = [];
+  chainOrder.forEach((cid) => {
+    assets.filter((a) => a.chain_id === cid).forEach((a) => grouped.push(a));
+  });
   return {
-    nodes: assets.map((a, i) => ({
+    nodes: grouped.map((a, i) => ({
       id: a.id,
       type: 'knot',
-      data: assetData(a),
+      data: {
+        title: a.title,
+        summary: a.summary,
+        token: Math.max(64, Math.round(a.summary.length * 2.5)),
+        src: a.src,
+        chain_id: a.chain_id,
+        blocks: a.blocks,
+      },
       meta: {
         // 有写回位置用写回位置，否则简单网格排布（后续语义场布局接管重排）
         position: a.position ?? {
@@ -53,7 +84,7 @@ export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
         defaultPorts: [KNOT_INPUT_PORT, KNOT_OUTPUT_PORT],
       },
     })),
-    edges: [],
+    edges,
   };
 }
 

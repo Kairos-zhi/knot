@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Button, Empty, List, Card } from '@douyinfe/semi-ui';
-import { useService, WorkflowDocument } from '@flowgram.ai/free-layout-editor';
+import { useService, WorkflowDocument, WorkflowLinesManager } from '@flowgram.ai/free-layout-editor';
 import { useSelection } from '../../context/selection-context';
 import { generate, CheckedKnot } from '../../services/generate';
 import styles from './styles.module.css';
@@ -18,6 +18,7 @@ import styles from './styles.module.css';
 export const KnotGeneratePanel: React.FC = () => {
   const { checkedIds } = useSelection();
   const workflowDocument = useService(WorkflowDocument);
+  const linesManager = useService(WorkflowLinesManager);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +53,7 @@ export const KnotGeneratePanel: React.FC = () => {
       // 调用生成服务
       const result = await generate({ checked: checkedKnots });
 
-      // 计算新节点位置（在已勾选结的下方）
+      // 计算新节点位置（从源头长出来：勾选结（V_b）的质心附近 + 偏移，不是面板下方）
       const positions = checkedKnots.map((k) => {
         const node = workflowDocument.getNode(k.id);
         const json = node?.toJSON() as
@@ -61,12 +62,12 @@ export const KnotGeneratePanel: React.FC = () => {
         return json?.meta?.position || { x: 0, y: 0 };
       });
 
-      const avgX =
-        positions.reduce((sum, p) => sum + p.x, 0) / positions.length;
-      const maxY = Math.max(...positions.map((p) => p.y));
+      const avgX = positions.reduce((sum, p) => sum + p.x, 0) / positions.length;
+      const avgY = positions.reduce((sum, p) => sum + p.y, 0) / positions.length;
+      // 从源头质心右下方错位长出（第一性原理：结从来源结长出来，不是丢到空白处）
       const newPosition = {
-        x: avgX,
-        y: maxY + 200,
+        x: avgX + 160,
+        y: avgY + 120,
       };
 
       // 创建新节点（knot 类型：生成自动成结，免手动收尾）
@@ -75,7 +76,7 @@ export const KnotGeneratePanel: React.FC = () => {
           title: result.title,
           summary: result.summary,
           token: 0,
-          src: 'generate',
+          src: `generated:${checkedKnots.map((k) => k.id).join(',')}`,
           chain_id: 'chain_gen',
         },
         meta: {
@@ -88,6 +89,19 @@ export const KnotGeneratePanel: React.FC = () => {
 
       if (newNode) {
         setError(null);
+        // 绳连回来源（第一性原理：生成结从 V_b 长出，绳=provenance 可视化）
+        checkedKnots.forEach((k) => {
+          try {
+            linesManager.createLine({
+              from: k.id,
+              to: newNode.id,
+              fromPort: 'out',
+              toPort: 'in',
+            });
+          } catch {
+            // 单条绳失败不影响生成
+          }
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '生成失败');
