@@ -10,14 +10,15 @@ import { LineRenderProps } from '@flowgram.ai/free-lines-plugin';
 const PADDING = 12;
 
 export const KnotLineRender: React.FC<LineRenderProps> = (props) => {
-  const { line, color, selected } = props;
+  const { line, color, selected, hovered } = props;
   const renderData = line.getData(WorkflowLineRenderData);
   if (!renderData) return null;
 
   const { bounds, path: bezierPath } = renderData;
 
-  const strokeWidth = selected ? 1.6 : 1;
-  const stroke = selected ? '#ff9500' : color ?? '#b8b8b8';
+  // 光标放上去/经过 → 自动高光（之反馈：绳 hover 即高亮，让人看出谁连谁）
+  const strokeWidth = hovered ? 2.2 : selected ? 1.6 : 1;
+  const stroke = hovered ? '#ff9500' : selected ? '#ff9500' : color ?? '#b8b8b8';
 
   // 打结（fixed）小结节：绳与目标结接触点附近的橙色圆点（比端口大）
   const fixed = (line.lineData as { fixed?: boolean } | undefined)?.fixed === true;

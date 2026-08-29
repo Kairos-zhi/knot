@@ -185,6 +185,19 @@
   font-size: 11px;
 }
 
+/* 焦点放大（之反馈：语义空间里当前正在做的语义放大化） */
+.knot-node--focused {
+  transform: scale(1.06);
+  z-index: 10;
+  transition: transform 0.25s ease;
+}
+
+/* 源头特殊形态（之反馈：源头=特殊颜色/形态——左缘橙色条，一眼认出流的来源） */
+.knot-node--source {
+  border-left: 3px solid #ff9500;
+  padding-left: 10px;
+}
+
 /* ---- 生长态：块列表 / 细分隔 / 续长入口 / 逐块流入 ----
    形态参考：星际拓荒谣言板渐进揭示、Gorogoa 层叠、Disco 思想内阁内化进度；
    克制风：低对比细分隔、虚线「+」与 ? 位同族、单强调色 #ff9500 只给生成态。 */

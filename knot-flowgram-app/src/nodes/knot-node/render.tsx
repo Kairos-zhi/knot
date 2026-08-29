@@ -114,7 +114,9 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       ref={nodeRef}
       className={`knot-node ${isExpanded ? 'knot-node--expanded' : 'knot-node--collapsed'} ${
         isFocused ? 'knot-node--focused' : ''
-      } ${distanceLevel}`}
+      } ${distanceLevel} ${
+        data.src && !data.src.startsWith('generated:') ? 'knot-node--source' : ''
+      }`}
       onMouseDown={(e) => {
         selectNode(e);
       }}
