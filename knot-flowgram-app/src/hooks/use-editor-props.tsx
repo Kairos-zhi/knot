@@ -32,6 +32,7 @@ import {
   createContextMenuPlugin,
   createVariablePanelPlugin,
   createPanelManagerPlugin,
+  createFocusLayoutPlugin,
 } from '../plugins';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
@@ -378,6 +379,8 @@ export function useEditorProps(
          * ⚠️ Browser mode is for demo only; for production, please deploy the server-side runtime
          * https://flowgram.ai/guide/runtime/introduction.html
          */
+        createFocusLayoutPlugin({}),
+
         createRuntimePlugin({
           mode: 'browser', // browser mode is for demo only!
           // mode: 'server',
