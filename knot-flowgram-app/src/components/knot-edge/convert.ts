@@ -19,6 +19,7 @@ export function toWorkflowJSON(doc: KnotFlowDocument): FlowDocumentJSON {
         token: n.data.token,
         src: n.data.src,
         chain_id: n.data.chain_id,
+        blocks: n.data.blocks,
       },
       meta: {
         position: n.meta.position,
