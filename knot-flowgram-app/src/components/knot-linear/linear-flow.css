@@ -1,0 +1,88 @@
+.knot-linear {
+  position: absolute;
+  left: 24px;
+  top: 48px;
+  bottom: 96px;
+  width: 340px;
+  overflow-y: auto;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  padding: 16px 14px;
+  backdrop-filter: blur(6px);
+}
+
+.knot-linear__rail {
+  position: absolute;
+  left: 22px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: #e8e8e8;
+}
+
+.knot-linear__item {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 8px 4px 8px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.knot-linear__item:hover {
+  background: #f7f7f7;
+}
+
+.knot-linear__dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #ff9500;
+  opacity: 0.75;
+  position: relative;
+  z-index: 1;
+}
+
+.knot-linear__body {
+  min-width: 0;
+}
+
+.knot-linear__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.4;
+}
+
+.knot-linear__meta {
+  font-size: 11px;
+  color: #a0a0a0;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knot-linear__preview {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.knot-linear__tail {
+  margin-top: 16px;
+  font-size: 11px;
+  color: #bbb;
+  text-align: center;
+  padding-left: 20px;
+}
