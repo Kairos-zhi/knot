@@ -20,6 +20,8 @@ export interface AssetItem {
   summary: string;
   src: string;
   chain_id: string;
+  /** 画布位置（写回后保留拖拽布局；缺省用网格排布） */
+  position?: { x: number; y: number };
 }
 
 /** 资产 → 结的初始画布数据（全量投影） */
@@ -37,8 +39,8 @@ export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
         chain_id: a.chain_id,
       },
       meta: {
-        // 简单网格排布：每行 3 个，行距 200（后续语义场布局接管重排）
-        position: {
+        // 有写回位置用写回位置，否则简单网格排布（后续语义场布局接管重排）
+        position: a.position ?? {
           x: 120 + (i % perRow) * 420,
           y: 120 + Math.floor(i / perRow) * 220,
         },
