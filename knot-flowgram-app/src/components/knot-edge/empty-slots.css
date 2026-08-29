@@ -5,6 +5,20 @@
   z-index: 5;
 }
 
+/* 引导文案：低存在感，不吵 */
+.knot-empty-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 64px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #b5b5b5;
+  letter-spacing: 0.5px;
+  user-select: none;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
 .knot-empty-slot {
   position: absolute;
   width: 64px;
@@ -20,4 +34,13 @@
   opacity: 0.7;
   user-select: none;
   background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.knot-empty-slot:hover {
+  border-color: #ff9500;
+  color: #ff9500;
+  opacity: 1;
 }
