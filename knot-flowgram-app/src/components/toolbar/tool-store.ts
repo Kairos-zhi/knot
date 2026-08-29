@@ -5,7 +5,7 @@
  * 工具范式=显式三件套，光标即工具，一切操作归入棍/绳/剪
  */
 
-export type ToolType = 'stick' | 'rope' | 'scissors';
+export type ToolType = 'hand' | 'stick' | 'rope' | 'scissors';
 
 let currentTool: ToolType = 'stick';
 const listeners: Array<(tool: ToolType) => void> = [];
@@ -27,9 +27,18 @@ export const onToolChange = (fn: (tool: ToolType) => void): (() => void) => {
   };
 };
 
-/** 快捷键映射：1=棍子 2=绳子 3=剪刀 */
+/** 快捷键映射（PS 逻辑：H=手 V=棍子 R=绳子 C=剪刀；数字键 1-4 同样支持；空格=临时手） */
 export const TOOL_HOTKEYS: Record<string, ToolType> = {
-  '1': 'stick',
-  '2': 'rope',
-  '3': 'scissors',
+  '1': 'hand',
+  '2': 'stick',
+  '3': 'rope',
+  '4': 'scissors',
+  h: 'hand',
+  H: 'hand',
+  v: 'stick',
+  V: 'stick',
+  r: 'rope',
+  R: 'rope',
+  c: 'scissors',
+  C: 'scissors',
 };

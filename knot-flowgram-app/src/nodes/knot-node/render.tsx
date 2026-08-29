@@ -113,6 +113,13 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       onMouseDown={(e) => {
         selectNode(e);
       }}
+      onDoubleClick={(e) => {
+        // PS 逻辑（之定）：双击=进入内容交互（展开/折叠）；单击=选中可拖
+        if (e.target instanceof HTMLElement && e.target.closest('button, input')) {
+          return;
+        }
+        handleToggleExpand(e);
+      }}
     >
       {/* 勾选框 */}
       <div className="knot-node__checkbox">

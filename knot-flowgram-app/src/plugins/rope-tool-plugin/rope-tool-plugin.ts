@@ -28,7 +28,7 @@ import {
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
-import { getTool } from '../../components/toolbar/tool-store';
+import { getTool, setTool, onToolChange } from '../../components/toolbar/tool-store';
 import { KnotToolbar } from '../../components/toolbar';
 
 export interface RopeToolPluginOptions {}
@@ -196,9 +196,39 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         line.lineData = { ...(line.lineData ?? {}), fixed: true };
       };
 
-      // ===== 鼠标事件（捕获阶段，绳子模式下从结上拖出时阻止默认拖动） =====
+      // ===== 鼠标事件（PS 逻辑：V=直接拖卡片、H/空格=平移视野、R=拖绳、C=剪） =====
+      // PS 状态
+      let pan: { sx: number; sy: number; vx: number; vy: number } | null = null;
+      let stickDrag: { nodeId: string; startPos: Pos; nodeStart: Pos | null } | null = null;
+      let spaceHeld = false;
+      let prevToolBeforeSpace: string = 'stick';
+
       const onMouseDown = (e: MouseEvent) => {
-        if (e.button !== 0 || getTool() !== 'rope') return;
+        if (e.button !== 0) return;
+        const tool = getTool();
+
+        // H 手：按住拖=平移视野
+        if (tool === 'hand') {
+          const sd = ctx.playground.config.scrollData;
+          pan = { sx: e.clientX, sy: e.clientY, vx: sd.scrollX, vy: sd.scrollY };
+          return;
+        }
+
+        // V 棍子：按住卡片直接拖（绕开 FlowGram 拖拽手感；双击展开在 render 层）
+        if (tool === 'stick') {
+          const target = e.target as HTMLElement | null;
+          if (target && target.closest('button, input')) return;
+          const nodeEl = target?.closest('[data-node-id]') as HTMLElement | null;
+          if (!nodeEl) return;
+          const nodeId = nodeEl.getAttribute('data-node-id');
+          if (!nodeId || !isKnotNode(ctx, nodeId)) return;
+          e.stopPropagation();
+          e.preventDefault();
+          stickDrag = { nodeId, startPos: toPlaygroundPos(e), nodeStart: nodeCenter(ctx, nodeId) };
+          return;
+        }
+
+        if (tool !== 'rope') return;
         const target = e.target as HTMLElement | null;
         const nodeEl = target?.closest('[data-node-id]') as HTMLElement | null;
         if (!nodeEl) return;
@@ -213,6 +243,33 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       };
 
       const onMouseMove = (e: MouseEvent) => {
+        // H 手平移：delta 驱动滚动（PS 抓手）
+        if (pan) {
+          const zoom = ctx.playground.config.zoom;
+          const dx = (e.clientX - pan.sx) / zoom;
+          const dy = (e.clientY - pan.sy) / zoom;
+          void ctx.playground.config.scrollToView({
+            scrollDelta: { x: -dx, y: -dy },
+            easing: false,
+          });
+          return;
+        }
+        // V 棍子拖动：跟手移动结
+        if (stickDrag && stickDrag.nodeStart) {
+          const pos = toPlaygroundPos(e);
+          const node = ctx.document.getNode(stickDrag.nodeId);
+          if (node) {
+            const t = node.getData(TransformData);
+            t.update({
+              position: {
+                x: stickDrag.nodeStart.x + (pos.x - stickDrag.startPos.x),
+                y: stickDrag.nodeStart.y + (pos.y - stickDrag.startPos.y),
+              },
+            });
+            ctx.document.layout.updateAffectedTransform(node);
+          }
+          return;
+        }
         if (!drag) return;
         drag.moved = true;
         const pos = toPlaygroundPos(e);
@@ -258,6 +315,14 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       };
 
       const onMouseUp = () => {
+        if (pan) {
+          pan = null;
+          return;
+        }
+        if (stickDrag) {
+          stickDrag = null;
+          return;
+        }
         if (!drag) return;
         clearDwell();
         setAttract(null);
@@ -334,6 +399,31 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       pipelineNode.addEventListener('click', onClickCapture, true);
       pipelineNode.addEventListener('mousemove', onHoverMove);
 
+      // PS 空格=临时手：按住空格切手，松开恢复
+      const onSpaceDown = (e: KeyboardEvent) => {
+        if (e.key !== ' ' || spaceHeld) return;
+        const t = e.target as HTMLElement | null;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        spaceHeld = true;
+        prevToolBeforeSpace = getTool();
+        setTool('hand');
+        e.preventDefault();
+      };
+      const onSpaceUp = (e: KeyboardEvent) => {
+        if (e.key !== ' ' || !spaceHeld) return;
+        spaceHeld = false;
+        setTool(prevToolBeforeSpace as Parameters<typeof setTool>[0]);
+      };
+      // 工具光标：手=grab（画笔模型，PS 同款）
+      const applyCursor = (tool: string) => {
+        const cursor = tool === 'hand' ? 'grab' : tool === 'stick' ? 'default' : 'crosshair';
+        ctx.playground.config.updateCursor(cursor);
+      };
+      const offTool = onToolChange(applyCursor);
+      applyCursor(getTool());
+      window.document.addEventListener('keydown', onSpaceDown);
+      window.document.addEventListener('keyup', onSpaceUp);
+
       ctx.playground.toDispose.push({
         dispose: () => {
           pipelineNode.removeEventListener('mousedown', onMouseDown, true);
@@ -341,6 +431,9 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           window.document.removeEventListener('mouseup', onMouseUp);
           pipelineNode.removeEventListener('click', onClickCapture, true);
           pipelineNode.removeEventListener('mousemove', onHoverMove);
+          window.document.removeEventListener('keydown', onSpaceDown);
+          window.document.removeEventListener('keyup', onSpaceUp);
+          offTool();
           previewSvg.remove();
           flashSvg.remove();
           toolbarRoot.unmount();

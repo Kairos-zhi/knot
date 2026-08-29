@@ -7,10 +7,11 @@ import React, { useEffect, useState } from 'react';
 import { getTool, setTool, onToolChange, ToolType, TOOL_HOTKEYS } from './tool-store';
 import './toolbar.css';
 
-const TOOLS: { type: ToolType; label: string; icon: string; title: string }[] = [
-  { type: 'stick', label: '棍子', icon: '●', title: '棍子：对象/结/资产（拿起想法）' },
-  { type: 'rope', label: '绳子', icon: '〜', title: '绳子：连接（串链/织网/拴项目）' },
-  { type: 'scissors', label: '剪刀', icon: '✂', title: '剪刀：断开（剪断绳/剪开结）' },
+const TOOLS: { type: ToolType; label: string; icon: string; hotkey: string; title: string }[] = [
+  { type: 'hand', label: '手', icon: '✋', hotkey: 'H', title: '手：在空间里行走（按住拖=平移视野；空格=临时手）' },
+  { type: 'stick', label: '棍子', icon: '●', hotkey: 'V', title: '棍子：移动/选择（PS V：单击选中，按住直接拖，双击展开内容）' },
+  { type: 'rope', label: '绳子', icon: '〜', hotkey: 'R', title: '绳子：连接（从结拖出绳头串链）' },
+  { type: 'scissors', label: '剪刀', icon: '✂', hotkey: 'C', title: '剪刀：断开（点绳剪断/点结解绳）' },
 ];
 
 export const KnotToolbar: React.FC = () => {
@@ -40,8 +41,10 @@ export const KnotToolbar: React.FC = () => {
           key={t.type}
           className={`knot-toolbar__btn ${tool === t.type ? 'knot-toolbar__btn--active' : ''}`}
           onClick={() => setTool(t.type)}
-          title={`${t.title}（快捷键 ${Object.keys(TOOL_HOTKEYS).find((k) => TOOL_HOTKEYS[k] === t.type)}）`}
+          title={t.title}
         >
+          {/* PS 式字母标识：提醒用户快捷键 */}
+          <span className="knot-toolbar__hotkey">{t.hotkey}</span>
           <span className="knot-toolbar__icon">{t.icon}</span>
           <span className="knot-toolbar__label">{t.label}</span>
         </button>

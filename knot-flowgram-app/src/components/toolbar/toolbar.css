@@ -17,6 +17,7 @@
 }
 
 .knot-toolbar__btn {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,6 +45,21 @@
 
 .knot-toolbar__btn--active:hover {
   background: rgba(255, 149, 0, 0.16);
+}
+
+.knot-toolbar__hotkey {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 9px;
+  color: #bbb;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.knot-toolbar__btn--active .knot-toolbar__hotkey {
+  color: #ff9500;
+  opacity: 0.9;
 }
 
 .knot-toolbar__icon {
