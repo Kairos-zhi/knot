@@ -15,6 +15,7 @@ import {
   FlowNodeBaseType,
   FreeLayoutPluginContext,
   FreeLayoutProps,
+  LineType,
   WorkflowNodeEntity,
 } from '@flowgram.ai/free-layout-editor';
 import { createFreeGroupPlugin } from '@flowgram.ai/free-group-plugin';
@@ -32,7 +33,6 @@ import {
   createContextMenuPlugin,
   createVariablePanelPlugin,
   createPanelManagerPlugin,
-  createFocusLayoutPlugin,
   createRopeToolPlugin,
 } from '../plugins';
 import { defaultFormMeta } from '../nodes/default-form-meta';
@@ -312,6 +312,7 @@ export function useEditorProps(
         createFreeLinesPlugin({
           renderLine: KnotLineRender,
           renderInsideLine: LineAddButton,
+          defaultLineType: LineType.STRAIGHT,
         }),
         /**
          * Minimap plugin
@@ -380,7 +381,10 @@ export function useEditorProps(
          * ⚠️ Browser mode is for demo only; for production, please deploy the server-side runtime
          * https://flowgram.ai/guide/runtime/introduction.html
          */
-        createFocusLayoutPlugin({}),
+        /**
+         * knot 焦点策略（之反馈修正 8/30）：展开/聚焦=毛玻璃化，不物理重排——
+         * 环状重排太猛破坏空间记忆（红队 C2 布局确定性）。focus-layout-plugin 保留不注册。
+         */
 
         /** 工具三件套：绳子+剪刀逻辑（棍子=默认现有行为） */
         createRopeToolPlugin({}),

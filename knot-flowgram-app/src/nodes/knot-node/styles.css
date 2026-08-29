@@ -170,13 +170,15 @@
   background: #f9f9f9;
 }
 
-/* 语义距离三级（近=实/中=淡/远=虚，不堆色用疏密+虚实） */
+/* 语义距离三级（近=实/中=淡/远=毛玻璃，不堆色用疏密+虚实） */
 .knot-node--mid {
   opacity: 0.72;
 }
 
 .knot-node--far {
-  opacity: 0.42;
+  opacity: 0.4;
+  filter: blur(2px);
+  pointer-events: auto;
 }
 
 .knot-node--far .knot-node__title {

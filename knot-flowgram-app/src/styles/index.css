@@ -114,3 +114,28 @@
   background: #ff9500;
   color: #fff;
 }
+
+/* 工具=画笔模型（之反馈）：切工具即变光标，路过卡片有光效呼应 */
+body[data-tool='rope'] .demo-container,
+body[data-tool='rope'] .gedit-flow-playground {
+  cursor: crosshair;
+}
+
+body[data-tool='rope'] .knot-node {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+body[data-tool='rope'] .knot-node:hover {
+  border-color: #ff9500;
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.18);
+}
+
+body[data-tool='scissors'] .demo-container,
+body[data-tool='scissors'] .gedit-flow-playground {
+  cursor: crosshair;
+}
+
+body[data-tool='scissors'] .knot-node:hover {
+  border-color: #ff9500;
+  opacity: 0.85;
+}

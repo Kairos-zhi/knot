@@ -14,6 +14,8 @@ export const getTool = (): ToolType => currentTool;
 
 export const setTool = (tool: ToolType): void => {
   currentTool = tool;
+  // 画笔模型：工具切换即改变画布光标与路过呼应（CSS 由 body[data-tool] 驱动）
+  window.document.body.dataset.tool = tool;
   listeners.forEach((fn) => fn(tool));
 };
 
