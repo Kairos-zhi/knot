@@ -14,7 +14,7 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FC } from 'react';
 import {
   FlowNodeFormData,
@@ -30,6 +30,7 @@ import {
 import { KnotNode, KnotBlock, getBlocks, nextBlockId } from '../../knot-model';
 import { grow } from '../../services/generate';
 import { useSelection } from '../../context/selection-context';
+import { getExpandedId, setExpandedId, onExpandedChange } from '../../context/expand-store';
 import { useFocus } from '../../context/focus-context';
 
 import './styles.css';
@@ -47,6 +48,15 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
   const linesManager = useService(WorkflowLinesManager);
+
+  // 卡片互斥（之定）：别的卡片展开时自己收起（实体感=同一时间只有一张展开）
+  useEffect(() => {
+    const id2 = id;
+    return onExpandedChange((cur) => {
+      if (cur !== id2) setIsExpanded(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
@@ -118,12 +128,14 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         selectNode(e);
       }}
       onMouseEnter={() => {
-        // 双层漏斗（之定）：鼠标移上自动展开
+        // 双层漏斗（之定）：鼠标移上自动展开 + 互斥（登记自己为唯一展开者）
+        setExpandedId(id);
         setIsExpanded(true);
       }}
       onMouseLeave={() => {
-        // 移开自动收回 mini（黄灯固定时例外）
+        // 移开自动收回 mini（黄灯固定时例外；互斥登记也清）
         if (!isPinned) setIsExpanded(false);
+        if (getExpandedId() === id) setExpandedId(null);
       }}
     >
       {/* 红绿灯状态机（之定案 22）：hover 1→2→3 依次亮（进度条）；第三灯=悬浮；选中=闪灯；三灯三功能 */}
