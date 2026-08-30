@@ -19,6 +19,8 @@ import {
 import { createNodeContainerModules, createNodeEntityDatas, FlowNodeFormData } from '@flowgram.ai/form-core';
 import { FormModelV2 } from '@flowgram.ai/node';
 import { interfaces } from 'inversify';
+import { ToolService } from '../src/services/tool-service';
+import { ExpandService } from '../src/services/expand-service';
 
 export function createHeadlessContainer(): interfaces.Container {
   const c: interfaces.Container = PlaygroundMockTools.createContainer([
@@ -47,5 +49,7 @@ export function createHeadlessContainer(): interfaces.Container {
   doc.options = {
     ...WorkflowDocumentOptionsDefault,
   };
+  c.bind(ToolService).toSelf().inSingletonScope();
+  c.bind(ExpandService).toSelf().inSingletonScope();
   return c;
 }
