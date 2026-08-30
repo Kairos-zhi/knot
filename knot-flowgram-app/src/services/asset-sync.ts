@@ -151,11 +151,42 @@ export function applyAssetDiff(
       });
       result.added.push(a.id);
     } else {
-      const json = node.toJSON() as { data?: { title?: string; summary?: string; src?: string } };
+      const json = node.toJSON() as {
+        data?: {
+          title?: string;
+          summary?: string;
+          src?: string;
+          chain_id?: string;
+          blocks?: KnotBlock[];
+        };
+      };
+      // dirty 判定：title/summary/src 之外，blocks 深比较（长度+逐字段）+ chain_id
+      // （修二轮 P0-2：blocks 更新同步画布，chain_id 变化触发重建=重排）
+      const oldBlocks = json.data?.blocks;
+      const newBlocks = a.blocks;
+      const blocksDirty =
+        (oldBlocks === undefined) !== (newBlocks === undefined) ||
+        (oldBlocks !== undefined &&
+          newBlocks !== undefined &&
+          (oldBlocks.length !== newBlocks.length ||
+            oldBlocks.some((ob, i) => {
+              const nb = newBlocks[i];
+              return (
+                !nb ||
+                ob.id !== nb.id ||
+                ob.source !== nb.source ||
+                ob.timestamp !== nb.timestamp ||
+                ob.content !== nb.content ||
+                ob.provenance.length !== nb.provenance.length ||
+                ob.provenance.some((p, j) => p !== nb.provenance[j])
+              );
+            })));
       const dirty =
         json.data?.title !== a.title ||
         json.data?.summary !== a.summary ||
-        json.data?.src !== a.src;
+        json.data?.src !== a.src ||
+        json.data?.chain_id !== a.chain_id ||
+        blocksDirty;
       if (dirty) {
         document.removeNode(node);
         document.createWorkflowNodeByType('knot', {
