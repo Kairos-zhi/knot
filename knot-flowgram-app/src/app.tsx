@@ -7,7 +7,6 @@ import { createRoot } from 'react-dom/client';
 import { unstableSetCreateRoot } from '@flowgram.ai/form-materials';
 
 import { Editor } from './editor';
-import { SelectionProvider } from './context/selection-context';
 
 /**
  * React 18/19 polyfill for form-materials
@@ -16,8 +15,5 @@ unstableSetCreateRoot(createRoot);
 
 const app = createRoot(document.getElementById('root')!);
 
-app.render(
-  <SelectionProvider>
-    <Editor />
-  </SelectionProvider>
-);
+// ③ 统一状态层：勾选集已迁入 KnotSelectionService（容器单例），SelectionProvider 退役
+app.render(<Editor />);

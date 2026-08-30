@@ -20,8 +20,8 @@ import { Emitter } from '@flowgram.ai/utils';
 import { KnotNode, KnotBlock, getBlocks, nextBlockId } from '../knot-model';
 import { CanvasSnapshot, serializeCanvas } from './asset-persistence';
 import { generate, grow } from './generate';
-import { getTool, setTool, ToolType } from '../components/toolbar/tool-store';
-import { setExpandedId } from '../context/expand-store';
+import { ToolType, ToolService } from './tool-service';
+import { ExpandService } from './expand-service';
 import { KNOT_INPUT_PORT, KNOT_OUTPUT_PORT } from '../components/knot-edge/ports';
 
 // ── OpResult 信封 ──
@@ -55,6 +55,10 @@ export class KnotOperationService {
   @inject(WorkflowLinesManager) private linesManager: WorkflowLinesManager;
 
   @inject(SelectionService) private selectionService: SelectionService;
+
+  @inject(ToolService) private toolService: ToolService;
+
+  @inject(ExpandService) private expandService: ExpandService;
 
   private readonly emitter = new Emitter<KnotEvent>();
 
@@ -433,12 +437,12 @@ export class KnotOperationService {
 
   // ── 工具 / 视图 ──
   setTool(tool: ToolType, opts?: { source?: string }): void {
-    setTool(tool);
+    this.toolService.setTool(tool);
     this.emit({ type: 'tool.changed', tool, source: opts?.source ?? 'human' });
   }
 
   getTool(): ToolType {
-    return getTool();
+    return this.toolService.getTool();
   }
 
   focusKnot(id: string | null, opts?: { source?: string }): void {
@@ -447,7 +451,7 @@ export class KnotOperationService {
   }
 
   expandKnot(id: string): void {
-    setExpandedId(id);
+    this.expandService.setExpandedId(id);
   }
 
   /** pin 是纯 UI 态（组件本地），入口收敛到 service 便于 agent 读 */

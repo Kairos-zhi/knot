@@ -14,7 +14,7 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import { FC } from 'react';
 import {
   useNodeRender,
@@ -23,9 +23,9 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 
 import { KnotNode, getBlocks } from '../../knot-model';
-import { useSelection } from '../../context/selection-context';
-import { getExpandedId, setExpandedId, onExpandedChange } from '../../context/expand-store';
-import { useFocus } from '../../context/focus-context';
+import { KnotSelectionService } from '../../services/knot-selection-service';
+import { ExpandService } from '../../services/expand-service';
+import { FocusService } from '../../services/focus-service';
 import { KnotOperationService } from '../../services/knot-operation-service';
 
 import './styles.css';
@@ -42,16 +42,19 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
   const opService = useService(KnotOperationService);
+  const expandService = useService(ExpandService);
+  const selectionService = useService(KnotSelectionService);
+  const focusService = useService(FocusService);
 
   const id = node.id;
 
   // 卡片互斥（之定）：别的卡片展开时自己收起（实体感=同一时间只有一张展开）
   useEffect(() => {
-    return onExpandedChange((cur) => {
+    return expandService.onExpandedChange((cur) => {
       if (cur !== id) setIsExpanded(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, expandService]);
   const json = node.toJSON() as { data?: KnotNode['data'] };
   const data: KnotNode['data'] = json.data ?? {
     title: '',
@@ -63,12 +66,20 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const blocks = getBlocks(data);
 
   // 勾选状态（可见集 V_b）
-  const selectionCtx = useSelection();
-  const isChecked = selectionCtx.checkedIds.includes(id);
-  const toggleCheck = selectionCtx.toggle;
+  const checkedIds = useSyncExternalStore(
+    (cb) => selectionService.subscribe(cb),
+    () => selectionService.getCheckedIds()
+  );
+  const isChecked = checkedIds.includes(id);
+  const toggleCheck = (tid: string) => selectionService.toggle(tid);
 
   // 语义距离（近=实/中=淡/远=虚，规格 v1 二.1）
-  const { focusedId, distanceOf } = useFocus();
+  const focusState = useSyncExternalStore(
+    (cb) => focusService.subscribe(cb),
+    () => focusService.getState()
+  );
+  const focusedId = focusState.focusedId;
+  const distanceOf = (tid: string) => focusService.distanceOf(tid);
   let distanceLevel = '';
   if (focusedId && focusedId !== id) {
     const d = distanceOf(id) ?? Infinity;
@@ -107,13 +118,13 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       }}
       onMouseEnter={() => {
         // 双层漏斗（之定）：鼠标移上自动展开 + 互斥（登记自己为唯一展开者）
-        setExpandedId(id);
+        expandService.setExpandedId(id);
         setIsExpanded(true);
       }}
       onMouseLeave={() => {
         // 移开自动收回 mini（黄灯固定时例外；互斥登记也清）
         if (!isPinned) setIsExpanded(false);
-        if (getExpandedId() === id) setExpandedId(null);
+        if (expandService.getExpandedId() === id) expandService.setExpandedId(null);
       }}
     >
       {/* 红绿灯状态机（之定案 22）：hover 1→2→3 依次亮（进度条）；第三灯=悬浮；选中=闪灯；三灯三功能 */}

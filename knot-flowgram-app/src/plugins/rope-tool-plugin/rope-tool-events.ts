@@ -9,9 +9,9 @@ import {
   TransformData,
   WorkflowLinesManager,
 } from '@flowgram.ai/free-layout-editor';
-import { getTool, setTool, onToolChange, ToolType } from '../../components/toolbar/tool-store';
+import { ToolType, ToolService } from '../../services/tool-service';
 import { KnotOperationService } from '../../services/knot-operation-service';
-import { setChain } from '../../components/knot-chain-card/chain-store';
+import { ChainService } from '../../services/chain-service';
 import { RopePreview } from './rope-preview';
 import { RopeDragState } from './rope-drag-state';
 import { AttractManager } from './attract-manager';
@@ -34,6 +34,8 @@ export interface RopeToolEventsDeps {
   pipelineNode: HTMLElement;
   linesManager: WorkflowLinesManager;
   opService: KnotOperationService;
+  toolService: ToolService;
+  chainService: ChainService;
   preview: RopePreview;
   dragState: RopeDragState;
   attract: AttractManager;
@@ -77,7 +79,7 @@ function nearestKnot(
 }
 
 export function createRopeToolEvents(deps: RopeToolEventsDeps): RopeToolEvents {
-  const { ctx, pipelineNode, linesManager, opService, preview, dragState, attract, stickTool } =
+  const { ctx, pipelineNode, linesManager, opService, toolService, chainService, preview, dragState, attract, stickTool } =
     deps;
 
   const toPlaygroundPos = (e: MouseEvent): Pos => {
@@ -128,7 +130,7 @@ export function createRopeToolEvents(deps: RopeToolEventsDeps): RopeToolEvents {
 
   const onMouseDown = (e: MouseEvent) => {
     if (e.button !== 0) return;
-    const tool = getTool();
+    const tool = toolService.getTool();
 
     // H 手：按住拖=平移视野
     if (tool === 'hand') {
@@ -274,13 +276,13 @@ export function createRopeToolEvents(deps: RopeToolEventsDeps): RopeToolEvents {
       // 松手诞生反馈：链上结依次金圈扩散+金框闪（链的诞生一眼可见）
       preview.chainBorn([drag.fromId, ...drag.chain]);
       // 串链完成 → 链卡浮现（之定：绳串联后才出现线性关系卡片）
-      setChain([drag.fromId, ...drag.chain]);
+      chainService.setChain([drag.fromId, ...drag.chain]);
     }
   };
 
   // ===== hover 提示（剪刀模式：绳高亮/结轻提示，纯 CSS class，克制） =====
   const onHoverMove = (e: MouseEvent) => {
-    if (getTool() === 'scissors') {
+    if (toolService.getTool() === 'scissors') {
       const pos = toPlaygroundPos(e);
       const line = linesManager.getCloseInLineFromMousePos(pos, 10);
       // FlowGram 自带 line hover 高亮（lineColor.hovered），此处无需额外处理
@@ -288,7 +290,7 @@ export function createRopeToolEvents(deps: RopeToolEventsDeps): RopeToolEvents {
       return;
     }
     // 绳子模式：光标处绳头落脚点常显（屏幕坐标直出，永远贴着光标）
-    if (getTool() === 'rope' && !dragState.drag) {
+    if (toolService.getTool() === 'rope' && !dragState.drag) {
       preview.showDotOnly(e.clientX, e.clientY);
     }
   };
@@ -299,22 +301,22 @@ export function createRopeToolEvents(deps: RopeToolEventsDeps): RopeToolEvents {
     const t = e.target as HTMLElement | null;
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
     spaceHeld = true;
-    prevToolBeforeSpace = getTool();
-    setTool('hand');
+    prevToolBeforeSpace = toolService.getTool();
+    toolService.setTool('hand');
     e.preventDefault();
   };
   const onSpaceUp = (e: KeyboardEvent) => {
     if (e.key !== ' ' || !spaceHeld) return;
     spaceHeld = false;
-    setTool(prevToolBeforeSpace as ToolType);
+    toolService.setTool(prevToolBeforeSpace as ToolType);
   };
   // 工具光标：手=grab（画笔模型，PS 同款）
   const applyCursor = (tool: string) => {
     const cursor = tool === 'hand' ? 'grab' : tool === 'stick' ? 'default' : 'crosshair';
     ctx.playground.config.updateCursor(cursor);
   };
-  const offTool = onToolChange(applyCursor);
-  applyCursor(getTool());
+  const offTool = toolService.onToolChange(applyCursor);
+  applyCursor(toolService.getTool());
 
   pipelineNode.addEventListener('mousedown', onMouseDown, true);
   window.document.addEventListener('mousemove', onMouseMove);

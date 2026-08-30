@@ -6,18 +6,19 @@
 import React, { useEffect, useState } from 'react';
 import { useService, WorkflowDocument } from '@flowgram.ai/free-layout-editor';
 
-import { getChain, onChainChange, closeChain, ChainState } from './chain-store';
+import { ChainService, ChainState } from '../../services/chain-service';
 import { KnotOperationService } from '../../services/knot-operation-service';
 import './chain-card.css';
 
 export const KnotChainCard: React.FC = () => {
   const document = useService(WorkflowDocument);
   const opService = useService(KnotOperationService);
-  const [chain, setChainState] = useState<ChainState | null>(getChain());
+  const chainService = useService(ChainService);
+  const [chain, setChainState] = useState<ChainState | null>(chainService.getChain());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => onChainChange(setChainState), []);
+  useEffect(() => chainService.onChainChange(setChainState), [chainService]);
 
   if (!chain) return null;
 
@@ -50,7 +51,7 @@ export const KnotChainCard: React.FC = () => {
     <div className="knot-chain-card">
       <div className="knot-chain-card__header">
         <span className="knot-chain-card__title">链 · {chain.ids.length} 结</span>
-        <button className="knot-chain-card__close" title="关闭链卡（绳保留在画布）" onClick={closeChain}>
+        <button className="knot-chain-card__close" title="关闭链卡（绳保留在画布）" onClick={() => chainService.closeChain()}>
           ✕
         </button>
       </div>

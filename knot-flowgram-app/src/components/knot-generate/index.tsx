@@ -3,16 +3,20 @@
  * 显示已勾选结列表（可见集 V_b）+ 生成按钮
  * 点击生成 → 调用 KnotOperationService.generateFromSelection → 返回内容自动成结（追加新节点进画布）
  */
-import React, { useState } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { Button, Empty, List, Card } from '@douyinfe/semi-ui';
 import { useService, WorkflowDocument } from '@flowgram.ai/free-layout-editor';
-import { useSelection } from '../../context/selection-context';
+import { KnotSelectionService } from '../../services/knot-selection-service';
 import { CheckedKnot } from '../../services/generate';
 import { KnotOperationService } from '../../services/knot-operation-service';
 import styles from './styles.module.css';
 
 export const KnotGeneratePanel: React.FC = () => {
-  const { checkedIds } = useSelection();
+  const selectionService = useService(KnotSelectionService);
+  const checkedIds = useSyncExternalStore(
+    (cb) => selectionService.subscribe(cb),
+    () => selectionService.getCheckedIds()
+  );
   const workflowDocument = useService(WorkflowDocument);
   const opService = useService(KnotOperationService);
   const [loading, setLoading] = useState(false);

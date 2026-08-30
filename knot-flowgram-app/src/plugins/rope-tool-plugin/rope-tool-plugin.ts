@@ -43,7 +43,8 @@ import { createAttractManager } from './attract-manager';
 import { createStickTool } from './stick-tool';
 import { createScissorsTool } from './scissors-tool';
 import { createRopeToolEvents } from './rope-tool-events';
-import { getTool } from '../../components/toolbar/tool-store';
+import { ToolService } from '../../services/tool-service';
+import { ChainService } from '../../services/chain-service';
 
 export interface RopeToolPluginOptions {}
 
@@ -72,6 +73,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       if (!pipelineNode) return;
       const linesManager = ctx.get(WorkflowLinesManager);
       const opService = ctx.get(KnotOperationService);
+      const toolService = ctx.get(ToolService);
+      const chainService = ctx.get(ChainService);
 
       // ===== 三件套工具条挂载（editor.tsx 不可改，插件内挂 React root） =====
       const toolbarHost = window.document.createElement('div');
@@ -121,6 +124,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         pipelineNode,
         linesManager,
         opService,
+        toolService,
+        chainService,
         preview,
         dragState,
         attract,
@@ -129,7 +134,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
 
       // 剪刀点击捕获（剪刀模式才生效）
       const onClickCapture = (e: MouseEvent) => {
-        if (getTool() !== 'scissors') return;
+        if (toolService.getTool() !== 'scissors') return;
         scissorsTool.onClickCapture(e);
       };
       pipelineNode.addEventListener('click', onClickCapture, true);
