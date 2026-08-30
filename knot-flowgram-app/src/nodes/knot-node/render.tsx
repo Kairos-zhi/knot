@@ -14,12 +14,11 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FC } from 'react';
 import {
   FlowNodeFormData,
   FormModelV2,
-  TransformData,
   useNodeRender,
   useService,
   WorkflowDocument,
