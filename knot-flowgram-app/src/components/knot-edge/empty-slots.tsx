@@ -5,26 +5,32 @@
  */
 import React from 'react';
 import { useService, WorkflowDocument, WorkflowSelectService } from '@flowgram.ai/free-layout-editor';
+import { KnotOperationService } from '../../services/knot-operation-service';
 import './empty-slots.css';
 
 export const KnotEmptySlots: React.FC = () => {
   const workflowDocument = useService(WorkflowDocument);
   const selectService = useService(WorkflowSelectService);
+  const opService = useService(KnotOperationService);
 
   const createKnotAt = (x: number, y: number) => {
-    const node = workflowDocument.createWorkflowNodeByType('knot', { x, y }, {
-      data: {
+    const result = opService.createKnot(
+      {
         title: '新结',
         summary: '点击展开，写点什么。',
         token: 0,
         src: 'manual',
         chain_id: 'chain_manual',
       },
-      meta: { defaultPorts: undefined },
-    });
-    if (node) {
-      // 打结后立即选中（焦点+可展开编辑）
-      selectService.selection = [node];
+      { x, y },
+      { source: 'human' }
+    );
+    if (result.ok) {
+      const node = workflowDocument.getNode(result.value);
+      if (node) {
+        // 打结后立即选中（焦点+可展开编辑）
+        selectService.selection = [node];
+      }
     }
   };
 
