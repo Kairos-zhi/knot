@@ -53,6 +53,14 @@ function nodeCenter(ctx: FreeLayoutPluginContext, nodeId: string): Pos | null {
   return { x: t.position.x + t.bounds.width / 2, y: t.position.y + t.bounds.height / 2 };
 }
 
+/** 引擎 position（左上角，纯位置不碰 bounds——拖动用，bounds 与视觉尺寸不一致会跳） */
+function nodePositionData(ctx: FreeLayoutPluginContext, nodeId: string): Pos | null {
+  const node = ctx.document.getNode(nodeId);
+  if (!node) return null;
+  const t = node.getData(TransformData);
+  return { x: t.position.x, y: t.position.y };
+}
+
 function isKnotNode(ctx: FreeLayoutPluginContext, nodeId: string): boolean {
   const node = ctx.document.getNode(nodeId);
   return !!node && node.flowNodeType === 'knot';
@@ -335,7 +343,9 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           if (!nodeId || !isKnotNode(ctx, nodeId)) return;
           e.stopPropagation();
           e.preventDefault();
-          stickDrag = { nodeId, startPos: toPlaygroundPos(e), nodeStart: nodeCenter(ctx, nodeId) };
+          // 拖动基准=引擎 position（左上角）+ 相对位移，完全不碰 bounds（bounds 与视觉尺寸不一致会跳）
+          const t0 = nodePositionData(ctx, nodeId);
+          stickDrag = { nodeId, startPos: toPlaygroundPos(e), nodeStart: t0 };
           // 拖动中抬起感（卡片被拿起来，操作即反馈）
           const dragEl = nodeEl.querySelector('.knot-node') as HTMLElement | null;
           if (dragEl) dragEl.classList.add('knot-node--lifting');
