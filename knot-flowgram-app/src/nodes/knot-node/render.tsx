@@ -49,16 +49,15 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
   const linesManager = useService(WorkflowLinesManager);
 
+  const id = node.id;
+
   // 卡片互斥（之定）：别的卡片展开时自己收起（实体感=同一时间只有一张展开）
   useEffect(() => {
-    const id2 = id;
     return onExpandedChange((cur) => {
-      if (cur !== id2) setIsExpanded(false);
+      if (cur !== id) setIsExpanded(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
   const data: KnotNode['data'] = json.data ?? {
     title: '',
