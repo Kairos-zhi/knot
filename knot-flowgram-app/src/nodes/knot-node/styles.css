@@ -10,10 +10,10 @@
   padding: 12px;
   background: #fff;
   border: 1px solid #e5e5e5;
-  /* 双层漏斗：mini 44 高；展开平滑过渡（max-height 动画防形态突变感=瞬移感） */
-  max-height: 44px;
-  overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+  /* 引擎尺寸恒定（mini 44 高）：展开内容走绝对浮层，引擎零重定位=零瞬移 */
+  height: 44px;
+  overflow: visible;
+  position: relative;
   border-radius: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
@@ -292,8 +292,32 @@
 }
 
 /* 绿灯：自由变换形状（可变形容器——resize 右下角手柄，内容层级随形态释出） */
-.knot-node--expanded {
+/* 展开浮层：absolute top:100%，淡入滑下（引擎不动，浮层自己展开） */
+.knot-node__expanded-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 240px;
   max-height: 440px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 20;
+  animation: knot-pop-in 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes knot-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .knot-node--expanded.knot-node--pinned {

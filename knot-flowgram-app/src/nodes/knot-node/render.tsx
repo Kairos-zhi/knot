@@ -49,28 +49,6 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
   const linesManager = useService(WorkflowLinesManager);
 
-  // 展开/收起同步引擎尺寸（防瞬移：CSS 尺寸与 meta.size 一致，引擎重算不跳位）
-  useEffect(() => {
-    try {
-      const t = node.getData(TransformData);
-      if (isExpanded) {
-        t.update({
-          size: { width: 240, height: Math.min(130 + blocks.length * 68, 420) },
-        });
-      } else {
-        t.update({
-          size: {
-            width: Math.min(240, Math.max(140, (data.title?.length ?? 4) * 13 + 56)),
-            height: 44,
-          },
-        });
-      }
-    } catch {
-      // 静默
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExpanded]);
-
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
   const data: KnotNode['data'] = json.data ?? {
@@ -222,9 +200,9 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         </div>
       )}
 
-      {/* 展开态：卡片 = 有序块列表 + 续长入口 */}
+      {/* 展开态：浮层卡片（absolute top:100%——引擎尺寸恒定不动，展开不触发引擎重定位，零瞬移） */}
       {isExpanded && (
-        <div className="knot-node__expanded">
+        <div className="knot-node__expanded knot-node__expanded-pop">
           <div className="knot-node__header">
             <div className="knot-node__title-expanded">{data.title}</div>
             {isFocused && <div className="knot-node__focus-star">★</div>}
