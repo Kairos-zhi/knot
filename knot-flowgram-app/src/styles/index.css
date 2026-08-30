@@ -115,7 +115,7 @@
   color: #fff;
 }
 
-/* 游戏化表现：经过的结脉冲形变（R 模式下拖绳经过时，K3 已挂 knot-node--knot-hover，升级为脉冲） */
+/* 游戏化表现：经过的结脉冲形变（不用 transform——会覆盖 FlowGram 节点定位，只用光晕扩散） */
 .knot-node--knot-hover {
   animation: knot-pulse 0.6s ease-out 2;
 }
@@ -123,15 +123,12 @@
 @keyframes knot-pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.45);
-    transform: scale(1);
   }
   50% {
     box-shadow: 0 0 0 10px rgba(255, 149, 0, 0);
-    transform: scale(1.05);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(255, 149, 0, 0);
-    transform: scale(1);
   }
 }
 
@@ -170,9 +167,9 @@
   animation: knot-strung-pulse 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 @keyframes knot-strung-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.55); transform: scale(1); border-color: #ff9500; }
-  40% { box-shadow: 0 0 0 12px rgba(255, 149, 0, 0); transform: scale(1.08); border-color: #ff9500; }
-  100% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); transform: scale(1); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.55); border-color: #ff9500; }
+  40% { box-shadow: 0 0 0 12px rgba(255, 149, 0, 0); border-color: #ff9500; }
+  100% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
 }
 
 /* 拖出瞬间：源结轻弹（操作即反馈） */
@@ -180,9 +177,9 @@
   animation: knot-source-bounce 0.4s ease-out;
 }
 @keyframes knot-source-bounce {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(255, 149, 0, 0.15); }
-  100% { transform: scale(1); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.15); }
+  35% { box-shadow: 0 0 0 6px rgba(255, 149, 0, 0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.15); }
 }
 
 /* 松手诞生：金圈扩散（屏幕坐标 SVG，沿链依次延迟） */
@@ -212,7 +209,6 @@
 /* ===== 卡片拖动手感（P3.5e 卡片直觉化：拿起=抬起，放下=落定） ===== */
 .knot-node--lifting {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 0 0 2px rgba(255, 149, 0, 0.25) !important;
-  transform: scale(1.03);
   border-color: rgba(255, 149, 0, 0.5) !important;
   cursor: grabbing !important;
   transition: none;
