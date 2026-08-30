@@ -33,13 +33,13 @@
 cd knot-flowgram-app
 npm install
 npm run dev                    # 画布 dev server → localhost:3002
-node scripts/asset-write-server.mjs   # 资产写回服务 → 3101（必须一起跑）
+node scripts/asset-write-server.mjs   # 协议端点 → 3101（必须一起跑；或一键 node scripts/start-all.mjs）
 # 浏览器打开 http://localhost:3002
 ```
 
 - 画布上的结来自资产清单 `src/assets/knot-assets.json`；加条目→刷新→长出新结
 - 画布改动（拖拽/生成）自动写回：localStorage + 资产文件
-- 重置：清 localStorage 键 `knot:canvas:v1`
+- 重置：清 localStorage 键 `knot:canvas:v3`
 
 ## 4. 架构地图（核心机制与坑）
 
@@ -51,7 +51,7 @@ node scripts/asset-write-server.mjs   # 资产写回服务 → 3101（必须一�
 - `src/context/` — selection-context（V_b）、focus-context（焦点）
 - `src/services/` — asset-sync（资产→结）、asset-persistence（结→资产）、generate（mock）
 - `src/assets/knot-assets.json` — 资产清单（事实源，画布写回目标）
-- `scripts/asset-write-server.mjs` — 写回服务（POST /write）
+- `scripts/asset-write-server.mjs` — 协议端点（GET /snapshot · POST /command · GET /events · POST /write）
 
 **三个必读的坑（踩过，别再踩）**：
 

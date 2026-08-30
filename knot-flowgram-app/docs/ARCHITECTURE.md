@@ -22,7 +22,8 @@
 | `src/services/asset-sync.ts` | 资产→结：`assetsToWorkflowJSON`（全量投影，支持 position 恢复）、`applyAssetDiff`（增量增改删，预留） |
 | `src/services/asset-persistence.ts` | 结→资产：`serializeCanvas` / localStorage / `pushSnapshotToAssetFile`（POST 3101）/ `watchCanvas`（onContentChange 监听） |
 | `src/services/generate.ts` | 生成服务：`generate({checked})` → mock（800ms 占位）；TODO 接 LLM |
-| `scripts/asset-write-server.mjs` | 写回服务：POST `/write` → 写 `src/assets/knot-assets.json`（3101，带 CORS） |
+| `scripts/asset-write-server.mjs` | 协议端点（3101）：`GET /snapshot` 全量快照 / `POST /command` 命令信封 / `GET /events` SSE / `POST /write` 画布写回兼容；CORS 白名单 localhost:3002 |
+| `scripts/start-all.mjs` | 一键启动：dev(3002) + 协议端点(3101) |
 | `src/assets/knot-assets.json` | 资产清单：kairos-oracle 关键文档的索引，画布写回目标 |
 
 ## 核心机制（含踩坑）
@@ -45,9 +46,10 @@ FlowGram 渲染节点时按 **`meta.renderKey || 'node-render'`** 查渲染组�
 结→资产：document.onContentChange → debounce 1.2s → serializeCanvas
           → localStorage（即时）+ POST localhost:3101/write（写回资产文件）
 ```
-- 写回服务必须和 dev server 一起跑（`node scripts/asset-write-server.mjs`）
+- 写回服务必须和 dev server 一起跑（`node scripts/asset-write-server.mjs`，或一键 `node scripts/start-all.mjs`）
+- 协议端点（3101）：`GET /snapshot`（全量快照+seq）/ `POST /command`（OpResult 信封，v1 支持 knot.create/update/delete/ping；画布级命令在桥接接入前返回 CANVAS_OFFLINE）/ `GET /events`（SSE，?since=seq 重放历史）
 - 基线同步：PersistenceBridge 挂载 1.5s 后自动对齐一次
-- 重置：清 localStorage `knot:canvas:v1`
+- 重置：清 localStorage `knot:canvas:v3`
 
 ### 4. 勾选 → 生成链路（Cola 操作序列同构）
 勾选（V_b）→ 生成面板 → `generate({checked})`（mock）→ `createWorkflowNodeByType('knot', pos, {data})` → 自动成结。

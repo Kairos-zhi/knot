@@ -12,13 +12,11 @@ knot 是「语义空间的 A2A 工作站」：结（knot-node）= 对话思考�
 # 1. 安装依赖
 npm install
 
-# 2. 启动画布 dev server（默认 3002；3000/3001 可能被其他项目占用）
-npm run dev
+# 2. 一键启动（画布 dev server 3002 + 协议端点 3101）
+node scripts/start-all.mjs
+# 或分开跑：npm run dev（3002）+ node scripts/asset-write-server.mjs（3101）
 
-# 3. 启动资产写回服务（结→资产文件 的写回通道，必须一起跑）
-node scripts/asset-write-server.mjs
-
-# 4. 浏览器打开
+# 3. 浏览器打开
 #    http://localhost:3002
 ```
 
@@ -28,14 +26,16 @@ node scripts/asset-write-server.mjs
 
 - **加资产**：在 `src/assets/knot-assets.json` 的 `assets` 数组加一条 `{ id, title, summary, src, chain_id }`，刷新页面即长出结。
 - **画布改动写回**：拖拽位置/勾选生成/编辑 → 变更监听（1.2s debounce）→ localStorage 即时保存 + POST 写回服务（3101）→ 资产文件更新。启动时 localStorage 快照优先恢复。
-- **重置画布**：清浏览器 localStorage（键 `knot:canvas:v1`）后刷新，回到资产清单投影。
+- **重置画布**：清浏览器 localStorage（键 `knot:canvas:v3`）后刷新，回到资产清单投影。
+- **协议端点**（3101，agent 不开浏览器也能操作）：`GET /snapshot` 全量快照、`POST /command` 命令信封（knot.create/update/delete/ping）、`GET /events` SSE 事件流。CORS 白名单 = localhost:3002。
 
 ## 常用命令
 
 ```bash
 npx tsc --noEmit        # 类型检查
+node scripts/start-all.mjs            # 一键起画布(3002)+协议端点(3101)
 npm run dev             # 画布 dev server（3002）
-node scripts/asset-write-server.mjs   # 写回服务（3101）
+node scripts/asset-write-server.mjs   # 协议端点（3101）
 ```
 
 ## 已知问题
@@ -56,7 +56,8 @@ src/
   services/asset-sync.ts      # 资产→结（投影/全量 + diff 增量）
   services/asset-persistence.ts # 结→资产（序列化/localStorage/写回/监听）
   services/generate.ts        # 生成服务（mock，TODO 接 LLM）
-scripts/asset-write-server.mjs # 写回服务（浏览器 → 资产文件）
+scripts/asset-write-server.mjs # 协议端点（snapshot/command/events/write）
+scripts/start-all.mjs         # 一键启动（dev+协议端点）
 ```
 
 详细架构见 `docs/ARCHITECTURE.md`，协作方式见 `docs/COLLABORATION.md`。
