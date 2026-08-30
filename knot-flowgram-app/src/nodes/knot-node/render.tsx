@@ -20,6 +20,8 @@ import {
   FlowNodeFormData,
   FormModelV2,
   useNodeRender,
+  useService,
+  WorkflowDocument,
   WorkflowNodeEntity,
 } from '@flowgram.ai/free-layout-editor';
 
@@ -36,6 +38,7 @@ interface KnotNodeRenderProps {
 
 export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const { node } = props;
+  const document = useService(WorkflowDocument);
   const { selected: isFocused, selectNode, nodeRef } = useNodeRender();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGrowing, setIsGrowing] = useState(false);
@@ -128,11 +131,42 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         handleToggleExpand(e);
       }}
     >
-      {/* macOS 红绿灯：三个灯亮起=被选中（优雅选中态，之定） */}
+      {/* macOS 红绿灯（窗口逻辑映射）：激活=三灯亮；失活=灰；hover 显符号；红=移除/黄=折叠/绿=展开 */}
       <div className="knot-node__lights">
-        <span className="knot-node__light knot-node__light--red" />
-        <span className="knot-node__light knot-node__light--yellow" />
-        <span className="knot-node__light knot-node__light--green" />
+        <span
+          className="knot-node__light knot-node__light--red"
+          title="移除这个结"
+          onClick={(e) => {
+            e.stopPropagation();
+            const n = (node as unknown as { id?: string }).id;
+            if (n) {
+              const ent = document.getNode(n);
+              if (ent) document.removeNode(ent);
+            }
+          }}
+        >
+          ×
+        </span>
+        <span
+          className="knot-node__light knot-node__light--yellow"
+          title="折叠（最小化）"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(false);
+          }}
+        >
+          −
+        </span>
+        <span
+          className="knot-node__light knot-node__light--green"
+          title="展开（放大）"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+        >
+          ＋
+        </span>
       </div>
 
       {/* 绳孔：从卡面唤起绳子（按住拖出绳头，不切工具） */}

@@ -198,7 +198,7 @@
   padding-left: 10px;
 }
 
-/* macOS 红绿灯选中态（之定：三个灯亮起=被选中，优雅） */
+/* macOS 红绿灯（窗口逻辑映射：激活亮/失活灰/hover 显符号/红移除黄折叠绿展开） */
 .knot-node__lights {
   display: flex;
   gap: 4px;
@@ -206,13 +206,22 @@
 }
 
 .knot-node__light {
-  width: 7px;
-  height: 7px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.12);
-  transition: background 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  line-height: 1;
+  cursor: pointer;
+  color: transparent;
+  background: rgba(0, 0, 0, 0.18);
+  transition: background 0.25s ease, box-shadow 0.25s ease, color 0.15s ease;
+  user-select: none;
 }
 
+/* 激活（选中）：三灯亮起 */
 .knot-node--focused .knot-node__light--red {
   background: #ff5f57;
   box-shadow: 0 0 4px rgba(255, 95, 87, 0.5);
@@ -226,6 +235,11 @@
 .knot-node--focused .knot-node__light--green {
   background: #28c840;
   box-shadow: 0 0 4px rgba(40, 200, 64, 0.5);
+}
+
+/* hover 激活卡片：灯显符号（macOS 同款 × − ＋） */
+.knot-node--focused:hover .knot-node__light {
+  color: rgba(0, 0, 0, 0.55);
 }
 
 /* 绳孔：从卡面唤起绳子的拖拽点 */
