@@ -187,9 +187,11 @@
 
 /* 焦点放大（之反馈：语义空间里当前正在做的语义放大化） */
 .knot-node--focused {
-  transform: scale(1.06);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s var(--knot-ease-out, cubic-bezier(0.2, 0.8, 0.3, 1)),
+    box-shadow 0.25s ease;
 }
 
 /* 源头特殊形态（左缘橙色竖条，一眼认出流的来源） */

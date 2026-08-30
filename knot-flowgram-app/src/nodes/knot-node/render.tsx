@@ -14,7 +14,7 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FC } from 'react';
 import {
   FlowNodeFormData,
@@ -44,11 +44,6 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [isGrowing, setIsGrowing] = useState(false);
   const [streamingText, setStreamingText] = useState<string | null>(null);
 
-  // 失焦自动收起（之反馈：展开后点周围区域应自己收回去）
-  useEffect(() => {
-    if (!isFocused) setIsExpanded(false);
-  }, [isFocused]);
-
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
   const data: KnotNode['data'] = json.data ?? {
@@ -72,11 +67,6 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
     const d = distanceOf(id) ?? Infinity;
     distanceLevel = d < 400 ? 'knot-node--near' : d < 900 ? 'knot-node--mid' : 'knot-node--far';
   }
-
-  const handleToggleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
 
   const handleToggleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -123,12 +113,13 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       onMouseDown={(e) => {
         selectNode(e);
       }}
-      onDoubleClick={(e) => {
-        // PS 逻辑（之定）：双击=进入内容交互（展开/折叠）；单击=选中可拖
-        if (e.target instanceof HTMLElement && e.target.closest('button, input')) {
-          return;
-        }
-        handleToggleExpand(e);
+      onMouseEnter={() => {
+        // 双层漏斗（之定）：鼠标移上自动展开
+        setIsExpanded(true);
+      }}
+      onMouseLeave={() => {
+        // 移开自动收回 mini
+        setIsExpanded(false);
       }}
     >
       {/* macOS 红绿灯（窗口逻辑映射）：激活=三灯亮；失活=灰；hover 显符号；红=移除/黄=折叠/绿=展开 */}
@@ -184,19 +175,12 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         />
       </div>
 
-      {/* 折叠态：圆点+首块摘要 + 固定展开按钮 ▸（之反馈：不要隐藏双击，给固定形态按键） */}
+      {/* 折叠态（mini）：圆点+首块摘要——hover 自动展开，无需按钮 */}
       {!isExpanded && (
         <div className="knot-node__collapsed">
           <div className="knot-node__dot" />
           <div className="knot-node__title">{blocks[0]?.content ?? data.title}</div>
           {isFocused && <div className="knot-node__focus-star">★</div>}
-          <button
-            className="knot-node__expand-btn"
-            title="展开（也可以双击卡片）"
-            onClick={handleToggleExpand}
-          >
-            ▸
-          </button>
         </div>
       )}
 
@@ -206,9 +190,6 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
           <div className="knot-node__header">
             <div className="knot-node__title-expanded">{data.title}</div>
             {isFocused && <div className="knot-node__focus-star">★</div>}
-            <button className="knot-node__close" title="收起" onClick={handleToggleExpand}>
-              ▾
-            </button>
           </div>
 
           {/* 块列表：块间细分隔（低对比不吵） */}
