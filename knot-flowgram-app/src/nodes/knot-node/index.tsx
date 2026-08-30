@@ -44,6 +44,7 @@ export const KnotNodeRegistry: FlowNodeRegistry = {
   },
   formMeta: {
     render: () => <></>,
+    plugins: [],
   },
   getInputPoints: () => [],
   getOutputPoints: () => [],

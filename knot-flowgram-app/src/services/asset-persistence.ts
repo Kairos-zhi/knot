@@ -11,7 +11,8 @@ import { WorkflowDocument } from '@flowgram.ai/free-layout-editor';
 import { AssetItem } from './asset-sync';
 import { KnotBlock } from '../knot-model';
 
-const LS_KEY = 'knot:canvas:v3';
+/** localStorage 快照键（单一事实源：代码侧唯一定义点） */
+export const LS_KEY = 'knot:canvas:v3';
 const WRITE_URL = 'http://localhost:3101/write';
 
 export interface AssetWithPosition extends AssetItem {
@@ -25,6 +26,8 @@ export interface CanvasSnapshot {
     targetNodeID: string;
     sourcePortID?: string;
     targetPortID?: string;
+    /** 绳扩展数据（修三轮 N2：fixed 标记必须进序列化） */
+    data?: { fixed?: boolean } & Record<string, unknown>;
   }[];
 }
 
@@ -51,7 +54,13 @@ export function serializeCanvas(document: WorkflowDocument): CanvasSnapshot {
     }
   });
   const wjson = document.toJSON() as {
-    edges?: { sourceNodeID: string; targetNodeID: string; sourcePortID?: string; targetPortID?: string }[];
+    edges?: {
+      sourceNodeID: string;
+      targetNodeID: string;
+      sourcePortID?: string;
+      targetPortID?: string;
+      data?: { fixed?: boolean } & Record<string, unknown>;
+    }[];
   };
   return { assets, edges: wjson.edges ?? [] };
 }
@@ -82,7 +91,7 @@ export async function pushSnapshotToAssetFile(snap: CanvasSnapshot): Promise<boo
     const res = await fetch(WRITE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ assets: snap.assets }),
+      body: JSON.stringify({ assets: snap.assets, edges: snap.edges }),
     });
     const data = (await res.json()) as { ok?: boolean };
     return data.ok === true;

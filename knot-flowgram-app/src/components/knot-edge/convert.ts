@@ -31,6 +31,7 @@ export function toWorkflowJSON(doc: KnotFlowDocument): FlowDocumentJSON {
       targetNodeID: e.targetNodeID,
       sourcePortID: e.sourcePortID,
       targetPortID: e.targetPortID,
+      ...(e.data ? { data: e.data } : {}),
     })),
   };
 }

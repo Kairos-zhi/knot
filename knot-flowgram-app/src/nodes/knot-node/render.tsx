@@ -17,21 +17,16 @@
 import React, { useEffect, useState } from 'react';
 import { FC } from 'react';
 import {
-  FlowNodeFormData,
-  FormModelV2,
   useNodeRender,
   useService,
-  WorkflowDocument,
-  WorkflowLinesManager,
   WorkflowNodeEntity,
-  WorkflowNodeLinesData,
 } from '@flowgram.ai/free-layout-editor';
 
-import { KnotNode, KnotBlock, getBlocks, nextBlockId } from '../../knot-model';
-import { grow } from '../../services/generate';
+import { KnotNode, getBlocks } from '../../knot-model';
 import { useSelection } from '../../context/selection-context';
 import { getExpandedId, setExpandedId, onExpandedChange } from '../../context/expand-store';
 import { useFocus } from '../../context/focus-context';
+import { KnotOperationService } from '../../services/knot-operation-service';
 
 import './styles.css';
 
@@ -41,13 +36,12 @@ interface KnotNodeRenderProps {
 
 export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const { node } = props;
-  const document = useService(WorkflowDocument);
   const { selected: isFocused, selectNode, nodeRef } = useNodeRender();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGrowing, setIsGrowing] = useState(false);
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
-  const linesManager = useService(WorkflowLinesManager);
+  const opService = useService(KnotOperationService);
 
   const id = node.id;
 
@@ -93,22 +87,7 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
     setIsGrowing(true);
     setStreamingText('');
     try {
-      const result = await grow(id, blocks, (text) => setStreamingText(text));
-      const newBlock: KnotBlock = {
-        id: nextBlockId(blocks),
-        source: 'generated',
-        timestamp: result.timestamp,
-        provenance: result.provenance,
-        content: result.content,
-      };
-      // 写回节点数据：blocks 尾部增块（id 稳定）；同步 title/summary 兼容字段
-      // 姿势对齐模板：FlowNodeFormData → getFormModel → setValueIn（字段路径=data 直接键）
-      const formModel = node.getData(FlowNodeFormData).getFormModel<FormModelV2>();
-      const next = [...blocks, newBlock];
-      if (formModel) {
-        formModel.setValueIn('blocks', next);
-        formModel.setValueIn('summary', next[0]?.content ?? data.summary);
-      }
+      await opService.growKnot(id, (text) => setStreamingText(text));
     } finally {
       setIsGrowing(false);
       setStreamingText(null);
@@ -144,21 +123,7 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
           title="红：断开这个结的所有链接"
           onClick={(e) => {
             e.stopPropagation();
-            // 红灯=关掉所有链接（断开全部绳；从绳两端节点的 LinesData 移除）
-            try {
-              const lines = linesManager.getAllAvailableLines().filter(
-                (l) => (l as { from?: string }).from === id || (l as { to?: string }).to === id,
-              );
-              lines.forEach((l) => {
-                const fromId = (l as { from?: string }).from;
-                if (fromId) {
-                  const n = document.getNode(fromId);
-                  n?.getData(WorkflowNodeLinesData).removeLine(l);
-                }
-              });
-            } catch {
-              // 静默
-            }
+            opService.disconnectAll(id);
           }}
         >
           ×

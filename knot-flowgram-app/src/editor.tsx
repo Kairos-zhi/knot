@@ -23,7 +23,7 @@ import knotAssetsJson from './assets/knot-assets.json';
 const knotAssets: AssetItem[] = (knotAssetsJson as { assets: AssetItem[] }).assets;
 const localSnap = loadSnapshotLocal();
 const knotInitialData = localSnap
-  ? assetsToWorkflowJSON(localSnap.assets)
+  ? assetsToWorkflowJSON(localSnap.assets, localSnap.edges)
   : assetsToWorkflowJSON(knotAssets);
 
 /** 持久化桥：监听画布变更 → 写回（localStorage + 资产文件） */

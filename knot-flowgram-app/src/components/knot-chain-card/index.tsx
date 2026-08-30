@@ -4,15 +4,15 @@
  * 无链时不存在（不是常驻面板）
  */
 import React, { useEffect, useState } from 'react';
-import { useService, WorkflowDocument, WorkflowLinesManager, TransformData } from '@flowgram.ai/free-layout-editor';
+import { useService, WorkflowDocument } from '@flowgram.ai/free-layout-editor';
 
 import { getChain, onChainChange, closeChain, ChainState } from './chain-store';
-import { generate } from '../../services/generate';
+import { KnotOperationService } from '../../services/knot-operation-service';
 import './chain-card.css';
 
 export const KnotChainCard: React.FC = () => {
   const document = useService(WorkflowDocument);
-  const linesManager = useService(WorkflowLinesManager);
+  const opService = useService(KnotOperationService);
   const [chain, setChainState] = useState<ChainState | null>(getChain());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,37 +33,11 @@ export const KnotChainCard: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await generate({
-        checked: chain.ids.map((id) => ({ id, title: '', summary: '' })),
-      });
-      // 新结接在链尾：位置=链尾结右下方，绳连回链尾
-      const lastId = chain.ids[chain.ids.length - 1];
-      const lastNode = document.getNode(lastId);
-      const lastPos = lastNode
-        ? (lastNode.getData(TransformData).position as { x: number; y: number })
-        : { x: 400, y: 400 };
-      const newNode = document.createWorkflowNodeByType(
-        'knot',
-        { x: lastPos.x + 180, y: lastPos.y + 100 },
-        {
-          data: {
-            title: result.title,
-            summary: result.summary,
-            token: 0,
-            src: `generated:${chain.ids.join(',')}`,
-            chain_id: 'chain_gen',
-          },
-          meta: { size: { width: 300, height: 120 } },
-        },
-      );
-      if (newNode) {
-        try {
-          linesManager.createLine({ from: lastId, to: newNode.id, fromPort: 'out', toPort: 'in' });
-        } catch {
-          // 单条绳失败不影响
-        }
-        // 链卡更新为含新结的链
-        setChainState({ ids: [...chain.ids, newNode.id], epoch: Date.now() });
+      const result = await opService.generateFromSelection(chain.ids);
+      if (result.ok) {
+        setChainState({ ids: [...chain.ids, result.value], epoch: Date.now() });
+      } else {
+        setError(result.error.message);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '生成失败');

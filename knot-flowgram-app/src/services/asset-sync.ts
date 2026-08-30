@@ -36,27 +36,51 @@ const assetData = (a: AssetItem) => ({
   blocks: a.blocks,
 });
 
-/** 资产 → 结的初始画布数据（全量投影，含按 chain_id 自动建绳：同链结链式相连） */
-export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
+/** 资产 → 结的初始画布数据（全量投影）
+ *  edges 传入时（localStorage 快照加载）：显式绳优先，fixed 等 data 原样恢复（修三轮 N1）；
+ *  edges 缺省时（资产清单投影）：按 chain_id 自动建绳（同链结链式相连）。
+ */
+export function assetsToWorkflowJSON(
+  assets: AssetItem[],
+  edges?: {
+    sourceNodeID: string;
+    targetNodeID: string;
+    sourcePortID?: string;
+    targetPortID?: string;
+    data?: Record<string, unknown>;
+  }[]
+): FlowDocumentJSON {
   const perRow = 3;
-  // 绳：同 chain_id 的结按序链式相连（v1 语义建绳最小版——「结+绳」网络形态立起来）
-  const edges: FlowDocumentJSON['edges'] = [];
-  const chains = new Map<string, string[]>();
-  assets.forEach((a) => {
-    const list = chains.get(a.chain_id) ?? [];
-    list.push(a.id);
-    chains.set(a.chain_id, list);
-  });
-  chains.forEach((ids) => {
-    for (let i = 0; i < ids.length - 1; i++) {
-      edges.push({
-        sourceNodeID: ids[i],
-        targetNodeID: ids[i + 1],
-        sourcePortID: 'out',
-        targetPortID: 'in',
-      });
-    }
-  });
+  let edgesOut: FlowDocumentJSON['edges'];
+  if (edges) {
+    // 显式绳：快照原样恢复（绳+fixed 无损闭环）
+    edgesOut = edges.map((e) => ({
+      sourceNodeID: e.sourceNodeID,
+      targetNodeID: e.targetNodeID,
+      sourcePortID: e.sourcePortID,
+      targetPortID: e.targetPortID,
+      ...(e.data ? { data: e.data } : {}),
+    }));
+  } else {
+    // 绳：同 chain_id 的结按序链式相连（v1 语义建绳最小版——「结+绳」网络形态立起来）
+    edgesOut = [];
+    const chains = new Map<string, string[]>();
+    assets.forEach((a) => {
+      const list = chains.get(a.chain_id) ?? [];
+      list.push(a.id);
+      chains.set(a.chain_id, list);
+    });
+    chains.forEach((ids) => {
+      for (let i = 0; i < ids.length - 1; i++) {
+        edgesOut.push({
+          sourceNodeID: ids[i],
+          targetNodeID: ids[i + 1],
+          sourcePortID: 'out',
+          targetPortID: 'in',
+        });
+      }
+    });
+  }
   // 按源分组排布：同 chain 的结空间相邻（源头感：同源长在一起，不是按列表顺序散开）
   const chainOrder = [...new Set(assets.map((a) => a.chain_id))];
   const grouped: AssetItem[] = [];
@@ -84,7 +108,7 @@ export function assetsToWorkflowJSON(assets: AssetItem[]): FlowDocumentJSON {
         defaultPorts: [KNOT_INPUT_PORT, KNOT_OUTPUT_PORT],
       },
     })),
-    edges,
+    edges: edgesOut,
   };
 }
 

@@ -90,6 +90,8 @@ export interface KnotEdge {
   sourcePortID: string;
   /** 终点端口 ID */
   targetPortID: string;
+  /** 绳扩展数据（fixed=打结固定；修三轮 N2：必须随序列化往返） */
+  data?: { fixed?: boolean } & Record<string, unknown>;
 }
 
 /**

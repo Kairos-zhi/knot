@@ -26,6 +26,7 @@ import { canContainNode, onDragLineEnd } from '../utils';
 import { FlowNodeRegistry, FlowDocumentJSON } from '../typings';
 import { shortcuts } from '../shortcuts';
 import { CustomService, ValidateService } from '../services';
+import { KnotOperationService } from '../services/knot-operation-service';
 import { GetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
 import { WorkflowRuntimeService } from '../plugins/runtime-plugin/runtime-service';
 import {
@@ -255,6 +256,7 @@ export function useEditorProps(
       onBind: ({ bind }) => {
         bind(CustomService).toSelf().inSingletonScope();
         bind(ValidateService).toSelf().inSingletonScope();
+        bind(KnotOperationService).toSelf().inSingletonScope();
       },
       /**
        * Playground init

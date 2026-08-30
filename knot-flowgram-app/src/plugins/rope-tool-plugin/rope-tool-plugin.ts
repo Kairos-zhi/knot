@@ -21,14 +21,13 @@ import {
   PluginCreator,
   FreeLayoutPluginContext,
   TransformData,
-  WorkflowDocument,
   WorkflowLinesManager,
-  WorkflowLineEntity,
 } from '@flowgram.ai/free-layout-editor';
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 import { getTool, setTool, onToolChange } from '../../components/toolbar/tool-store';
+import { KnotOperationService } from '../../services/knot-operation-service';
 import { setChain } from '../../components/knot-chain-card/chain-store';
 import { KnotToolbar } from '../../components/toolbar';
 
@@ -91,8 +90,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
     onReady(ctx) {
       const pipelineNode = ctx.playground.pipelineNode;
       if (!pipelineNode) return;
-      const document = ctx.get(WorkflowDocument);
       const linesManager = ctx.get(WorkflowLinesManager);
+      const opService = ctx.get(KnotOperationService);
 
       // ===== 三件套工具条挂载（editor.tsx 不可改，插件内挂 React root） =====
       const toolbarHost = window.document.createElement('div');
@@ -284,25 +283,21 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       const createEdge = (fromId: string, toId: string, fixed: boolean): void => {
         try {
           if (!isKnotNode(ctx, toId)) return; // 错误沉默：不兼容的结不成绳
-          const existing = linesManager.getLine({ from: fromId, to: toId });
-          if (existing) return;
-          const line = linesManager.createLine({
-            from: fromId,
-            to: toId,
-            fromPort: 'out',
-            toPort: 'in',
-            ...(fixed ? { data: { fixed: true } } : {}),
-          });
+          const existed = !!linesManager.getLine({ from: fromId, to: toId });
+          const r = opService.connect(fromId, toId, { fixed });
           // 游戏化表现：新绳「画出来」——flowing 虚线流动 600ms 后固定
-          if (line) {
-            line.flowing = true;
-            setTimeout(() => {
-              try {
-                line.flowing = false;
-              } catch {
-                // 绳已删除则忽略
-              }
-            }, 600);
+          if (r.ok && !existed) {
+            const line = linesManager.getLine({ from: fromId, to: toId });
+            if (line) {
+              line.flowing = true;
+              setTimeout(() => {
+                try {
+                  line.flowing = false;
+                } catch {
+                  // 绳已删除则忽略
+                }
+              }, 600);
+            }
           }
         } catch {
           // 单条绳失败静默（错误沉默原则）
@@ -310,9 +305,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       };
 
       const setEdgeFixed = (fromId: string, toId: string): void => {
-        const line = linesManager.getLine({ from: fromId, to: toId });
-        if (!line) return;
-        line.lineData = { ...(line.lineData ?? {}), fixed: true };
+        opService.connect(fromId, toId, { fixed: true }); // 幂等：已存在只补 fixed
       };
 
       // ===== 鼠标事件（PS 逻辑：V=直接拖卡片、H/空格=平移视野、R=拖绳、C=剪） =====
@@ -528,9 +521,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           e.stopPropagation();
           e.preventDefault();
           flashAt(pos);
-          if (document.linesManager.canRemove(line)) {
-            line.dispose(); // 剪断：该 edge 删除，两端独立
-          }
+          opService.disconnect(line.from.id, line.to.id); // 剪断：该 edge 删除，两端独立
           return;
         }
         // 点在结上 → 解绳：该结所有绳解除（结保留）
@@ -539,12 +530,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           if (!nodeId || !isKnotNode(ctx, nodeId)) return;
           e.stopPropagation();
           e.preventDefault();
-          const toRemove: WorkflowLineEntity[] = linesManager
-            .getAllLines()
-            .filter((l) => l.from?.id === nodeId || l.to?.id === nodeId);
-          toRemove.forEach((l) => {
-            if (document.linesManager.canRemove(l)) l.dispose();
-          });
+          opService.disconnectAll(nodeId);
           flashAt(pos);
         }
       };
