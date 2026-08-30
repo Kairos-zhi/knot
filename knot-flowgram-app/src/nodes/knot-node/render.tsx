@@ -23,6 +23,7 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 
 import { KnotNode, getBlocks } from '../../knot-model';
+import { KnotPaperCard } from '../../components/knot-card';
 import { KnotSelectionService } from '../../services/knot-selection-service';
 import { ExpandService } from '../../services/expand-service';
 import { FocusService } from '../../services/focus-service';
@@ -189,6 +190,15 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       {/* 展开态：浮层卡片（absolute top:100%——引擎尺寸恒定不动，展开不触发引擎重定位，零瞬移） */}
       {isExpanded && (
         <div className="knot-node__expanded knot-node__expanded-pop">
+          {/* 三原色卡片 P0：三纸叠放（右端三色标签竖排、点击换层、懒渲染）。
+              数据留口：makeDefaultPapers 由结数据合成三层演示纸叠，P1 接真实版本快照写回。 */}
+          <KnotPaperCard
+            knotId={id}
+            title={data.title}
+            summary={data.summary}
+            blocks={blocks.map((b) => ({ id: b.id, content: b.content }))}
+          />
+
           <div className="knot-node__header">
             <div className="knot-node__title-expanded">{data.title}</div>
             {isFocused && <div className="knot-node__focus-star">★</div>}

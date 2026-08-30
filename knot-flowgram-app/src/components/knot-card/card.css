@@ -1,0 +1,211 @@
+/**
+ * 三原色标签纸卡片样式（P0）
+ * tokens 全部走 CSS 变量（--knot-paper-*，见设计规范 v1 §一，已在本文件 :root 兜底定义，
+ * 待 tokens 入主样式表后可移除兜底）。
+ */
+
+:root {
+  /* 三原色标签纸（浅色面） */
+  --knot-paper-green: #34c759;
+  --knot-paper-blue: #007aff;
+  --knot-paper-red: #ff3b30;
+  /* 深色面（P2 全量接，本棒仅留口） */
+  --knot-paper-green-dark: #30d158;
+  --knot-paper-blue-dark: #0a84ff;
+  --knot-paper-red-dark: #ff453a;
+  /* 深色面卡片底色（P2 留口；浅色面用 --knot-paper-surface） */
+  --knot-paper-surface-dark: #0a0a0a;
+  --knot-paper-surface: #ffffff;
+  /* 标签纸材质 */
+  --knot-paper-radius: 12px;
+  --knot-paper-tab-radius: 6px;
+  --knot-paper-tab-expose: 4px;
+  --knot-paper-tab-hit: 28px;
+  /* 动效 tokens 兜底 */
+  --knot-ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --knot-dur-fast: 150ms;
+  /* 文字色 */
+  --knot-paper-text: #333333;
+  --knot-paper-text-weak: #666666;
+  --knot-paper-tab-text-on-red: #3d0c09; /* 红标签条深色文字（对比度拍板） */
+}
+
+.knot-paper-card {
+  position: relative;
+  width: 240px;
+  /* 浅色面浅色底；深色面切换时换 --knot-paper-surface-dark（P2） */
+  --knot-paper-bg: var(--knot-paper-surface);
+}
+
+.knot-paper-card__stack {
+  position: relative;
+  /* 右侧给标签条让位：露出 4px + 点击区余量 */
+  padding-right: calc(var(--knot-paper-tab-expose) + 10px);
+}
+
+/* ---- 纸 ---- */
+.knot-paper {
+  position: relative;
+  width: 100%;
+  min-height: 120px;
+  border-radius: var(--knot-paper-radius);
+  background: var(--knot-paper-bg);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* material-thin 薄材质：细边框 + 轻阴影 */
+  backdrop-filter: blur(2px);
+  /* 抽纸到顶：smooth(0.5) 微位移 */
+  transition: transform var(--knot-motion-smooth, 0.5s var(--knot-ease-out)),
+    box-shadow var(--knot-motion-smooth, 0.5s var(--knot-ease-out)),
+    opacity var(--knot-motion-smooth, 0.5s var(--knot-ease-out));
+  will-change: transform;
+}
+
+.knot-paper:not(.knot-paper--active) {
+  /* 压在下面的纸：只露边缘壳，内容不渲染（懒渲染）；零高超薄 */
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+  border-width: 0 0 0 1px;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* 层色指示：激活纸左缘 3px 层色条（薄材质色彩归属） */
+.knot-paper--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 2px;
+}
+.knot-paper--green::before {
+  background: var(--knot-paper-green);
+}
+.knot-paper--blue::before {
+  background: var(--knot-paper-blue);
+}
+.knot-paper--red::before {
+  background: var(--knot-paper-red);
+}
+
+.knot-paper__body {
+  padding: 12px 14px 12px 14px;
+  color: var(--knot-paper-text);
+}
+.knot-paper__title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.knot-paper__summary {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--knot-paper-text-weak);
+}
+.knot-paper__block {
+  font-size: 12px;
+  line-height: 1.5;
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 让纸叠容器有高度（纸 absolute 定位，激活层撑高） */
+.knot-paper--active {
+  position: relative;
+}
+
+/* ---- 右端竖排标签纸 ---- */
+.knot-paper-card__tabs {
+  position: absolute;
+  right: 0;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.knot-paper-tab {
+  /* 点击区 ≥28×28（--knot-paper-tab-hit），独立于标签视觉 */
+  min-width: var(--knot-paper-tab-hit);
+  min-height: var(--knot-paper-tab-hit);
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  /* 置顶反馈：snappy(0.3, bounce 0.05) */
+  transition: transform var(--knot-motion-snappy, 0.3s cubic-bezier(0.2, 1.05, 0.4, 1)),
+    opacity var(--knot-dur-fast) var(--knot-ease-out);
+}
+
+.knot-paper-tab__label {
+  /* 标签纸视觉条：右端竖排，固定露出 --knot-paper-tab-expose（未激活只露头 4px） */
+  writing-mode: vertical-rl;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 8px 3px;
+  border-radius: var(--knot-paper-tab-radius) 0 0 var(--knot-paper-tab-radius);
+  color: #ffffff;
+  /* 非激活标签左缩，仅露出 --knot-paper-tab-expose；激活/悬停时全宽伸出 */
+  transform: translateX(calc(100% - var(--knot-paper-tab-expose)));
+  transition: transform var(--knot-motion-smooth, 0.5s var(--knot-ease-out));
+  box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: none; /* 点击落在 28×28 按钮壳上 */
+  display: inline-block;
+}
+
+.knot-paper-tab--green .knot-paper-tab__label {
+  background: var(--knot-paper-green);
+}
+.knot-paper-tab--blue .knot-paper-tab__label {
+  background: var(--knot-paper-blue);
+}
+.knot-paper-tab--red .knot-paper-tab__label {
+  background: var(--knot-paper-red);
+  /* 红标签条深色文字（对比度拍板） */
+  color: var(--knot-paper-tab-text-on-red);
+}
+
+.knot-paper-tab:hover .knot-paper-tab__label,
+.knot-paper-tab--active .knot-paper-tab__label {
+  transform: translateX(0);
+}
+
+.knot-paper-tab--active {
+  /* 置顶反馈微弹 */
+  transform: translateX(-2px);
+}
+
+/* ---- Reduce Motion：抽纸改淡入淡出 ---- */
+@media (prefers-reduced-motion: reduce) {
+  .knot-paper {
+    transition: opacity 0.2s ease-in-out;
+    transform: none !important;
+  }
+  .knot-paper:not(.knot-paper--active) {
+    opacity: 0.55;
+  }
+  .knot-paper-tab__label,
+  .knot-paper-tab {
+    transition: opacity 0.2s ease-in-out;
+  }
+  .knot-paper-tab__label {
+    transform: none;
+    opacity: 0.6;
+  }
+  .knot-paper-tab--active .knot-paper-tab__label,
+  .knot-paper-tab:hover .knot-paper-tab__label {
+    opacity: 1;
+  }
+  .knot-paper-tab--active {
+    transform: none;
+  }
+}
