@@ -10,6 +10,10 @@
   padding: 12px;
   background: #fff;
   border: 1px solid #e5e5e5;
+  /* 双层漏斗：mini 44 高；展开平滑过渡（max-height 动画防形态突变感=瞬移感） */
+  max-height: 44px;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
   border-radius: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 13px;
@@ -288,6 +292,10 @@
 }
 
 /* 绿灯：自由变换形状（可变形容器——resize 右下角手柄，内容层级随形态释出） */
+.knot-node--expanded {
+  max-height: 440px;
+}
+
 .knot-node--expanded.knot-node--pinned {
   resize: both;
   overflow: auto;
