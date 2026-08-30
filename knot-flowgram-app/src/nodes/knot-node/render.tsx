@@ -14,11 +14,12 @@
  * 注：FlowGram 渲染组件查询 key = meta.renderKey || 'node-render'，
  * 故 knot registry 的 meta.renderKey 必须为 'knot' 才能命中 renderNodes 映射。
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FC } from 'react';
 import {
   FlowNodeFormData,
   FormModelV2,
+  TransformData,
   useNodeRender,
   useService,
   WorkflowDocument,
@@ -47,6 +48,28 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
   const linesManager = useService(WorkflowLinesManager);
+
+  // 展开/收起同步引擎尺寸（防瞬移：CSS 尺寸与 meta.size 一致，引擎重算不跳位）
+  useEffect(() => {
+    try {
+      const t = node.getData(TransformData);
+      if (isExpanded) {
+        t.update({
+          size: { width: 240, height: Math.min(130 + blocks.length * 68, 420) },
+        });
+      } else {
+        t.update({
+          size: {
+            width: Math.min(240, Math.max(140, (data.title?.length ?? 4) * 13 + 56)),
+            height: 44,
+          },
+        });
+      }
+    } catch {
+      // 静默
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpanded]);
 
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
