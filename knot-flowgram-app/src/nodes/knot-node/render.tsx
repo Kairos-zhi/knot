@@ -137,7 +137,7 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
               const lines = linesManager.getAllAvailableLines().filter(
                 (l) => (l as { from?: string }).from === id || (l as { to?: string }).to === id,
               );
-              lines.forEach((l) => linesManager.removeLine(l));
+              lines.forEach((l) => document.removeLine(l));
             } catch {
               // 静默
             }
