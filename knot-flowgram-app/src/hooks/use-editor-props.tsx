@@ -27,6 +27,11 @@ import { FlowNodeRegistry, FlowDocumentJSON } from '../typings';
 import { shortcuts } from '../shortcuts';
 import { CustomService, ValidateService } from '../services';
 import { KnotOperationService } from '../services/knot-operation-service';
+import { ToolService } from '../services/tool-service';
+import { ChainService } from '../services/chain-service';
+import { ExpandService } from '../services/expand-service';
+import { KnotSelectionService } from '../services/knot-selection-service';
+import { FocusService } from '../services/focus-service';
 import { GetGlobalVariableSchema } from '../plugins/variable-panel-plugin';
 import { WorkflowRuntimeService } from '../plugins/runtime-plugin/runtime-service';
 import {
@@ -257,6 +262,12 @@ export function useEditorProps(
         bind(CustomService).toSelf().inSingletonScope();
         bind(ValidateService).toSelf().inSingletonScope();
         bind(KnotOperationService).toSelf().inSingletonScope();
+        // ③ 统一状态层：5 状态源 3 模式 → FlowGram Service（同款注册姿势）
+        bind(ToolService).toSelf().inSingletonScope();
+        bind(ChainService).toSelf().inSingletonScope();
+        bind(ExpandService).toSelf().inSingletonScope();
+        bind(KnotSelectionService).toSelf().inSingletonScope();
+        bind(FocusService).toSelf().inSingletonScope();
       },
       /**
        * Playground init

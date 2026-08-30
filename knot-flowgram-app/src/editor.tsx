@@ -11,7 +11,8 @@ import '@flowgram.ai/free-layout-editor/index.css';
 import './styles/index.css';
 import { nodeRegistries } from './nodes';
 import { useEditorProps } from './hooks';
-import { FocusProvider } from './context/focus-context';
+import { FocusService } from './services/focus-service';
+import { useEffect } from 'react';
 import { KnotChainCard } from './components/knot-chain-card';
 import { KnotEmptySlots } from './components/knot-edge';
 import { LinearFlowView } from './components/knot-linear/linear-flow';
@@ -30,6 +31,19 @@ const knotInitialData = localSnap
 const PersistenceBridge = () => {
   const document = useService(WorkflowDocument);
   watchCanvas(document);
+  return null;
+};
+
+/**
+ * 焦点桥（③ 统一状态层）：原 FocusProvider 的选中监听平移到 FocusService.init()，
+ * 在 provider 内挂载一次即可（service 为容器单例，幂等由 onSelectionChanged 注册一次保证）。
+ */
+const FocusBridge = () => {
+  const focusService = useService(FocusService);
+  useEffect(() => {
+    focusService.init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return null;
 };
 
@@ -55,8 +69,8 @@ export const Editor = () => {
     <div className="doc-free-feature-overview">
       <FreeLayoutEditorProvider {...editorProps}>
         <PersistenceBridge />
-        <FocusProvider>
-          <div className={`demo-container mode-${viewMode}`}>
+        <FocusBridge />
+        <div className={`demo-container mode-${viewMode}`}>
             <DockedPanelLayer>
               <EditorRenderer className="demo-editor" />
             </DockedPanelLayer>
@@ -91,7 +105,6 @@ export const Editor = () => {
               </button>
             </div>
           </div>
-        </FocusProvider>
       </FreeLayoutEditorProvider>
     </div>
   );

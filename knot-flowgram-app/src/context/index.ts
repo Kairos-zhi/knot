@@ -5,5 +5,3 @@
 
 export { NodeRenderContext } from './node-render-context';
 export { IsSidebarContext } from './sidebar-context';
-export { SelectionProvider, useSelection } from './selection-context';
-export { FocusProvider, useFocus } from './focus-context';

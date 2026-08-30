@@ -23,7 +23,7 @@ import {
 } from '@flowgram.ai/free-layout-editor';
 import type { WorkflowNodeEntity } from '@flowgram.ai/free-layout-editor';
 
-import { focusBridge } from '../../context/focus-context';
+import { FocusService } from '../../services/focus-service';
 
 export interface FocusLayoutPluginOptions {}
 
@@ -139,7 +139,7 @@ export const createFocusLayoutPlugin: PluginCreator<FocusLayoutPluginOptions> =
   definePluginCreator<FocusLayoutPluginOptions, FreeLayoutPluginContext>({
     onReady(ctx) {
       // 1) 焦点出现/替换 → 物理重排；清除焦点不 fire（位置惯性，天然冻结）
-      const disposable = focusBridge.onRelayout((focusId) => {
+      const disposable = ctx.get(FocusService).onRelayout((focusId) => {
         if (ctx.playground.disposed) return;
         relayout(ctx, focusId);
       });

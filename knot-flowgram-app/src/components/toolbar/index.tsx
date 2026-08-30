@@ -4,7 +4,8 @@
  * 样式克制：半透明底，与画布融合
  */
 import React, { useEffect, useState } from 'react';
-import { getTool, setTool, onToolChange, ToolType, TOOL_HOTKEYS } from './tool-store';
+import { ToolType, TOOL_HOTKEYS, ToolService } from '../../services/tool-service';
+import { useService } from '@flowgram.ai/free-layout-editor';
 import './toolbar.css';
 
 const TOOLS: { type: ToolType; label: string; icon: string; hotkey: string; title: string }[] = [
@@ -13,24 +14,25 @@ const TOOLS: { type: ToolType; label: string; icon: string; hotkey: string; titl
 ];
 
 export const KnotToolbar: React.FC = () => {
-  const [tool, setToolState] = useState<ToolType>(getTool());
+  const toolService = useService(ToolService);
+  const [tool, setToolState] = useState<ToolType>(toolService.getTool());
 
   useEffect(() => {
-    const off = onToolChange((t) => setToolState(t));
+    const off = toolService.onToolChange((t) => setToolState(t));
     const onKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
         return;
       }
       const next = TOOL_HOTKEYS[e.key];
-      if (next) setTool(next);
+      if (next) toolService.setTool(next);
     };
     window.document.addEventListener('keydown', onKeyDown);
     return () => {
       off();
       window.document.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [toolService]);
 
   return (
     <div className="knot-toolbar">
@@ -38,7 +40,7 @@ export const KnotToolbar: React.FC = () => {
         <button
           key={t.type}
           className={`knot-toolbar__btn ${tool === t.type ? 'knot-toolbar__btn--active' : ''}`}
-          onClick={() => setTool(t.type)}
+          onClick={() => toolService.setTool(t.type)}
           title={t.title}
         >
           {/* PS 式字母标识：提醒用户快捷键 */}
