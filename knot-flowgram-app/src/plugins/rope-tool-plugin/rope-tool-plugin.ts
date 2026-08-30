@@ -128,14 +128,14 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       previewSvg.appendChild(bornGroup);
       window.document.body.appendChild(previewSvg);
 
-      /** 世界坐标 → 屏幕坐标（PlaygroundConfig.toFixedPos：画布位置转 window 位置） */
-      const toScreenPos = (p: Pos): Pos => {
-        try {
-          const f = ctx.playground.config.toFixedPos(p);
-          return { x: f.x, y: f.y };
-        } catch {
-          return p;
-        }
+      /** 结的屏幕中心：DOM getBoundingClientRect（绝对准确，不依赖 toFixedPos 的坐标语义） */
+      const nodeScreenCenter = (nodeId: string): Pos | null => {
+        const el = pipelineNode.querySelector(
+          `[data-node-id="${nodeId}"] .knot-node`,
+        ) as HTMLElement | null;
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       };
 
       // ===== 剪断反馈 flash 层 =====
@@ -179,10 +179,10 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       }
       let drag: DragRope | null = null;
 
-      const showPreview = (from: Pos, to: Pos) => {
+      const showPreview = (fromId: string, to: Pos) => {
         previewSvg.style.display = '';
-        const fs = toScreenPos(from);
-        const ts = toScreenPos(to);
+        const fs = nodeScreenCenter(fromId) ?? to;
+        const ts = to; // to 是屏幕坐标（拖绳时直接用鼠标 client 位置传入）
         previewPath.setAttribute('d', `M ${fs.x} ${fs.y} L ${ts.x} ${ts.y}`);
         previewDot.setAttribute('cx', String(ts.x));
         previewDot.setAttribute('cy', String(ts.y));
@@ -206,9 +206,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       const syncBadges = (chain: string[], fromId: string) => {
         badgeGroup.replaceChildren();
         const draw = (nodeId: string, num: number) => {
-          const c = nodeCenter(ctx, nodeId);
-          if (!c) return;
-          const s = toScreenPos(c);
+          const s = nodeScreenCenter(nodeId);
+          if (!s) return;
           const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g');
           const bg = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           bg.setAttribute('cx', String(s.x));
@@ -236,9 +235,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
       /** 成链诞生闪光：链上结依次金圈扩散（Roottrees 金框锁定级正反馈，橙色单色系） */
       const chainBorn = (ids: string[]) => {
         ids.forEach((id, i) => {
-          const c = nodeCenter(ctx, id);
-          if (!c) return;
-          const s = toScreenPos(c);
+          const s = nodeScreenCenter(id);
+          if (!s) return;
           const ring = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           ring.setAttribute('cx', String(s.x));
           ring.setAttribute('cy', String(s.y));
@@ -354,8 +352,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         e.stopPropagation();
         e.preventDefault();
         drag = { fromId: nodeId, chain: [], dwellTimer: null, dwellTargetId: null, knotted: false, moved: false };
-        const c = nodeCenter(ctx, nodeId);
-        if (c) showPreview(c, toPlaygroundPos(e));
+        showPreview(nodeId, { x: e.clientX, y: e.clientY });
         syncBadges([], nodeId); // 拖出瞬间：起点 0 号徽章立刻出现（绳的源头可见）
         // 拖出瞬间源结轻弹（操作即反馈：绳头在手）
         const srcEl = pipelineNode.querySelector(`[data-node-id="${nodeId}"] .knot-node`) as HTMLElement | null;
@@ -398,7 +395,7 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         const pos = toPlaygroundPos(e);
         const fromC = nodeCenter(ctx, drag.fromId);
         if (!fromC) return;
-        showPreview(fromC, pos);
+        showPreview(drag.fromId, { x: e.clientX, y: e.clientY });
 
         // 吸附检测：<120px 的结发光晕（错误沉默：无兼容判断之外的提示）
         const near = nearestKnot(ctx, pos, drag.fromId, ATTRACT_DIST);
