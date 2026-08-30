@@ -24,6 +24,7 @@ import {
   WorkflowDocument,
   WorkflowLinesManager,
   WorkflowNodeEntity,
+  WorkflowNodeLinesData,
 } from '@flowgram.ai/free-layout-editor';
 
 import { KnotNode, KnotBlock, getBlocks, nextBlockId } from '../../knot-model';
@@ -132,12 +133,18 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
           title="红：断开这个结的所有链接"
           onClick={(e) => {
             e.stopPropagation();
-            // 红灯=关掉所有链接（断开全部绳）
+            // 红灯=关掉所有链接（断开全部绳；从绳两端节点的 LinesData 移除）
             try {
               const lines = linesManager.getAllAvailableLines().filter(
                 (l) => (l as { from?: string }).from === id || (l as { to?: string }).to === id,
               );
-              lines.forEach((l) => document.removeLine(l));
+              lines.forEach((l) => {
+                const fromId = (l as { from?: string }).from;
+                if (fromId) {
+                  const n = document.getNode(fromId);
+                  n?.getData(WorkflowNodeLinesData).removeLine(l);
+                }
+              });
             } catch {
               // 静默
             }
