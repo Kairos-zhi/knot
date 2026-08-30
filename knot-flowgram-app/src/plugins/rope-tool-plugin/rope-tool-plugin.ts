@@ -342,6 +342,19 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
           return;
         }
 
+        // 绳孔唤起（之定：绳子从卡面唤起，不切工具直接拖绳）
+        const ropeFromEl = (e.target as HTMLElement | null)?.closest?.('[data-rope-from]') as HTMLElement | null;
+        if (ropeFromEl && tool !== 'scissors') {
+          const nodeId = ropeFromEl.getAttribute('data-rope-from');
+          if (!nodeId || !isKnotNode(ctx, nodeId)) return;
+          e.stopPropagation();
+          e.preventDefault();
+          drag = { fromId: nodeId, chain: [], dwellTimer: null, dwellTargetId: null, knotted: false, moved: false };
+          showPreview(nodeId, { x: e.clientX, y: e.clientY });
+          syncBadges([], nodeId);
+          return;
+        }
+
         if (tool !== 'rope') return;
         const target = e.target as HTMLElement | null;
         const nodeEl = target?.closest('[data-node-id]') as HTMLElement | null;
@@ -396,6 +409,8 @@ export const createRopeToolPlugin: PluginCreator<RopeToolPluginOptions> =
         const fromC = nodeCenter(ctx, drag.fromId);
         if (!fromC) return;
         showPreview(drag.fromId, { x: e.clientX, y: e.clientY });
+        // 每帧重画徽章：视角平移/缩放时结 DOM 位置实时更新，标记点永不漂移
+        syncBadges(drag.chain, drag.fromId);
 
         // 吸附检测：<120px 的结发光晕（错误沉默：无兼容判断之外的提示）
         const near = nearestKnot(ctx, pos, drag.fromId, ATTRACT_DIST);

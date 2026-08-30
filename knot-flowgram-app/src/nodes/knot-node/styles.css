@@ -192,10 +192,68 @@
   transition: transform 0.25s ease;
 }
 
-/* 源头特殊形态（之反馈：源头=特殊颜色/形态——左缘橙色条，一眼认出流的来源） */
+/* 源头特殊形态（左缘橙色竖条，一眼认出流的来源） */
 .knot-node--source {
   border-left: 3px solid #ff9500;
   padding-left: 10px;
+}
+
+/* macOS 红绿灯选中态（之定：三个灯亮起=被选中，优雅） */
+.knot-node__lights {
+  display: flex;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.knot-node__light {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.knot-node--focused .knot-node__light--red {
+  background: #ff5f57;
+  box-shadow: 0 0 4px rgba(255, 95, 87, 0.5);
+}
+
+.knot-node--focused .knot-node__light--yellow {
+  background: #febc2e;
+  box-shadow: 0 0 4px rgba(254, 188, 46, 0.5);
+}
+
+.knot-node--focused .knot-node__light--green {
+  background: #28c840;
+  box-shadow: 0 0 4px rgba(40, 200, 64, 0.5);
+}
+
+/* 绳孔：从卡面唤起绳子的拖拽点 */
+.knot-node__rope-handle {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #d8d8d8;
+  background: #fff;
+  color: #ff9500;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+  opacity: 0.55;
+  transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
+  z-index: 2;
+}
+
+.knot-node__rope-handle:hover {
+  opacity: 1;
+  border-color: #ff9500;
+  transform: translateY(-50%) scale(1.15);
 }
 
 /* ---- 生长态：块列表 / 细分隔 / 续长入口 / 逐块流入 ----

@@ -128,6 +128,18 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         handleToggleExpand(e);
       }}
     >
+      {/* macOS 红绿灯：三个灯亮起=被选中（优雅选中态，之定） */}
+      <div className="knot-node__lights">
+        <span className="knot-node__light knot-node__light--red" />
+        <span className="knot-node__light knot-node__light--yellow" />
+        <span className="knot-node__light knot-node__light--green" />
+      </div>
+
+      {/* 绳孔：从卡面唤起绳子（按住拖出绳头，不切工具） */}
+      <div className="knot-node__rope-handle" data-rope-from={id} title="从这里拖出绳子">
+        ○
+      </div>
+
       {/* 勾选框 */}
       <div className="knot-node__checkbox">
         <input
