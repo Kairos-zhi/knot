@@ -22,6 +22,7 @@ import {
   useNodeRender,
   useService,
   WorkflowDocument,
+  WorkflowLinesManager,
   WorkflowNodeEntity,
 } from '@flowgram.ai/free-layout-editor';
 
@@ -43,6 +44,8 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isGrowing, setIsGrowing] = useState(false);
   const [streamingText, setStreamingText] = useState<string | null>(null);
+  const [isPinned, setIsPinned] = useState(false); // 黄灯：固定形态（锁定展开，不随移开收起）
+  const linesManager = useService(WorkflowLinesManager);
 
   const id = node.id;
   const json = node.toJSON() as { data?: KnotNode['data'] };
@@ -107,7 +110,7 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
       ref={nodeRef}
       className={`knot-node ${isExpanded ? 'knot-node--expanded' : 'knot-node--collapsed'} ${
         isFocused ? 'knot-node--focused' : ''
-      } ${distanceLevel} ${
+      } ${isPinned ? 'knot-node--pinned' : ''} ${distanceLevel} ${
         data.src && !data.src.startsWith('generated:') ? 'knot-node--source' : ''
       }`}
       onMouseDown={(e) => {
@@ -118,21 +121,25 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         setIsExpanded(true);
       }}
       onMouseLeave={() => {
-        // 移开自动收回 mini
-        setIsExpanded(false);
+        // 移开自动收回 mini（黄灯固定时例外）
+        if (!isPinned) setIsExpanded(false);
       }}
     >
-      {/* macOS 红绿灯（窗口逻辑映射）：激活=三灯亮；失活=灰；hover 显符号；红=移除/黄=折叠/绿=展开 */}
+      {/* 红绿灯状态机（之定案 22）：hover 1→2→3 依次亮（进度条）；第三灯=悬浮；选中=闪灯；三灯三功能 */}
       <div className="knot-node__lights">
         <span
-          className="knot-node__light knot-node__light--red"
-          title="移除这个结"
+          className={`knot-node__light knot-node__light--red ${isPinned ? 'is-pinned-mark' : ''}`}
+          title="红：断开这个结的所有链接"
           onClick={(e) => {
             e.stopPropagation();
-            const n = (node as unknown as { id?: string }).id;
-            if (n) {
-              const ent = document.getNode(n);
-              if (ent) document.removeNode(ent);
+            // 红灯=关掉所有链接（断开全部绳）
+            try {
+              const lines = linesManager.getAllAvailableLines().filter(
+                (l) => (l as { from?: string }).from === id || (l as { to?: string }).to === id,
+              );
+              lines.forEach((l) => linesManager.removeLine(l));
+            } catch {
+              // 静默
             }
           }}
         >
@@ -140,20 +147,21 @@ export const KnotNodeRender: FC<KnotNodeRenderProps> = (props) => {
         </span>
         <span
           className="knot-node__light knot-node__light--yellow"
-          title="折叠（最小化）"
+          title="黄：固定形态（锁定展开，不随移开收起）"
           onClick={(e) => {
             e.stopPropagation();
-            setIsExpanded(false);
+            setIsPinned((p) => !p);
           }}
         >
           −
         </span>
         <span
           className="knot-node__light knot-node__light--green"
-          title="展开（放大）"
+          title="绿：展开"
           onClick={(e) => {
             e.stopPropagation();
             setIsExpanded(true);
+            setIsPinned(true);
           }}
         >
           ＋

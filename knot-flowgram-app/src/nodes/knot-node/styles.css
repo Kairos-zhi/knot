@@ -239,12 +239,64 @@
   box-shadow: 0 0 4px rgba(40, 200, 64, 0.5);
 }
 
+/* 进度条时序（之定案 22）：hover 时 1→2→3 依次亮起（150ms 阶梯） */
+.knot-node:hover .knot-node__light--red {
+  background: #ff5f57;
+  transition-delay: 0ms;
+}
+
+.knot-node:hover .knot-node__light--yellow {
+  background: #febc2e;
+  transition-delay: 150ms;
+}
+
+.knot-node:hover .knot-node__light--green {
+  background: #28c840;
+  transition-delay: 300ms;
+}
+
+/* 第三灯亮=悬浮（之：到第三个点的时候悬浮） */
+.knot-node:hover .knot-node__lights {
+  transform: translateY(-1px);
+}
+
+/* 选中=闪灯（渐变呼吸） */
+.knot-node--focused .knot-node__light {
+  animation: knot-light-breathe 1.6s ease-in-out infinite;
+}
+
+.knot-node--focused .knot-node__light--yellow {
+  animation-delay: 0.15s;
+}
+
+.knot-node--focused .knot-node__light--green {
+  animation-delay: 0.3s;
+}
+
+@keyframes knot-light-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
 /* hover 激活卡片：灯显符号（macOS 同款 × − ＋） */
 .knot-node--focused:hover .knot-node__light {
   color: rgba(0, 0, 0, 0.55);
 }
 
-/* 绳孔：从卡面唤起绳子的拖拽点 */
+/* 绿灯：自由变换形状（可变形容器——resize 右下角手柄，内容层级随形态释出） */
+.knot-node--expanded.knot-node--pinned {
+  resize: both;
+  overflow: auto;
+  min-width: 240px;
+  min-height: 120px;
+  max-width: 720px;
+  max-height: 80vh;
+}
 .knot-node__rope-handle {
   position: absolute;
   right: -8px;
