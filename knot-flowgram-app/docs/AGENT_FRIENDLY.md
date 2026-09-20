@@ -42,12 +42,15 @@ agent 能以**原生状态**操作工作台——打结、串绳、续长、拆�
 4. 禁止把业务逻辑写死在组件里（组件=视图，操作=内核，资产=数据）
 5. 新增接口类型时，先想清楚四层里它属于哪一层
 
-## 当前差距（Checker 审计基线）
+## 当前状态（2026-08-31 · RFC v0.1 冻结后）
 
-- ✅ 数据资产接口：asset-sync/asset-persistence 已有雏形
-- ⚠️ 操作内核：操作散落在组件/插件里（render.tsx 的续长、rope-tool-plugin 的串绳），未收敛为内核
-- ❌ agent 程序接口：完全空白（只有 DOM 事件）
-- ❌ 协议接口：未设计
+- ✅ 数据资产接口：`asset-sync` / `asset-persistence` + `scripts/asset-write-server.mjs`（`/snapshot`、`/write`）
+- ✅ 操作内核：`KnotOperationService` 已收敛 UI 写路径；UI 手势与程序命令应继续共用该内核
+- ✅ agent 程序接口：knot 协议 v0.1 已冻结；`POST /command` 支持资产级执行，画布级命令进入 Canvas Bridge 队列（`/command/poll` + `/command/ack`）
+- ✅ 事件接口：`GET /events` SSE，seq 落盘持久化；冷启动先读 `/snapshot`
+- ✅ 并发/身份基础：写路径文件锁（冲突返回 409）；写类端点 Bearer token 鉴权；source 由宿主配置映射，不信 body 自报
+- ⏳ Canvas Bridge 浏览器内实现：协议端点已具备，`OperationService` 轮询执行与回执仍待落地
+- ⏳ 协议接口（跨 agent 通信/多项目穿透）：v0.1 先留开放协议面，A2A/A2UI 等外部标准以后再适配，不将宿主私有 API 写入本体
 
 ---
 
