@@ -1,3 +1,5 @@
+> 历史架构说明：保留旧 FlowGram 机制与踩坑记录。最新工作现场、输入编译、恢复与协议边界见[当前架构](../../docs/architecture/overview.md)和[状态模型](../../docs/architecture/state-and-persistence.md)。下文历史状态／协作做法不覆盖现行治理或当前实现。
+
 # knot 架构地图
 
 > 目的：让新协作者（人 or agent）不猜——每个机制在哪、怎么接、踩过的坑。
