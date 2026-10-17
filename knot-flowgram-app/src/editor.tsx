@@ -17,21 +17,37 @@ import { KnotChainCard } from './components/knot-chain-card';
 import { KnotEmptySlots } from './components/knot-edge';
 import { LinearFlowView } from './components/knot-linear/linear-flow';
 import { assetsToWorkflowJSON, AssetItem } from './services/asset-sync';
-import { loadSnapshotLocal, watchCanvas } from './services/asset-persistence';
+import { initializeSnapshotOnce, watchCanvas } from './services/asset-persistence';
+import { KnotOperationService } from './services/knot-operation-service';
+import { KnotSelectionService } from './services/knot-selection-service';
 import knotAssetsJson from './assets/knot-assets.json';
 
-// 双向同步：localStorage 快照优先（画布即资产本体，刷新不丢），否则资产清单投影
+// Each fresh kernel reads current stored bytes through PersistenceBridge, not a module cache.
 const knotAssets: AssetItem[] = (knotAssetsJson as { assets: AssetItem[] }).assets;
-const localSnap = loadSnapshotLocal();
-const knotInitialData = localSnap
-  ? assetsToWorkflowJSON(localSnap.assets, localSnap.edges)
-  : assetsToWorkflowJSON(knotAssets);
+const knotInitialData = assetsToWorkflowJSON(knotAssets);
 
 /** 持久化桥：监听画布变更 → 写回（localStorage + 资产文件） */
 const PersistenceBridge = () => {
   const document = useService(WorkflowDocument);
-  watchCanvas(document);
-  return null;
+  const operations = useService(KnotOperationService);
+  const selection = useService(KnotSelectionService);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    operations.init();
+    const initialized = initializeSnapshotOnce(operations, snapshot => operations.restoreSnapshot(snapshot));
+    if (!initialized.ok) {
+      setError(`${initialized.error.code}: ${initialized.error.message}`);
+      return;
+    }
+    setError(null);
+    return watchCanvas(document, {
+      getSnapshot: () => operations.getSnapshot(),
+      subscribe: listener => selection.subscribe(listener),
+      onError: problem => setError(`${problem.code}: ${problem.message}`),
+      onSaved: () => setError(null),
+    });
+  }, [document, operations, selection]);
+  return error ? <div role="alert">保存／恢复失败：{error}</div> : null;
 };
 
 /**

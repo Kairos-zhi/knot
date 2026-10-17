@@ -132,3 +132,64 @@ export const createKnotEdge = (
   sourcePortID,
   targetPortID,
 });
+
+/** 工作现场保存引用和输入状态；资产内容仍由 WorkflowDocument 持有。 */
+export interface WorksiteState {
+  id: string;
+  assetId: string | null;
+  conversationId: string | null;
+  draft: string;
+  agentId: string | null;
+  checkedIds: string[];
+  excludedIds: string[];
+}
+
+export interface PresentationLayout {
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+}
+
+/** 呈现只引用现场；关闭或改变形态不会删除现场。 */
+export interface PresentationState {
+  id: string;
+  worksiteId: string;
+  kind: 'window' | 'card' | 'icon';
+  closed: boolean;
+  layout: PresentationLayout;
+}
+
+export interface WorkspaceState {
+  activeWorksiteId: string;
+  worksites: WorksiteState[];
+  presentations: PresentationState[];
+}
+
+export type WorksiteCommand =
+  | { type: 'worksite.create'; id: string; assetId?: string | null; conversationId?: string | null }
+  | { type: 'worksite.activate'; worksiteId: string }
+  | { type: 'worksite.update'; worksiteId: string; draft?: string; agentId?: string | null }
+  | { type: 'worksite.supply'; worksiteId: string; assetId: string; mode: 'connect' | 'exclude' | 'suggest' }
+  | { type: 'presentation.open'; id: string; worksiteId: string; kind?: PresentationState['kind']; layout?: PresentationLayout }
+  | { type: 'presentation.update'; presentationId: string; kind?: PresentationState['kind']; closed?: boolean; layout?: Partial<PresentationLayout> };
+
+export type WorkspaceResult =
+  | { ok: true; value: WorkspaceState }
+  | { ok: false; error: { code: string; message: string } };
+
+export interface WorkspaceChange {
+  type: 'worksite.changed' | 'presentation.changed' | 'workspace.restored';
+  command: WorksiteCommand | { type: 'workspace.restore' } | { type: 'workspace.reconcileAssets'; removedIds: string[] };
+  source: string;
+}
+
+/** 下一次输入的只读数据；provenance 保留历史来源，不扩展供给。 */
+export interface CompiledWorksiteInput {
+  worksiteId: string;
+  assetId: string | null;
+  conversationId: string | null;
+  draft: string;
+  agentId: string | null;
+  materials: Array<{ id: string; title: string; summary: string; blocks: KnotBlock[] }>;
+}
