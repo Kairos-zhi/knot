@@ -1,0 +1,441 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-18",
+  "kind": "documentation-source-register",
+  "cloudExportIsNotOriginalByteRecovery": true,
+  "publicationEncoding": "UTF-8 with LF line endings; character counts use this normalized text",
+  "sourceEntries": [
+    {
+      "id": "H01",
+      "name": "knot产品哲学对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/product-philosophy.md",
+      "sourceKind": "local",
+      "sourceSha256": "9AE538B1985349D7DEC0036DE7EE27C9E526B9103342B0A7D021A33678599289",
+      "revision": null,
+      "publishedSha256Utf8Lf": "3A96AE53A60E6B3F51E1B3F6A6308BDA218551B98EB4D63D58073CC65AE5EAA2",
+      "originalCharacters": 13657,
+      "publishedCharacters": 13859,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H02",
+      "name": "knot端云一体对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/continuity.md",
+      "sourceKind": "local",
+      "sourceSha256": "9047C46674C47429B1B1756BFC295A7D31AFA90A497681F1F7507E06AFA81EE4",
+      "revision": null,
+      "publishedSha256Utf8Lf": "BFDDCE2493F97D639D81277636B3F2C745CE8BDEC093395C0A277091657CBBC1",
+      "originalCharacters": 6971,
+      "publishedCharacters": 7019,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H03",
+      "name": "knot交互对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/interaction.md",
+      "sourceKind": "local",
+      "sourceSha256": "B076EF9BA74309333742A8651F76CCD2F232689369B451758F17EDC4EFC45D99",
+      "revision": null,
+      "publishedSha256Utf8Lf": "E9DA820168EE499BE3234D33D44CF6AD4F2F6A7F108869F7425DA9C2822CBF16",
+      "originalCharacters": 6590,
+      "publishedCharacters": 6792,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H04",
+      "name": "knot商业模式对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/business.md",
+      "sourceKind": "local",
+      "sourceSha256": "4D5B7AD824E0FB6CB3C9BA7F35FE69694709B91B7E02A54C67ECAE115323EB34",
+      "revision": null,
+      "publishedSha256Utf8Lf": "099B53D776A4491F571461B5B25B7A559D158B8D36B6747B6DE8D737E475589B",
+      "originalCharacters": 9758,
+      "publishedCharacters": 9960,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H05",
+      "name": "knot设计系统对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/design-system.md",
+      "sourceKind": "local",
+      "sourceSha256": "96C5C47265364C6D6FE4F2F7411B53445BF845F0655A11B06241E6BE1AF35646",
+      "revision": null,
+      "publishedSha256Utf8Lf": "4FAC8CAC58100D2F0CE8FD192958AF8DF51132BC8EEFAD80E5066F115E5B0BA0",
+      "originalCharacters": 11985,
+      "publishedCharacters": 12187,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H06",
+      "name": "knot生态平台对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/ecosystem.md",
+      "sourceKind": "local",
+      "sourceSha256": "BD17C7E55CCFBCDFCEEB43C9F68A3558F5E1C6169B4664537EDE0EBF87A1FFD4",
+      "revision": null,
+      "publishedSha256Utf8Lf": "076FE59E61806EF79EB8136D7B6C5E773F34B67342230735DE110A9377E67D0E",
+      "originalCharacters": 10217,
+      "publishedCharacters": 10115,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H07",
+      "name": "knot无障碍对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/accessibility.md",
+      "sourceKind": "local",
+      "sourceSha256": "FDD0AF20556A239684CA1018A45BE5E118365C1B0D59F245FB32DABE0412EA6D",
+      "revision": null,
+      "publishedSha256Utf8Lf": "B8073F115CE488ABBB2A3D8EB05B56BDB74DF989CB2A7F0A43A1229C69154472",
+      "originalCharacters": 10801,
+      "publishedCharacters": 10780,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H08",
+      "name": "knot叙事品牌对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/brand.md",
+      "sourceKind": "local",
+      "sourceSha256": "2457B2174FEA40A96D6EA345ABDE461E889438C587F00AA6E4CDBBE78A7C4D1D",
+      "revision": null,
+      "publishedSha256Utf8Lf": "5F243092976E3E355C648BD96DCB5715B9C7A1E7ACAFCC7885FD0EF50E8693DD",
+      "originalCharacters": 9796,
+      "publishedCharacters": 9998,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H09",
+      "name": "knot隐私对标Apple_调研_20260830.md",
+      "path": "docs/research/apple/archive/privacy.md",
+      "sourceKind": "local",
+      "sourceSha256": "F3706DEF94E9A5296A913A257CF9A522EE108C81611E8CB8DBF65B74C87AAC15",
+      "revision": null,
+      "publishedSha256Utf8Lf": "FC59F9C7F8F14BD3654B7AA24A5B79F81D41F203219FB783493CAFE378C58363",
+      "originalCharacters": 7595,
+      "publishedCharacters": 7797,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H10",
+      "name": "knot调研_技术线_第一弹.md",
+      "path": "docs/research/archive/technology-first.md",
+      "sourceKind": "local",
+      "sourceSha256": "C523B6A612B190127B0E14A3AA0A00BB99DCAD0C0D0C999962A36260611DD97F",
+      "revision": null,
+      "publishedSha256Utf8Lf": "BD6B72AE4465BBB035C40E11FAA0434515424512569329263DB7C960884F9511",
+      "originalCharacters": 4592,
+      "publishedCharacters": 4623,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H11",
+      "name": "knot调研_技术线_第二弹_Cola深度拆解.md",
+      "path": "docs/research/archive/cola-mechanism.md",
+      "sourceKind": "local",
+      "sourceSha256": "B716CFB579CBB2973CC2D6B4307149D217C22BAE0FAF4A553C160922200F4BFF",
+      "revision": null,
+      "publishedSha256Utf8Lf": "FB6A23CA98D5FFFFF6ADA60741FD8A28F6DC053FBB902F87965EFDD0FC958F34",
+      "originalCharacters": 2798,
+      "publishedCharacters": 2994,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H12",
+      "name": "knot调研_市场线_第一弹.md",
+      "path": "docs/research/archive/market-first.md",
+      "sourceKind": "local",
+      "sourceSha256": "80D3FCF8311BA35470BBF543ABFEDB08ADA4457D5FFFCF9B41E9F43BD5A38218",
+      "revision": null,
+      "publishedSha256Utf8Lf": "D53EE07BBF7A0EBB6777521583E89EAA866583CA61CA679A7478E781A0F0871A",
+      "originalCharacters": 1976,
+      "publishedCharacters": 2172,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H13",
+      "name": "knot编排层可借鉴清单.md",
+      "path": "docs/research/archive/orchestration.md",
+      "sourceKind": "local",
+      "sourceSha256": "ABB3227A7CA9F2B430B13860F047BE4F47490F79DE4A4F8A0F8477C9F8387968",
+      "revision": null,
+      "publishedSha256Utf8Lf": "883A1CCB08E5457112D5A58ED0271739252CEEA0A23645A58B1451AFE82DB1D6",
+      "originalCharacters": 1604,
+      "publishedCharacters": 1800,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H14",
+      "name": "knot形式层设计规格_v1.md",
+      "path": "docs/history/specs/form-layer-v1.md",
+      "sourceKind": "local",
+      "sourceSha256": "53D24314AA38F300FCB5E40A8EA13884933460BF026DCE38FEB0C15533D7D5FA",
+      "revision": null,
+      "publishedSha256Utf8Lf": "8B6DD516DAAD534487ADA608454AA5E0576FF1EFA4E55925F716710F5DD6B2C9",
+      "originalCharacters": 3049,
+      "publishedCharacters": 3225,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H15",
+      "name": "knot设计规范_v1.md",
+      "path": "docs/history/specs/design-v1.md",
+      "sourceKind": "local",
+      "sourceSha256": "943DAF5DE8A93487C1742FAEE6F957F7EEA525A5D1DDC93C78134802AD4B88E3",
+      "revision": null,
+      "publishedSha256Utf8Lf": "1F5DDC27E99A52D7E93248FA89A84B43C36ADE51469EA7D06DD1D67DF510D0DC",
+      "originalCharacters": 7009,
+      "publishedCharacters": 7185,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H16",
+      "name": "knot协议规范_v0.1.md",
+      "path": "docs/history/specs/protocol-v0.1.md",
+      "sourceKind": "local",
+      "sourceSha256": "EF70655FE790ABCAEC9019A60A2E6235704C3931ED12D84A2BA92B67986EEF57",
+      "revision": null,
+      "publishedSha256Utf8Lf": "B641708FCEBAC41CBB9C17F6CA263B6679B184E0960AE4C72EDF2249C9CCF386",
+      "originalCharacters": 5215,
+      "publishedCharacters": 5391,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H17",
+      "name": "knot定调_iPadOS对标_20260928.md",
+      "path": "docs/history/2026-09-28/ipados-direction.md",
+      "sourceKind": "local",
+      "sourceSha256": "5EC62B5520B161CE709D79D9671E1839CB40040E82F5F44DE6D966AA958B2B6B",
+      "revision": null,
+      "publishedSha256Utf8Lf": "F16E0D75B970F9EB892DCF50182ADF80D11B97C2E45A712CD41554C26904AB57",
+      "originalCharacters": 1974,
+      "publishedCharacters": 2150,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H18",
+      "name": "knot评估_OS对标与节点资产化_20260928.md",
+      "path": "docs/history/2026-09-28/os-assets-evaluation.md",
+      "sourceKind": "local",
+      "sourceSha256": "1178FA5F54D94FD803CFD8085877BD172D8A01E69BFB497E4185F95A815731DE",
+      "revision": null,
+      "publishedSha256Utf8Lf": "694FA2FF098E4F57C0052A98FA86C6C856886E04911450A804A35472BE874F84",
+      "originalCharacters": 2356,
+      "publishedCharacters": 2532,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H19",
+      "name": "结_敏捷交付路线图_v0.1.md",
+      "path": "docs/history/roadmaps/agile-v0.1.md",
+      "sourceKind": "local",
+      "sourceSha256": "F13851B16C7D032AF4072456D7001869E3334FAFBEE3188D1A40BCE810EEC0F7",
+      "revision": null,
+      "publishedSha256Utf8Lf": "5BF2D4CD2DE1B11DAE733DE8EE68E8A1696E687B3FA031D783BE2D3C04A45D26",
+      "originalCharacters": 920,
+      "publishedCharacters": 1096,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H20",
+      "name": "结_与原版差异roadmap_v0.1.md",
+      "path": "docs/history/roadmaps/difference-v0.1.md",
+      "sourceKind": "local",
+      "sourceSha256": "603DF71B21F804066CDB25EE660A80971884150B8E57AA731F906ECB385F6350",
+      "revision": null,
+      "publishedSha256Utf8Lf": "98A7CC9D4C58721456B5DFE232BB8661F5B9CB6106833F313D0E6D94243B0680",
+      "originalCharacters": 16735,
+      "publishedCharacters": 16239,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H21",
+      "name": "游戏行业_knot表达范式_案例.md",
+      "path": "docs/research/archive/game-cases.md",
+      "sourceKind": "local",
+      "sourceSha256": "B6EFC13C71942E50924D38F19E810DBFB1E09C5AE92F7B1E8539E5E8CD6E0CC8",
+      "revision": null,
+      "publishedSha256Utf8Lf": "60DE48ECACEB634A7242772607D335B1149C6639742448E42948353BE269343C",
+      "originalCharacters": 2248,
+      "publishedCharacters": 2444,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H22",
+      "name": "游戏行业_knot表达范式_深度调研.md",
+      "path": "docs/research/archive/game-deep.md",
+      "sourceKind": "local",
+      "sourceSha256": "93542ABA4E641C10DC80ECE6209FF842D7BA50E7682B4EBA5D51EBA05E3C3ACA",
+      "revision": null,
+      "publishedSha256Utf8Lf": "6022BD50305B4B6D303C4A7FA210708ED97A9DA2DE82E3BCAD9B5CC7D605617C",
+      "originalCharacters": 21125,
+      "publishedCharacters": 21190,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H23",
+      "name": "knot调研_游戏线_第二弹_K3.md",
+      "path": "docs/research/archive/game-second.md",
+      "sourceKind": "local",
+      "sourceSha256": "B73DCD2041650088830D9B09EF0AE84BF679485DAC7C16324745D4F841CB9C4F",
+      "revision": null,
+      "publishedSha256Utf8Lf": "7346CEB54DF612EDB197987F463751B15988243980795B2223C5394191635331",
+      "originalCharacters": 10443,
+      "publishedCharacters": 10639,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H24",
+      "name": "Knot_AgentOS_产品与开发总纲_v1.0_20260928.md",
+      "path": "docs/history/2026-09-28/product-outline-v1.0.md",
+      "sourceKind": "cloud",
+      "sourceSha256": null,
+      "revision": 2,
+      "publishedSha256Utf8Lf": "3E0D6C4DE56F55FBE050ED0822C1F937F10AECDE60F14B5F459C1450326D269C",
+      "originalCharacters": 11151,
+      "publishedCharacters": 11302,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H25",
+      "name": "Knot_AgentOS_工作台开发方案_v0.2_20260928.md",
+      "path": "docs/history/2026-09-28/workstation-plan-v0.2.md",
+      "sourceKind": "cloud",
+      "sourceSha256": null,
+      "revision": 2,
+      "publishedSha256Utf8Lf": "86E11EC0F758681242CB5A63F05752B79301FA567040049C0EF480F6A832BD4A",
+      "originalCharacters": 12253,
+      "publishedCharacters": 12365,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H26",
+      "name": "Knot_既有方案复用与改造对照_20260928.md",
+      "path": "docs/history/2026-09-28/reuse-review.md",
+      "sourceKind": "cloud",
+      "sourceSha256": null,
+      "revision": 2,
+      "publishedSha256Utf8Lf": "82DA94836DB9614C9DA8B91D29B79EED15A76107C6E577CDF2C24131741EEC14",
+      "originalCharacters": 5163,
+      "publishedCharacters": 5104,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    },
+    {
+      "id": "H27",
+      "name": "Knot_首轮开发启动计划_v0.1_20260928.md",
+      "path": "docs/history/2026-09-28/startup-plan-v0.1.md",
+      "sourceKind": "cloud",
+      "sourceSha256": null,
+      "revision": 2,
+      "publishedSha256Utf8Lf": "2333BE7888E87AEB397AFDDC2DA2D34C07E78E172FCA24C8AB4496F880DFA33D",
+      "originalCharacters": 10483,
+      "publishedCharacters": 10660,
+      "transformations": [
+        "historical status wrapper",
+        "normalize source links and local paths",
+        "omit images and internal operational details"
+      ]
+    }
+  ]
+}

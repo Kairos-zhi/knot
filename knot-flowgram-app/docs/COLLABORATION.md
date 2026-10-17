@@ -1,3 +1,5 @@
+> 历史协作记录（2026-08）：下文人员、仓库地址、投入与进度属于原时点，不证明当前安排。当前仓库为 [Kairos-zhi/knot](https://github.com/Kairos-zhi/knot)，现行入口见[团队与协作](../../docs/development/team.md)、[开发计划](../../docs/development/plan.md)和[验收](../../docs/development/acceptance.md)。
+
 # knot 开发协作范式
 
 > 用 knot 的方式开发 knot——决策成结，任务成链，进度成资产。

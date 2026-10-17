@@ -1,3 +1,5 @@
+> 历史交接（2026-08-30），保留原文，不再作为当前项目全貌或任务授权。新协作者先读[产品介绍](../../docs/product/introduction.md)、[当前状态](../../docs/development/status.md)与[路线图](../../docs/product/roadmap.md)。下文旧人员／仓库／待办应按原日期理解。
+
 # knot — 项目交接简报（给 Oracle agent）
 
 > 读这份文档的 agent：你将参与 **knot 本体**的同步开发（与 之 × 杜 协作）。本文档自包含——读完即可了解项目全貌、跑起来、开始工作。

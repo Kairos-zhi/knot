@@ -42,14 +42,17 @@ agent 能以**原生状态**操作工作台——打结、串绳、续长、拆�
 4. 禁止把业务逻辑写死在组件里（组件=视图，操作=内核，资产=数据）
 5. 新增接口类型时，先想清楚四层里它属于哪一层
 
-## 当前状态（2026-08-31 · RFC v0.1 冻结后）
+## 当前状态（2026-10-18 · PR #8 合并后）
+
+完整现状见[开发状态](../../docs/development/status.md)，当前能力边界见[协议与操作入口](../../docs/architecture/protocol.md)。以下保留原生标准并更新完成度，不把服务层接受扩展成产品验收。
 
 - ✅ 数据资产接口：`asset-sync` / `asset-persistence` + `scripts/asset-write-server.mjs`（`/snapshot`、`/write`）
 - ✅ 操作内核：`KnotOperationService` 已收敛 UI 写路径；UI 手势与程序命令应继续共用该内核
 - ✅ agent 程序接口：knot 协议 v0.1 已冻结；`POST /command` 支持资产级执行，画布级命令进入 Canvas Bridge 队列（`/command/poll` + `/command/ack`）
 - ✅ 事件接口：`GET /events` SSE，seq 落盘持久化；冷启动先读 `/snapshot`
 - ✅ 并发/身份基础：写路径文件锁（冲突返回 409）；写类端点 Bearer token 鉴权；source 由宿主配置映射，不信 body 自报
-- ⏳ Canvas Bridge 浏览器内实现：协议端点已具备；桥服务/桥插件已实现（轮询执行+回执+双实例防重复；PR #6，待合并）
+- ✅ Canvas Bridge：原 PR #6 已随 PR #8 合入 main；桥服务／插件与模拟 fetch、同进程双实例断言已有，不代表生产 HTTP 或跨进程恰好一次已验收
+- ✅ 工作现场、只读输入与本地请求适配：三段原独立接受代码已合入；新现场命令当前为本地 API，完整 Workspace 远端同步与真实 Run 接入仍待补
 - ⏳ 协议接口（跨 agent 通信/多项目穿透）：v0.1 先留开放协议面，A2A/A2UI 等外部标准以后再适配，不将宿主私有 API 写入本体
 
 ---

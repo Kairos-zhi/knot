@@ -1,3 +1,5 @@
+> 本页保留上游 FlowGram Demo 的工程说明，不作为 Knot 的产品定义或最新架构。先读[仓库 README](../README.md)、[当前架构](../docs/architecture/overview.md)与[开发状态](../docs/development/status.md)。
+
 # FlowGram.AI - Demo Free Layout
 
 自由布局最佳实践 demo
