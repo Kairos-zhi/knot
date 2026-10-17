@@ -27,6 +27,7 @@ import { FlowNodeRegistry, FlowDocumentJSON } from '../typings';
 import { shortcuts } from '../shortcuts';
 import { CustomService, ValidateService } from '../services';
 import { KnotOperationService } from '../services/knot-operation-service';
+import { KnotCanvasBridgeService } from '../services/knot-canvas-bridge-service';
 import { ToolService } from '../services/tool-service';
 import { ChainService } from '../services/chain-service';
 import { ExpandService } from '../services/expand-service';
@@ -40,6 +41,7 @@ import {
   createVariablePanelPlugin,
   createPanelManagerPlugin,
   createRopeToolPlugin,
+  createCanvasBridgePlugin,
 } from '../plugins';
 import { defaultFormMeta } from '../nodes/default-form-meta';
 import { WorkflowNodeType } from '../nodes';
@@ -262,6 +264,7 @@ export function useEditorProps(
         bind(CustomService).toSelf().inSingletonScope();
         bind(ValidateService).toSelf().inSingletonScope();
         bind(KnotOperationService).toSelf().inSingletonScope();
+        bind(KnotCanvasBridgeService).toSelf().inSingletonScope();
         // ③ 统一状态层：5 状态源 3 模式 → FlowGram Service（同款注册姿势）
         bind(ToolService).toSelf().inSingletonScope();
         bind(ChainService).toSelf().inSingletonScope();
@@ -421,6 +424,7 @@ export function useEditorProps(
         }),
         /** Float layout plugin */
         createPanelManagerPlugin(),
+        createCanvasBridgePlugin({}),
       ],
     }),
     []

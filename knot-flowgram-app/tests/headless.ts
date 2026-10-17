@@ -21,6 +21,7 @@ import { FormModelV2 } from '@flowgram.ai/node';
 import { interfaces } from 'inversify';
 import { ToolService } from '../src/services/tool-service';
 import { ExpandService } from '../src/services/expand-service';
+import { KnotSelectionService } from '../src/services/knot-selection-service';
 
 export function createHeadlessContainer(): interfaces.Container {
   const c: interfaces.Container = PlaygroundMockTools.createContainer([
@@ -51,5 +52,6 @@ export function createHeadlessContainer(): interfaces.Container {
   };
   c.bind(ToolService).toSelf().inSingletonScope();
   c.bind(ExpandService).toSelf().inSingletonScope();
+  c.bind(KnotSelectionService).toSelf().inSingletonScope();
   return c;
 }
