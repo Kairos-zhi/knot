@@ -1,6 +1,13 @@
 # Knot 文档地图
 
-更新：2026-10-18。先理解产品，再看当前状态；需要实施时再进入架构、验收与源码。
+更新：2026-10-18。先理解产品，再看当前状态；需要实施时再进入架构、验收与源码。产品愿景使用 P0–P4 表达，工程交付只认五阶段与 G0–G8 的统一映射。
+
+## 推荐阅读路径
+
+1. [产品介绍](product/introduction.md)：先理解“让思考留下来，让创造接着发生”的工作现场。
+2. [产品总览](product/overview.md) 与 [交互约定](product/interaction.md)：确认对象、供给、呈现和人的覆盖权。
+3. [路线图](product/roadmap.md)：查看 P0–P4 如何落到五阶段与 G0–G8，不把愿景阶段当成另一套排期。
+4. [当前状态](development/status.md) 与 [协议与操作入口](architecture/protocol.md)：区分已实现、已验证、占位和未建。
 
 ## 当前文档
 
@@ -8,7 +15,7 @@
 |---|---|
 | [产品介绍](product/introduction.md) | 一分钟向使用者或协作者说明 Knot |
 | [产品总览](product/overview.md) | 用户、价值、形态、首轮工作与长期方向 |
-| [哲学与 AI 原生范式](product/philosophy.md) | 资产化、共用环境、主动协作与人的覆盖权 |
+| [哲学与 AI 原生范式](product/philosophy.md) | 资产化、共用环境、活结、主动协作与人的覆盖权 |
 | [交互约定](product/interaction.md) | 查看、供给、切换、三态、关闭与断开分别发生什么 |
 | [路线图](product/roadmap.md) | 五阶段与 G0–G8 如何对应、当前在哪 |
 | [架构地图](architecture/overview.md) | 各能力由谁拥有、当前实现与目标差在哪里 |
