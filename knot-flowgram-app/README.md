@@ -63,3 +63,18 @@ scripts/start-all.mjs         # 一键启动（dev+协议端点）
 ```
 
 详细架构见 `docs/ARCHITECTURE.md`，协作方式见 `docs/COLLABORATION.md`。
+
+## Knot 验证入口
+
+在本目录执行 `npm ci --ignore-scripts --no-audit --no-fund`，再执行
+`npm run verify`。该入口依次运行类型检查、`tests/` 下全部
+`knot-*.assert.ts` 行为测试和生产构建。任何测试失败或未发现测试时，
+执行器均返回非零退出码。
+
+`npm test` 运行 Knot 行为测试；`npm run build` 执行真实生产构建。
+仓库根目录的 `.github/workflows/knot-verify.yml` 对 PR 和 main 推送使用
+相同验证入口，Node 固定为 22.22.3。
+
+这些检查覆盖已有本地内核，不代表真实 Agent 通信、Windows 微信集成、
+界面体验或 G2–G8 已验收。其他沿用的演示脚本（如 `test:cov`、
+`build:fast`）不属于验证入口，也不提供覆盖率结论。
