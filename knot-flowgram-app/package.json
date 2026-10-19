@@ -60,7 +60,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "exit 0",
+    "build": "npm run build:prod",
     "build:fast": "exit 0",
     "build:watch": "exit 0",
     "build:prod": "cross-env MODE=app NODE_ENV=production rsbuild build",
@@ -69,10 +69,11 @@
     "dev": "cross-env MODE=app NODE_ENV=development rsbuild dev --open",
     "lint": "eslint ./src --cache",
     "lint:fix": "eslint ./src --fix",
-    "ts-check": "tsc --noEmit",
+    "ts-check": "tsc --noEmit --incremental false",
     "start": "cross-env NODE_ENV=development rsbuild dev --open",
-    "test": "exit",
+    "test": "node scripts/run-knot-tests.mjs",
     "test:cov": "exit",
-    "watch": "exit 0"
+    "watch": "exit 0",
+    "verify": "npm run ts-check && npm test && npm run build"
   }
 }
