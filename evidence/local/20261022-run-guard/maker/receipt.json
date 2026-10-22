@@ -1,0 +1,72 @@
+{
+  "task": "KONT-RUN-008",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "at": "2026-10-22T14:38:41.280Z",
+  "baseCommit": "30e28af",
+  "manifest": "manifest.json",
+  "report": "REPORT.md",
+  "validation": {
+    "build": {
+      "command": "node scripts/build.mjs",
+      "exitCode": 0,
+      "evidence": "build.log"
+    },
+    "focused": {
+      "command": "node --test tests/run-execution-guard.test.mjs tests/run-observer-binding.test.mjs",
+      "exitCode": 0,
+      "total": 5,
+      "pass": 5,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "focused.tap"
+    },
+    "fullSuiteRun": false
+  },
+  "scope": "Unwired Agent setup single-stream guard candidate with exact local binding; not dispatch authorization",
+  "officialFixture": {
+    "runtime": "installed official 0.2.1 Electron",
+    "components": [
+      "Cordis",
+      "AgentRegistry",
+      "SessionStore",
+      "SessionProjectionRegistry",
+      "SystemPrompt",
+      "ToolRuntime",
+      "AgentLoop",
+      "LlmRuntime"
+    ],
+    "provider": "synthetic in-memory adapter only",
+    "syntheticProviderCalls": 6,
+    "realModelCalls": 0,
+    "realRunCompleted": false
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "hostExecutionEntryConnected": false,
+    "actualUserSessionsRead": 0,
+    "credentialsRead": false,
+    "persistentSessionCreated": false,
+    "installedDesktopChanged": false,
+    "profileChanged": false,
+    "uiChanged": false,
+    "vendorChanged": false,
+    "historicalManifestsChanged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false
+  },
+  "remaining": [
+    "Independent Checker/Gate",
+    "Full request-context fingerprint plus user identity and money/execution authorization",
+    "Provider-internal HTTP retry/count guarantees",
+    "Persistent dispatch deduplication and terminal artifact return",
+    "Actual model/Desktop deployment/human acceptance"
+  ],
+  "limitations": [
+    "Only controlled Agent; other trusted host plugins can bypass guard",
+    "One llm.stream does not prove one Provider HTTP request",
+    "maxTokens is not a money budget"
+  ]
+}

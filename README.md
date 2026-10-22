@@ -64,4 +64,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-007](docs/tasks/KONT-RUN-007.md) 正式装配仅接受普通JSON/YAML的 `readAudit: { enabled: true, grants: [] }`；默认关闭，空白名单不读会话。授权逐项绑定runId/requestId/sessionId/inputSha256，可另给approvedRequestSha256；不接受函数、类、路径或配置自报版本。实际版本和Session来自宿主包服务，持久化来自宿主服务；隔离验证中的包解析base有显式适配，尚未证明在用Desktop profile装配／部署。
 
+[KONT-RUN-008](docs/tasks/KONT-RUN-008.md) 新增Agent setup作用域保护候选：显式绑定准备记录与provider/model/maxTokens，默认拒绝；限制无工具、一次LLM stream及取消后的调用。官方执行组件配合合成提供方验证，不接插件执行入口；完整上下文请求核准、金额预算、持久防重和真实终态回流仍未接通。一次stream不等于Provider内部HTTP零重试。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

@@ -1,0 +1,20 @@
+{
+  "task": "KONT-RUN-008",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/run-execution-guard.mjs",
+      "bytes": 6601,
+      "sha256": "0ad4670f090f91aa016c5eec1d2f7e158cf92badd06297c9029a3a2328c22b00"
+    },
+    {
+      "path": "tests/run-guard-official-worker.cjs",
+      "bytes": 10974,
+      "sha256": "1a7ebd9116d124638d39025ebf97eca9829a843573f54c5c51ee1badb90018c1"
+    },
+    {
+      "path": "tests/run-execution-guard.test.mjs",
+      "bytes": 764,
+      "sha256": "dd53ddcdcd5b64174f6df347f18c53efa8cdf8a536d9468b2a7bc64f4f22b51e"
+    }
+  ]
+}
