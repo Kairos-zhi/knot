@@ -1,0 +1,76 @@
+{
+  "task": "KONT-RESEARCH-002-A",
+  "reviewer": "kont_checker",
+  "result": "ACCEPT_RESEARCH_LIMITED",
+  "researchDocument": "docs/research/20261021-backend-seeker.md",
+  "researchDocumentSha256": "6E6FC816ECBF9F69BD43E220EB399E2E6B07A581F8C67C493B13A142196EDC74",
+  "sourceIndexSha256": "7A6C1B3E88026F3B62DE176768EB9AFADDA238D87FEFD13DF4F3B93D5D1AEC21",
+  "sourceIntegrity": {
+    "localFiles": 38,
+    "allHashesAndLengthsMatch": true,
+    "independentlyRefetchedOfficialFixedSources": 10,
+    "allRemoteHashesMatch": true,
+    "evidence": "source-integrity.json"
+  },
+  "findings": [
+    {
+      "topic": "CAS transaction",
+      "result": "supported as static source fact",
+      "evidence": [
+        "OpenCove syncHandlers.ts:355-380: baseRevision read/check and expectedRevision transfer",
+        "OpenCove PersistenceStore.ts:234-268: forwards expectedRevision into writeNormalizedAppState",
+        "OpenCove write.ts:80-95: currentRevision rechecked inside SQLite transaction before state deletion/writes",
+        "syncWriteState.spec.ts:64-179 covers missing baseRevision, rejected automatic empty overwrite, explicit empty overwrite"
+      ],
+      "boundary": "Tests were read, not executed; this does not prove crash/power-loss behavior."
+    },
+    {
+      "topic": "in-flight dedup versus durable idempotency",
+      "result": "correctly bounded",
+      "evidence": [
+        "sessionPrepareOrReviveHandler.ts:41-61 uses Map keyed by workspaceId/nodeId; finally deletes the promise",
+        "parallel spec:145-174 repeats same node while a different node starts and expects only two spawns"
+      ],
+      "boundary": "Only in-flight promise sharing is established, not cross-process durable exactly-once."
+    },
+    {
+      "topic": "PTY catch-up and replay overflow",
+      "result": "supported and correctly scoped",
+      "evidence": [
+        "ptyStreamHub.attach.ts:76-129 sends metadata/state, checks retained seq and presentationBaselineSeq, replays chunks or emits overflow",
+        "sessionStreaming.integration.spec.ts:366-465 verifies attach delta and replay_window_exceeded -> presentation_snapshot"
+      ],
+      "boundary": "PTY-specific mechanism does not establish all transports or durable event-journal guarantees."
+    },
+    {
+      "topic": "Flowith public-layer boundary",
+      "result": "honestly separated",
+      "evidence": [
+        "generate.ts:486-562 prewrites question/response nodes, submits worker request, polls, preserves timeout node identity",
+        "canvas.ts:135-165 upsert/PATCH; partition duplicate claim is visibly a comment, not independently proven database DDL",
+        "canvas.ts:256-284 retries transient polling errors and rethrows NOT_LOGGED_IN",
+        "generate.ts:368-395 and ergonomics.test.ts:15-60 show deterministic follow-parent history, cap, cycle stop, roles and media placeholders"
+      ],
+      "boundary": "Public CLI/adapter source does not prove private server job/queue/transaction/cancellation/billing or immutable input-version behavior."
+    },
+    {
+      "topic": "three proposed engineering candidates",
+      "result": "within research-only authorization",
+      "evidence": [
+        "Candidate1 says first check existing Knot coverage and avoid second store",
+        "Candidate2 says first inspect DSH lifecycle/cancellation/identity and reuse owners",
+        "Candidate3 reuses schema4/provenance/supply and does not import parent-chain authorization"
+      ],
+      "boundary": "These are candidates only. No implementation, billing, schema migration, or product acceptance approved."
+    }
+  ],
+  "blockers": [],
+  "BFeishuStatus": "NOT_REVIEWED; B retrieval and independent evidence remain separate and are not implied by A acceptance",
+  "notPerformed": [
+    "competitor install/start/runtime or test execution",
+    "model/provider invocation",
+    "product code modifications",
+    "approval of any engineering implementation"
+  ],
+  "writtenAt": "2026-10-21T11:28:20.042Z"
+}

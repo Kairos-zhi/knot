@@ -1,0 +1,538 @@
+[
+  {
+    "name": "@deepseek-ai/cordis",
+    "version": "4.0.5",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/cordis/package.json",
+    "sha256": "b73831b926b16cbd684aa1b277461e7800a2b35e2dd351ad3c2c8c0db158589d"
+  },
+  {
+    "file": "@deepseek-ai/cordis/lib/index.js",
+    "sha256": "6a9394c0877ff45218818c6e815edd038f8057e1a1deb390a8d43ec81c57691e"
+  },
+  {
+    "name": "@deepseek-ai/cordis-plugin-group",
+    "version": "1.0.5",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-group/package.json",
+    "sha256": "050a441daa0457c11fd2ec434b8cdf547e536cafd24a0c554e38e290cb87cc3d"
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-group/lib/index.js",
+    "sha256": "68f178f2836fafb52b3959aa71ae90aecd321c3f9a189d9f686233fcb000e419"
+  },
+  {
+    "name": "@deepseek-ai/cordis-plugin-include",
+    "version": "1.0.10",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-include/package.json",
+    "sha256": "b2c80e65046bafc7327aed738ddd7d5f405aa605526731c0102c5167ffc4d84c"
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-include/lib/index.js",
+    "sha256": "ad5eaf3b80a8fd9945466486493a0d1a8e9590895bcde01e5673f3d07b4fd306"
+  },
+  {
+    "name": "@deepseek-ai/cordis-plugin-loader",
+    "version": "1.0.6",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-loader/package.json",
+    "sha256": "270d8d1ee5751e4173e7c4f9953bc19a1d370306d254c0ffaf21c37bc6deb78a"
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-loader/lib/index.js",
+    "sha256": "638b9ad360e01236120772323f80a65570c4f3f42f4cfc6243330241025b6d72"
+  },
+  {
+    "name": "@deepseek-ai/cordis-plugin-timer",
+    "version": "1.1.7",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-timer/package.json",
+    "sha256": "4cfe2a0421f7c6b4fc742f3df715657fe92c2e0ff68a6dec98ad79b8b5a4ddc9"
+  },
+  {
+    "file": "@deepseek-ai/cordis-plugin-timer/lib/index.js",
+    "sha256": "aab5832ebcefccd223b16ff3e8f09ca611841f53352c8439ea3acf7cc11ad002"
+  },
+  {
+    "name": "@deepseek-ai/dsh",
+    "version": "0.2.1-rc.2",
+    "exports": {
+      "./profile-boot": {
+        "types": "./lib/types/profile-boot.d.ts",
+        "default": "./lib/profile-boot.js"
+      },
+      "./lib/*": "./lib/*",
+      "./package.json": "./package.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh/package.json",
+    "sha256": "bea4288aa88eb54efe829686553100a75fdf09d11c5e3bf6b329badb9a0368dd"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-connection",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "node": "./lib/client.node.js",
+        "browser": "./lib/client.browser.js",
+        "default": "./lib/client.browser.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-connection/package.json",
+    "sha256": "e08f7cd5c92b3315f6be6a1aea603379fd12d2e373e8dccff44538c007e73862"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-connection/lib/index.js",
+    "sha256": "0ebcca7583e082716f79b0b55bc1749d48269cc8db2989b043b321b57abd3684"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-cordis",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-cordis/package.json",
+    "sha256": "28f5d3c71f62982c93daf2096033e09b676a61f99d00cb441eea4c493b5c6546"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-cordis/lib/index.js",
+    "sha256": "cce6d5a3b21fc1c22bebd646ad6129722f993ba9dad8ef7497244c5bc49658a3"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-cordis/lib/client.js",
+    "sha256": "a1706492c5a108118ce5a3099278044cd30270b3e1dd004500c6fb87c1dd312d"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-layout",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-layout/package.json",
+    "sha256": "02a4d3d1fbd8f3ad8da65f2b8ebac40f3f9ebfe9bfe5efa0fbcf841d6e40e88d"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-layout/lib/index.js",
+    "sha256": "c62669c2bcf72075724aa3d4c90bb6064f8b5952322c7950640cc8ca95389859"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-layout/lib/client.js",
+    "sha256": "204348a4bc0636a11d1b2bd7ca905cd86e8c4a8394082b7037593c11ec195707"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-renderer",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-renderer/package.json",
+    "sha256": "ffa0842cb523b3492880152b96836f7341f7143fd3f5abb528f2e364be462e3c"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-renderer/lib/index.js",
+    "sha256": "a2a4d657f9500da5a8b2aef06f54fbb1251fbc7d31ddc5ba25720b60445c30b6"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-renderer/lib/client.js",
+    "sha256": "dbdb3f26bfbc1d143bc8a0eed5982a2507c4f0cf8027e7c170f3bed3604be356"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar/package.json",
+    "sha256": "f646e96a81dd63bd04ebbe87e93f7cb554afcf1c35ed2effcbb8c5daaa053b9f"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar/lib/index.js",
+    "sha256": "be323c589cda4dbb7714df563ebb66f581a3d37ed2ab6859fed85fcebf970aea"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar/lib/client.js",
+    "sha256": "12b911280efed871c21985c4e4bcf8c41a7e2f764c60420993e8d72e64302285"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar-browser",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./types": {
+        "types": "./lib/types/types.d.ts"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-browser/package.json",
+    "sha256": "22d752912e098025197614dabb88533dd360c02dcd47b36f9f7128a44b9bd520"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-browser/lib/index.js",
+    "sha256": "cc5e94ace2adf1cfcb933efdebc6d8d8ef34bc7728d49a84e710f7c77f253b9a"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-browser/lib/client.js",
+    "sha256": "e1a730a5087b946273280e135f9cd2718d2c2ce98aa30d3ffc53f5da2abf2136"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview/package.json",
+    "sha256": "8f9e4e3a299ae29490b1c9f389c2c3f2e3a1236ef66da81d2b0320d3b004b0d5"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview/lib/index.js",
+    "sha256": "f7daa144dcfd49cad33f05289064741870a8b59cce24d02a50c86bf72fbc3b01"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview/lib/client.js",
+    "sha256": "240f1ded901c0621eceaa4bf7069c2608061051673f3f50f09b0fac6f6ceabc7"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar-files",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-files/package.json",
+    "sha256": "fe5110da8e5db092a1ad881071a12133bb19693d3da0a4eec78add289da88b33"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-files/lib/index.js",
+    "sha256": "806a8f69ff8402dd310d141baff27bb38fa16a40cd51195061425fc5744d733a"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-files/lib/client.js",
+    "sha256": "2a7cb260eed7aaa4c670e16dae208f5dfeef61526f9a2e006c7ede8f020bc968"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar-right",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-right/package.json",
+    "sha256": "1ceaebd7534965eb3d6790bd39cd662b5961002ce8b544f124c1875d087d8d17"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-right/lib/index.js",
+    "sha256": "c6edb0b0d3fd64404d353b7ac6502e82ed54919e2a2f5d59fd0f5fedd287bfce"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-right/lib/client.js",
+    "sha256": "38c1aa5968bf98dea89e19c63ed7eb30f225a31788f7e8e3e27a5a9e0e6172b2"
+  },
+  {
+    "name": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-terminal/package.json",
+    "sha256": "0c85e7533322eea934b61e4020a947f7817e32540949538259d38da576f62e91"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-terminal/lib/index.js",
+    "sha256": "816de42ccab6e02df23cc8a40f6daba171bca0c861b860c7539e7a3adeeb1147"
+  },
+  {
+    "file": "@deepseek-ai/dsh-client-ui-sidebar-terminal/lib/client.js",
+    "sha256": "f02f13042ebdbeb4c9ba336df8cbde1ca45e2fbfa49a8a54cd4f0a3df59972a0"
+  },
+  {
+    "name": "@deepseek-ai/dsh-cordis-client-runner",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./client": {
+        "types": "./lib/types/client/index.d.ts",
+        "default": "./lib/client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-cordis-client-runner/package.json",
+    "sha256": "0235fc05fc073a02099a1bce4d067fff51d57e7c5037afb3464ab08655754add"
+  },
+  {
+    "file": "@deepseek-ai/dsh-cordis-client-runner/lib/index.js",
+    "sha256": "ab16398378c1482ce0420fbce965110af7513077396d378bbf9791b99b03f4c5"
+  },
+  {
+    "file": "@deepseek-ai/dsh-cordis-client-runner/lib/client.js",
+    "sha256": "ad3488b2cdbe6b5077962aa05dbeff9499f5b782838f1b658c6c902aa538bcd0"
+  },
+  {
+    "name": "@deepseek-ai/dsh-cordis-host-runner",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./types": {
+        "types": "./lib/types/types.d.ts",
+        "default": "./lib/types/types.js"
+      },
+      "./typert": {
+        "types": "./lib/typert.host.d.ts",
+        "default": "./lib/typert.host.js"
+      },
+      "./remote": {
+        "types": "./lib/typert.remote-client.d.ts",
+        "default": "./lib/typert.remote-client.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-cordis-host-runner/package.json",
+    "sha256": "2a185d3239efaba9d4de167b781ee2f52a465c28b666622e91791cd25dd7c7fe"
+  },
+  {
+    "file": "@deepseek-ai/dsh-cordis-host-runner/lib/index.js",
+    "sha256": "6bb46b4b2edf2d28600c185808ad3a60393447fc675eebf7339189a37b7949da"
+  },
+  {
+    "name": "@deepseek-ai/dsh-host-webserver",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-host-webserver/package.json",
+    "sha256": "9e9d4a506e4bed1d76acc0decee79dbc7d4a211fc95449bbbf505cbd5579995f"
+  },
+  {
+    "file": "@deepseek-ai/dsh-host-webserver/lib/index.js",
+    "sha256": "08907285802f0edd3aeb68c91fb443be2804879ab3d41104c4600424be06f3ab"
+  },
+  {
+    "name": "@deepseek-ai/dsh-tool-cordis",
+    "version": "0.2.1-rc.2",
+    "main": "lib/index.js",
+    "exports": {
+      ".": {
+        "types": "./lib/types/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "./host": {
+        "types": "./lib/types/host.d.ts",
+        "default": "./lib/types/host.js"
+      },
+      "./src/*": "./src/*",
+      "./package.json": "./package.json",
+      "./host/locale/*.json": "./locale/host/*.json",
+      "./locale/*.json": "./locale/*.json"
+    }
+  },
+  {
+    "file": "@deepseek-ai/dsh-tool-cordis/package.json",
+    "sha256": "4f137d09ee7ffd4356d9a14b72443f5d2f342d029d0a424d30c601be96e82018"
+  },
+  {
+    "file": "@deepseek-ai/dsh-tool-cordis/lib/index.js",
+    "sha256": "ce0cd4d8983532c920cab7713dc51874f6d710c2c46c4a095167bfa980becdb0"
+  }
+]

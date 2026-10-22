@@ -1,0 +1,22 @@
+[
+  {
+    "Path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\desktop-host-archive.mjs",
+    "Hash": "6A6C3BEA4CEBC26525A22A00CC419C5CBDCE88848EAC1BC7A80078FFF869DE93"
+  },
+  {
+    "Path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\desktop-host-client.mjs",
+    "Hash": "8EB7B5184626E94526A608911AFD14ADA6EDB79A8772676B727640C3CBC0B62C"
+  },
+  {
+    "Path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\desktop-host-debug.mjs",
+    "Hash": "34F44ACABEF8E31DF6A00AA571B993BF90BE8F50C4135709D5BEE918F2258E0D"
+  },
+  {
+    "Path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\tests\\desktop-host-client.test.mjs",
+    "Hash": "C9152B139F6CFCF019488D418CE0F38903AB6DABE957E960BDF81C1D944B503D"
+  },
+  {
+    "Path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\tests\\desktop-host-archive.test.mjs",
+    "Hash": "82F46C0E525124FFC8891279E8E22550A2558BEDACCC7D7A38D473BCD2D0046F"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-10-22T17:21:47.5021555+08:00",
+  "profile": "D:\\DSH-Desktop\\home\\profiles\\desktop",
+  "files": [
+    {
+      "path": "D:\\DSH-Desktop\\home\\profiles\\desktop\\package.json",
+      "sha256": "90344905509F34B2D01BDD0480AA696C4C6FFE6DD73F20D86596BEB06E88E86C",
+      "bytes": 420
+    },
+    {
+      "path": "D:\\DSH-Desktop\\home\\profiles\\desktop\\pnpm-lock.yaml",
+      "sha256": "EE4885B7BA16D4E256C416D0F2E23E9D7594626CA84A71CD17894DB4C7F8BC9F",
+      "bytes": 419
+    },
+    {
+      "path": "D:\\DSH-Desktop\\home\\profiles\\desktop\\cordis.yml",
+      "sha256": "C300DCF2EBC5F02062D6591268D29D3DB6FE45E0CB138F5467276FE2BA06076E",
+      "bytes": 223
+    },
+    {
+      "path": "D:\\DSH-Desktop\\home\\profiles\\desktop\\cordis.patch.yml",
+      "sha256": "4ED8DAF8F421E054A4B6A4004E6A772710FB39E7C48EA8342EEC282D4ABAAA50",
+      "bytes": 1901
+    }
+  ],
+  "operation": "read-only hash baseline; content omitted"
+}

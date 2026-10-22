@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-22T18:48:42.5367426+08:00",
+  "remainingProcessCount": 0,
+  "remainingPids": [],
+  "debugListeners": [],
+  "lockExists": false,
+  "beforeStateHash": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "afterStateHash": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "forcedTermination": false,
+  "note": "Explicit empty list normalization; original PS property enumeration serialized a null entry. Exit counts and hashes unchanged."
+}

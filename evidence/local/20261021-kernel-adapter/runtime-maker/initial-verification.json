@@ -1,0 +1,12 @@
+{
+  "initialRun": "failed-test-expectation",
+  "failures": [
+    "Draft test registration-map seam overwrote main:kont with sidebar icon; fixed test seam",
+    "Launch URL token exchange expected302 but official DSH returned303; corrected test"
+  ],
+  "ownedCleanup": "Only failed-test process chain 13236/30540/32180 was terminated after ancestry checks and excluding3081; original dev instance untouched",
+  "runtime": "D:\\tmp",
+  "completeIntegration": "pending-backend-freeze",
+  "modelCalls": 0,
+  "browserAutomation": false
+}

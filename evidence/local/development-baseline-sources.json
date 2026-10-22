@@ -1,0 +1,64 @@
+{
+  "archive_id": "kont-dev-baseline-20261021",
+  "date": "2026-10-21",
+  "purpose": "source pointers only; no credentials or raw transcripts",
+  "sources": [
+    {
+      "path": "C:\\Users\\x2270\\hermes-sync\\handoff\\20261018_Knot_产品Brief_v4.md",
+      "sha256": "D79A56447E06853C4DC0A656F1CA26A4591C97D8EF3421688BD6A2BE44100DCD"
+    },
+    {
+      "path": "D:\\xwechat_files\\wxid_45pmy7xcoh5g22_6303\\msg\\file\\2026-10\\Knot竞品调研_20261018.md",
+      "sha256": "D210FDA0BB5636C1D27E915A20BF58DCA42051984840FE2BA8F34123D78FE461"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\knot-flowgram-app\\docs\\AGENT_FRIENDLY.md",
+      "sha256": "3EDFA47C6FBAB4BC90D683E5F6B1702513DFCE4B7D7F3BC4217A5BDA18880476"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\product\\philosophy.md",
+      "sha256": "A9334EE5817224216F4984C9C81054FD26BC9F76B1A92E79833FEA0BB8EDAA89"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\product\\interaction.md",
+      "sha256": "CD2294A3F8A072CF308F9DC8E2F74267910167BD3BEE95B8F3A0B1EBFADACA10"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\architecture\\overview.md",
+      "sha256": "FD2253385B43DA7DE758F754ADF35BCCBCBE3E3C8774ACB19F4AB76894CE3124"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\architecture\\protocol.md",
+      "sha256": "7805746BC91084787ED8272C53C9EE0CDC171FD9FD179A14F06EA978E8195CC3"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\design\\principles.md",
+      "sha256": "9329590A632CA6864DD936CFDACC10B5E64BA487C3C45128E6DEB688CA67583B"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\design\\system.md",
+      "sha256": "64D035FC61955CF7AB4A68462D91724F523B9FFD18713A09563788B76FB83365"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\research\\apple\\README.md",
+      "sha256": "CEEC67B3A2E7F902ECD962CFBA7B517F69E4399CAC1F7CE1BB70F45A8EAEB481"
+    },
+    {
+      "path": "C:\\Users\\x2270\\Documents\\Codex\\2026-10-17\\knot-accepted-core-publish\\docs\\history\\2026-09-28\\ipados-direction.md",
+      "sha256": "F16E0D75B970F9EB892DCF50182ADF80D11B97C2E45A712CD41554C26904AB57"
+    },
+    {
+      "path": "C:\\Users\\x2270\\hermes-sync\\kairos-oracle\\knot协作逻辑_人类可读性原则_20260906.md",
+      "sha256": "6B0C2E63BFDC4814246B19755DF2E0FEE96184A1E5342E07C7FDB023A787AB47"
+    },
+    {
+      "path": "C:\\Users\\x2270\\hermes-sync\\handoff\\标准化工作流_v1.md",
+      "sha256": "567D6AA44659F38D831C2F535DBCE6796554C7CC452ACB1DD581485EC4FE374D"
+    }
+  ],
+  "limits": [
+    "Apple archive full texts not all reread",
+    "Competitor source web pages not reverified in this run",
+    "Remote governance and file directory not queried"
+  ]
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "path": "lib/main.js",
+    "local": "lib_main.js",
+    "sha256": "6f3d1ddd1106371452c2204be6dfb2e5460a8e8259cdd05cdccb5387b3f9a85a"
+  },
+  {
+    "path": "lib/preload-app.cjs",
+    "local": "lib_preload-app.cjs",
+    "sha256": "f323eb67f7ace407d3b1d858f264f7846e436d9ba3e80c02b0454a6da0aed968"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-client-connection/lib/index.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-client-connection_lib_index.js",
+    "sha256": "0ebcca7583e082716f79b0b55bc1749d48269cc8db2989b043b321b57abd3684"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-client-connection/lib/client.browser.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-client-connection_lib_client.browser.js",
+    "sha256": "dfc3544eb894c74b340a4c4c63a8c125fd2e983df9efed5885712574af994e62"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-remotes/lib/index.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-api-remotes_lib_index.js",
+    "sha256": "2e7068e388541ca63648727a6659bdf24f3a0d1d90f5ef54959787285370a218"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-gateway/lib/index.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-api-gateway_lib_index.js",
+    "sha256": "4fbe460fec585ebc2cf2887261f6c33f024081a539d9fb5d6557a9002324b23f"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-gateway/lib/client.browser.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-api-gateway_lib_client.browser.js",
+    "sha256": "3043de82334846a3a5654b7317830c5403f90e9aeca692d3c15e30e01d16505d"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-plugin-manager/lib/index.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-plugin-manager_lib_index.js",
+    "sha256": "1b8bf9eb266d7b3b7f899175e3f435c89ed8baa8aabc677212759f8c6cd23132"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-plugin-manager/lib/typert.host.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-plugin-manager_lib_typert.host.js",
+    "sha256": "4d52452212ba28f6121adb4cceab5d4a64b0f9c09f3216edeffbf81e7717a238"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-plugin-manager/lib/typert.remote-client.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-plugin-manager_lib_typert.remote-client.js",
+    "sha256": "9254a2e61de2ac50c89d286c27ad4f7d52e74491eed4c019d4c7e99af678484a"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-desktop-host/lib/index.js",
+    "local": "dsh_node_modules_@deepseek-ai_dsh-desktop-host_lib_index.js",
+    "sha256": "6ae7cb9d57516b73c8aa4317c514ed81d28f2680efcee56d8faf2e588bb28c48"
+  }
+]

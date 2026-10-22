@@ -1,0 +1,215 @@
+
+> test
+> node scripts/build.mjs && node --test tests/*.test.mjs
+
+(node:62468) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built KONT host core and DSH browser bundle.
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 9.0058
+  type: 'test'
+  ...
+# Subtest: renderer receipt follows successful slot registrations, collapse and disposal
+ok 2 - renderer receipt follows successful slot registrations, collapse and disposal
+  ---
+  duration_ms: 10.7825
+  type: 'test'
+  ...
+# Subtest: renderer receipt rejects partial failure and never exposes readiness after reload/disposal
+ok 3 - renderer receipt rejects partial failure and never exposes readiness after reload/disposal
+  ---
+  duration_ms: 2.3093
+  type: 'test'
+  ...
+# Subtest: official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+ok 4 - official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+  ---
+  duration_ms: 682.3002
+  type: 'test'
+  ...
+# Subtest: official pnpm file bundle includes generated modules and resolves the sibling plugin
+ok 5 - official pnpm file bundle includes generated modules and resolves the sibling plugin
+  ---
+  duration_ms: 1516.6387
+  type: 'test'
+  ...
+# Subtest: read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+ok 6 - read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+  ---
+  duration_ms: 20.6763
+  type: 'test'
+  ...
+# Subtest: installed RPC contract uses exact method, correlated envelope, args and official origin
+ok 7 - installed RPC contract uses exact method, correlated envelope, args and official origin
+  ---
+  duration_ms: 6.1942
+  type: 'test'
+  ...
+# Subtest: denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+ok 8 - denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+  ---
+  duration_ms: 0.9847
+  type: 'test'
+  ...
+# Subtest: wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+ok 9 - wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+  ---
+  duration_ms: 5.1057
+  type: 'test'
+  ...
+# Subtest: safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+ok 10 - safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+  ---
+  duration_ms: 1.1193
+  type: 'test'
+  ...
+# Subtest: install opt-in constructs only reviewed local package with supported options
+ok 11 - install opt-in constructs only reviewed local package with supported options
+  ---
+  duration_ms: 1.0118
+  type: 'test'
+  ...
+# Subtest: debug clients reject non-loopback and credential-bearing targets before network
+ok 12 - debug clients reject non-loopback and credential-bearing targets before network
+  ---
+  duration_ms: 2.9333
+  type: 'test'
+  ...
+# Subtest: renderer receipt reads only fixed registration projection and validates shape
+ok 13 - renderer receipt reads only fixed registration projection and validates shape
+  ---
+  duration_ms: 1.6472
+  type: 'test'
+  ...
+# Subtest: compatibility refusal retains declared DSH requirements without raw diagnostics
+ok 14 - compatibility refusal retains declared DSH requirements without raw diagnostics
+  ---
+  duration_ms: 0.7221
+  type: 'test'
+  ...
+# Subtest: HTTP requires the host trust fence and authenticated browser before reads or writes
+ok 15 - HTTP requires the host trust fence and authenticated browser before reads or writes
+  ---
+  duration_ms: 194.371
+  type: 'test'
+  ...
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 16 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 54.7058
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 17 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 18.2227
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 18 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 127.4066
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 19 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 21.3665
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 20 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 18.5117
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 21 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 705.8511
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 22 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 157.8985
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 23 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 174.8172
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 24 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 39.4572
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 25 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 43.227
+  type: 'test'
+  ...
+# Subtest: draft leave guard warns on actual edits and clears when text returns to the saved value
+ok 26 - draft leave guard warns on actual edits and clears when text returns to the saved value
+  ---
+  duration_ms: 15.0194
+  type: 'test'
+  ...
+# Subtest: dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+ok 27 - dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+  ---
+  duration_ms: 39.5963
+  type: 'test'
+  ...
+# Subtest: Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+ok 28 - Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+  ---
+  duration_ms: 6708.822
+  type: 'test'
+  ...
+# Subtest: selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+ok 29 - selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+  ---
+  duration_ms: 67.9315
+  type: 'test'
+  ...
+# Subtest: concurrent windows reject stale writes and do not lose a saved draft
+ok 30 - concurrent windows reject stale writes and do not lose a saved draft
+  ---
+  duration_ms: 18.5337
+  type: 'test'
+  ...
+# Subtest: failed batch rolls back all changes and disk; returned objects cannot mutate the store
+ok 31 - failed batch rolls back all changes and disk; returned objects cannot mutate the store
+  ---
+  duration_ms: 16.6201
+  type: 'test'
+  ...
+# Subtest: corrupt snapshots fail closed and are never replaced with empty data
+ok 32 - corrupt snapshots fail closed and are never replaced with empty data
+  ---
+  duration_ms: 13.9291
+  type: 'test'
+  ...
+# Subtest: one live writer owns storage and oversized drafts are rejected
+ok 33 - one live writer owns storage and oversized drafts are rejected
+  ---
+  duration_ms: 11.4027
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7521.4049

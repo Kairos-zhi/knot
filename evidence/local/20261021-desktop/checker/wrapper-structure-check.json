@@ -1,0 +1,18 @@
+{
+  "wrapper": "@kont/desktop-bundle",
+  "requires": "0.1.7-rc.2",
+  "dependency": "file:../dsh-plugin",
+  "bundlePatch": "./cordis.patch.yml",
+  "patch": [
+    {
+      "insert": [
+        {
+          "id": "kont-worksite",
+          "name": "@kont/dsh-plugin"
+        }
+      ]
+    }
+  ],
+  "reviewOnly": true,
+  "installed": false
+}

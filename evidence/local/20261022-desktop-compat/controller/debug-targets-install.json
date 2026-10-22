@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T17:32:22.1578387+08:00",
+  "mainPid": 66888,
+  "listeners": [
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19222,
+      "OwningProcess": 66888
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19221,
+      "OwningProcess": 66888
+    }
+  ],
+  "renderer": [
+    {
+      "id": "93FA6BAAFA939806F1310226CA02A014",
+      "type": "page",
+      "url": "dsh-app://app/",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:19221/devtools/page/93FA6BAAFA939806F1310226CA02A014"
+    }
+  ],
+  "main": [
+    {
+      "id": "2874f06a-d7e2-4194-95e8-2fb345aaf30f",
+      "type": "node",
+      "url": "file://",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:19222/2874f06a-d7e2-4194-95e8-2fb345aaf30f"
+    }
+  ]
+}

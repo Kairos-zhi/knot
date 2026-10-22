@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-22T10:47:23.506Z",
+  "bundles": [
+    {
+      "name": "@kont/desktop-bundle",
+      "version": "0.1.0",
+      "official": false,
+      "availability": "profile",
+      "installed": true,
+      "enabled": true,
+      "optional": false,
+      "removable": true,
+      "rows": [
+        {
+          "rowId": "kont-worksite",
+          "moduleName": "@kont/dsh-plugin",
+          "entryId": "include:kont-worksite"
+        }
+      ]
+    }
+  ],
+  "plugins": [
+    {
+      "entryId": "include:kont-worksite",
+      "moduleName": "@kont/dsh-plugin",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ],
+  "client": {
+    "present": true,
+    "module": "@kont/dsh-plugin",
+    "version": "0.1.0",
+    "active": true,
+    "mainRegistered": true,
+    "sidebarRegistered": true
+  }
+}

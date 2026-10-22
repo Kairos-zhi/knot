@@ -1,0 +1,23 @@
+{
+  "task": "KONT-DESKTOP-003-COMPAT-A",
+  "verdict": "ACCEPT_DESKTOP_INTEGRATION_LIMITED",
+  "recordType": "retrospective-consolidation",
+  "writtenDuring": "CARD-KONT-20261022-RESUME closeout independent review",
+  "chronology": "This consolidated A pointer is written after installation and runtime review. It does not claim to predate the install. The existing overall-preinstall-gate.json records independent approval of the original A eight frozen files before installation; subsequent final-review.json records limited Desktop runtime acceptance.",
+  "references": {
+    "preinstall": "overall-preinstall-gate.json",
+    "runtime": "final-review.json",
+    "unifiedCandidate": "manifest-check.json",
+    "candidate": "../maker/receipt.json"
+  },
+  "aOriginalFrozenFiles": 8,
+  "testCounts": {
+    "aMakerR2Historical": 33,
+    "independentPreinstallAfterBFinalTest": 34,
+    "currentCloseoutFullRegression": 38,
+    "note": "Different dated suites; 38 is not retroactively assigned to the earlier Desktop Gate."
+  },
+  "acceptedScope": "Exact supported versions, recursive file-directory packaging, actual official 0.2.1 service compatibility, narrow renderer registration receipt lifecycle and subsequently reviewed Desktop loading/restart integration.",
+  "excluded": ["Real model or complete Run execution", "Formal Apple UI/user experience acceptance", "Forced termination or power-loss recovery", "Standalone wrapper tarball distribution", "Complete product acceptance"],
+  "currentCloseout": "Only ASAR reader comment and isolated pinned-source contract tests added; product kernel/client candidate bytes unchanged. Final closeout decision is in ../../20261022-closeout/checker/final-review.json."
+}

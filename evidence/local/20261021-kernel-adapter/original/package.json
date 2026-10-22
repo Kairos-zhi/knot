@@ -1,0 +1,11 @@
+{
+  "name": "kont-dsh-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node --test tests/*.test.mjs",
+    "start": "node scripts/dev.mjs"
+  },
+  "engines": { "node": ">=22.13.0" }
+}

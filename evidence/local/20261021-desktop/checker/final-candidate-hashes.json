@@ -1,0 +1,27 @@
+[
+  {
+    "path": "scripts/start-desktop.ps1",
+    "sha256": "745FB6F4029E4B46AB0889E9011011CEE25AEACC113C39EF8FBD5B996A0279B2",
+    "matches": true
+  },
+  {
+    "path": "start-kont-desktop.cmd",
+    "sha256": "FD952B6BEC1046154E7A425FCAE555390641991C75426B9375E1FC5156730A0A",
+    "matches": true
+  },
+  {
+    "path": "packages/desktop-bundle/package.json",
+    "sha256": "573DA44D83A937DD5A8F7B3766CCBE9906BCD2EE25C1CAA2DA7C0B5A4BB0BCBA",
+    "matches": true
+  },
+  {
+    "path": "packages/desktop-bundle/cordis.patch.yml",
+    "sha256": "64ECE206237BA3048E3ED75F275C1C967D6D300C48DC78F2E13DDB923C91D978",
+    "matches": true
+  },
+  {
+    "path": "docs/tasks/KONT-DESKTOP-003.md",
+    "sha256": "C36BC74858183A3B3A970CAECD570617E54A519DF5EC52FA2842E64F27720DEA",
+    "matches": true
+  }
+]

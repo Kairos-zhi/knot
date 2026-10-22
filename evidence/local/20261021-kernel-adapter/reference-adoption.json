@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-21",
+  "resource_used": [
+    {
+      "url": "https://github.com/DeadWaveWave/opencove/blob/main/docs/architecture/CONTROL_SURFACE.md",
+      "adopted": "同一能力通过统一command/query/event契约供多个入口调用；Knot继续保留自己的旧协议而非复制其schema"
+    },
+    {
+      "url": "https://github.com/flowith-ai/canvas-cowork",
+      "adopted": "Agent通过程序入口读写空间、操作节点与取回结果；本轮仅窄读写纵切，不采用其生成服务或私有接口"
+    }
+  ],
+  "limits": "机制参照；未下载/运行竞品代码，未验证全部产品能力"
+}

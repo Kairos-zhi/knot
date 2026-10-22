@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-22T18:51:41.8865062+08:00",
+  "processes": [
+    {
+      "pid": 70324,
+      "parent": 52496,
+      "debugFlags": false
+    },
+    {
+      "pid": 72140,
+      "parent": 70324,
+      "debugFlags": false
+    },
+    {
+      "pid": 72080,
+      "parent": 70324,
+      "debugFlags": false
+    },
+    {
+      "pid": 73284,
+      "parent": 70324,
+      "debugFlags": false
+    },
+    {
+      "pid": 61668,
+      "parent": 70324,
+      "debugFlags": false
+    }
+  ],
+  "listeners": [
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 6755,
+      "OwningProcess": 61668
+    }
+  ],
+  "stateHash": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "lockExists": true
+}

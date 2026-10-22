@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T18:48:03.4748858+08:00",
+  "owned": [
+    {
+      "ProcessId": 66888,
+      "ParentProcessId": 64592,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 69364,
+      "ParentProcessId": 66888,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 66840,
+      "ParentProcessId": 66888,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 60064,
+      "ParentProcessId": 66888,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 62108,
+      "ParentProcessId": 66888,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "stateHash": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "lockExisted": true
+}

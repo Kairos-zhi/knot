@@ -1,0 +1,124 @@
+{
+  "id": "KONT-KERNEL-001-r2",
+  "sourceMain": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "dshVersion": "0.1.7-rc.2",
+  "controllerTests": {
+    "exitCode": 0,
+    "skipped": 0,
+    "failed": 0,
+    "warning": "Node stripTypeScriptTypes experimental warning",
+    "passed": 20
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5"
+    },
+    {
+      "path": "package.json",
+      "sha256": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33"
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sha256": "906849A4739FC5968C5E3C4C6E49CE985BA249169C73A6E53FBDE69214EF46F0"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "sha256": "F0783DE7A77C1BDE9E647D6B2D01F7ED51703BDCEB1E6C3FF45E57694BB9425E"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "sha256": "37CB8E75F5DEFCDE35D4261A7722477C4FA309C3F7410921E1F7D98F4D6031BF"
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "sha256": "0CA5BB7766EB9483CA6051BFC5302256A27095AF7A237E85A4BCBF3220C5DECE"
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "sha256": "6FB84B5CD24636E277C3689D5E0973154EC859E23567FDCDCFA05001778F8597"
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "sha256": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "sha256": "2A919A08D28083925A044CF276E22B6EB1A040DE00F47FB34ABBB875D5ECEB3C"
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "sha256": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1"
+    },
+    {
+      "path": "start-kont.cmd",
+      "sha256": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB"
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "sha256": "5E893A60B8C664E493A9942D433CF96860A9AF0ED174114FA230C7E6571BA25F"
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "sha256": "A8313EB9E9CADB20F7C77F33E7A8636F8E65220999A898736A98DD1038B56699"
+    },
+    {
+      "path": "tests/kernel.test.mjs",
+      "sha256": "2B0222F6A995483F29BEBDA1113F37F4CBD57637E9931F12387B27F51789FCFC"
+    },
+    {
+      "path": "tests/plugin-lifecycle.test.mjs",
+      "sha256": "8B1A223F7A1BA4C3F48AA47BDF4C7207EEC693407C8CAE7399EDF1791A0E9A82"
+    },
+    {
+      "path": "tests/protocol.test.mjs",
+      "sha256": "A44070BAC8335F43F8367E84FE937595141F458C3878A9C9BD1A48212103BD44"
+    },
+    {
+      "path": "tests/runtime-draft.test.mjs",
+      "sha256": "DAE5D6428A699B4F5805849EE1552FFC41C5A152F4BBB0B470FB06ACFD70ABB7"
+    },
+    {
+      "path": "tests/runtime-launcher.test.mjs",
+      "sha256": "11739F4AD37F3ECB028372E26E2F4DFB0B1D0B25E667F5C78E178DC65AA9E393"
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "sha256": "BAB423C5B410E5E04CB08A3553568DACD752D35CC7CFA53D007FBFBC94FD23DD"
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "sha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3"
+    },
+    {
+      "path": "vendor/knot/src/services/asset-persistence.ts",
+      "sha256": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72"
+    },
+    {
+      "path": "vendor/knot/src/services/asset-sync.ts",
+      "sha256": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773"
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "sha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699"
+    }
+  ],
+  "builtFiles": [
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "sha256": "6B792E18C4381FD8A8D039BDB0598BC42B4E62095C14850CF937AD598BD9646D"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/knot-model.js",
+      "sha256": "CC941F6A79C0F06379679FAAED3FB4AD3823E0E52DC8E4FC35228E379C3BF8E9"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/snapshot.js",
+      "sha256": "7EEC9B84F108E0412E95D82C1CF57B4EE6D8A2DA4B28320A75292469BF1BEA94"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/workspace-state.js",
+      "sha256": "E52CF42CFCD4A6B2366D734074C31A05F11FF106073FF8EA0E9DA415E0C304A4"
+    }
+  ]
+}

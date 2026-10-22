@@ -1,0 +1,247 @@
+{
+  "scope": "research-only; no competitor code executed",
+  "localFiles": [
+    {
+      "file": "flowith-LICENSE",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-readme.md",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-references_api.md",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts___tests___canvas.test.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts___tests___ergonomics.test.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts___tests___generate.test.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts_index.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts_lib_canvas.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts_lib_generate.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts_lib_http.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "flowith-scripts_lib_session.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-control-surface.md",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-docs_cli_CANVAS_NODE_CONTROL.md",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-LICENSE",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_controlSurface.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_controlSurfaceHttpServer.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_nodeControlHandlers.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_resolveSpaceWorkingDirectoryFromStore.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionFinalMessageHandler.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionHandlers.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionInputHandlers.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionPrepareOrReviveHandler.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionRecords.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionStreamingHandlers.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_syncHandlers.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_ptyStream_ptyStreamHub.attach.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_ptyStream_ptyStreamHub.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_contexts_workspace_application_nodeControl_nodeControlState.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_contexts_workspace_application_nodeControl_nodeControlUseCases.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_contexts_workspace_infrastructure_approval_ApprovedWorkspaceStoreCore.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_platform_persistence_sqlite_PersistenceStore.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_platform_persistence_sqlite_write.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-src_shared_contracts_dto_nodeControl.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.nodeWorkerBindingRecovery.spec.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.sessionPrepareOrRevive.parallel.spec.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.sessionStreaming.integration.spec.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.syncWriteState.spec.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    },
+    {
+      "file": "opencove-tests_unit_contexts_nodeControl.spec.ts",
+      "hashMatches": true,
+      "bytesMatch": true
+    }
+  ],
+  "remoteFixedSamples": [
+    {
+      "file": "flowith-scripts___tests___ergonomics.test.ts",
+      "url": "https://raw.githubusercontent.com/flowith-ai/canvas-cowork/9b80a7fd33e039aa520707887d7ca23441546568/scripts/__tests__/ergonomics.test.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "flowith-scripts_lib_canvas.ts",
+      "url": "https://raw.githubusercontent.com/flowith-ai/canvas-cowork/9b80a7fd33e039aa520707887d7ca23441546568/scripts/lib/canvas.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "flowith-scripts_lib_generate.ts",
+      "url": "https://raw.githubusercontent.com/flowith-ai/canvas-cowork/9b80a7fd33e039aa520707887d7ca23441546568/scripts/lib/generate.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_sessionPrepareOrReviveHandler.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/src/app/main/controlSurface/handlers/sessionPrepareOrReviveHandler.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_handlers_syncHandlers.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/src/app/main/controlSurface/handlers/syncHandlers.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-src_app_main_controlSurface_ptyStream_ptyStreamHub.attach.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/src/app/main/controlSurface/ptyStream/ptyStreamHub.attach.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-src_platform_persistence_sqlite_write.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/src/platform/persistence/sqlite/write.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.sessionPrepareOrRevive.parallel.spec.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/tests/contract/controlSurface/controlSurfaceHttpServer.sessionPrepareOrRevive.parallel.spec.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.sessionStreaming.integration.spec.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/tests/contract/controlSurface/controlSurfaceHttpServer.sessionStreaming.integration.spec.ts",
+      "hashMatches": true
+    },
+    {
+      "file": "opencove-tests_contract_controlSurface_controlSurfaceHttpServer.syncWriteState.spec.ts",
+      "url": "https://raw.githubusercontent.com/DeadWaveWave/opencove/e10604b9d940ed7752c6fe931e23024d6003aa55/tests/contract/controlSurface/controlSurfaceHttpServer.syncWriteState.spec.ts",
+      "hashMatches": true
+    }
+  ]
+}

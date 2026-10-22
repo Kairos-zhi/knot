@@ -1,0 +1,52 @@
+{
+  "observedAt": "2026-10-21T19:33:16.1589927+08:00",
+  "processes": [
+    {
+      "ProcessId": 9612,
+      "ParentProcessId": 29504,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --user-data-dir=D:\\DSH-Desktop\\user-data --enable-logging=file --log-file=D:\\DSH-Desktop\\logs\\electron.log"
+    },
+    {
+      "ProcessId": 10396,
+      "ParentProcessId": 9612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --type=gpu-process --user-data-dir=\"D:\\DSH-Desktop\\user-data\" --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1924,i,9052667059755116546,11501440048893991350,262144 --enable-features=AllowWindowCaptureExclusionInRemoteSessions,PdfUseShowSaveFilePicker --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1928,i,16979694175439198177,8036479178714335518,4 --trace-process-track-uuid=3190708988185955192 --enable-logging=handle --log-file=1912 --mojo-platform-channel-handle=1916 /prefetch:2"
+    },
+    {
+      "ProcessId": 35896,
+      "ParentProcessId": 9612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=zh-CN --service-sandbox-type=none --user-data-dir=\"D:\\DSH-Desktop\\user-data\" --standard-schemes=dsh-app --secure-schemes=dsh-app --cors-schemes=dsh-app --fetch-schemes=dsh-app --streaming-schemes=dsh-app --code-cache-schemes=dsh-app --field-trial-handle=1924,i,9052667059755116546,11501440048893991350,262144 --enable-features=AllowWindowCaptureExclusionInRemoteSessions,PdfUseShowSaveFilePicker --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1928,i,16979694175439198177,8036479178714335518,4 --trace-process-track-uuid=3190708989122997041 --enable-logging=handle --log-file=2240 --mojo-platform-channel-handle=2236 /prefetch:11"
+    },
+    {
+      "ProcessId": 30896,
+      "ParentProcessId": 9612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --type=renderer --user-data-dir=\"D:\\DSH-Desktop\\user-data\" --standard-schemes=dsh-app --secure-schemes=dsh-app --cors-schemes=dsh-app --fetch-schemes=dsh-app --streaming-schemes=dsh-app --code-cache-schemes=dsh-app --app-path=\"D:\\DSH-Desktop\\app\\resources\\app.asar\" --enable-sandbox --video-capture-use-gpu-memory-buffer --lang=zh-CN --device-scale-factor=1.25 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=71918976318 --field-trial-handle=1924,i,9052667059755116546,11501440048893991350,262144 --enable-features=AllowWindowCaptureExclusionInRemoteSessions,PdfUseShowSaveFilePicker --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1928,i,16979694175439198177,8036479178714335518,4 --trace-process-track-uuid=3190708990060038890 --enable-logging=handle --log-file=1972 --mojo-platform-channel-handle=3176 /prefetch:1"
+    },
+    {
+      "ProcessId": 26652,
+      "ParentProcessId": 9612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --expose-internals D:\\DSH-Desktop\\app\\resources\\app.asar\\dsh\\node_modules\\@deepseek-ai\\dsh-desktop-host\\lib\\index.js D:\\DSH-Desktop\\app\\resources\\app.asar\\dsh D:\\DSH-Desktop\\home\\profiles\\desktop D:\\DSH-Desktop\\app\\resources\\runtime\\primary-runtime D:\\DSH-Desktop\\app\\resources\\runtime\\primary-runtime\\dependencies\\pnpm\\bin\\pnpm.mjs D:\\DSH-Desktop\\app\\resources\\runtime\\bin"
+    },
+    {
+      "ProcessId": 36160,
+      "ParentProcessId": 9612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+      "CommandLine": "\"D:\\DSH-Desktop\\app\\DeepSeek Harness.exe\" --type=renderer --user-data-dir=\"D:\\DSH-Desktop\\user-data\" --standard-schemes=dsh-app --secure-schemes=dsh-app --cors-schemes=dsh-app --fetch-schemes=dsh-app --streaming-schemes=dsh-app --code-cache-schemes=dsh-app --app-path=\"D:\\DSH-Desktop\\app\\resources\\app.asar\" --enable-sandbox --video-capture-use-gpu-memory-buffer --lang=zh-CN --device-scale-factor=1.25 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=71922259951 --field-trial-handle=1924,i,9052667059755116546,11501440048893991350,262144 --enable-features=AllowWindowCaptureExclusionInRemoteSessions,PdfUseShowSaveFilePicker --disable-features=DropInputEventsWhilePaintHolding,LocalNetworkAccessChecks,NetworkServiceSandbox,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --pseudonymization-salt-handle=1928,i,16979694175439198177,8036479178714335518,4 --trace-process-track-uuid=3190708990997080739 --enable-logging=handle --log-file=3980 --mojo-platform-channel-handle=3976 --dsh-welcome-locale=zh-CN /prefetch:1"
+    }
+  ],
+  "windows": [
+    {
+      "Id": 9612,
+      "MainWindowTitle": "DeepSeek Harness",
+      "MainWindowHandle": {
+        "value": 7013274
+      }
+    }
+  ],
+  "userDataExists": true,
+  "profileManifestExists": true
+}

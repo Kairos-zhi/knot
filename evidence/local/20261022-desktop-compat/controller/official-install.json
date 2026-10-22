@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-10-22T10:47:08.010Z",
+  "method": "official pluginManager/installBundle",
+  "attempt": 1,
+  "inspection": {
+    "status": "accepted",
+    "kind": "path",
+    "name": "@kont/desktop-bundle",
+    "version": "0.1.0",
+    "bundle": true
+  },
+  "installation": {
+    "version": "0.1.0",
+    "bundle": "@kont/desktop-bundle",
+    "changed": true,
+    "application": "applied",
+    "stage": "enable",
+    "target": "@kont/desktop-bundle",
+    "enabled": true,
+    "packageResult": {
+      "exitCode": 0,
+      "truncated": false
+    }
+  },
+  "finishedAt": "2026-10-22T10:47:10.986Z"
+}

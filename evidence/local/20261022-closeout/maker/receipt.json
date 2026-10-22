@@ -1,0 +1,214 @@
+{
+  "task": "20261022-closeout",
+  "status": "MAKER_FROZEN_AWAITING_INDEPENDENT_CHECKER",
+  "files": [
+    {
+      "path": "scripts/desktop-host-archive.mjs",
+      "sha256": "6B7FD6B0599A6FEE87D74136365112D579BAE8C2FF199F2E4539DC86514F97AA"
+    },
+    {
+      "path": "tests/protocol-equivalence.test.mjs",
+      "sha256": "FE2428AB5F99E3AD65CB4C18CDCD9D255299B71932B3947263F18A51273915E2"
+    },
+    {
+      "path": "tests/helpers/protocol-source-fixture.mjs",
+      "sha256": "B3DC0A4E02B43A5DB1C7F8FAE9C116E84C0C355164FF501B17C20EAE855B4804"
+    },
+    {
+      "path": "tests/fixtures/asset-write-server.upstream.mjs",
+      "sha256": "91B5E9470F87EE8DCB7DEEF0A5C19E519BB11749F031143006EF5DAAD215A246"
+    },
+    {
+      "path": "tests/fixtures/asset-write-server.provenance.json",
+      "sha256": "12AF83BAD8C4D91DBC37ADFA1052A97FDECB7608DE6E2BF8567B752C586698C6"
+    },
+    {
+      "path": "tests/fixtures/.gitattributes",
+      "sha256": "B90E99D202B2E0A815348CEC6C0568C9EA0DBC10C97A5EBFEEE8BE2D43E7A27B"
+    }
+  ],
+  "productComparison": [
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sha256": "A4332BF747D1DA3B6BC4969044E7AFDA8BC1E20B3442FA489396ACA347EA67FB",
+      "unchanged": true
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "sha256": "77ACB53882A6F240766C077A921B357441FA82FEE7ABB9859AB3A35DEA765930",
+      "unchanged": true
+    },
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "sha256": "64ECE206237BA3048E3ED75F275C1C967D6D300C48DC78F2E13DDB923C91D978",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "sha256": "8EEF5A9CB17A390373E824584A499DF8C2FE5E41BDC4E943DE19F42E30325EB9",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "sha256": "8FFB54C2AEBC043902F5746B835EB94E8BB7D7259EE37061BE53B2F3420B6758",
+      "unchanged": true
+    },
+    {
+      "path": "tests/desktop-compat.test.mjs",
+      "sha256": "6EC953DA756725EA8606743E924657B2997CD64325B268FFB83183F4D9B7FE38",
+      "unchanged": true
+    },
+    {
+      "path": "tests/desktop-compat-worker.cjs",
+      "sha256": "5A9E03CEAFB9B90734DF9B64D0AF22F4DB4F317405D50B5A270B742A9005B43D",
+      "unchanged": true
+    },
+    {
+      "path": "tests/desktop-compat-renderer-receipt.test.mjs",
+      "sha256": "68931604C3C53D1617D1A4D8C9DBE4F5290C8D4657141B6FF3E50F07F8A23A09",
+      "unchanged": true
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "sha256": "37CB8E75F5DEFCDE35D4261A7722477C4FA309C3F7410921E1F7D98F4D6031BF",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "sha256": "0CA5BB7766EB9483CA6051BFC5302256A27095AF7A237E85A4BCBF3220C5DECE",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "sha256": "6FB84B5CD24636E277C3689D5E0973154EC859E23567FDCDCFA05001778F8597",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "sha256": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/build.mjs",
+      "sha256": "2A919A08D28083925A044CF276E22B6EB1A040DE00F47FB34ABBB875D5ECEB3C",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "sha256": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1",
+      "unchanged": true
+    },
+    {
+      "path": "start-kont.cmd",
+      "sha256": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "sha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-persistence.ts",
+      "sha256": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-sync.ts",
+      "sha256": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "sha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/knot-model.js",
+      "sha256": "CC941F6A79C0F06379679FAAED3FB4AD3823E0E52DC8E4FC35228E379C3BF8E9",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/snapshot.js",
+      "sha256": "7EEC9B84F108E0412E95D82C1CF57B4EE6D8A2DA4B28320A75292469BF1BEA94",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/workspace-state.js",
+      "sha256": "E52CF42CFCD4A6B2366D734074C31A05F11FF106073FF8EA0E9DA415E0C304A4",
+      "unchanged": true
+    }
+  ],
+  "source": {
+    "repository": "https://github.com/Kairos-zhi/knot.git",
+    "commit": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+    "path": "knot-flowgram-app/scripts/asset-write-server.mjs",
+    "sha256": "91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246"
+  },
+  "commands": {
+    "sourceTotal": 16,
+    "currentSupportedNames": 5,
+    "sharedDirect": [
+      "ping",
+      "knot.create",
+      "knot.update"
+    ],
+    "directInsteadOfQueued": [
+      "rope.connect",
+      "rope.disconnect"
+    ],
+    "unsupported": [
+      "knot.delete",
+      "rope.disconnectAll",
+      "chain.thread",
+      "chain.get",
+      "generate.grow",
+      "generate.fromSelection",
+      "tool.set",
+      "tool.get",
+      "focus.set",
+      "expand.set",
+      "pin.toggle"
+    ],
+    "additionalWorkspace": [
+      "worksite.create",
+      "worksite.activate",
+      "worksite.update",
+      "worksite.supply",
+      "presentation.open",
+      "presentation.update"
+    ],
+    "legacyAliases": [
+      "asset.add",
+      "scene.create"
+    ]
+  },
+  "tests": {
+    "focused": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "regression": {
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "limits": [
+    "No full protocol equivalence claim",
+    "No model execution",
+    "No live Desktop/profile/original repository mutation",
+    "No commit/push"
+  ]
+}

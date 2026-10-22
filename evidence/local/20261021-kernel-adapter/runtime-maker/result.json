@@ -1,0 +1,25 @@
+{
+  "platform": "Win32NT",
+  "node": "22.22.3",
+  "dsh": "0.1.7-rc.2",
+  "testCommand": "node --test tests/runtime-draft.test.mjs tests/runtime-launcher.test.mjs",
+  "testExit": 0,
+  "passed": 3,
+  "failed": 0,
+  "shutdownMethod": "same-process official DSH SIGTERM handler, exercised via fork IPC",
+  "cycles": 2,
+  "storeLockNaturallyAbsentAfterEachExit": true,
+  "savedDraftRestoredAfterRestart": true,
+  "openedBrowser": false,
+  "remainingTestRuntimeProcesses": 0,
+  "tempRoot": "D:\\tmp",
+  "modelCalls": 0,
+  "providerCredentialsCopied": false,
+  "limitations": [
+    "Did not send a physical console Ctrl+C key",
+    "Did not test power loss or force-killed stale lock recovery",
+    "UI test invokes JavaScript component callbacks without browser or simulated click"
+  ],
+  "initialFailure": "runtime-tests-01-lock-failure.log; A fixed async disposer registration before successful rerun",
+  "postFixLog": "runtime-tests-02.log"
+}

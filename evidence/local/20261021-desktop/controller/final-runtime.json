@@ -1,0 +1,26 @@
+{
+  "verifiedAt": "2026-10-21T19:37:34.0299547+08:00",
+  "desktop": [
+    {
+      "Id": 9612,
+      "MainWindowTitle": "DeepSeek Harness",
+      "Responding": true
+    }
+  ],
+  "desktopManifest": {
+    "name": "dsh-profile-desktop",
+    "private": true,
+    "dependencies": {},
+    "dsh": {
+      "profile": {
+        "bundles": [
+          "@deepseek-ai/dsh-base",
+          "@deepseek-ai/dsh-web-app"
+        ]
+      }
+    }
+  },
+  "userDataExists": true,
+  "knotLoaded": false,
+  "legacyCliVersion": "0.1.7-rc.2"
+}

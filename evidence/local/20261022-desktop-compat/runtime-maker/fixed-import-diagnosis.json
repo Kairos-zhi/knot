@@ -1,0 +1,4 @@
+{
+  "classification": "fixed-import-failed",
+  "code": "ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING"
+}

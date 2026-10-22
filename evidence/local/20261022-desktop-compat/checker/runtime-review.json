@@ -1,0 +1,32 @@
+{
+  "status": "LIVE_READ_ONLY_PASS_AWAITING_ORDINARY_START_CLEANUP",
+  "scope": "Official Desktop 0.2.1-rc.2 KONT compatibility slice",
+  "independentChecks": [
+    "Read-only current official manager confirms Knot bundle installed enabled and plugin fiber active",
+    "Live fixed renderer receipt present active mainRegistered sidebarRegistered true",
+    "Authenticated live Host snapshot seq8 schema4 matches unchanged on-disk state",
+    "Two labelled fixture assets and multi-block provenance persist",
+    "Legacy worksite draft checked A excluded B persist",
+    "Cold-start SSE since0 returns reset seq8 snapshotRequired true",
+    "Installed manifest, patch, client source/build and backend module bytes match reviewed candidate"
+  ],
+  "controllerEvidenceReviewed": [
+    "official-install.json attempt1 applied enabled exit0",
+    "real-desktop-verification.json and updated fixed script:8 commands,ordered source agent:local SSE,auth Origin stale negative cases,preview explicitly excludes B,actual Electron same-origin legacy/protocol vs Bearer/disk",
+    "installed-graceful-exit-v2.json:0 remaining processes/ports,lock naturally absent,hash unchanged; initial serialization artifact retained"
+  ],
+  "stateSha256": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "seq": 8,
+  "checkerActions": {
+    "models": 0,
+    "writesToProduct": 0,
+    "assetWrites": 0,
+    "appStarts": 0,
+    "appStops": 0
+  },
+  "limitations": [
+    "Controller performed install/write/quit; Checker independently reviewed those artifacts and directly tested reopened read-only state",
+    "No real Agent/model run or frontend visual/product acceptance",
+    "Awaiting ordinary startup and debug port removal before final limited acceptance"
+  ]
+}

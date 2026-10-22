@@ -1,0 +1,137 @@
+
+> test
+> node scripts/build.mjs && node --test tests/*.test.mjs
+
+(node:30864) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built KONT host core and DSH browser bundle.
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 6.4767
+  type: 'test'
+  ...
+# Subtest: HTTP requires the host trust fence and authenticated browser before reads or writes
+ok 2 - HTTP requires the host trust fence and authenticated browser before reads or writes
+  ---
+  duration_ms: 113.6328
+  type: 'test'
+  ...
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 3 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 42.8782
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 4 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 12.0528
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 5 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 19.3747
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 6 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 11.7591
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 7 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 18.352
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 8 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 448.1733
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 9 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 47.6923
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 10 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 103.5745
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 11 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 23.4538
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 12 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 34.8029
+  type: 'test'
+  ...
+# Subtest: draft leave guard warns on actual edits and clears when text returns to the saved value
+ok 13 - draft leave guard warns on actual edits and clears when text returns to the saved value
+  ---
+  duration_ms: 11.7037
+  type: 'test'
+  ...
+# Subtest: dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+ok 14 - dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+  ---
+  duration_ms: 21.8402
+  type: 'test'
+  ...
+# Subtest: Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+ok 15 - Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+  ---
+  duration_ms: 5271.0982
+  type: 'test'
+  ...
+# Subtest: selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+ok 16 - selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+  ---
+  duration_ms: 37.9175
+  type: 'test'
+  ...
+# Subtest: concurrent windows reject stale writes and do not lose a saved draft
+ok 17 - concurrent windows reject stale writes and do not lose a saved draft
+  ---
+  duration_ms: 7.5721
+  type: 'test'
+  ...
+# Subtest: failed batch rolls back all changes and disk; returned objects cannot mutate the store
+ok 18 - failed batch rolls back all changes and disk; returned objects cannot mutate the store
+  ---
+  duration_ms: 9.1618
+  type: 'test'
+  ...
+# Subtest: corrupt snapshots fail closed and are never replaced with empty data
+ok 19 - corrupt snapshots fail closed and are never replaced with empty data
+  ---
+  duration_ms: 6.9583
+  type: 'test'
+  ...
+# Subtest: one live writer owns storage and oversized drafts are rejected
+ok 20 - one live writer owns storage and oversized drafts are rejected
+  ---
+  duration_ms: 4.4505
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5724.7145

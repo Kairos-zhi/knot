@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-21",
+  "status": "MAKER_SELF_CHECK_PASSED_NOT_ACCEPTED",
+  "powershellParser": "no parse errors",
+  "prepareOnly": "exit0; signed installed executable found; D drive paths returned; no desktop launch",
+  "exeProductVersion": "0.2.1.0",
+  "wrapper": "JSON and YAML parsed, same kernel inserted, exact old DSH peer retained",
+  "installedKnot": false,
+  "changedFrozenCandidate": false,
+  "limitations": [
+    "Wrapper not installed or activated",
+    "0.2.1 runtime compatibility not tested",
+    "Actual desktop Host protocol not exercised",
+    "No UI/Apple experience acceptance"
+  ]
+}

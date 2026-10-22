@@ -1,0 +1,130 @@
+{
+  "candidateHashes": [
+    {
+      "path": "scripts/start-desktop.ps1",
+      "matches": true
+    },
+    {
+      "path": "start-kont-desktop.cmd",
+      "matches": true
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "matches": true
+    },
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "matches": true
+    },
+    {
+      "path": "docs/tasks/KONT-DESKTOP-003.md",
+      "matches": true
+    }
+  ],
+  "frozenHashes": [
+    {
+      "path": ".gitignore",
+      "matches": true
+    },
+    {
+      "path": "package.json",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "matches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "matches": true
+    },
+    {
+      "path": "scripts/build.mjs",
+      "matches": true
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "matches": true
+    },
+    {
+      "path": "start-kont.cmd",
+      "matches": true
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/kernel.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/plugin-lifecycle.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/protocol.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/runtime-draft.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/runtime-launcher.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "matches": true
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "matches": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-persistence.ts",
+      "matches": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-sync.ts",
+      "matches": true
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "matches": true
+    }
+  ],
+  "parseErrors": [],
+  "prepareExitCode": 0,
+  "prepareResult": {
+    "executable": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+    "version": "0.2.1.0",
+    "dshHome": "D:\\DSH-Desktop\\home",
+    "electronUserData": "D:\\DSH-Desktop\\user-data",
+    "kontData": "D:\\DSH-Desktop\\kont-data",
+    "activatesKnotPlugin": false
+  },
+  "cDriveRefusalExitCode": 1,
+  "cDriveRefusalMessage": "The desktop installation and its runtime data must remain on D:.\r\nAt C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\start-desktop.ps1:14 char:5\r\n+     throw 'The desktop installation and its runtime data must remain  ...\r\n+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (The desktop ins...t remain on D:.:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : The desktop installation and its runtime data must remain on D:.\r\n \r\n"
+}

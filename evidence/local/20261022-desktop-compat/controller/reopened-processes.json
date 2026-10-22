@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-22T18:49:12.9727671+08:00",
+  "owned": [
+    {
+      "ProcessId": 53748,
+      "ParentProcessId": 72872,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 66724,
+      "ParentProcessId": 53748,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 72820,
+      "ParentProcessId": 53748,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 71060,
+      "ParentProcessId": 53748,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 70200,
+      "ParentProcessId": 53748,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "listeners": [
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19222,
+      "OwningProcess": 53748
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19221,
+      "OwningProcess": 53748
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 3584,
+      "OwningProcess": 70200
+    }
+  ]
+}

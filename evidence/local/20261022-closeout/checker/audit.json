@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-22T11:08:12.522Z",
+  "frozenMakerFiles": 6,
+  "unchangedComparedFiles": 24,
+  "sourceFixtureExactGitBlob": true,
+  "sourceCommit": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "sourceSha256": "91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246",
+  "stagedFileCount": 350,
+  "evidenceEntries": 297,
+  "dispositions": {
+    "local-only-private-document": 8,
+    "include": 289
+  },
+  "indexHashMismatches": [],
+  "indexIncludesNotStaged": [],
+  "privateEntriesStaged": [],
+  "suspiciousNames": [],
+  "secretCandidatePaths": [],
+  "stateLines": 24,
+  "queueLimitedRows": 7,
+  "queueClosedRows": 2,
+  "archiveBytes": {
+    "state": 4813,
+    "queue": 4827
+  },
+  "attributes": "tests/fixtures/asset-write-server.upstream.mjs: text: set\nSTATE.md: text: unset",
+  "coreAutocrlf": "true"
+}

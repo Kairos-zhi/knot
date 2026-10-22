@@ -1,0 +1,18 @@
+[
+  {
+    "path": "scripts/dev.mjs",
+    "sha256": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1"
+  },
+  {
+    "path": "packages/dsh-plugin/src/client.cjs",
+    "sha256": "F0783DE7A77C1BDE9E647D6B2D01F7ED51703BDCEB1E6C3FF45E57694BB9425E"
+  },
+  {
+    "path": "tests/runtime-draft.test.mjs",
+    "sha256": "DAE5D6428A699B4F5805849EE1552FFC41C5A152F4BBB0B470FB06ACFD70ABB7"
+  },
+  {
+    "path": "tests/runtime-launcher.test.mjs",
+    "sha256": "11739F4AD37F3ECB028372E26E2F4DFB0B1D0B25E667F5C78E178DC65AA9E393"
+  }
+]

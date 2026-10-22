@@ -1,0 +1,149 @@
+
+> test
+> node scripts/build.mjs && node --test tests/*.test.mjs
+
+(node:58724) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built KONT host core and DSH browser bundle.
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 9.3431
+  type: 'test'
+  ...
+# Subtest: official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+ok 2 - official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+  ---
+  duration_ms: 627.7253
+  type: 'test'
+  ...
+# Subtest: official pnpm file bundle includes generated modules and resolves the sibling plugin
+ok 3 - official pnpm file bundle includes generated modules and resolves the sibling plugin
+  ---
+  duration_ms: 1542.171
+  type: 'test'
+  ...
+# Subtest: HTTP requires the host trust fence and authenticated browser before reads or writes
+ok 4 - HTTP requires the host trust fence and authenticated browser before reads or writes
+  ---
+  duration_ms: 180.8545
+  type: 'test'
+  ...
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 5 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 54.7245
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 6 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 18.502
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 7 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 22.5059
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 8 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 19.9201
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 9 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 22.7229
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 10 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 617.6903
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 11 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 76.0915
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 12 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 136.6187
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 13 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 29.4985
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 14 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 43.5686
+  type: 'test'
+  ...
+# Subtest: draft leave guard warns on actual edits and clears when text returns to the saved value
+ok 15 - draft leave guard warns on actual edits and clears when text returns to the saved value
+  ---
+  duration_ms: 14.0595
+  type: 'test'
+  ...
+# Subtest: dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+ok 16 - dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+  ---
+  duration_ms: 29.3551
+  type: 'test'
+  ...
+# Subtest: Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+ok 17 - Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+  ---
+  duration_ms: 8105.576
+  type: 'test'
+  ...
+# Subtest: selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+ok 18 - selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+  ---
+  duration_ms: 46.0574
+  type: 'test'
+  ...
+# Subtest: concurrent windows reject stale writes and do not lose a saved draft
+ok 19 - concurrent windows reject stale writes and do not lose a saved draft
+  ---
+  duration_ms: 10.0578
+  type: 'test'
+  ...
+# Subtest: failed batch rolls back all changes and disk; returned objects cannot mutate the store
+ok 20 - failed batch rolls back all changes and disk; returned objects cannot mutate the store
+  ---
+  duration_ms: 11.2013
+  type: 'test'
+  ...
+# Subtest: corrupt snapshots fail closed and are never replaced with empty data
+ok 21 - corrupt snapshots fail closed and are never replaced with empty data
+  ---
+  duration_ms: 8.9971
+  type: 'test'
+  ...
+# Subtest: one live writer owns storage and oversized drafts are rejected
+ok 22 - one live writer owns storage and oversized drafts are rejected
+  ---
+  duration_ms: 6.3568
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8752.5116

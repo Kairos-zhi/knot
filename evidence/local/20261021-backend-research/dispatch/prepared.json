@@ -1,0 +1,10 @@
+{
+  "a2a_id": "a2a-20261021-kont-backend-feishu-002",
+  "card": "C:\\Users\\x2270\\hermes-sync\\tasks\\a2a-20261021-kont-backend-feishu-002.json",
+  "prompt": "C:\\Users\\x2270\\hermes-sync\\handoff\\a2a-20261021-kont-backend-feishu-002-prompt.md",
+  "cardSha256": "24E3FAA2E79D62610BF752FB2AEF98D1F3F7782D27EAA7FA62EC3452B4692B11",
+  "promptSha256": "A8C3FF27471918CAD020916D32BC50C00ECB1ABDA2D0B621210548BF797F9038",
+  "role": "seeker:aily",
+  "scope": "Feishu evidence only",
+  "status": "pending_dispatch"
+}

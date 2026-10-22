@@ -1,0 +1,20 @@
+[
+  {
+    "Link": "E:\\桌面\\DSH.lnk",
+    "Target": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "Arguments": "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\start-desktop.ps1\"",
+    "Backup": "D:\\DSH-Desktop\\shortcut-backup-20261021\\1.lnk"
+  },
+  {
+    "Link": "E:\\桌面\\DeepSeek Harness.lnk",
+    "Target": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "Arguments": "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\start-desktop.ps1\"",
+    "Backup": "D:\\DSH-Desktop\\shortcut-backup-20261021\\2.lnk"
+  },
+  {
+    "Link": "C:\\Users\\x2270\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DeepSeek Harness.lnk",
+    "Target": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "Arguments": "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File \"C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\scripts\\start-desktop.ps1\"",
+    "Backup": "D:\\DSH-Desktop\\shortcut-backup-20261021\\3.lnk"
+  }
+]

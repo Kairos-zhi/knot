@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-22T17:25:31.8532162+08:00",
+  "listeners": [
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19222,
+      "OwningProcess": 60204
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 19221,
+      "OwningProcess": 60204
+    }
+  ],
+  "owned": [
+    {
+      "ProcessId": 60204,
+      "ParentProcessId": 22152,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 64268,
+      "ParentProcessId": 60204,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 51476,
+      "ParentProcessId": 60204,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 55072,
+      "ParentProcessId": 60204,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 56648,
+      "ParentProcessId": 60204,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "renderer": [
+    {
+      "id": "52D162BAE5743008F3365CF921F28E14",
+      "type": "page",
+      "url": "dsh-app://app/",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:19221/devtools/page/52D162BAE5743008F3365CF921F28E14"
+    }
+  ],
+  "main": [
+    {
+      "id": "b1ae4ef7-2bbb-4928-8ea4-82a884456d4a",
+      "type": "node",
+      "url": "file://",
+      "webSocketDebuggerUrl": "ws://127.0.0.1:19222/b1ae4ef7-2bbb-4928-8ea4-82a884456d4a"
+    }
+  ]
+}

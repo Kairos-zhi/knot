@@ -1,0 +1,64 @@
+{
+  "startedAt": "2026-10-22T10:47:38.005Z",
+  "hostPort": 6554,
+  "fixture": true,
+  "modelCalls": 0,
+  "checks": [
+    "real Host authentication and Origin negative cases",
+    "real Desktop Host create/connect/append/disconnect and worksite supply/exclusion",
+    "stale write rejected without changing persisted bytes",
+    "real Host ordered SSE and non-forgeable configured caller source",
+    "explicit persisted worksite selection/exclusion and original preview omit excluded B",
+    "actual Electron same-origin legacy/protocol reads match Bearer and disk state"
+  ],
+  "passed": true,
+  "seq": 8,
+  "fixtureAssetIds": [
+    "desktop-check-A",
+    "desktop-check-B"
+  ],
+  "stateSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+  "events": [
+    {
+      "seq": 1,
+      "type": "knot.created",
+      "source": "agent:local"
+    },
+    {
+      "seq": 2,
+      "type": "knot.created",
+      "source": "agent:local"
+    },
+    {
+      "seq": 3,
+      "type": "rope.connected",
+      "source": "agent:local"
+    },
+    {
+      "seq": 4,
+      "type": "knot.updated",
+      "source": "agent:local"
+    },
+    {
+      "seq": 5,
+      "type": "rope.disconnected",
+      "source": "agent:local"
+    },
+    {
+      "seq": 6,
+      "type": "worksite.changed",
+      "source": "agent:local"
+    },
+    {
+      "seq": 7,
+      "type": "worksite.changed",
+      "source": "agent:local"
+    },
+    {
+      "seq": 8,
+      "type": "worksite.changed",
+      "source": "agent:local"
+    }
+  ],
+  "finishedAt": "2026-10-22T10:47:38.159Z"
+}

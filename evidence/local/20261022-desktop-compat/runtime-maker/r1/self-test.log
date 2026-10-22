@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+ok 1 - read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+  ---
+  duration_ms: 12.9274
+  type: 'test'
+  ...
+# Subtest: installed RPC contract uses exact method, correlated envelope, args and official origin
+ok 2 - installed RPC contract uses exact method, correlated envelope, args and official origin
+  ---
+  duration_ms: 2.7801
+  type: 'test'
+  ...
+# Subtest: denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+ok 3 - denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+  ---
+  duration_ms: 0.3901
+  type: 'test'
+  ...
+# Subtest: wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+ok 4 - wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+  ---
+  duration_ms: 2.6353
+  type: 'test'
+  ...
+# Subtest: safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+ok 5 - safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+  ---
+  duration_ms: 0.5574
+  type: 'test'
+  ...
+# Subtest: install opt-in constructs only reviewed local package with supported options
+ok 6 - install opt-in constructs only reviewed local package with supported options
+  ---
+  duration_ms: 0.565
+  type: 'test'
+  ...
+# Subtest: debug clients reject non-loopback and credential-bearing targets before network
+ok 7 - debug clients reject non-loopback and credential-bearing targets before network
+  ---
+  duration_ms: 1.4796
+  type: 'test'
+  ...
+# Subtest: renderer receipt reads only fixed registration projection and validates shape
+ok 8 - renderer receipt reads only fixed registration projection and validates shape
+  ---
+  duration_ms: 1.1055
+  type: 'test'
+  ...
+# Subtest: compatibility refusal retains declared DSH requirements without raw diagnostics
+ok 9 - compatibility refusal retains declared DSH requirements without raw diagnostics
+  ---
+  duration_ms: 0.384
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 208.4344

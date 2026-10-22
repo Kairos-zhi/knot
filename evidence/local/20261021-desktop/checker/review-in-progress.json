@@ -1,0 +1,23 @@
+{
+  "status": "PENDING_CANDIDATE",
+  "scope": "Official desktop installation and narrow Knot desktop wrapper integration",
+  "verified": [
+    "Official installer and installed executable signatures Valid and DeepSeek publisher",
+    "Installed executable located on D:",
+    "Electron visible main window exists",
+    "Desktop Host child uses installed app.asar and dedicated D: desktop profile",
+    "Electron user-data-dir points to D:"
+  ],
+  "open": [
+    "Read bundled application exact runtime release",
+    "Independent wrapper source and launch script review after candidate freeze",
+    "Desktop profile lists and loads Knot wrapper through supported manager",
+    "Authenticated Knot snapshot/command/events from actual desktop Host",
+    "Persistence/restart and fixed old candidate hash preservation"
+  ],
+  "limitations": [
+    "No UI screenshot/click verification",
+    "No model call",
+    "No product-experience acceptance"
+  ]
+}

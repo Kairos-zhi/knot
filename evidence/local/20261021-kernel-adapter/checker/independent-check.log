@@ -1,0 +1,8 @@
+PASS 27 frozen source/build hashes and manifest identity
+PASS legacy schema-4 import preserves generated multi-block/provenance/position/fixed/extensions and manual exclusion/site isolation
+PASS invalid snapshot and failing mixed transaction preserve exact persisted bytes
+PASS real DSH plugin loads persisted schema-4 state; unauthenticated/bad-token/malicious-Origin/Host rejected
+PASS browser-free real HTTP create/connect/append uses old command shapes; SSE ordered durable facts with trusted source mapping
+PASS real HTTP stale baseSeq/invalid blocks/unimplemented generation reject without new seq or false success
+PASS real DSH normal shutdown releases own lock; immediate same-directory restart preserves snapshot and seq; cold SSE requests snapshot reset
+PASS frozen source/build hashes remain unchanged after independent tests

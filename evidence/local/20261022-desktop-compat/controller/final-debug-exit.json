@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-22T18:50:43.6261236+08:00",
+  "expectedPids": [
+    53748,
+    66724,
+    72820,
+    71060,
+    70200
+  ],
+  "remainingProcessCount": 0,
+  "remainingPids": [],
+  "debugListenerCount": 0,
+  "lockExists": false,
+  "stateSha256": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "forced": false
+}

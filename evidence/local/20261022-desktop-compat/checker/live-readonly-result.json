@@ -1,0 +1,67 @@
+{
+  "at": "2026-10-22T10:49:52.534Z",
+  "readOnly": true,
+  "modelCalls": 0,
+  "bundles": [
+    {
+      "name": "@kont/desktop-bundle",
+      "version": "0.1.0",
+      "official": false,
+      "availability": "profile",
+      "installed": true,
+      "enabled": true,
+      "optional": false,
+      "removable": true,
+      "rows": [
+        {
+          "rowId": "kont-worksite",
+          "moduleName": "@kont/dsh-plugin",
+          "entryId": "include:kont-worksite"
+        }
+      ]
+    }
+  ],
+  "plugins": [
+    {
+      "entryId": "include:kont-worksite",
+      "moduleName": "@kont/dsh-plugin",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ],
+  "client": {
+    "present": true,
+    "module": "@kont/dsh-plugin",
+    "version": "0.1.0",
+    "active": true,
+    "mainRegistered": true,
+    "sidebarRegistered": true
+  },
+  "coldSse": {
+    "reset": true,
+    "seq": 8,
+    "snapshotRequired": true
+  },
+  "installHashes": [
+    {
+      "file": "packages/dsh-plugin/package.json",
+      "match": true
+    },
+    {
+      "file": "packages/desktop-bundle/package.json",
+      "match": true
+    },
+    {
+      "file": "packages/desktop-bundle/cordis.patch.yml",
+      "match": true
+    },
+    {
+      "file": "packages/dsh-plugin/lib/client.js",
+      "match": true
+    }
+  ],
+  "seq": 8,
+  "stateSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+  "fixtureAssets": 2,
+  "passed": true
+}

@@ -1,0 +1,16 @@
+{
+  "archive_id": "kont-dev-baseline-20261021",
+  "reviewer": "kont_checker",
+  "result": "passed-documentation-only",
+  "remainingDocumentBlockers": 0,
+  "sourceHashesVerified": 13,
+  "checks": [
+    "User decision retained",
+    "Agent-native and Apple standards aligned",
+    "Existing v1.1 workflow reused",
+    "Read-scope limits explicit",
+    "Engineering candidate not accepted",
+    "Memory note does not claim cross-window adoption"
+  ],
+  "engineeringAccepted": false
+}

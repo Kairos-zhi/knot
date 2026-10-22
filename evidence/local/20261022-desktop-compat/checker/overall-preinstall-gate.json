@@ -1,0 +1,43 @@
+{
+  "verdict": "CONDITIONAL_PREINSTALL_SAFE",
+  "task": "KONT-DESKTOP-003-COMPAT",
+  "scope": "A r2-renderer-receipt + B r2 tools; permits controller controlled official manager install and verification only",
+  "hashes": {
+    "a": 8,
+    "beforeMatch": 13,
+    "afterBuildMatch": 13,
+    "b": 5
+  },
+  "regression": {
+    "passed": 34,
+    "exitCode": 0,
+    "failed": 0,
+    "log": "preinstall-regression.log",
+    "skipped": 0,
+    "command": "npm test"
+  },
+  "findings": [
+    "A registration getter publishes no data or credentials; both slot flags become true only after register succeeds; collapse clears flags; failed registration and dispose remove own receipt; old disposal cannot remove new instance; disposed late callback cannot register.",
+    "Plugin and wrapper peer versions are exactly 0.1.7-rc.2 || 0.2.1-rc.2. No wildcard bypass. Explicit files includes generated lib and src. Official bundled pnpm offline file:absolute-directory recursive install is independently rerun; copied runtime bytes and actual shipped service compatibility pass. Wrapper standalone tgz distribution remains unsupported.",
+    "No backend/kernel/style/build changes in this candidate; generated client rebuild reproduces frozen SHA.",
+    "B r2 only main expression uses fixed Node builtin createRequire anchored to official ASAR main and resolves electron.app.quit; no environment/credential read, enumeration, arbitrary caller code, app.exit or process.exit.",
+    "B real request and exit artifacts show requested=true then no remaining expected PIDs/listeners. These are independently reviewed controller/Maker runtime artifacts, not a Checker-triggered live shutdown. Original dynamic import failure remains recorded.",
+    "Current debug-targets-install identifies main66888 and both19221/19222 literal loopback listeners owned by that PID, renderer dsh-app://app page and matching WS port. Ownership must be reconfirmed at actual operation.",
+    "Controller verifier confines writes to labelled fixture assets after empty assets/seq0 guard; reads only Knot-generated agent-token into memory; fixed same-origin GET pair and Host snapshot/command/SSE checks. No provider/model/DOM/click/screenshot."
+  ],
+  "conditions": [
+    "Before verifier execution add explicit checkedIds/excludedIds/draft terminal assertions for worksite legacy, optionally request fixed supply preview; command success and matching two reads alone do not prove exclusion semantics.",
+    "Verify endpoint/PID binding still current immediately before actions. Manager install must use fixed reviewed file spec and enabled/saveExact only.",
+    "Real post-install Host active and live client receipt both registrations, authentication/command/events/persistence plus normal app.quit lock release/restart readback remain required for runtime acceptance.",
+    "After verification remove temporary debugging listeners and restore ordinary official Desktop launch using same D paths.",
+    "Do not treat receipt booleans as visual/product acceptance or fixture operations as real Agent/model execution."
+  ],
+  "blockingFindings": [],
+  "notPerformed": [
+    "No desktop start/stop/install by Checker",
+    "No provider credential or running profile read",
+    "No model",
+    "No product source edits"
+  ],
+  "reviewedControllerVerifierSha256": "24AEF6901B30F62DA604865FC58128E25B713BCC83C164BD256EBCB9509F6AFF"
+}

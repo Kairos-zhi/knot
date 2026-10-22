@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-10-22T17:13:29.6245026+08:00",
+  "executable": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+  "productVersion": "0.2.1.0",
+  "signature": "Valid",
+  "exeSha256": "9C789407850773CE7D914A3EC0476852BF1CEEA69789D8CCF4E39BE953F4BF52",
+  "processes": [
+    {
+      "ProcessId": 55612,
+      "ParentProcessId": 61288,
+      "Name": "DeepSeek Harness.exe",
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 65184,
+      "ParentProcessId": 55612,
+      "Name": "DeepSeek Harness.exe",
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 57824,
+      "ParentProcessId": 55612,
+      "Name": "DeepSeek Harness.exe",
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 67868,
+      "ParentProcessId": 55612,
+      "Name": "DeepSeek Harness.exe",
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 56440,
+      "ParentProcessId": 55612,
+      "Name": "DeepSeek Harness.exe",
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "knotStateExists": false,
+  "knotStateSha256": null,
+  "scope": "pre-install baseline; no credentials; no model invocation"
+}

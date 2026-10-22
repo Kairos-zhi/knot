@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-22T10:49:35.077Z",
+  "passed": true,
+  "seq": 8,
+  "stateSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+  "coldStartReset": true,
+  "client": {
+    "present": true,
+    "module": "@kont/dsh-plugin",
+    "version": "0.1.0",
+    "active": true,
+    "mainRegistered": true,
+    "sidebarRegistered": true
+  },
+  "plugins": [
+    {
+      "entryId": "include:kont-worksite",
+      "moduleName": "@kont/dsh-plugin",
+      "enabled": true,
+      "fiberPhase": "active"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 5.8832
+  type: 'test'
+  ...
+# Subtest: HTTP requires the host trust fence and authenticated browser before reads or writes
+ok 2 - HTTP requires the host trust fence and authenticated browser before reads or writes
+  ---
+  duration_ms: 91.2826
+  type: 'test'
+  ...
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 3 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 35.3713
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 4 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 13.752
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 5 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 13.3568
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 6 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 7.9694
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 7 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 12.3329
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 8 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 335.8407
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 9 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 36.5009
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 10 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 80.4296
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 11 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 17.1596
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 12 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 33.3638
+  type: 'test'
+  ...
+# Subtest: selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+ok 13 - selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+  ---
+  duration_ms: 25.8057
+  type: 'test'
+  ...
+# Subtest: concurrent windows reject stale writes and do not lose a saved draft
+ok 14 - concurrent windows reject stale writes and do not lose a saved draft
+  ---
+  duration_ms: 6.9007
+  type: 'test'
+  ...
+# Subtest: failed batch rolls back all changes and disk; returned objects cannot mutate the store
+ok 15 - failed batch rolls back all changes and disk; returned objects cannot mutate the store
+  ---
+  duration_ms: 7.7398
+  type: 'test'
+  ...
+# Subtest: corrupt snapshots fail closed and are never replaced with empty data
+ok 16 - corrupt snapshots fail closed and are never replaced with empty data
+  ---
+  duration_ms: 6.3809
+  type: 'test'
+  ...
+# Subtest: one live writer owns storage and oversized drafts are rejected
+ok 17 - one live writer owns storage and oversized drafts are rejected
+  ---
+  duration_ms: 5.1915
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 630.8009

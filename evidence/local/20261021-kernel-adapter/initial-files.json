@@ -1,0 +1,92 @@
+{
+  "candidate": "pre-control-prototype",
+  "branch": "codex/kont-dsh-plugin-bootstrap",
+  "hasCommit": false,
+  "files": [
+    {
+      "path": ".gitignore",
+      "length": 65,
+      "sha256": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5"
+    },
+    {
+      "path": "AGENTS.md",
+      "length": 1350,
+      "sha256": "AE0902CD547B6FCB6EAE2DEDC37A0533D78E0AFB4B5DF4963FB7B3F4E0DC3B40"
+    },
+    {
+      "path": "docs/development-baseline.md",
+      "length": 6845,
+      "sha256": "82DDD4828FB8EFB8F157B85C5F5C93F5F9E934FD854EE1D85D00421155D50B62"
+    },
+    {
+      "path": "package.json",
+      "length": 277,
+      "sha256": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33"
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "length": 499,
+      "sha256": "906849A4739FC5968C5E3C4C6E49CE985BA249169C73A6E53FBDE69214EF46F0"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "length": 9547,
+      "sha256": "609E1BD4006F9796DD58105143604C14C4D98FD3F20006BAD72B76A2FCE4FE7F"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "length": 2102,
+      "sha256": "ED672F2AADFBB0BF3658D1F9EAC393F82C699558AACDD6BCB5201E9214422CC9"
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "length": 6435,
+      "sha256": "7068800C36BA3AD5A3F68A8E2A9E97EA5F5934F304B84ADD2870D2C02C833BD3"
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "length": 4048,
+      "sha256": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "length": 892,
+      "sha256": "AC9AB755ED4FF51175D5920F820A15F6AB8C3DAD390D8C0E1A45C7E5233B3729"
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "length": 2616,
+      "sha256": "5C7E0470867B979E6E6F5554AA30B78CADC2A3937BD4626F79C64FA6F56AC683"
+    },
+    {
+      "path": "start-kont.cmd",
+      "length": 104,
+      "sha256": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB"
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "length": 1321,
+      "sha256": "5E893A60B8C664E493A9942D433CF96860A9AF0ED174114FA230C7E6571BA25F"
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "length": 2302,
+      "sha256": "A8313EB9E9CADB20F7C77F33E7A8636F8E65220999A898736A98DD1038B56699"
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "length": 4260,
+      "sha256": "BAB423C5B410E5E04CB08A3553568DACD752D35CC7CFA53D007FBFBC94FD23DD"
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "length": 6016,
+      "sha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3"
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "length": 14246,
+      "sha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699"
+    }
+  ]
+}

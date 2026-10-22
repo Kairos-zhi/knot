@@ -1,0 +1,87 @@
+{
+  "task": "KONT-DESKTOP-003-COMPAT",
+  "reviewer": "kont_checker",
+  "status": "CONDITIONAL_PREFLIGHT_ONLY",
+  "candidateFrozen": false,
+  "engineeringAccepted": false,
+  "actionsPerformed": "read-only source and task/baseline review; no start/stop/install",
+  "installedSourceChecks": [
+    {
+      "path": "lib/main.js",
+      "sha256": "6f3d1ddd1106371452c2204be6dfb2e5460a8e8259cdd05cdccb5387b3f9a85a",
+      "matchesExtractedManifest": true,
+      "matchesActualSavedSource": true
+    },
+    {
+      "path": "lib/preload-app.cjs",
+      "sha256": "f323eb67f7ace407d3b1d858f264f7846e436d9ba3e80c02b0454a6da0aed968",
+      "matchesExtractedManifest": true,
+      "matchesActualSavedSource": true
+    },
+    {
+      "path": "dsh/node_modules/@deepseek-ai/dsh-desktop-host/lib/index.js",
+      "sha256": "6ae7cb9d57516b73c8aa4317c514ed81d28f2680efcee56d8faf2e588bb28c48",
+      "matchesExtractedManifest": true,
+      "matchesActualSavedSource": true
+    }
+  ],
+  "findings": [
+    {
+      "topic": "narrower public quit route",
+      "result": "none found in inspected public preload/HTTP surface",
+      "evidence": [
+        "lib/preload-app.cjs:787-840 createProductApi exposes browser/deviceInfo/keyboard/shortcuts/updates; no quit",
+        "lib/preload-app.cjs:860-876 boot and platform-close surfaces are origin scoped; close is not application quit",
+        "lib/main.js:12812 tray quit invokes app.quit; before-quit at13094 owns actual shutdown",
+        "dsh-desktop-host/lib/index.js:262-270 accepts shutdown only on the private parent IPC"
+      ],
+      "boundary": "No claim that all possible OS/native accessibility mechanisms were exhaustively ruled out. CloseMainWindow/Browser.close must not be counted as normal quit."
+    },
+    {
+      "topic": "existing authentication route",
+      "result": "use official application-origin forwarding without exporting tokens/cookies",
+      "evidence": [
+        "lib/main.js:8229-8235 exchanges launch URL for cookie inside shell",
+        "lib/main.js:8269-8295 forwardWebRequest checks Origin then adds shell-owned cookie and removes Host/Origin/Cookie from renderer request",
+        "lib/main.js:12406-12416 dsh-app app routes use this forwarding; boot exposes injections and stream origin, not Host auth token"
+      ],
+      "boundary": "Only exact dsh-app://app/ main target and an allowlist of pluginManager inspect/install/list requests. No environment/cookie/token/memory extraction."
+    },
+    {
+      "topic": "main inspector quit proposal",
+      "result": "conditionally narrower than arbitrary Node evaluation but not yet runtime verified",
+      "requiredFixedExpression": "import('electron').then(({app})=>app.quit())",
+      "conditions": [
+        "Packaged build must actually support main --inspect bound only127.0.0.1; do not bypass Electron fuses if unsupported",
+        "Renderer CDP and main inspector use separate temporary loopback ports; target executable/profile identity must match the controller-owned instance",
+        "Do not read process.env, auth cookies/tokens, arbitrary modules or private memory; no generic eval surface in reusable tool",
+        "Do not set skipQuitConfirmation, app.exit/process.exit, force-recovery flags, or programmatically approve a native interruption prompt",
+        "Wait for official before-quit task inspection and backend.close; if active tasks/unknown inspection require human decision, report rather than suppress it"
+      ]
+    },
+    {
+      "topic": "one bootstrap termination",
+      "result": "may only be a documented setup exception for verified controller-owned empty instance",
+      "conditions": [
+        "Reconfirm current PID tree/executable and that Knot store is not installed/created, no managed work is in progress",
+        "Keep actual termination and reason in evidence, with explicit not-normal-shutdown label",
+        "No extension to unrelated Electron processes or existing3081 instance; do not claim persistence proof from this event"
+      ]
+    }
+  ],
+  "preInstallGate": [
+    "Freeze source/build/package hashes and independently review the exact0.2.1 peer/files/dependency candidate before install",
+    "Use official pluginManager compatibility check and installBundle only; no version exemptions, ASAR patch, manualdesktop profile changes or oldCLI",
+    "During runtime verify active Host plugin, client registration and same-kernel snapshot/command/events; do not equate registered entry with visual/product acceptance"
+  ],
+  "cleanupGate": [
+    "Normal app.quit must reach official before-quit/backend.close and remove Knot own lock after installation; restart must preserve data and seq",
+    "Verify all temporary CDP/main-inspector listeners gone after closing; restart sameD: profile normally with no debug arguments",
+    "Do not persist debug startup flags or auth material in launcher/shortcut/logs"
+  ],
+  "blockersBeforeActualRun": [
+    "main-inspector packaged support and fixed quit expression remain unverified",
+    "candidate package/files/peer changes are not yet frozen or independentlyaccepted"
+  ],
+  "writtenAt": "2026-10-22T09:20:08.557Z"
+}

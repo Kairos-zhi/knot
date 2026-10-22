@@ -1,0 +1,110 @@
+{
+  "review": "checker-input-boundary-review",
+  "date": "2026-10-21",
+  "sourceExpected": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "sourceFetchedMain": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "sourceMatches": true,
+  "prototypeFiles": [
+    {
+      "path": ".gitignore",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "AGENTS.md",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "docs/development-baseline.md",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "package.json",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "scripts/build.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "start-kont.cmd",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "lengthMatches": true,
+      "hashMatches": true
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "lengthMatches": true,
+      "hashMatches": true
+    }
+  ],
+  "scope": "task KONT-KERNEL-001 only; waiting candidates; no engineering acceptance",
+  "requiredChecks": [
+    "programmatic create/connect/append/disconnect and snapshot restore",
+    "multi-block provenance and edge fixed preservation",
+    "ordered persisted seq and explicit reset replay semantics",
+    "source mapped from credential, no untrusted body identity",
+    "supply exclusion/site isolation/conflict/transaction/corruption/auth negatives",
+    "Windows normal stop/restart no own stale lock, correct web-runtime config, clean draft leave hint",
+    "actual isolated DSH 0.1.7-rc.2 profile loads candidate; no model and no UI simulation"
+  ],
+  "excluded": [
+    "existing 3081 instance",
+    "Provider credentials",
+    "original runtime and asset writes",
+    "complete product or true Agent runtime acceptance"
+  ]
+}

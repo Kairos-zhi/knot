@@ -1,0 +1,38 @@
+{
+  "sourceCommit": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "sourceTree": "4575b8fb6ee7dcb4788b2729a135c9e04fde7d1e",
+  "files": [
+    {
+      "path": "services\\workspace-state.ts",
+      "sourceSha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699",
+      "vendorSha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699",
+      "unchanged": true
+    },
+    {
+      "path": "services\\asset-persistence.ts",
+      "sourceSha256": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72",
+      "vendorSha256": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72",
+      "unchanged": true
+    },
+    {
+      "path": "services\\asset-sync.ts",
+      "sourceSha256": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773",
+      "vendorSha256": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773",
+      "unchanged": true
+    },
+    {
+      "path": "knot-model.ts",
+      "sourceSha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3",
+      "vendorSha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3",
+      "unchanged": true
+    }
+  ],
+  "extractions": [
+    "workspace-state.ts full module",
+    "knot-model.ts full module",
+    "asset-sync.ts assetsToWorkflowJSON only",
+    "asset-persistence.ts isRecord/readData/serializeCanvas/normalizeCanvasSnapshot only"
+  ],
+  "engineAdapter": "FlowGram 1.0.14 portInfoToLineId copied algorithm; in/out constants",
+  "buildIntegrity": "sha256 guards on all four full original files; explicit unique extraction start/end markers"
+}

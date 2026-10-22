@@ -1,0 +1,18 @@
+[
+  {
+    "path": "packages/dsh-plugin/lib/client.js",
+    "matches": true
+  },
+  {
+    "path": "packages/dsh-plugin/lib/knot-model.js",
+    "matches": true
+  },
+  {
+    "path": "packages/dsh-plugin/lib/snapshot.js",
+    "matches": true
+  },
+  {
+    "path": "packages/dsh-plugin/lib/workspace-state.js",
+    "matches": true
+  }
+]

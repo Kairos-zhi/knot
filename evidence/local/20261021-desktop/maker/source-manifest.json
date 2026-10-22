@@ -1,0 +1,114 @@
+[
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_README.md",
+    "sha256": "3846DA4815463C6546CFF771D2C169B52A37B9272815D369C8697DD761DC1D61"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_desktop-auto-update-environment.mjs",
+    "sha256": "18E713339E93BB29659B3042C8C62D9D56B55C0462EF227268449BC653E12617"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_desktop-package-environment.mjs",
+    "sha256": "8D7ACBBA7E63F0C71B713E259F0C9D0852B336E7B907CD10CBAD03B33E836711"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_dev.ts",
+    "sha256": "A48BC690D066D30AD68057E47B1AF64B167694D34D0C8E1C735EA68A85A7095C"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_installer-directories.nsh",
+    "sha256": "0F8AA5E473F86D062984C3F02970B54F57E81990F16B3180082A3E94198C49DB"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_installer.nsh",
+    "sha256": "E11893C27B7604EA158505EBFEA7C582E50BBAB93A745367C4A537BBF366B31F"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_package-target.ts",
+    "sha256": "5F0BA5CB9DEC904097CB3C279B3B34CF8DC1A0DE818285CCCFAFFE01391FEFAE"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_scripts_upload-target.ts",
+    "sha256": "09F56FBE6324AFD0BA327E6B2D02C2B4297D7333E6271A08B50B3ED80922165E"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_host-process.ts",
+    "sha256": "6B9D3E558F526B7832020FB43D6682A07A68BF2D5657F26951F50A4F3EABFA28"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_main.ts",
+    "sha256": "3B32D5F52F8E501F2ED1DB51F2F72DAE06E676A04196A6D4C4F96F375CBF15E5"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_node-environment.ts",
+    "sha256": "CD760FEDE0EA4838269B09F9D68FD95DDE2956D3542F16ED2A6B9629B02339BF"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_paths.ts",
+    "sha256": "2D77C11510FBC539DE0F43510D0A772711AC1BE461598625D2768080168BE639"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_project-manager.ts",
+    "sha256": "2AD0AACBA5377E82C1ED2BD70F52003FFDF91FA0E287DD3D51CFD896F2249748"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_runtime-tree.ts",
+    "sha256": "AAEF471A94C1BB295C7AECD080F2BF9F4FA037A8FC3F2D76C63DB9B367C80778"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop_src_single-instance.ts",
+    "sha256": "DC6A6E263A6FDEDC3F1CFACB97EB6F60DD5B04AD5D3B02DAAE4640F2E30A5150"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\apps_desktop-host_src_index.ts",
+    "sha256": "4812095A04DC94CDDB2297ED3238BA4BF26D6884A0DCDC0B8C79180E54EF98C7"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\docs_development.md",
+    "sha256": "B6C4EA2AF4B833E3C77D69D5736D45CD071C1A6D15B6EAB321542EA4A601DAF4"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\docs_user_develop_basic_index.md",
+    "sha256": "4C7F620DA1D8FCF3ACA44E466E05002B9B3424C62D647C8D443981B0E31C1635"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source\\docs_user_guide_index.md",
+    "sha256": "FE0A55F008AB84FECADA53B9CE9BC50BB126A3B7B31EDE1A7B16028BC2F47F38"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\apps_desktop_README.md",
+    "sha256": "D149BD530D2AAEA666AFE64148942E3550D268C7994F486F59B596103153A5A0"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\apps_desktop_src_host-process.ts",
+    "sha256": "6B9D3E558F526B7832020FB43D6682A07A68BF2D5657F26951F50A4F3EABFA28"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\apps_desktop_src_paths.ts",
+    "sha256": "2D77C11510FBC539DE0F43510D0A772711AC1BE461598625D2768080168BE639"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\apps_desktop-host_src_index.ts",
+    "sha256": "1F61890C63DA8898CEF678479450D7647163530C416751D161DDE6B397C654D3"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\packages_boot_plugin-manager_README.md",
+    "sha256": "D3A3693A7E93A67126781CBF15E047858A65AFBAC1254C2180B4DCECE6DD0B03"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\packages_boot_plugin-manager_src_index.ts",
+    "sha256": "11F14C578780F8FA4E40F84A9C10C2FACE9806A733B76979885E2D0A92EC396E"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\packages_boot_plugin-manager_src_install-spec.ts",
+    "sha256": "2A0AD0179BF8475096B002B942195163CDEE5B1FD70370114458EBA9537709C1"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\packages_boot_plugin-manager_src_types.ts",
+    "sha256": "9A4E29B21A9A13D7571472BBCF46010525A0D9085C69C3435169DC5204B0B6C4"
+  },
+  {
+    "path": "C:\\Users\\x2270\\Documents\\ChatGPT\\KONT\\evidence\\local\\20261021-desktop\\maker\\source-0.2.1\\packages_client_ui-plugin-manager_src_client_PluginManagerPage.tsx",
+    "sha256": "CA6C1FA1DEB96EEC24FE68C858C1CA91F542C0D196317F91F823DBD342E1F2C8"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-21T19:34:16.1030393+08:00",
+  "source": "https://www.deepseek.com/download/",
+  "download": "https://download.deepseek.com/desktop/dsh-latest-windows-x64.exe",
+  "installer": "D:\\DSH-Desktop\\installers\\dsh-official-windows-x64.exe",
+  "installerVersion": "0.2.1-rc.2",
+  "sha256": "72E4A8579F11B5428DD0A1506532777924ADBA7ECAACC710A7E429085796537F",
+  "signature": "Valid",
+  "app": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe",
+  "home": "D:\\DSH-Desktop\\home",
+  "userData": "D:\\DSH-Desktop\\user-data",
+  "knotData": "D:\\DSH-Desktop\\kont-data",
+  "desktopPid": 9612,
+  "hostPid": 26652,
+  "modelInvoked": false,
+  "knotPluginLoaded": false
+}

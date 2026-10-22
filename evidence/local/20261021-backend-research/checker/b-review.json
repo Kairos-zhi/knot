@@ -1,0 +1,126 @@
+{
+  "task": "KONT-RESEARCH-002-B",
+  "reviewer": "kont_checker",
+  "result": "ACCEPT_RESEARCH_LIMITED",
+  "receiptPath": "C:/Users/x2270/hermes-sync/tasks/a2a-20261021-kont-backend-feishu-002.receipt.json",
+  "receiptStatus": "done_pending_check",
+  "receiptAcceptanceBeforeReview": "none",
+  "remoteStatusFromLocalReceipt": "done",
+  "artifactPath": "C:\\Users\\x2270\\hermes-sync\\knot-runs\\20261021-backend-feishu\\20261021_task_7699079302595283968_Knot后端飞书既有方案补证.md",
+  "artifactBytes": 13444,
+  "artifactSha256": "956df6a714b34d5346a290e00b7a91626f55ca4de2efcc797bd267e7c874f0db",
+  "artifactHashMatchesReceiptOutboxAndState": true,
+  "commentSha256": "d8ecac4695f7767c29bd0b13d47501e7f4264a76f6fafc02a5694857374dd842",
+  "commentDigestRecomputed": true,
+  "commentNormalization": "collector _comment_text output is stripped; sha256 of artifact tail from ## 任务评论 1 with trim()",
+  "transportScope": "local receipt/outbox/state/artifact integrity verified; remote task UI was not independently opened and delivery state is not user-read proof",
+  "sources": [
+    {
+      "name": "outline",
+      "url": "https://my.feishu.cn/docx/IhBadp6pfoyesyx36qLcW3xin02",
+      "documentId": "IhBadp6pfoyesyx36qLcW3xin02",
+      "readIdentity": "user",
+      "sampledRevision": 2,
+      "latestRevisionAtCheckerRead": 2,
+      "sampleFile": "evidence/local/20261021-backend-research/checker/b-live-outline-rev2.json",
+      "sampleSha256": "83b800e05c74ab8257f3df681fcc48db1ed3d90d3f95cebc8d077babc86bbda0",
+      "latestOutlineFile": "evidence/local/20261021-backend-research/checker/b-latest-outline-outline.json",
+      "latestOutlineSha256": "0355897033c16cc28128af030a81eda55630862f444aaf604f88dee1bd609625",
+      "priorFixedFullOriginalPath": "C:/Users/x2270/hermes-sync/handoff/20261018_Knot_Checker并行复核_v1/docs-checker/private-fetch-H24.json",
+      "priorFixedFullOriginalSha256": "0f536d91dada38e00cac6c0c071f72dc799233e4b3305bf74288053511cd211b",
+      "sourceTitle": "<title>Knot_AgentOS_产品与开发总纲_v1.0_20260928</title>",
+      "sourceBodyDate": "2026-09-28",
+      "readScope": "live keyword fragment + latest outline; key assertions compared with prior fixed full original; not a fresh full-document reread"
+    },
+    {
+      "name": "development",
+      "url": "https://my.feishu.cn/docx/NusbdCxypoZYJgxOHaBczAJ0nrd",
+      "documentId": "NusbdCxypoZYJgxOHaBczAJ0nrd",
+      "readIdentity": "user",
+      "sampledRevision": 2,
+      "latestRevisionAtCheckerRead": 2,
+      "sampleFile": "evidence/local/20261021-backend-research/checker/b-live-development-rev2.json",
+      "sampleSha256": "40aeb72ed3ffe4de25941cff47791d4e66410e37cdcf343a24c34bf9ca1744a1",
+      "latestOutlineFile": "evidence/local/20261021-backend-research/checker/b-latest-development-outline.json",
+      "latestOutlineSha256": "93b643550cbcdb2f8dd9bfb9fb58e0c75b70369cf68fe16eeb47477b52e723a1",
+      "priorFixedFullOriginalPath": "C:/Users/x2270/hermes-sync/handoff/20261018_Knot_Checker并行复核_v1/docs-checker/private-fetch-H25.json",
+      "priorFixedFullOriginalSha256": "368b5960358b822c1287df923b65922499a278420e974c80b62eba4341fe1364",
+      "sourceTitle": "<title>Knot_AgentOS_工作台开发方案_v0.2_20260928</title>",
+      "sourceBodyDate": "2026-09-28",
+      "readScope": "live keyword fragment + latest outline; key assertions compared with prior fixed full original; not a fresh full-document reread"
+    },
+    {
+      "name": "reuse",
+      "url": "https://my.feishu.cn/docx/A7CBdUMAWoM94XxOrkJcNCRPnef",
+      "documentId": "A7CBdUMAWoM94XxOrkJcNCRPnef",
+      "readIdentity": "user",
+      "sampledRevision": 2,
+      "latestRevisionAtCheckerRead": 2,
+      "sampleFile": "evidence/local/20261021-backend-research/checker/b-live-reuse-rev2.json",
+      "sampleSha256": "f2c82f262b7192d643eb6078a7660074293d96ce994fee0f78b32b0fbb367f5e",
+      "latestOutlineFile": "evidence/local/20261021-backend-research/checker/b-latest-reuse-outline.json",
+      "latestOutlineSha256": "f2d3d88b863147e48814348a04a7af8354bd6c3e1d154bf444283effe8be67c2",
+      "priorFixedFullOriginalPath": "C:/Users/x2270/hermes-sync/handoff/20261018_Knot_Checker并行复核_v1/docs-checker/private-fetch-H26.json",
+      "priorFixedFullOriginalSha256": "335f04b78b57af717e9f81a4b13413161f5601cde258459917d496f6f17e41ee",
+      "sourceTitle": "<title>Knot_既有方案复用与改造对照_20260928</title>",
+      "sourceBodyDate": "2026-09-28",
+      "readScope": "live keyword fragment + latest outline; key assertions compared with prior fixed full original; not a fresh full-document reread"
+    },
+    {
+      "name": "startup",
+      "url": "https://my.feishu.cn/docx/SdOsdHNOyostdyxxOmSc0Sjbnsg",
+      "documentId": "SdOsdHNOyostdyxxOmSc0Sjbnsg",
+      "readIdentity": "user",
+      "sampledRevision": 2,
+      "latestRevisionAtCheckerRead": 2,
+      "sampleFile": "evidence/local/20261021-backend-research/checker/b-live-startup-rev2.json",
+      "sampleSha256": "f453a7d0063c45a6943858e4dadeb8ab4aee87e11b08064be4a136553a84decd",
+      "latestOutlineFile": "evidence/local/20261021-backend-research/checker/b-latest-startup-outline.json",
+      "latestOutlineSha256": "b0abda60d82cac946ab34a9e1e7c7c5ce68a9eaa5a7fe96771de298ea9bedff7",
+      "priorFixedFullOriginalPath": "C:/Users/x2270/hermes-sync/handoff/20261018_Knot_Checker并行复核_v1/docs-checker/private-fetch-H27.json",
+      "priorFixedFullOriginalSha256": "d9f879e6a5a64401704bf82d97ed77479be8de9a4d996c54880c3c09db60f7d8",
+      "sourceTitle": "<title>Knot_首轮开发启动计划_v0.1_20260928</title>",
+      "sourceBodyDate": "2026-09-28",
+      "readScope": "live keyword fragment + latest outline; key assertions compared with prior fixed full original; not a fresh full-document reread"
+    }
+  ],
+  "findings": [
+    {
+      "topic": "Q1 shared kernel and open protocol",
+      "result": "supported as historical design and cited historical code observations",
+      "details": "The four rev2 documents preserve common Operation Kernel, programmatic Read/Write/Protocol, snapshot/command/events, source-from-host and rendering-coupling limitations. HEAD 9e99a71 is historical evidence, not the present checkout status."
+    },
+    {
+      "topic": "Q2 Run/session/turn and lifecycle",
+      "result": "supported as design/verification requirements, not an implemented runtime claim",
+      "details": "Development §5.1/5.2 distinguishes followup void, Agent-wide whenIdle and per-turn terminal evidence; owned task lifecycle, lost receipt reconciliation and reconnect/cancel tests are required. No new implementation proof derives from these documents."
+    },
+    {
+      "topic": "Q3 immutable inputs and exclusion",
+      "result": "supported with explicit scope",
+      "details": "Development §4.1 lists a versioning-needed incremental input snapshot spec, §4.3 preserves sends-time snapshot and blocks old Session/summary/provenance from silently reintroducing excluded supply. Existing selected result text is allowed as selected content; no recursive parent authorization."
+    },
+    {
+      "topic": "artifact sources and revision boundaries",
+      "result": "adequately traceable with this receipt supplement",
+      "details": "Original report records tokens/revisions/sections; this checker receipt provides canonical docx URLs and verifies latest revision2. Source body date is 2026-09-28, distinct from Seeker read date2026-10-21 and checker read date2026-10-22."
+    }
+  ],
+  "nonBlockingNotes": [
+    "Coverage prose says Q1 appears in all four while source table marks startup Q1 as dash; treat startup as supporting scenario evidence, not a fourth independent protocol freeze.",
+    "Merged v11 package was not independently extracted and remains excluded from primary support.",
+    "Input version/hash fields and Run map are incremental design requirements, not a frozen implemented schema or accepted runtime capability.",
+    "Historical statements that probes/decoupling are pending must not override later KONT-KERNEL-001-r2 acceptance or new Desktop 0.2.1 compatibility work."
+  ],
+  "blockers": [],
+  "acceptanceScope": "historical Feishu design/reuse evidence only; no current engineering/runtime/product acceptance",
+  "notPerformed": [
+    "remote task status read directly from Aily service",
+    "merged v11 full extraction or version reconciliation",
+    "new provider credentials/account/scope authorization",
+    "third-party message send",
+    "model invocation",
+    "product/profile changes"
+  ],
+  "writtenAt": "2026-10-22T09:15:41.681Z"
+}

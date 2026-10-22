@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-22T09:25:55.213Z",
+  "inspection": {
+    "status": "accepted",
+    "kind": "path",
+    "name": "@kont/desktop-bundle",
+    "version": "0.1.0",
+    "bundle": true
+  },
+  "bundles": [],
+  "plugins": [],
+  "client": {
+    "present": false
+  },
+  "installedByController": false
+}

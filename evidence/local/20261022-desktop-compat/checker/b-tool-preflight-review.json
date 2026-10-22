@@ -1,0 +1,45 @@
+{
+  "task": "KONT-DESKTOP-003-COMPAT",
+  "role": "independent-checker",
+  "verdict": "CONDITIONAL_PREINSTALL_SAFE",
+  "scope": "B frozen tools and controlled integration plan only; not A candidate, installation, runtime or product acceptance",
+  "frozenFiles": 5,
+  "hashesMatched": 5,
+  "tests": {
+    "failed": 0,
+    "command": "node --test tests/desktop-host-client.test.mjs tests/desktop-host-archive.test.mjs",
+    "skipped": 0,
+    "exitCode": 0,
+    "passed": 9
+  },
+  "sourceFindings": [
+    "Installed ASAR main/preload/desktop-host source independently matched the extracted source hashes in preflight-plan.json.",
+    "Official dsh-app://app proxy adds Host authentication privately; client uses same-origin fetch and never reads token/cookie.",
+    "Public product bridge exposes no quit. CloseMainWindow hides; fixed main inspector app.quit uses official before-quit path, awaits backend close subject to official quit confirmation.",
+    "Client permits three management reads, explicitly enabled fixed-spec install, fixed registration receipt read. createDesktopManager exposes no caller-supplied RPC/eval/options.",
+    "safeManagerResult projects selected fields and compatibility requirements; raw package output/diagnostics/registry excluded. This is field projection, not arbitrary-string secret classification.",
+    "Archive parser is read-only and bounds packed paths/data; tests cover traversal and unpacked denial."
+  ],
+  "conditions": [
+    "Controller verifies and records renderer/main loopback listeners and target identities belong to this controlled instance. connectDesktopManager validates loopback WS but does not bind returned WS port to inventory port itself.",
+    "Only createDesktopManager fixed install options are within this plan; exported managerExpression accepts more official options but no expanded registry/build approval is authorized.",
+    "Packaged main inspector support must succeed without bypass; otherwise stop integration and report blocked.",
+    "Quit requested receipt is not exit proof. Confirm main/Host exit and natural lock release, restart same D profile, verify persistence and receipt lifecycle. Do not bypass any native task confirmation.",
+    "Temporary debug ports must close and ordinary Desktop startup must be restored. Bootstrap termination is not normal-shutdown evidence.",
+    "A v2 final frozen candidate requires separate Checker Gate before installation."
+  ],
+  "actionsNotPerformed": [
+    "No app start/stop/install",
+    "No profile edit",
+    "No credential/provider read",
+    "No model call",
+    "No screenshot or click",
+    "No product code changes"
+  ],
+  "unresolvedBlockingFindings": [],
+  "limitations": [
+    "No real Desktop CDP or main inspector session exercised by Checker in this preflight.",
+    "VM and fixture tests do not establish official Desktop load/slot registration/persistence/shutdown.",
+    "No broader product or UI acceptance."
+  ]
+}

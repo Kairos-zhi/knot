@@ -1,0 +1,11 @@
+const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex').toUpperCase();
+const files=['scripts/desktop-host-archive.mjs','tests/protocol-equivalence.test.mjs','tests/helpers/protocol-source-fixture.mjs','tests/fixtures/asset-write-server.upstream.mjs','tests/fixtures/asset-write-server.provenance.json','tests/fixtures/.gitattributes'];
+const prior=JSON.parse(fs.readFileSync('evidence/local/20261022-desktop-compat/maker/receipt.json','utf8'));
+const checked=[...prior.files,...prior.acceptedKernelComparison.filter(row=>!row.path.startsWith('tests/')).map(row=>({path:row.path,sha256:row.current}))];
+const unique=[...new Map(checked.map(row=>[row.path,row])).values()];
+const unchanged=unique.map(row=>({path:row.path,sha256:sha(row.path),unchanged:sha(row.path)===row.sha256}));
+if(unchanged.some(row=>!row.unchanged))throw Error('Previously frozen product/source changed; inspect before freezing');
+const receipt={task:'20261022-closeout',status:'MAKER_FROZEN_AWAITING_INDEPENDENT_CHECKER',files:files.map(p=>({path:p,sha256:sha(p)})),productComparison:unchanged,source:{repository:'https://github.com/Kairos-zhi/knot.git',commit:'08a2a5340edab920ce942173ba63b2c5bc369eb4',path:'knot-flowgram-app/scripts/asset-write-server.mjs',sha256:'91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246'},commands:{sourceTotal:16,currentSupportedNames:5,sharedDirect:['ping','knot.create','knot.update'],directInsteadOfQueued:['rope.connect','rope.disconnect'],unsupported:['knot.delete','rope.disconnectAll','chain.thread','chain.get','generate.grow','generate.fromSelection','tool.set','tool.get','focus.set','expand.set','pin.toggle'],additionalWorkspace:['worksite.create','worksite.activate','worksite.update','worksite.supply','presentation.open','presentation.update'],legacyAliases:['asset.add','scene.create']},tests:{focused:{passed:5,failed:0,skipped:0},regression:{passed:38,failed:0,skipped:0}},limits:['No full protocol equivalence claim','No model execution','No live Desktop/profile/original repository mutation','No commit/push']};
+fs.writeFileSync(path.join(__dirname,'receipt.json'),JSON.stringify(receipt,null,2));
+console.log(JSON.stringify({files:receipt.files,tests:receipt.tests,unchangedComparedFiles:unchanged.length}));

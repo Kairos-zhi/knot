@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-22T17:25:06.9289853+08:00",
+  "reason": "bootstrap owned empty desktop with temporary loopback debug transports; forced termination is NOT graceful-exit evidence",
+  "processes": [
+    {
+      "ProcessId": 55612,
+      "ParentProcessId": 61288,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 65184,
+      "ParentProcessId": 55612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 57824,
+      "ParentProcessId": 55612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 67868,
+      "ParentProcessId": 55612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 56440,
+      "ParentProcessId": 55612,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "knotStoreLockExisted": false
+}

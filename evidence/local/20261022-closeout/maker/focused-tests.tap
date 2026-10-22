@@ -1,0 +1,41 @@
+TAP version 13
+# Subtest: read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+ok 1 - read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+  ---
+  duration_ms: 12.3783
+  type: 'test'
+  ...
+# Subtest: pinned source server and KONT share deterministic direct command, document and SSE semantics
+ok 2 - pinned source server and KONT share deterministic direct command, document and SSE semantics
+  ---
+  duration_ms: 347.4802
+  type: 'test'
+  ...
+# {"commit":"08a2a5340edab920ce942173ba63b2c5bc369eb4","script":"knot-flowgram-app/scripts/asset-write-server.mjs","sha256":"91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246","assemblyPatches":[["const PORT = 3101;","const PORT = 0;"],["server.listen(PORT, () => {","server.listen(PORT, '127.0.0.1', () => {\\n  console.log('TEST_READY:' + server.address().port);"]],"assetFixture":{"assets":[],"edges":[],"note":""}}
+# Subtest: shared errors retain boundaries while authentication, validation and revision differences stay explicit
+ok 3 - shared errors retain boundaries while authentication, validation and revision differences stay explicit
+  ---
+  duration_ms: 291.7333
+  type: 'test'
+  ...
+# Subtest: source enumeration has 16 named commands; 3 direct equivalents, 2 changed execution modes and 11 unsupported
+ok 4 - source enumeration has 16 named commands; 3 direct equivalents, 2 changed execution modes and 11 unsupported
+  ---
+  duration_ms: 346.3316
+  type: 'test'
+  ...
+# Subtest: SSE cursor validation and cold-start reset are intentional differences, not normalized away
+ok 5 - SSE cursor validation and cold-start reset are intentional differences, not normalized away
+  ---
+  duration_ms: 513.5554
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1727.3593

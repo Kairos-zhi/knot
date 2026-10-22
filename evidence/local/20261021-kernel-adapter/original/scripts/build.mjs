@@ -1,0 +1,11 @@
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { stripTypeScriptTypes } from 'node:module';
+const root = new URL('../', import.meta.url);
+const output = new URL('packages/dsh-plugin/lib/', root);
+await mkdir(output, { recursive: true });
+const core = await readFile(new URL('vendor/knot/src/services/workspace-state.ts', root), 'utf8');
+await writeFile(new URL('workspace-state.js', output), stripTypeScriptTypes(core));
+const client = await readFile(new URL('packages/dsh-plugin/src/client.cjs', root), 'utf8');
+const css = await readFile(new URL('packages/dsh-plugin/src/style.css', root), 'utf8');
+await writeFile(new URL('client.js', output), `window.__ModuleLoader__.load({id:"@kont/dsh-plugin",factory:(require)=>{const exports={};const CSS=${JSON.stringify(css)};\n${client}\nreturn exports;}});\n`);
+console.log('Built KONT host core and DSH browser bundle.');

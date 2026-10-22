@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-10-21T19:20:24.6695848+08:00",
+  "state": "dispatched",
+  "remote_task_id": "7699079302595283968",
+  "remote_task_url": "https://aily.feishu.cn/tasks/7699079302595283968",
+  "bridge": {
+    "a2a_id": "a2a-20261021-kont-backend-feishu-002",
+    "card_path": "C:\\Users\\x2270\\hermes-sync\\tasks\\a2a-20261021-kont-backend-feishu-002.json",
+    "card_mtime": "2026-10-21T19:18:12.128274+08:00",
+    "remote_task_id": "7699079302595283968",
+    "remote_task_url": "https://aily.feishu.cn/tasks/7699079302595283968",
+    "role": "seeker:aily",
+    "state": "dispatched",
+    "dispatched_at": "2026-10-21T19:19:47.998895+08:00",
+    "next_gate": "remote_in_progress_then_claim"
+  },
+  "registry_entry": {
+    "task_id": "7699079302595283968",
+    "label": "Knot后端飞书既有方案补证",
+    "output_dir": "C:\\Users\\x2270\\hermes-sync\\knot-runs\\20261021-backend-feishu",
+    "registered_at": "2026-10-21T19:19:47+08:00",
+    "next_action": "poll_status",
+    "a2a_id": "a2a-20261021-kont-backend-feishu-002",
+    "a2a_role": "seeker:aily",
+    "card_path": "C:\\Users\\x2270\\hermes-sync\\tasks\\a2a-20261021-kont-backend-feishu-002.json",
+    "card_mtime": "2026-10-21 19:18:12"
+  },
+  "completion_verified": false,
+  "checker_accepted": false
+}

@@ -1,0 +1,153 @@
+{
+  "id": "KONT-DESKTOP-003-r2",
+  "createdAt": "2026-10-22T18:52:14.7025202+08:00",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5"
+    },
+    {
+      "path": "package.json",
+      "sha256": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33"
+    },
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "sha256": "64ECE206237BA3048E3ED75F275C1C967D6D300C48DC78F2E13DDB923C91D978"
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "sha256": "77ACB53882A6F240766C077A921B357441FA82FEE7ABB9859AB3A35DEA765930"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "sha256": "8FFB54C2AEBC043902F5746B835EB94E8BB7D7259EE37061BE53B2F3420B6758"
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sha256": "A4332BF747D1DA3B6BC4969044E7AFDA8BC1E20B3442FA489396ACA347EA67FB"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "sha256": "8EEF5A9CB17A390373E824584A499DF8C2FE5E41BDC4E943DE19F42E30325EB9"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "sha256": "37CB8E75F5DEFCDE35D4261A7722477C4FA309C3F7410921E1F7D98F4D6031BF"
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "sha256": "0CA5BB7766EB9483CA6051BFC5302256A27095AF7A237E85A4BCBF3220C5DECE"
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "sha256": "6FB84B5CD24636E277C3689D5E0973154EC859E23567FDCDCFA05001778F8597"
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "sha256": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "sha256": "2A919A08D28083925A044CF276E22B6EB1A040DE00F47FB34ABBB875D5ECEB3C"
+    },
+    {
+      "path": "scripts/desktop-host-archive.mjs",
+      "sha256": "6A6C3BEA4CEBC26525A22A00CC419C5CBDCE88848EAC1BC7A80078FFF869DE93"
+    },
+    {
+      "path": "scripts/desktop-host-client.mjs",
+      "sha256": "8EB7B5184626E94526A608911AFD14ADA6EDB79A8772676B727640C3CBC0B62C"
+    },
+    {
+      "path": "scripts/desktop-host-debug.mjs",
+      "sha256": "34F44ACABEF8E31DF6A00AA571B993BF90BE8F50C4135709D5BEE918F2258E0D"
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "sha256": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1"
+    },
+    {
+      "path": "start-kont.cmd",
+      "sha256": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB"
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "sha256": "5E893A60B8C664E493A9942D433CF96860A9AF0ED174114FA230C7E6571BA25F"
+    },
+    {
+      "path": "tests/desktop-compat-renderer-receipt.test.mjs",
+      "sha256": "68931604C3C53D1617D1A4D8C9DBE4F5290C8D4657141B6FF3E50F07F8A23A09"
+    },
+    {
+      "path": "tests/desktop-compat-worker.cjs",
+      "sha256": "5A9E03CEAFB9B90734DF9B64D0AF22F4DB4F317405D50B5A270B742A9005B43D"
+    },
+    {
+      "path": "tests/desktop-compat.test.mjs",
+      "sha256": "6EC953DA756725EA8606743E924657B2997CD64325B268FFB83183F4D9B7FE38"
+    },
+    {
+      "path": "tests/desktop-host-archive.test.mjs",
+      "sha256": "82F46C0E525124FFC8891279E8E22550A2558BEDACCC7D7A38D473BCD2D0046F"
+    },
+    {
+      "path": "tests/desktop-host-client.test.mjs",
+      "sha256": "C9152B139F6CFCF019488D418CE0F38903AB6DABE957E960BDF81C1D944B503D"
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "sha256": "A8313EB9E9CADB20F7C77F33E7A8636F8E65220999A898736A98DD1038B56699"
+    },
+    {
+      "path": "tests/kernel.test.mjs",
+      "sha256": "2B0222F6A995483F29BEBDA1113F37F4CBD57637E9931F12387B27F51789FCFC"
+    },
+    {
+      "path": "tests/plugin-lifecycle.test.mjs",
+      "sha256": "8B1A223F7A1BA4C3F48AA47BDF4C7207EEC693407C8CAE7399EDF1791A0E9A82"
+    },
+    {
+      "path": "tests/protocol.test.mjs",
+      "sha256": "A44070BAC8335F43F8367E84FE937595141F458C3878A9C9BD1A48212103BD44"
+    },
+    {
+      "path": "tests/runtime-draft.test.mjs",
+      "sha256": "DAE5D6428A699B4F5805849EE1552FFC41C5A152F4BBB0B470FB06ACFD70ABB7"
+    },
+    {
+      "path": "tests/runtime-launcher.test.mjs",
+      "sha256": "11739F4AD37F3ECB028372E26E2F4DFB0B1D0B25E667F5C78E178DC65AA9E393"
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "sha256": "BAB423C5B410E5E04CB08A3553568DACD752D35CC7CFA53D007FBFBC94FD23DD"
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "sha256": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3"
+    },
+    {
+      "path": "vendor/knot/src/services/asset-persistence.ts",
+      "sha256": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72"
+    },
+    {
+      "path": "vendor/knot/src/services/asset-sync.ts",
+      "sha256": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773"
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "sha256": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699"
+    }
+  ],
+  "tests": {
+    "exitCode": 0,
+    "failed": 0,
+    "passed": 34,
+    "skipped": 0
+  },
+  "officialVersion": "0.2.1-rc.2",
+  "officialAsarSha256": "47874618BF5B3011FCAAC10CD4C85F69DA333E70D4F99B921207C78D0999512A",
+  "realDesktopSeq": 8,
+  "status": "independent-final-runtime-check-pending",
+  "candidateScope": "compatibility/package completeness/renderer registration; shared kernel backend unchanged"
+}

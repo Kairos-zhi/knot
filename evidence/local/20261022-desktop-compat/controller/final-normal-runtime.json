@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-22T18:51:12.4581235+08:00",
+  "normalLaunch": true,
+  "debugListenerCount": 0,
+  "debugFlagsPresent": false,
+  "owned": [
+    {
+      "ProcessId": 70324,
+      "ParentProcessId": 52496,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 72140,
+      "ParentProcessId": 70324,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 72080,
+      "ParentProcessId": 70324,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 73284,
+      "ParentProcessId": 70324,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    },
+    {
+      "ProcessId": 61668,
+      "ParentProcessId": 70324,
+      "ExecutablePath": "D:\\DSH-Desktop\\app\\DeepSeek Harness.exe"
+    }
+  ],
+  "hostListener": {
+    "LocalAddress": "127.0.0.1",
+    "LocalPort": 6755,
+    "OwningProcess": 61668
+  },
+  "dataDirectory": "D:\\DSH-Desktop\\kont-data",
+  "lockExists": true,
+  "stateSha256": "E0359BB66A44A41C082AB12C845CBEA6A70435E5C9D6F7BC641277A16C3C79AC",
+  "exeSha256": "9C789407850773CE7D914A3EC0476852BF1CEEA69789D8CCF4E39BE953F4BF52"
+}

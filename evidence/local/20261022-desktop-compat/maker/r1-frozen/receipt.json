@@ -1,0 +1,216 @@
+{
+  "task": "KONT-DESKTOP-003-A",
+  "status": "FROZEN_FOR_INDEPENDENT_CHECKER",
+  "officialSource": {
+    "repository": "https://github.com/deepseek-ai/deepseek-harness",
+    "tag": "dsh-v0.2.1-rc.2",
+    "commit": "687f282e8625c6b8d11ff58211a90524be2e4317"
+  },
+  "runtime": {
+    "version": "0.2.1-rc.2",
+    "asar": "D:/DSH-Desktop/app/resources/app.asar",
+    "asarSha256": "47874618BF5B3011FCAAC10CD4C85F69DA333E70D4F99B921207C78D0999512A",
+    "cordis": "4.0.5",
+    "pnpm": "11.28.5"
+  },
+  "files": [
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sha256": "A4332BF747D1DA3B6BC4969044E7AFDA8BC1E20B3442FA489396ACA347EA67FB"
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "sha256": "77ACB53882A6F240766C077A921B357441FA82FEE7ABB9859AB3A35DEA765930"
+    },
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "sha256": "64ECE206237BA3048E3ED75F275C1C967D6D300C48DC78F2E13DDB923C91D978"
+    },
+    {
+      "path": "tests/desktop-compat.test.mjs",
+      "sha256": "6EC953DA756725EA8606743E924657B2997CD64325B268FFB83183F4D9B7FE38"
+    },
+    {
+      "path": "tests/desktop-compat-worker.cjs",
+      "sha256": "5A9E03CEAFB9B90734DF9B64D0AF22F4DB4F317405D50B5A270B742A9005B43D"
+    }
+  ],
+  "acceptedKernelComparison": [
+    {
+      "path": ".gitignore",
+      "previous": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5",
+      "current": "941AC22EF5F558E39355D948160ADABD33778AF210285C32BCEB6A7A573F1EE5",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "previous": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33",
+      "current": "B579663006E3113B4E93A6D6EAA89F98AE1489199620169F69CC5E5BA7963D33",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "previous": "906849A4739FC5968C5E3C4C6E49CE985BA249169C73A6E53FBDE69214EF46F0",
+      "current": "A4332BF747D1DA3B6BC4969044E7AFDA8BC1E20B3442FA489396ACA347EA67FB",
+      "unchanged": false
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "previous": "F0783DE7A77C1BDE9E647D6B2D01F7ED51703BDCEB1E6C3FF45E57694BB9425E",
+      "current": "F0783DE7A77C1BDE9E647D6B2D01F7ED51703BDCEB1E6C3FF45E57694BB9425E",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "previous": "37CB8E75F5DEFCDE35D4261A7722477C4FA309C3F7410921E1F7D98F4D6031BF",
+      "current": "37CB8E75F5DEFCDE35D4261A7722477C4FA309C3F7410921E1F7D98F4D6031BF",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "previous": "0CA5BB7766EB9483CA6051BFC5302256A27095AF7A237E85A4BCBF3220C5DECE",
+      "current": "0CA5BB7766EB9483CA6051BFC5302256A27095AF7A237E85A4BCBF3220C5DECE",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "previous": "6FB84B5CD24636E277C3689D5E0973154EC859E23567FDCDCFA05001778F8597",
+      "current": "6FB84B5CD24636E277C3689D5E0973154EC859E23567FDCDCFA05001778F8597",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "previous": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8",
+      "current": "A275653E20B64DDF14A0EABAC48A48B5C1445BF2A8F2D5C440B74FD60C7084E8",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/build.mjs",
+      "previous": "2A919A08D28083925A044CF276E22B6EB1A040DE00F47FB34ABBB875D5ECEB3C",
+      "current": "2A919A08D28083925A044CF276E22B6EB1A040DE00F47FB34ABBB875D5ECEB3C",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/dev.mjs",
+      "previous": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1",
+      "current": "260890489BC888B3358F2EBB156CF738AEFFC521BC6E31FAA7C1C815C03054C1",
+      "unchanged": true
+    },
+    {
+      "path": "start-kont.cmd",
+      "previous": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB",
+      "current": "97D5480645E4FAE6BF2395718AA7D6DC40518A243F802F70607EA566269088FB",
+      "unchanged": true
+    },
+    {
+      "path": "tests/client-bundle.test.mjs",
+      "previous": "5E893A60B8C664E493A9942D433CF96860A9AF0ED174114FA230C7E6571BA25F",
+      "current": "5E893A60B8C664E493A9942D433CF96860A9AF0ED174114FA230C7E6571BA25F",
+      "unchanged": true
+    },
+    {
+      "path": "tests/http.test.mjs",
+      "previous": "A8313EB9E9CADB20F7C77F33E7A8636F8E65220999A898736A98DD1038B56699",
+      "current": "A8313EB9E9CADB20F7C77F33E7A8636F8E65220999A898736A98DD1038B56699",
+      "unchanged": true
+    },
+    {
+      "path": "tests/kernel.test.mjs",
+      "previous": "2B0222F6A995483F29BEBDA1113F37F4CBD57637E9931F12387B27F51789FCFC",
+      "current": "2B0222F6A995483F29BEBDA1113F37F4CBD57637E9931F12387B27F51789FCFC",
+      "unchanged": true
+    },
+    {
+      "path": "tests/plugin-lifecycle.test.mjs",
+      "previous": "8B1A223F7A1BA4C3F48AA47BDF4C7207EEC693407C8CAE7399EDF1791A0E9A82",
+      "current": "8B1A223F7A1BA4C3F48AA47BDF4C7207EEC693407C8CAE7399EDF1791A0E9A82",
+      "unchanged": true
+    },
+    {
+      "path": "tests/protocol.test.mjs",
+      "previous": "A44070BAC8335F43F8367E84FE937595141F458C3878A9C9BD1A48212103BD44",
+      "current": "A44070BAC8335F43F8367E84FE937595141F458C3878A9C9BD1A48212103BD44",
+      "unchanged": true
+    },
+    {
+      "path": "tests/runtime-draft.test.mjs",
+      "previous": "DAE5D6428A699B4F5805849EE1552FFC41C5A152F4BBB0B470FB06ACFD70ABB7",
+      "current": "DAE5D6428A699B4F5805849EE1552FFC41C5A152F4BBB0B470FB06ACFD70ABB7",
+      "unchanged": true
+    },
+    {
+      "path": "tests/runtime-launcher.test.mjs",
+      "previous": "11739F4AD37F3ECB028372E26E2F4DFB0B1D0B25E667F5C78E178DC65AA9E393",
+      "current": "11739F4AD37F3ECB028372E26E2F4DFB0B1D0B25E667F5C78E178DC65AA9E393",
+      "unchanged": true
+    },
+    {
+      "path": "tests/worksite.test.mjs",
+      "previous": "BAB423C5B410E5E04CB08A3553568DACD752D35CC7CFA53D007FBFBC94FD23DD",
+      "current": "BAB423C5B410E5E04CB08A3553568DACD752D35CC7CFA53D007FBFBC94FD23DD",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/knot-model.ts",
+      "previous": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3",
+      "current": "7EBDFE583FE308303CFCF7998F5B9788F7427ECE26BA0A8FCD31714695A0EAF3",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-persistence.ts",
+      "previous": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72",
+      "current": "95EBE71ED73FE07577D241C32C4EDE268142CA3ED99F5D93AD3BF5F25A16AD72",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/asset-sync.ts",
+      "previous": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773",
+      "current": "8B2622AF993A5A0A6528381D855F0EF77AD62045176BBC4E8DCB266391C99773",
+      "unchanged": true
+    },
+    {
+      "path": "vendor/knot/src/services/workspace-state.ts",
+      "previous": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699",
+      "current": "EFD9F11009698F69F6F3523D0DF1065BFDB2D56A809D39E8C03A1A416237F699",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "previous": "6B792E18C4381FD8A8D039BDB0598BC42B4E62095C14850CF937AD598BD9646D",
+      "current": "6B792E18C4381FD8A8D039BDB0598BC42B4E62095C14850CF937AD598BD9646D",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/knot-model.js",
+      "previous": "CC941F6A79C0F06379679FAAED3FB4AD3823E0E52DC8E4FC35228E379C3BF8E9",
+      "current": "CC941F6A79C0F06379679FAAED3FB4AD3823E0E52DC8E4FC35228E379C3BF8E9",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/snapshot.js",
+      "previous": "7EEC9B84F108E0412E95D82C1CF57B4EE6D8A2DA4B28320A75292469BF1BEA94",
+      "current": "7EEC9B84F108E0412E95D82C1CF57B4EE6D8A2DA4B28320A75292469BF1BEA94",
+      "unchanged": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/workspace-state.js",
+      "previous": "E52CF42CFCD4A6B2366D734074C31A05F11FF106073FF8EA0E9DA415E0C304A4",
+      "current": "E52CF42CFCD4A6B2366D734074C31A05F11FF106073FF8EA0E9DA415E0C304A4",
+      "unchanged": true
+    }
+  ],
+  "tests": {
+    "command": "npm test",
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "desktopCompatGroups": 2
+  },
+  "limitations": [
+    "No official Desktop profile installation or renderer boot was performed by Maker A.",
+    "Browser module loader/slot declarations checked against actual shipped client source; actual DOM rendering is outside these tests.",
+    "Connection uses the actual shipped authentication implementation with an isolated in-memory credential provider; no live credentials are read.",
+    "Supported local activation spec is file:absolute-wrapper-directory; bare absolute paths link and omit recursive dependency installation.",
+    "Wrapper tarball distribution is not claimed; sibling file dependency is validated for directory installation."
+  ]
+}

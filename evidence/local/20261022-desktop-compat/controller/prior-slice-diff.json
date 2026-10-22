@@ -1,0 +1,11 @@
+{
+  "changed": [
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "prior": "906849A4739FC5968C5E3C4C6E49CE985BA249169C73A6E53FBDE69214EF46F0",
+      "current": "A4332BF747D1DA3B6BC4969044E7AFDA8BC1E20B3442FA489396ACA347EA67FB"
+    }
+  ],
+  "compared": 23,
+  "observedAt": "2026-10-22T17:19:20.3622819+08:00"
+}

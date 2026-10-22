@@ -1,0 +1,2 @@
+# Candidates and evidence are SHA256-addressed; retain exact checked bytes in Git.
+* -text

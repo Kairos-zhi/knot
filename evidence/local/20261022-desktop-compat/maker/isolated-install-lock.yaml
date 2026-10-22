@@ -1,0 +1,33 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@kont/desktop-bundle':
+        specifier: file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/desktop-bundle
+        version: file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/desktop-bundle
+
+packages:
+
+  '@kont/desktop-bundle@file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/desktop-bundle':
+    resolution: {directory: C:/Users/x2270/Documents/ChatGPT/KONT/packages/desktop-bundle, type: directory}
+    peerDependencies:
+      '@deepseek-ai/dsh': 0.1.7-rc.2 || 0.2.1-rc.2
+
+  '@kont/dsh-plugin@file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/dsh-plugin':
+    resolution: {directory: C:/Users/x2270/Documents/ChatGPT/KONT/packages/dsh-plugin, type: directory}
+    peerDependencies:
+      '@deepseek-ai/dsh': 0.1.7-rc.2 || 0.2.1-rc.2
+
+snapshots:
+
+  '@kont/desktop-bundle@file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/desktop-bundle':
+    dependencies:
+      '@kont/dsh-plugin': file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/dsh-plugin
+
+  '@kont/dsh-plugin@file:C:/Users/x2270/Documents/ChatGPT/KONT/packages/dsh-plugin': {}

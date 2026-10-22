@@ -1,0 +1,10 @@
+{
+  "packageVersion": "0.2.1-rc.2",
+  "releaseVersion": "0.2.1-rc.2",
+  "hostProtocolVersion": 4,
+  "nodeVersion": "24.21.0",
+  "pnpmVersion": "11.28.5",
+  "platform": "win32",
+  "arch": "x64",
+  "method": "Installed signed Electron RunAsNode fs.readFileSync of app.asar/package.json and dsh/desktop-runtime.json"
+}
