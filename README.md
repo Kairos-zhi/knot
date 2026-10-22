@@ -62,4 +62,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-006](docs/tasks/KONT-RUN-006.md) 将观察工厂绑定插件同一存储，提供宿主内部 `ctx.kontRunObserver.observe(runId)`；配置不能覆盖Run读取。默认拒绝，卸载取消在途观察、等句柄释放再关闭存储。只有开发源码接缝，尚未部署在用桌面；本卡只做受影响专项验证，不追溯改写前述全量51项结果。
 
+[KONT-RUN-007](docs/tasks/KONT-RUN-007.md) 正式装配仅接受普通JSON/YAML的 `readAudit: { enabled: true, grants: [] }`；默认关闭，空白名单不读会话。授权逐项绑定runId/requestId/sessionId/inputSha256，可另给approvedRequestSha256；不接受函数、类、路径或配置自报版本。实际版本和Session来自宿主包服务，持久化来自宿主服务；隔离验证中的包解析base有显式适配，尚未证明在用Desktop profile装配／部署。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

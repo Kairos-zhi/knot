@@ -1,0 +1,30 @@
+{
+  "task": "KONT-RUN-007",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/read-audit-config.mjs",
+      "bytes": 5197,
+      "sha256": "a2bf191fd67172b0ced563451741e19773c6ba64f57ad88149381bc9fc830447"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "bytes": 9541,
+      "sha256": "1015631994d123b6f62f9932801a47a36106dc35ed83b832932be9b7f9c1d8fe"
+    },
+    {
+      "path": "tests/read-audit-config.test.mjs",
+      "bytes": 5770,
+      "sha256": "6b482bf588866336118afc761b6ddabb842d37b3a1ba2caa54501ce3689ed392"
+    },
+    {
+      "path": "tests/run-read-official-worker.cjs",
+      "bytes": 11739,
+      "sha256": "e7ad2e16dd364c7d2ec58fb90fe26a72584ffe2e136c5cef38739d5edcf419e1"
+    },
+    {
+      "path": "tests/run-read-official.test.mjs",
+      "bytes": 1783,
+      "sha256": "54ab4a6fe06c520d5e9f5dbcc671a0fc27a0887070b507ef8ebb0d0fbc856135"
+    }
+  ]
+}

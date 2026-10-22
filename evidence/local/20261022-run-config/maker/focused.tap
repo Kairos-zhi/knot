@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 1 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 54.0859
+  type: 'test'
+  ...
+# Subtest: readAudit accepts only JSON data, freezes a detached permission snapshot and rejects function/Class/path/schema extensions
+ok 2 - readAudit accepts only JSON data, freezes a detached permission snapshot and rejects function/Class/path/schema extensions
+  ---
+  duration_ms: 6.6429
+  type: 'test'
+  ...
+# Subtest: disabled readAudit checks no host packages or services; enabled dependencies are explicit and missing capability fails fast
+ok 3 - disabled readAudit checks no host packages or services; enabled dependencies are explicit and missing capability fails fast
+  ---
+  duration_ms: 1.1821
+  type: 'test'
+  ...
+# Subtest: host metadata versions/names/paths are refused without session I/O; grants require all four exact fields
+ok 4 - host metadata versions/names/paths are refused without session I/O; grants require all four exact fields
+  ---
+  duration_ms: 24.693
+  type: 'test'
+  ...
+# Subtest: host binding registers on real Cordis, defaults to no read, and retained references reject after disposal
+ok 5 - host binding registers on real Cordis, defaults to no read, and retained references reject after disposal
+  ---
+  duration_ms: 39.4796
+  type: 'test'
+  ...
+# Subtest: host readRun override cannot replace the plugin store; external cancellation still propagates
+ok 6 - host readRun override cannot replace the plugin store; external cancellation still propagates
+  ---
+  duration_ms: 19.4864
+  type: 'test'
+  ...
+# Subtest: async service removal is awaited and rejected removal is sanitized
+ok 7 - async service removal is awaited and rejected removal is sanitized
+  ---
+  duration_ms: 0.6371
+  type: 'test'
+  ...
+# Subtest: real Cordis service collision releases the plugin store lock even when registration fails
+ok 8 - real Cordis service collision releases the plugin store lock even when registration fails
+  ---
+  duration_ms: 13.0412
+  type: 'test'
+  ...
+# Subtest: actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+ok 9 - actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+  ---
+  duration_ms: 408.7546
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 741.7625

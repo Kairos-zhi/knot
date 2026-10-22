@@ -1,0 +1,54 @@
+{
+  "task": "KONT-RUN-007",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "at": "2026-10-22T14:14:48.789Z",
+  "baseCommit": "ae972e5",
+  "manifest": "manifest.json",
+  "report": "REPORT.md",
+  "validation": {
+    "build": {
+      "command": "node scripts/build.mjs",
+      "exitCode": 0,
+      "evidence": "build.log"
+    },
+    "focused": {
+      "command": "node --test tests/read-audit-config.test.mjs tests/run-observer-binding.test.mjs tests/plugin-lifecycle.test.mjs tests/run-read-official.test.mjs",
+      "exitCode": 0,
+      "total": 9,
+      "pass": 9,
+      "fail": 0,
+      "skip": 0,
+      "evidence": "focused.tap"
+    },
+    "fullSuiteRun": false
+  },
+  "scope": "Serializable readAudit config to actual host package metadata/Session/persistence and existing binding",
+  "officialLibraryFixture": {
+    "fixture": "official-library-generated-synthetic-session",
+    "packageOf": "actual official PluginPackages API",
+    "resolutionBase": "ASAR anchor substitution only",
+    "actualDesktopProfileResolution": false,
+    "realRunCompleted": false
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "modelRequests": 0,
+    "actualUserSessionsRead": 0,
+    "credentialsRead": false,
+    "installedDesktopChanged": false,
+    "profileChanged": false,
+    "uiChanged": false,
+    "vendorChanged": false,
+    "oldHistoricalManifestsChanged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false
+  },
+  "remaining": [
+    "Independent Checker/Gate",
+    "Actual production Desktop profile/manager configuration",
+    "Real model Run and human acceptance"
+  ]
+}

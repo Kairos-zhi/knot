@@ -15,7 +15,10 @@ test('actual official Electron Session + JSONL synthetic fixture persists, point
   assert.equal(result.executionAuthorized, false); assert.equal(result.modelRequests, 0);
   assert.equal(result.realRunCompleted, false); assert.equal(result.knotBytesUnchanged, true);
   assert.equal(result.bindingChecks.samePluginStore, true); assert.equal(result.bindingChecks.registrationReads, 0);
-  assert.equal(result.bindingChecks.readRunOverrideIgnored, true); assert.equal(result.bindingChecks.serviceRemoved, true);
+  assert.equal(result.bindingChecks.functionConfigRejected, true); assert.equal(result.bindingChecks.serializedConfigLoaded, true);
+  assert.equal(result.bindingChecks.configSnapshotDetached, true);
+  assert.equal(result.bindingChecks.serviceRemoved, true);
   assert.equal(result.bindingChecks.inFlightCancelled, true); assert.equal(result.bindingChecks.handleCloseBeforeStoreClose, true);
   assert.equal(result.bindingChecks.retainedReferenceClosed, true);
+  assert.equal(result.packageResolution.actualDesktopProfileResolution, false);
 });

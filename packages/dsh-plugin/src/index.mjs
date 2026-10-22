@@ -3,6 +3,8 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { KontStore, KontError } from './store.mjs';
 import { bindRunObserver } from './run-observer-binding.mjs';
+import { parseReadAuditConfig, resolveReadAudit, readAuditInject } from './read-audit-config.mjs';
+import { DshReadError } from './dsh-run-read.mjs';
 export const name = 'kont-worksite';
 export const inject = ['webServer', 'connection'];
 
@@ -118,6 +120,7 @@ export function createHandler(store, connection) {
   };
 }
 export async function apply(ctx, config = {}) {
+  const audit = parseReadAuditConfig(config);
   if (!process.env.KONT_DATA_DIR) throw new Error('KONT_DATA_DIR must name an isolated data directory');
   const dataDirectory = resolve(process.env.KONT_DATA_DIR);
   await mkdir(dataDirectory, { recursive: true });
@@ -142,7 +145,17 @@ export async function apply(ctx, config = {}) {
     try { await observerBinding?.dispose(); } finally { await store.close(); }
   };
   ctx.effect(() => disposeStorage, 'kont-worksite.storage');
-  try { observerBinding = bindRunObserver(ctx, store, config); }
+  try {
+    if (audit.enabled) {
+      if (readAuditInject.some(name => !ctx.get(name))) throw new DshReadError('DSH_HOST_CAPABILITY_MISSING');
+      const dependency = ctx.inject(readAuditInject, async scope => {
+        const binding = bindRunObserver(scope, store, await resolveReadAudit(scope, audit));
+        observerBinding = binding;
+        scope.effect(() => () => binding.dispose(), 'kont-worksite.read-audit');
+      });
+      await dependency.await();
+    } else observerBinding = bindRunObserver(ctx, store);
+  }
   catch (error) { await disposeStorage(); throw error; }
   ctx.effect(() => ctx.webServer.register({ kind: 'exact', path: '/kont/api/workspace', handler: createHandler(store, ctx.connection) }));
   for (const path of ['/kont/snapshot', '/kont/command', '/kont/events']) ctx.effect(() => ctx.webServer.register({ kind: 'exact', path, handler: protocol }));

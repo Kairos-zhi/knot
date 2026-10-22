@@ -27,6 +27,7 @@ async function corpus(dir) {
   const { Context } = official('@deepseek-ai/cordis');
   const { Session } = official('@deepseek-ai/dsh-session');
   const persistencePlugin = official('@deepseek-ai/dsh-session-persistence-jsonl');
+  const { PluginPackages } = official('@deepseek-ai/dsh-app-boot');
   const importLocal = file => import(pathToFileURL(resolve(file)).href);
   const { runHash, runPromptText } = await importLocal('packages/dsh-plugin/src/run.mjs');
   const { createDshRunObserver } = await importLocal('packages/dsh-plugin/src/dsh-run-read.mjs');
@@ -34,6 +35,8 @@ async function corpus(dir) {
   const dir = await mkdtemp('D:/Temp/kont-run-read-official-');
   assert.ok(resolve(dir).startsWith(resolve('D:/Temp/kont-run-read-official-')), 'fixture cleanup must stay in its dedicated Temp prefix');
   const ctx = new Context(); let store, pluginCtx, releaseRead, releaseClose;
+  const metadataCtx = new Context();
+  const actualPackages = new PluginPackages(metadataCtx);
   const previousDirectory = process.env.KONT_DATA_DIR, previousToken = process.env.KONT_AGENT_TOKEN;
   try {
     const prepared = await prepareSyntheticReadRun(join(dir, 'knot', 'worksites.json'));
@@ -105,17 +108,23 @@ async function corpus(dir) {
     pluginCtx.provide('connection', { requestRejection: () => undefined });
     pluginCtx.provide('webServer', { register: () => () => {} });
     const { apply: applyKont } = await importLocal('packages/dsh-plugin/src/index.mjs');
-    let attemptedOverride = false;
+    // Actual packageOf implementation, with only the parentURL adapted to this
+    // ASAR installation anchor. This is not a real Desktop profile resolver run.
+    pluginCtx.provide('pluginPackages', { packageOf(specifier) {
+      return actualPackages.packageOf(specifier, pathToFileURL(anchor).href);
+    } });
+    pluginCtx.provide('sessionPersistence', readOnlyPersistence);
+    await assert.rejects(applyKont(pluginCtx, { readRun() {} }), { code: 'DSH_CONFIG_INVALID' });
     const opensBeforeApply = opens;
-    await applyKont(pluginCtx, { hostVersion, persistence: readOnlyPersistence, Session,
-      authorizeRead: asked => ({ allowed: true, binding: asked, approvedRequestSha256: expectedRequestSha256 }),
-      readRun() { attemptedOverride = true; throw new Error('host cannot replace plugin store'); } });
+    const serializedConfig = JSON.parse(JSON.stringify({ readAudit: { enabled: true,
+      grants: [{ ...binding, approvedRequestSha256: expectedRequestSha256 }] } }));
+    await applyKont(pluginCtx, serializedConfig);
+    serializedConfig.readAudit.grants[0].inputSha256 = 'f'.repeat(64);
     assert.equal(opens, opensBeforeApply, 'registration must not read a Session');
     const registrationReads = opens - opensBeforeApply;
     const bound = pluginCtx.kontRunObserver;
     const boundResult = await bound.observe(run.runId);
     assert.equal(boundResult.requestSha256, expectedRequestSha256); assert.equal(boundResult.executionAuthorized, false);
-    assert.equal(attemptedOverride, false);
     assert.deepEqual(await readFile(store.file), knotBefore);
     holdRead = true;
     const startedReading = new Promise(resolve => { readStarted = resolve; });
@@ -142,13 +151,15 @@ async function corpus(dir) {
       persistedFiles: before.length, events: events.length, expectedRequestSha256, actualRequestSha256: approved.requestSha256,
       logSha256: approved.logSha256, observeCalls: opens, handlesClosed: closes, physicalBytesUnchanged: true,
       knotBytesUnchanged: true, executionAuthorized: false, modelRequests: 0, realRunCompleted: false,
-      bindingChecks: { samePluginStore: true, readRunOverrideIgnored: !attemptedOverride, registrationReads,
+      bindingChecks: { samePluginStore: true, functionConfigRejected: true, serializedConfigLoaded: true, configSnapshotDetached: true, registrationReads,
         retainedReferenceClosed: true, inFlightCancelled: true, handleCloseBeforeStoreClose: true, serviceRemoved: true },
+      packageResolution: { implementation: 'actual-official-PluginPackages.packageOf', parentURL: 'isolated-ASAR-anchor-substitution',
+        actualDesktopProfileResolution: false },
       statuses: [missing.status, mismatch.status, approved.status] };
     console.log(JSON.stringify(result));
   } finally {
     releaseRead?.(); releaseClose?.();
-    await pluginCtx?.fiber.dispose(); await store?.close(); await ctx.fiber.dispose();
+    await pluginCtx?.fiber.dispose(); await store?.close(); await ctx.fiber.dispose(); await metadataCtx.fiber.dispose();
     if (previousDirectory === undefined) delete process.env.KONT_DATA_DIR; else process.env.KONT_DATA_DIR = previousDirectory;
     if (previousToken === undefined) delete process.env.KONT_AGENT_TOKEN; else process.env.KONT_AGENT_TOKEN = previousToken;
     await rm(dir, { recursive: true, force: true });

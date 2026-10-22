@@ -17,6 +17,7 @@
 | KONT-RUN-004 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | N/checker/final-review.json；44/44＋11项；仅离线准备／关联投影／原子回流，无实际Run／桌面部署 |
 | KONT-RUN-005 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | O/checker/final-review.json；51/51＋5项；官方库合成会话点读／窄请求审计，不执行模型或自动回流 |
 | KONT-RUN-006 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | P/checker/final-review.json；build＋focused12/12；同store绑定／卸载屏障，不新增HTTP或执行入口 |
+| KONT-RUN-007 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Q/checker/final-review.json；build＋focused9/9；JSON只读配置装配候选，不含真实profile解析／部署 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -26,3 +27,5 @@ CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继�
 RUN-005 Gate：ACCEPT_DSH_READ_AUDIT_LIMITED；当前11＝9限定接受＋2关闭，完整产品接受0。之随后要求“小步快跑”：后续每卡聚焦一个可验证改动，Maker／Checker不合并，够用即收口，不重复扩大验证。
 当前RUN-006（之“推进”）：证据P=evidence/local/20261022-run-host；只做宿主内部绑定，聚焦测试与独立复核；不扩模型／部署权限。
 RUN-006 Gate：ACCEPT_HOST_OBSERVER_BINDING_LIMITED；当前12＝10限定接受＋2关闭，完整产品接受0；未重跑全量，旧51项为历史结果。
+当前RUN-007（之“快步前进”）：Q=evidence/local/20261022-run-config；只做正式装配配置，聚焦验证，无模型／在用部署权限增量。
+RUN-007 Gate：ACCEPT_SERIALIZABLE_READ_CONFIG_LIMITED；当前13＝11限定接受＋2关闭，完整产品接受0；实际库测试有ASAR anchor解析base适配，非真实Desktop profile部署，未重跑全量。
