@@ -1,0 +1,41 @@
+{
+  "task": "KONT-RUN-004",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "at": "2026-10-22T11:22:29.316Z",
+  "baseCommit": "3535c393bfabf1e5628e4750fa2c17acb610d116",
+  "candidateManifest": "manifest.json",
+  "report": "REPORT.md",
+  "tests": {
+    "command": "npm test",
+    "exitCode": 0,
+    "total": 44,
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "newGroups": 6,
+    "evidence": "test-results.tap"
+  },
+  "boundaries": {
+    "dshInvocations": 0,
+    "modelRequests": 0,
+    "networkPromptCancelFollowCalls": 0,
+    "desktopInstalledBytesChanged": false,
+    "vendorChanged": false,
+    "uiChanged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false,
+    "syntheticEventsOnly": true,
+    "realRunCompleted": false,
+    "sourceProtocolSupportedNames": "5/16 unchanged; run.prepare is a Knot extension"
+  },
+  "scope": "Durable prepared identity/input plus pure DSH prompt and internal atomic return contract; only fresh first single-user text/tool-free synthetic logs tested; no connected DSH adapter or model execution",
+  "remaining": [
+    "Independent Checker and Gate",
+    "DSH session authenticity/model/cost/permission and full model-context authorization",
+    "Actual runtime transport/cancellation/recovery and desktop deployment",
+    "General multi-turn/context/multimodal/tool outputs and production limits"
+  ]
+}

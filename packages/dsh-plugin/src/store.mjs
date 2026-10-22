@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { createDefaultWorkspace } from '../lib/workspace-state.js';
 import { getBlocks } from '../lib/knot-model.js';
 import { applyCommand, normalizeSnapshot, KontError, reject, isRecord, text } from './kernel.mjs';
+import { prepareRun, returnRun, validateRuns, runHash } from './run.mjs';
 export { KontError };
 
 const fresh = () => ({ schemaVersion: 4, revision: 0, seq: 0, assets: [], edges: [], workspace: createDefaultWorkspace(), titles: { legacy: '第一个工作现场' } });
@@ -53,7 +54,7 @@ export class KontStore {
       if (!Object.hasOwn(titles, site.id)) Object.defineProperty(titles, site.id, { value: site.id, enumerable: true, writable: true, configurable: true });
       text(titles[site.id], 200, '现场标题');
     }
-    return { ...snapshot, revision, seq, titles };
+    return { ...snapshot, revision, seq, titles, ...(value.runs !== undefined ? { runs: validateRuns(value.runs) } : {}) };
   }
   read() { return clone(this.#state); }
   snapshot() { const { revision, seq, titles, ...snapshot } = this.read(); return snapshot; }
@@ -77,11 +78,20 @@ export class KontStore {
       return { ok: false, error: { code: 'STORAGE_ERROR', message: '现场保存失败，原有数据保留' } };
     }
   }
-  #commit(request, source, legacyCommand = false, imported = null) {
+  /** Internal adapter entry only; no HTTP command dispatches here. Evidence authenticity
+   * is the future adapter's responsibility. Current tests supply labelled synthetic logs. */
+  returnRun(runId, evidence, source = 'runtime:dsh') {
+    return this.#commit({ commands: [{ runId, evidence }] }, source, true, null, true).then(result => result.results[0]);
+  }
+  #commit(request, source, legacyCommand = false, imported = null, internalReturn = false) {
     if (this.#closing) return Promise.reject(new KontError('STORE_CLOSED', '现场存储已关闭', 503));
     // Freeze the call's payload before yielding to the writer queue. The
     // snapshot validator rejects accessors/non-JSON values on the actual model.
-    try { request = clone(request); if (imported) imported = normalizeSnapshot(imported); }
+    try {
+      request = clone(request);
+      if (imported) imported = { snapshot: normalizeSnapshot(imported),
+        runs: imported.runs === undefined ? null : validateRuns(clone(imported.runs)) };
+    }
     catch (error) { return Promise.reject(error); }
     const result = this.#queue.then(async () => {
       text(source, 200, '操作来源');
@@ -90,12 +100,20 @@ export class KontStore {
       if ((!legacyCommand && request.revision !== this.#state.revision)
         || (request.baseSeq !== undefined && request.baseSeq !== this.#state.seq)) reject('STALE_REVISION', '现场已被另一个窗口更新；请刷新后重试，未保存草稿仍保留', 409);
       if (!Array.isArray(request.commands) || request.commands.length < 1 || request.commands.length > 10) reject('INVALID_COMMAND', '操作数量无效');
-      const next = imported ? { ...normalizeSnapshot(imported), revision: this.#state.revision, seq: this.#state.seq, titles: {} } : this.read();
+      // Snapshot restore may replace asset/worksite state, never import or erase
+      // runtime attestations. An exported journal must exactly match this store.
+      if (imported?.runs !== null && imported?.runs !== undefined
+        && runHash(imported.runs) !== runHash(this.#state.runs ?? [])) reject('RUN_RESTORE_CONFLICT', 'Snapshot cannot replace Run evidence');
+      const next = imported ? { ...imported.snapshot, revision: this.#state.revision, seq: this.#state.seq, titles: {},
+        ...(this.#state.runs !== undefined ? { runs: clone(this.#state.runs) } : {}) } : this.read();
       const events = [], results = [];
       for (const command of request.commands) {
-        const applied = imported ? { value: true, event: { type: 'snapshot.restored' } } : applyCommand(next, command);
+        const applied = imported ? { value: true, event: { type: 'snapshot.restored' } }
+          : internalReturn ? returnRun(next, command.runId, command.evidence, applyCommand)
+          : command?.type === 'run.prepare' ? prepareRun(next, command) : applyCommand(next, command);
         results.push(clone(applied.value));
-        if (applied.event) events.push({ ...clone(applied.event), source, seq: ++next.seq, ts: new Date().toISOString() });
+        for (const event of applied.events ?? (applied.event ? [applied.event] : []))
+          events.push({ ...clone(event), source, seq: ++next.seq, ts: new Date().toISOString() });
       }
       if (events.length === 0) return { state: this.read(), results };
       next.revision += 1;

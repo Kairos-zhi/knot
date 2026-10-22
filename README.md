@@ -14,7 +14,7 @@
 
 ## 当前候选
 
-`KONT-KERNEL-001-r2` 已独立限定接受：20 项测试与 8 组额外程序化实测通过，代码／产物哈希前后一致。接受仅限下述纵切，代码尚未提交或部署，原运行实例未替换。
+`KONT-KERNEL-001-r2` 已独立限定接受：20 项测试与 8 组额外程序化实测通过，代码／产物哈希前后一致。其后桌面兼容与加载由独立子卡接受，已本地提交；历史20项不冒称当前全量测试。
 
 [KONT-KERNEL-001](docs/tasks/KONT-KERNEL-001.md) 是限定 Headless 适配：复用既有 schema 4 快照校验、资产投影及现场规则，提供创建／更新结、连接／断开绳、现场和呈现操作，以及状态与事件出口。它不是原 OperationService 的完整迁移。
 
@@ -29,7 +29,7 @@ npm run build
 npm test
 ```
 
-当前完整测试38/38通过，无失败／跳过；其中新增旧协议真实服务与`/kont`入口的共有契约及差异断言。测试直接调用内核、HTTP、真实临时 DSH profile 与安装版运行库，不调用模型。此前已在实际官方桌面验证Host激活、客户端注册、创建→连接→追加→断开、供给排除、SSE和普通重启恢复，本轮收口未重跑桌面安装／启停。构建使用 Node 类型擦除 API，有实验性警告。
+当前完整测试44/44通过，无失败／跳过；原38项加Run契约6组。原测试包含内核、HTTP、临时DSH profile与安装版运行库；新增Run事件均为合成夹具，不调用模型。此前实际官方桌面Host/client、同内核操作及普通重启证据保持历史限定接受，本轮没有重跑桌面安装／启停。构建使用 Node 类型擦除 API，有实验性警告。
 
 ## 服务层隔离启动（测试）
 
@@ -55,5 +55,7 @@ npm start
 Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目录的 `agent-token` 文件生成，或由宿主环境提供；来源身份由宿主映射，调用体不能自行认领身份。仅接受受限 loopback／Host／Origin。浏览器通过 DSH Connection 鉴权，调用同一存储和内核。
 
 已支持 `knot.create`、`knot.update`、`rope.connect`、`rope.disconnect` 及原有 `worksite.*`／`presentation.*` 操作。追加块当前通过读取快照后提交 `knot.update` 的完整 blocks 完成；这不是调用模型的 `generate.grow`。未覆盖命令返回 `UNSUPPORTED_COMMAND`。
+
+[KONT-RUN-004](docs/tasks/KONT-RUN-004.md) 已独立限定接受，新增 `run.prepare`：显式提供 requestId、sessionId（仅计划值）、worksiteId、targetId，固定准备时输入／材料摘要并保存prepared记录；它不会执行DSH。原具名协议覆盖仍为5/16。纯prompt适配与内部原子回流仅验证离线关联契约，普通HTTP不能伪造completed。只支持新Session首turn、单用户、纯文本／无工具的给定日志投影；没有已连接的运行时适配器，不证明完整DSH事件schema、实际会话兼容或真实Run完成。新增源码尚未部署到运行中的桌面。
 
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

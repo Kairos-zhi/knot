@@ -1,0 +1,17 @@
+{
+  "task_id": "KONT-RUN-004",
+  "role": "controller Gate",
+  "at": "2026-10-22T11:27:31.149Z",
+  "state": "ACCEPTED_LIMITED",
+  "basis": "evidence/local/20261022-run-contract/checker/final-review.json",
+  "verdict": "ACCEPT_RUN_CONTRACT_LIMITED",
+  "candidate_hashes_match": true,
+  "candidate_files": 4,
+  "independent_full": 44,
+  "independent_probes": 11,
+  "real_run_completed": 0,
+  "desktop_deployed": false,
+  "original_protocol": "5/16 unchanged",
+  "scope": "Offline service contract only; no full schema/context/authenticity or live runtime proof",
+  "commit_policy": "one local checkpoint, no push or merge"
+}

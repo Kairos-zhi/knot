@@ -1,0 +1,54 @@
+[
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-agent/package.json",
+    "sha256": "4f3d36d223b60d0fbf416a2e790eac4fb4638382bcbe6b783e465f79e245b516"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-agent/lib/index.js",
+    "sha256": "7b59cf82c2784c25bdce4e3e24e5e5303b02b9f1003efacf50255492d17baf8b"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session/package.json",
+    "sha256": "06c940188426e4c21ea84fad21c7fda49febfd1f209368b79323410313f909ad"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session/lib/index.js",
+    "sha256": "2f5dd07cb5c744a29abbb8003a8a4cefd9e582c6e2538074ca299a0ddd02a3bf"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-session-controller/package.json",
+    "sha256": "a4c9b386c5f43d16f32aa7a4926a9cf32ac76d2fe68f33cc285b3af0e2a554a5"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-session-controller/lib/index.js",
+    "sha256": "a9801acb577b03053c5d5a3191ff555c5f1d791d0acddec113bea4511e33b386"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-format/package.json",
+    "sha256": "e2afc2b20778a7bddab663ad9bfbaabe4c2cac5e1aaaa1f0c6bfab288aa00e20"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-format/lib/index.js",
+    "sha256": "6c7417ec2cd555e2781197d91c4566c88ffcf2728f362d7a2937859be57226ec"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-turn-outline/package.json",
+    "sha256": "0834f6bc09124f2b6d9793d8c13a23c8720a9489291927df4d201e7b2947dee7"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-turn-outline/lib/index.js",
+    "sha256": "a31d5c3e685698de024aad9beb49a8aa2e554d176eee2eb58271bbcd310e25ba"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-api-session-controller/lib/typert.host.js",
+    "sha256": "0c12316ed398710bcd87520f2332ebb647f0ab5f71cdfe04551c0592b48b2c3c"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-agent-loop/lib/index.js",
+    "sha256": "cf57e3ecd487ac5c2553455aaa5cef2c6fb41e6bd61be5aa455675d1d7193033"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session/lib/types/known-event-types.js",
+    "sha256": "f2adf39f26ecf7cc84bceaef1dcf8210395a13aa02e16828df1038a27a404edd"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-22T11:16:54.290Z",
+  "hostVersion": "0.2.1-rc.2",
+  "archivePath": "D:/DSH-Desktop/app/resources/app.asar",
+  "asarSha256": "47874618bf5b3011fcaac10cd4c85f69da333e70d4f99b921207c78d0999512a",
+  "expectedAcceptedAsarSha256": "47874618bf5b3011fcaac10cd4c85f69da333e70d4f99b921207c78d0999512a",
+  "matchesAcceptedArchive": true,
+  "members": 13,
+  "allMemberHashesMatch": true,
+  "modelRequests": 0,
+  "readOnly": true
+}

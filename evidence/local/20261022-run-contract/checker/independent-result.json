@@ -1,0 +1,34 @@
+{
+  "task": "KONT-RUN-004",
+  "role": "independent Checker",
+  "at": "2026-10-22T11:25:10.610Z",
+  "candidateFiles": 4,
+  "candidateHashesMatch": true,
+  "installedArchiveUnchanged": true,
+  "installedMembersMatch": 13,
+  "wireDeclarationsChecked": [
+    "SessionPromptRequest",
+    "SessionFollowRequest",
+    "MessageBase"
+  ],
+  "independentProbes": [
+    "parallel duplicate preparation",
+    "explicit supply isolation",
+    "wire key projection",
+    "metadata and MessageBase.id compatible projection",
+    "ordered multi-message text join",
+    "caller payload frozen before queue",
+    "parallel duplicate return single transaction",
+    "postcommit event observers",
+    "completed cold readback and cursor reset",
+    "restore omission preserves journal",
+    "attempt rejection"
+  ],
+  "modelRequests": 0,
+  "syntheticOnly": true,
+  "verdict": "PROBES_PASS",
+  "limitations": [
+    "Association projection, not full DSH schema validation",
+    "No connected DSH adapter/authenticity proof or model execution"
+  ]
+}

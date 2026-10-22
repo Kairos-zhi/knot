@@ -1,0 +1,21 @@
+{
+  "task_id": "KONT-RUN-004",
+  "at": "2026-10-22",
+  "authorization": "之：换窗口，继续开发；supersedes prior closeout STOP for this card only",
+  "state": "ACCEPTED_LIMITED",
+  "verdict": "ACCEPT_RUN_CONTRACT_LIMITED",
+  "base_commit": "3535c393bfabf1e5628e4750fa2c17acb610d116",
+  "maker": "run_maker",
+  "checker": "run_checker",
+  "evidence_root": "evidence/local/20261022-run-contract",
+  "evidence_index": "evidence/RUN-004-INDEX.json",
+  "independent_review": "evidence/local/20261022-run-contract/checker/final-review.json",
+  "post_commit_receipt": "evidence/local/20261022-run-contract/controller/receipt.json",
+  "tests": { "full": 44, "independent_full": 44, "independent_probe_groups": 11, "failed": 0, "skipped": 0 },
+  "counts": { "units": 10, "accepted_limited": 8, "closed": 2, "full_product_acceptances": 0 },
+  "source_protocol": { "supported_names": 5, "enumerated": 16, "extension": "run.prepare is additional, not a sixth supported original command" },
+  "accepted": ["Durable prepared identity and fixed explicit input hashes", "Pure DSH prompt wire shape", "Internal synthetic event correlation projection and atomic asset/receipt return"],
+  "excluded": ["Connected authenticated DSH adapter and log authenticity", "Full DSH schema and actual Session-log compatibility", "Complete model-visible context authorization", "Real model/Session/Run, live cancellation and recovery", "Desktop deployment, human experience and whole-product acceptance"],
+  "operations": { "model_requests": 0, "live_prompt_cancel_follow": 0, "desktop_reinstalled_or_restarted": false, "push": false, "merge": false },
+  "next": "Next small card must verify trusted DSH log reading and complete context/model/permissions before execution; do not reinterpret synthetic completed records as actual Runs. No paid model or desktop deployment authorization added."
+}

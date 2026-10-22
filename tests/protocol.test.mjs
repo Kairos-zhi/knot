@@ -78,3 +78,24 @@ test('SSE delivers durable ordered events and releases its subscription on disco
   assert.equal(subscriptions, 0);
   assert.equal((await fetch(`${url}/kont/events?since=999`, { headers })).status, 400);
 });
+
+test('Run extension HTTP can prepare and read, but cannot forge runtime completion', async t => {
+  const { store, url, headers, command } = await fixture(t);
+  await command({ type: 'knot.create', id: 'target' });
+  const prepared = await (await command({ type: 'run.prepare', requestId: 'synthetic-http-request',
+    sessionId: 'synthetic-unverified-session', worksiteId: 'legacy', targetId: 'target' })).json();
+  assert.equal(prepared.ok, true); assert.equal(prepared.value.status, 'prepared');
+  const before = store.read();
+  for (const type of ['run.complete', 'run.return', 'run.bind', 'run.cancel']) {
+    const result = await command({ type, runId: prepared.value.runId, status: 'completed', evidence: { accepted: true } });
+    assert.equal(result.status, 400); assert.equal((await result.json()).error.code, 'UNSUPPORTED_COMMAND');
+  }
+  const bypass = await fetch(`${url}/kont/api/workspace`, { method: 'POST',
+    headers: { 'x-browser-test': 'yes', 'content-type': 'application/json' },
+    body: JSON.stringify({ revision: before.revision, commands: [{ type: 'run.return', runId: prepared.value.runId }] }) });
+  assert.equal(bypass.status, 400); assert.deepEqual(store.read(), before);
+  const snapshot = await (await fetch(`${url}/kont/snapshot`, { headers })).json();
+  assert.equal(snapshot.snapshot.runs[0].runId, prepared.value.runId);
+  assert.equal(snapshot.snapshot.runs[0].receipt, null);
+  assert.equal(store.eventsSince(1).events[0].type, 'run.prepared');
+});

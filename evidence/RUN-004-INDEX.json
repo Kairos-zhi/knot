@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "task_id": "KONT-RUN-004",
+  "note": "Dedicated additive index; historical evidence/INDEX.json and frozen manifests unchanged. Raw ASAR source extracts and synthetic working states remain local. Postcommit attestation stays local to avoid self-reference.",
+  "files": [
+    {
+      "path": "evidence/local/20261022-run-contract/maker/receipt.json",
+      "bytes": 1400,
+      "sha256": "67d654015744014b15af229178acbc1edbfffca70c4ae73f95f5452fdbafe3f4",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/maker/REPORT.md",
+      "bytes": 4797,
+      "sha256": "e2950bccfe0f279a6f7e705c829fe8e081c946ae46772658dc575534652abeee",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/maker/manifest.json",
+      "bytes": 703,
+      "sha256": "150f35d0893714d1f3b018e4f7650382ab67866ab556ae17e82248e2ddfd509d",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/maker/test-results.tap",
+      "bytes": 11863,
+      "sha256": "21b8cee12fc4fc597c465d9904fc2f420d329839cfc07bcdd33d8a551a0e120f",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/final-review.json",
+      "bytes": 2463,
+      "sha256": "31968e7d552eb7fecbdc86f16d5b2edb2d9c6a32fc97a94be0f836043dc72f02",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/REPORT.md",
+      "bytes": 4304,
+      "sha256": "e2c81139a9e024fea845b022243e24a330fd14cac5505c0fc123402996716060",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/regression.log",
+      "bytes": 11859,
+      "sha256": "4d6c79c9bd02790122a831008e2dba7972c3db375f7d8ca98bd49c560f675d5c",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/independent-check.mjs",
+      "bytes": 7570,
+      "sha256": "f7c56f2ee895fd04c1913dd3b33ca618421009b711375009156fa6e87b07ef1f",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/independent-check.log",
+      "bytes": 1061,
+      "sha256": "72ae9c4e5ec59be680e33896c25e7dd371e8036036cc813a7368a0c17c558e14",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/checker/independent-result.json",
+      "bytes": 1026,
+      "sha256": "57bbf6628d7513e1a55b9cf7027dd7cf0d0bd35f39d94e2492199a15570ad654",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/research/manifest.json",
+      "bytes": 2190,
+      "sha256": "39680ce4b21131db319a78213eb013e05ec37c4ff78d9ce4a5a16962d3f8c0d1",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/research/source-verification.json",
+      "bytes": 436,
+      "sha256": "9a9d9e99f1eb9fd3f4f26eca8dc9f44dbe7ac8979a168fc7929e4e88d4668c43",
+      "disposition": "include"
+    },
+    {
+      "path": "evidence/local/20261022-run-contract/controller/gate.json",
+      "bytes": 621,
+      "sha256": "6d08bd00e471515e27260f1b370f76e30393d14ae8c30d34af43fa90ced668c7",
+      "disposition": "include"
+    }
+  ]
+}

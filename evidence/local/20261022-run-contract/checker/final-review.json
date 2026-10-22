@@ -1,0 +1,59 @@
+{
+  "task": "KONT-RUN-004",
+  "role": "independent Checker",
+  "checker": "run_checker",
+  "verdict": "ACCEPT_RUN_CONTRACT_LIMITED",
+  "at": "2026-10-22T11:26:06.966Z",
+  "candidateManifest": "../maker/manifest.json",
+  "candidateFiles": 4,
+  "candidateHashesMatchBeforeAndAfter": true,
+  "independentRegression": {
+    "command": "npm test",
+    "exitCode": 0,
+    "tests": 44,
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "regression.log"
+  },
+  "independentProbes": {
+    "command": "node evidence/local/20261022-run-contract/checker/independent-check.mjs",
+    "exitCode": 0,
+    "groups": 11,
+    "result": "independent-result.json",
+    "script": "independent-check.mjs"
+  },
+  "sourceVerification": {
+    "archive": "D:/DSH-Desktop/app/resources/app.asar",
+    "sha256": "47874618bf5b3011fcaac10cd4c85f69da333e70d4f99b921207c78d0999512a",
+    "membersMatched": 13,
+    "readOnly": true
+  },
+  "acceptedScope": [
+    "Durable prepared Run identity and immutable explicit input snapshot with hashes",
+    "Pure SessionPromptRequest shape adaptation without transport or execution",
+    "Internal first-turn text/tool-free correlation projection over synthetic log evidence",
+    "Atomic asset block and Run receipt persistence with postcommit events, target CAS and same-log replay protection",
+    "HTTP terminal forgery rejection and snapshot journal preservation"
+  ],
+  "limitations": [
+    "Projection validation only, not full DSH schema validation or actual Session-log compatibility proof",
+    "Submitted user prompt only, not complete model-visible context; developer/system/header/context content not fully audited",
+    "No connected trusted adapter, authenticated runtime identity or log authenticity validation",
+    "No model request, live Session/turn binding, cancellation/follow/recovery, desktop deployment or user experience acceptance",
+    "Only fresh first single-user text/tool-free log shape; no general multi-turn/tool/multimodal capability",
+    "No end-to-end exactly-once, production journal lifecycle, power-loss recovery or whole-product acceptance"
+  ],
+  "evidence": [
+    "REPORT.md",
+    "regression.log",
+    "independent-check.mjs",
+    "independent-check.log",
+    "independent-result.json"
+  ],
+  "blockers": [],
+  "modelRequests": 0,
+  "syntheticEventsOnly": true,
+  "productFilesModifiedByChecker": false,
+  "originalProtocolSupportedNames": "5/16 unchanged; run.prepare is a Knot extension"
+}
