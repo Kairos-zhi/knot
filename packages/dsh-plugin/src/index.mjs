@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { KontStore, KontError } from './store.mjs';
+import { bindRunObserver } from './run-observer-binding.mjs';
 export const name = 'kont-worksite';
 export const inject = ['webServer', 'connection'];
 
@@ -116,7 +117,7 @@ export function createHandler(store, connection) {
     }
   };
 }
-export async function apply(ctx) {
+export async function apply(ctx, config = {}) {
   if (!process.env.KONT_DATA_DIR) throw new Error('KONT_DATA_DIR must name an isolated data directory');
   const dataDirectory = resolve(process.env.KONT_DATA_DIR);
   await mkdir(dataDirectory, { recursive: true });
@@ -133,9 +134,16 @@ export async function apply(ctx) {
   if (agentToken.length < 32 || /\s/.test(agentToken)) throw new Error('KONT agent token is invalid');
   const store = await new KontStore(resolve(dataDirectory, 'worksites.json')).init();
   const protocol = createProtocolHandler(store, ctx.connection, { agentToken, agentSource: process.env.KONT_AGENT_SOURCE || 'agent:local' });
+  let observerBinding;
   // Cordis awaits effect disposers; an async event listener is not a shutdown
   // barrier and could let the process exit before the lock was unlinked.
-  ctx.effect(() => async () => { protocol.dispose(); await store.close(); }, 'kont-worksite.storage');
+  const disposeStorage = async () => {
+    protocol.dispose();
+    try { await observerBinding?.dispose(); } finally { await store.close(); }
+  };
+  ctx.effect(() => disposeStorage, 'kont-worksite.storage');
+  try { observerBinding = bindRunObserver(ctx, store, config); }
+  catch (error) { await disposeStorage(); throw error; }
   ctx.effect(() => ctx.webServer.register({ kind: 'exact', path: '/kont/api/workspace', handler: createHandler(store, ctx.connection) }));
   for (const path of ['/kont/snapshot', '/kont/command', '/kont/events']) ctx.effect(() => ctx.webServer.register({ kind: 'exact', path, handler: protocol }));
 }

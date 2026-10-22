@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 1 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 52.0528
+  type: 'test'
+  ...
+# Subtest: host binding registers on real Cordis, defaults to no read, and retained references reject after disposal
+ok 2 - host binding registers on real Cordis, defaults to no read, and retained references reject after disposal
+  ---
+  duration_ms: 54.0039
+  type: 'test'
+  ...
+# Subtest: host readRun override cannot replace the plugin store; external cancellation still propagates
+ok 3 - host readRun override cannot replace the plugin store; external cancellation still propagates
+  ---
+  duration_ms: 32.791
+  type: 'test'
+  ...
+# Subtest: async service removal is awaited and rejected removal is sanitized
+ok 4 - async service removal is awaited and rejected removal is sanitized
+  ---
+  duration_ms: 0.7782
+  type: 'test'
+  ...
+# Subtest: real Cordis service collision releases the plugin store lock even when registration fails
+ok 5 - real Cordis service collision releases the plugin store lock even when registration fails
+  ---
+  duration_ms: 11.5542
+  type: 'test'
+  ...
+# Subtest: actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+ok 6 - actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+  ---
+  duration_ms: 430.8627
+  type: 'test'
+  ...
+# Subtest: read permission is default-deny and exact binding/version gate precedes every persistence call
+ok 7 - read permission is default-deny and exact binding/version gate precedes every persistence call
+  ---
+  duration_ms: 42.0354
+  type: 'test'
+  ...
+# Subtest: missing/mismatch request approval is explicit; reference fingerprint approval never authorizes execution or writes
+ok 8 - missing/mismatch request approval is explicit; reference fingerprint approval never authorizes execution or writes
+  ---
+  duration_ms: 21.8654
+  type: 'test'
+  ...
+# Subtest: system/developer/runtime context, config route/maxTokens and permission changes invalidate independent request approval
+ok 9 - system/developer/runtime context, config route/maxTokens and permission changes invalidate independent request approval
+  ---
+  duration_ms: 20.9333
+  type: 'test'
+  ...
+# Subtest: old/migrated/seeded/oversized/changed identity observations refuse before or after read and close any acquired handle
+ok 10 - old/migrated/seeded/oversized/changed identity observations refuse before or after read and close any acquired handle
+  ---
+  duration_ms: 14.8349
+  type: 'test'
+  ...
+# Subtest: narrow field, sequence, cancellation, failure and surface negatives cannot become approved observations
+ok 11 - narrow field, sequence, cancellation, failure and surface negatives cannot become approved observations
+  ---
+  duration_ms: 29.773
+  type: 'test'
+  ...
+# Subtest: IO/replay/close exceptions are sanitized, acquired handles close, and cancellation during read/close refuses results
+ok 12 - IO/replay/close exceptions are sanitized, acquired handles close, and cancellation during read/close refuses results
+  ---
+  duration_ms: 15.5269
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 693.3215

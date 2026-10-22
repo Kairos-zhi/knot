@@ -60,4 +60,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-005](docs/tasks/KONT-RUN-005.md) 补只读观察工厂：服务侧许可后点读一个Session，使用官方Session重放窄请求边界；系统／开发者／上下文、模型与权限变化使原指纹核准失效。无许可不读，无指纹核准不标核准，所有结果均不授权执行或自动回流。工厂尚未接入在用桌面；官方库合成会话验证不等于真实模型Run。
 
+[KONT-RUN-006](docs/tasks/KONT-RUN-006.md) 将观察工厂绑定插件同一存储，提供宿主内部 `ctx.kontRunObserver.observe(runId)`；配置不能覆盖Run读取。默认拒绝，卸载取消在途观察、等句柄释放再关闭存储。只有开发源码接缝，尚未部署在用桌面；本卡只做受影响专项验证，不追溯改写前述全量51项结果。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。
