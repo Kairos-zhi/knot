@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-22；之授权“换窗口，继续开发”，当前中控接续 KONT-RUN-004；旧收口回执保持历史原文。
+更新：2026-10-22；之授权“按照原计划继续开发”，当前中控接续 KONT-RUN-005；旧收口回执保持历史原文。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -15,11 +15,12 @@
 | DESKTOP-003-COMPAT-A | ACCEPTED_LIMITED | D/checker/a-final-review.json、final-review.json |
 | DESKTOP-003-COMPAT-B | ACCEPTED_LIMITED | D/checker/final-review.json、manifest-check.json |
 | RUN-004 | ACCEPTED_LIMITED | N/checker/final-review.json；44/44＋11项自有检查；仅离线服务契约 |
+| RUN-005 | ACCEPTED_LIMITED | O/checker/final-review.json；51/51＋5项；官方库只读接缝／窄请求审计 |
 
-证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract。
+证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 当前桌面：D:\DSH-Desktop，官方0.2.1-rc.2普通启动；已加载Knot，无临时调试端口。原Headless／3081未替换。
-- 上轮回执：D/controller/receipt.json、commit.json；本轮回执：N/controller/receipt.json；索引：evidence/RUN-004-INDEX.json；[本卡收口](docs/handoff/20261022-run-contract.json)。
+- 上轮回执：N/controller/receipt.json；本轮回执：O/controller/receipt.json；索引：evidence/RUN-005-INDEX.json；RUN-004历史[收口](docs/handoff/20261022-run-contract.json)与索引保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前10单元＝8项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。Run准备／离线回流已Gate；真实DSH日志与完整上下文核验、实际执行另卡。
+- 当前11单元＝9项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0；RUN-005已Gate，未调用模型／部署桌面。后续缩小单卡、聚焦验证，保留独立Checker，压缩重复测试和文档。
 - 未决：真实模型／完整Run、正式Apple工作站体验、完整命令面、per-Agent权限、强杀／断电恢复与生产交付。

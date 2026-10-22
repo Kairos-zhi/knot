@@ -1,0 +1,17 @@
+{
+  "task": "KONT-RUN-005",
+  "role": "independent Checker",
+  "at": "2026-10-22T13:43:54.032Z",
+  "verdict": "PASS",
+  "probes": [
+    "wrong Run binding refuses before persistence",
+    "abort during authorization refuses before persistence",
+    "wrong-access acquired handle closes without reading",
+    "read exception sanitizes body and path while closing",
+    "changed developer instruction invalidates prior approval without body output or execution"
+  ],
+  "groups": 5,
+  "syntheticOnly": true,
+  "modelRequests": 0,
+  "officialLibraryProof": "official-library-result.json (separate actual-library run)"
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-query/package.json",
+    "bytes": 2032,
+    "sha256": "6822705a3f1fccd30d0d2cc5c6c15d70361419ae3e3dc9a62f45a34c533279f5"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-query/lib/index.js",
+    "bytes": 49100,
+    "sha256": "76ce2944e561c12f48b5e240d68cafe54ce6d667b1d20722e6939ed834489939"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-query-sqlite/package.json",
+    "bytes": 1576,
+    "sha256": "a1a3ffde3849ec47950caa1bd8387f05d92fdeb38b0073de30a7cb79e9499675"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-query-sqlite/lib/index.js",
+    "bytes": 46487,
+    "sha256": "dbecf83320e10d93d735b3d01384ab817a0b90102ccecb0a22c013c71dfe70a0"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-persistence/package.json",
+    "bytes": 1270,
+    "sha256": "c7b9a12d966df8e096865cf50f63e37ac3cb763a51d5d1fbd8cc4a07050cc42a"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-persistence/lib/index.js",
+    "bytes": 12920,
+    "sha256": "cc0b6d3a224133af611b428d5a49020e300f86c3b4ba28037aeb219029bde3eb"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/package.json",
+    "bytes": 1601,
+    "sha256": "965c4c6a2b1d9f5f821bba233b2b77200e581cc60e3d5aa12e82e442a58c5b0f"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js",
+    "bytes": 147273,
+    "sha256": "973dd78679b2661d6f492343bc22b124ae958aa597d3b36c698a2c650f909984"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-projection/package.json",
+    "bytes": 1309,
+    "sha256": "e4a0c855b4e3110c9132ae79daf2b9aa524b8b99fe9f1abff6d5546e13a4045f"
+  },
+  {
+    "path": "dsh/node_modules/@deepseek-ai/dsh-session-projection/lib/index.js",
+    "bytes": 19981,
+    "sha256": "7dc2b212819baf4fc292751054d30b97afcbdee0a4733230abf92c6722e6550c"
+  }
+]

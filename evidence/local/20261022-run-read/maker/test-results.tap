@@ -1,0 +1,324 @@
+
+> test
+> node scripts/build.mjs && node --test tests/*.test.mjs
+
+(node:73776) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Built KONT host core and DSH browser bundle.
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 10.137
+  type: 'test'
+  ...
+# Subtest: renderer receipt follows successful slot registrations, collapse and disposal
+ok 2 - renderer receipt follows successful slot registrations, collapse and disposal
+  ---
+  duration_ms: 11.4467
+  type: 'test'
+  ...
+# Subtest: renderer receipt rejects partial failure and never exposes readiness after reload/disposal
+ok 3 - renderer receipt rejects partial failure and never exposes readiness after reload/disposal
+  ---
+  duration_ms: 4.0946
+  type: 'test'
+  ...
+# Subtest: official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+ok 4 - official Desktop 0.2.1 runtime serves the unchanged KONT kernel and awaits cleanup
+  ---
+  duration_ms: 775.4985
+  type: 'test'
+  ...
+# Subtest: official pnpm file bundle includes generated modules and resolves the sibling plugin
+ok 5 - official pnpm file bundle includes generated modules and resolves the sibling plugin
+  ---
+  duration_ms: 1923.1792
+  type: 'test'
+  ...
+# Subtest: read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+ok 6 - read-only ASAR parser reads bounded packed data and rejects traversal and unpacked entries
+  ---
+  duration_ms: 18.8804
+  type: 'test'
+  ...
+# Subtest: installed RPC contract uses exact method, correlated envelope, args and official origin
+ok 7 - installed RPC contract uses exact method, correlated envelope, args and official origin
+  ---
+  duration_ms: 4.9885
+  type: 'test'
+  ...
+# Subtest: denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+ok 8 - denies arbitrary RPC, implicit install, non-reviewed spec, and drifted options
+  ---
+  duration_ms: 0.5442
+  type: 'test'
+  ...
+# Subtest: wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+ok 9 - wrong origin, uncorrelated and rejected response fail without exposing diagnostics
+  ---
+  duration_ms: 3.9575
+  type: 'test'
+  ...
+# Subtest: safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+ok 10 - safe projection omits pnpm output, paths, registry, error detail and arbitrary metadata
+  ---
+  duration_ms: 0.7346
+  type: 'test'
+  ...
+# Subtest: install opt-in constructs only reviewed local package with supported options
+ok 11 - install opt-in constructs only reviewed local package with supported options
+  ---
+  duration_ms: 0.7593
+  type: 'test'
+  ...
+# Subtest: debug clients reject non-loopback and credential-bearing targets before network
+ok 12 - debug clients reject non-loopback and credential-bearing targets before network
+  ---
+  duration_ms: 1.898
+  type: 'test'
+  ...
+# Subtest: renderer receipt reads only fixed registration projection and validates shape
+ok 13 - renderer receipt reads only fixed registration projection and validates shape
+  ---
+  duration_ms: 3.9801
+  type: 'test'
+  ...
+# Subtest: compatibility refusal retains declared DSH requirements without raw diagnostics
+ok 14 - compatibility refusal retains declared DSH requirements without raw diagnostics
+  ---
+  duration_ms: 0.9011
+  type: 'test'
+  ...
+# Subtest: fixed quit resolves only official Electron path and schedules graceful app.quit
+ok 15 - fixed quit resolves only official Electron path and schedules graceful app.quit
+  ---
+  duration_ms: 2.3801
+  type: 'test'
+  ...
+# Subtest: HTTP requires the host trust fence and authenticated browser before reads or writes
+ok 16 - HTTP requires the host trust fence and authenticated browser before reads or writes
+  ---
+  duration_ms: 183.7247
+  type: 'test'
+  ...
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 17 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 55.3502
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 18 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 17.207
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 19 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 24.4411
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 20 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 20.4586
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 21 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 25.0706
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 22 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 931.5744
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 23 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 70.3222
+  type: 'test'
+  ...
+# Subtest: pinned source server and KONT share deterministic direct command, document and SSE semantics
+ok 24 - pinned source server and KONT share deterministic direct command, document and SSE semantics
+  ---
+  duration_ms: 618.8983
+  type: 'test'
+  ...
+# {"commit":"08a2a5340edab920ce942173ba63b2c5bc369eb4","script":"knot-flowgram-app/scripts/asset-write-server.mjs","sha256":"91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246","assemblyPatches":[["const PORT = 3101;","const PORT = 0;"],["server.listen(PORT, () => {","server.listen(PORT, '127.0.0.1', () => {\\n  console.log('TEST_READY:' + server.address().port);"]],"assetFixture":{"assets":[],"edges":[],"note":""}}
+# Subtest: shared errors retain boundaries while authentication, validation and revision differences stay explicit
+ok 25 - shared errors retain boundaries while authentication, validation and revision differences stay explicit
+  ---
+  duration_ms: 374.2063
+  type: 'test'
+  ...
+# Subtest: source enumeration has 16 named commands; 3 direct equivalents, 2 changed execution modes and 11 unsupported
+ok 26 - source enumeration has 16 named commands; 3 direct equivalents, 2 changed execution modes and 11 unsupported
+  ---
+  duration_ms: 378.0501
+  type: 'test'
+  ...
+# Subtest: SSE cursor validation and cold-start reset are intentional differences, not normalized away
+ok 27 - SSE cursor validation and cold-start reset are intentional differences, not normalized away
+  ---
+  duration_ms: 559.9081
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 28 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 194.5412
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 29 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 48.5668
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 30 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 57.6323
+  type: 'test'
+  ...
+# Subtest: Run extension HTTP can prepare and read, but cannot forge runtime completion
+ok 31 - Run extension HTTP can prepare and read, but cannot forge runtime completion
+  ---
+  duration_ms: 68.8437
+  type: 'test'
+  ...
+# Subtest: prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+ok 32 - prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+  ---
+  duration_ms: 124.2031
+  type: 'test'
+  ...
+# Subtest: synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+ok 33 - synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+  ---
+  duration_ms: 103.0811
+  type: 'test'
+  ...
+# Subtest: synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+ok 34 - synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+  ---
+  duration_ms: 119.4168
+  type: 'test'
+  ...
+# Subtest: target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+ok 35 - target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+  ---
+  duration_ms: 87.7097
+  type: 'test'
+  ...
+# Subtest: failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+ok 36 - failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+  ---
+  duration_ms: 109.093
+  type: 'test'
+  ...
+# Subtest: actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+ok 37 - actual official Electron Session + JSONL synthetic fixture persists, point-reads and replays request audit without model calls
+  ---
+  duration_ms: 633.3251
+  type: 'test'
+  ...
+# Subtest: read permission is default-deny and exact binding/version gate precedes every persistence call
+ok 38 - read permission is default-deny and exact binding/version gate precedes every persistence call
+  ---
+  duration_ms: 71.4269
+  type: 'test'
+  ...
+# Subtest: missing/mismatch request approval is explicit; reference fingerprint approval never authorizes execution or writes
+ok 39 - missing/mismatch request approval is explicit; reference fingerprint approval never authorizes execution or writes
+  ---
+  duration_ms: 35.1558
+  type: 'test'
+  ...
+# Subtest: system/developer/runtime context, config route/maxTokens and permission changes invalidate independent request approval
+ok 40 - system/developer/runtime context, config route/maxTokens and permission changes invalidate independent request approval
+  ---
+  duration_ms: 52.5154
+  type: 'test'
+  ...
+# Subtest: old/migrated/seeded/oversized/changed identity observations refuse before or after read and close any acquired handle
+ok 41 - old/migrated/seeded/oversized/changed identity observations refuse before or after read and close any acquired handle
+  ---
+  duration_ms: 28.3014
+  type: 'test'
+  ...
+# Subtest: narrow field, sequence, cancellation, failure and surface negatives cannot become approved observations
+ok 42 - narrow field, sequence, cancellation, failure and surface negatives cannot become approved observations
+  ---
+  duration_ms: 56.6512
+  type: 'test'
+  ...
+# Subtest: IO/replay/close exceptions are sanitized, acquired handles close, and cancellation during read/close refuses results
+ok 43 - IO/replay/close exceptions are sanitized, acquired handles close, and cancellation during read/close refuses results
+  ---
+  duration_ms: 32.8251
+  type: 'test'
+  ...
+# Subtest: draft leave guard warns on actual edits and clears when text returns to the saved value
+ok 44 - draft leave guard warns on actual edits and clears when text returns to the saved value
+  ---
+  duration_ms: 16.2156
+  type: 'test'
+  ...
+# Subtest: dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+ok 45 - dedicated profile uses the real web-runtime row and rejects invalid ports before boot
+  ---
+  duration_ms: 42.2404
+  type: 'test'
+  ...
+# Subtest: Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+ok 46 - Windows same-process DSH normal shutdown releases the store lock and preserves data on restart
+  ---
+  duration_ms: 8129.2336
+  type: 'test'
+  ...
+# Subtest: selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+ok 47 - selected materials, exclusion, draft and presentation survive restart; sites stay isolated
+  ---
+  duration_ms: 65.9217
+  type: 'test'
+  ...
+# Subtest: concurrent windows reject stale writes and do not lose a saved draft
+ok 48 - concurrent windows reject stale writes and do not lose a saved draft
+  ---
+  duration_ms: 14.5764
+  type: 'test'
+  ...
+# Subtest: failed batch rolls back all changes and disk; returned objects cannot mutate the store
+ok 49 - failed batch rolls back all changes and disk; returned objects cannot mutate the store
+  ---
+  duration_ms: 16.5237
+  type: 'test'
+  ...
+# Subtest: corrupt snapshots fail closed and are never replaced with empty data
+ok 50 - corrupt snapshots fail closed and are never replaced with empty data
+  ---
+  duration_ms: 27.5141
+  type: 'test'
+  ...
+# Subtest: one live writer owns storage and oversized drafts are rejected
+ok 51 - one live writer owns storage and oversized drafts are rejected
+  ---
+  duration_ms: 12.1486
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9305.024

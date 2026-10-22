@@ -1,0 +1,22 @@
+[
+  {
+    "path": "packages/dsh-plugin/src/run.mjs",
+    "sha256": "5f4674040c29475faf3feefdd1f62d71a860a9697b4e434b81770be106cc7150",
+    "unchanged": true
+  },
+  {
+    "path": "packages/dsh-plugin/src/store.mjs",
+    "sha256": "6ff9ee308a5765f4394b265037f26f848be89e823ed5bd336a46918a865c77e6",
+    "unchanged": true
+  },
+  {
+    "path": "tests/run-contract.test.mjs",
+    "sha256": "89e8d73b6b746dd1965423431a6b78ed7c741c102984fb772cbc03752311ac9c",
+    "unchanged": true
+  },
+  {
+    "path": "tests/protocol.test.mjs",
+    "sha256": "803900431ea0423be19d6e231e9121fc61ec994ff0e5bd4fbf9c0a8a70ef6637",
+    "unchanged": true
+  }
+]

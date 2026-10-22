@@ -1,0 +1,58 @@
+{
+  "task": "KONT-RUN-005",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "at": "2026-10-22T13:40:50.095Z",
+  "baseCommit": "7f7bc42e3408ce8692aff7520763e0b7c75f1991",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "tests": {
+    "command": "npm test",
+    "exitCode": 0,
+    "total": 51,
+    "pass": 51,
+    "fail": 0,
+    "skip": 0,
+    "newGroups": 7,
+    "evidence": "test-results.tap"
+  },
+  "actualOfficialLibrary": {
+    "evidence": "official-library-result.json",
+    "runtime": "installed Electron RunAsNode",
+    "version": "0.2.1-rc.2",
+    "fixture": "official-library-generated-synthetic-session",
+    "persistence": "actual official JSONL",
+    "modelRequests": 0,
+    "realRunCompleted": false
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "modelRunVerified": false,
+    "actualUserSessionsRead": 0,
+    "modelCalls": 0,
+    "providerCalls": 0,
+    "desktopProfileRead": false,
+    "credentialsRead": false,
+    "desktopInstalledBytesChanged": false,
+    "oldRun004FrozenSourcesUnchanged": true,
+    "uiChanged": false,
+    "vendorChanged": false,
+    "committed": false,
+    "pushed": false,
+    "merged": false
+  },
+  "remaining": [
+    "Independent Checker/Gate",
+    "Trusted host composition and actual Session binding",
+    "Model/cost/execution authorization",
+    "Full schema/plugin projections/provider HTTP transform and general multi-turn/tool/multimodal/stream",
+    "Actual cancellation/recovery/Desktop deployment/human experience"
+  ],
+  "limitations": [
+    "Logical valid current-format prefix; torn physical tail can be hidden by persistence",
+    "JSONL root filename metadata scan possible; no public list call",
+    "Bounded returned slice is not strict bounded physical parsing memory",
+    "Hash is audit correlation, not cryptographic source authentication"
+  ]
+}

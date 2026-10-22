@@ -1,0 +1,25 @@
+{
+  "hostVersion": "0.2.1-rc.2",
+  "fixture": "official-library-generated-synthetic-session",
+  "source": "installed-ASAR",
+  "persistedFiles": 1,
+  "events": 14,
+  "expectedRequestSha256": "b67688d84259f4743e3b7edf6dfa5e1a241b0887d257f6b952012e3206415a71",
+  "actualRequestSha256": "b67688d84259f4743e3b7edf6dfa5e1a241b0887d257f6b952012e3206415a71",
+  "logSha256": "35612101ff3d52618073e4340e94e0a10ddb5b2b4f7f4a900761e3111b286646",
+  "observeCalls": 3,
+  "handlesClosed": 3,
+  "physicalBytesUnchanged": true,
+  "knotBytesUnchanged": true,
+  "executionAuthorized": false,
+  "modelRequests": 0,
+  "realRunCompleted": false,
+  "statuses": [
+    "needs_request_approval",
+    "request_approval_mismatch",
+    "request_fingerprint_approved"
+  ],
+  "independentChecker": true,
+  "exitCode": 0,
+  "at": "2026-10-22T13:42:35.235Z"
+}
