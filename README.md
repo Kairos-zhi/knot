@@ -72,4 +72,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 若执行器发生任何清理异常，后续`dispose()`会持续拒绝，调用方不能自动关闭store，须先核对并释放仍存活的owned资源；业务写入结果与清理错误分别报告。
 
+[KONT-RUN-011](docs/tasks/KONT-RUN-011.md) 补实际请求核准：完整LLM请求、Session事实与已持久claim绑定，默认拒绝；核准及审计落盘后在调用边界重核摘要，变化或取消均拒绝。单次真实`deepseek-flash`试跑已完成：官方账户与适配器、唯一生成POST、真实completed终态、单块带来源回流、正常重开读回。输入158／输出18 Token，按官方高峰价估算0.00046元（非结算账单），低于用户3元上限。该次授权已消费，不自动重复调用。仍为独立store验证，未部署在用Desktop；通用多用户身份／计费授权、持久DSH恢复与正式工作站体验未交付。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

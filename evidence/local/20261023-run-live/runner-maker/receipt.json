@@ -1,0 +1,12 @@
+{
+  "task": "KONT-RUN-011",
+  "role": "runner-maker",
+  "state": "FROZEN_FOR_CHECKER",
+  "focusedTests": { "passed": 4, "failed": 0, "exitCode": 0 },
+  "checkOnly": { "exitCode": 0, "generationPosts": 0, "localCredentialRead": true },
+  "actualOfficialSerializer": true,
+  "realGenerationPosts": 0,
+  "credentialsPrintedOrCopied": false,
+  "desktopProfileWritten": false,
+  "independentAcceptance": false
+}

@@ -13,11 +13,11 @@ const fail = code => { throw new RunGuardError(code); };
  * Local approval is a guard input, NOT a dispatch/cost/context authorization.
  * No host execute entry, model selection, Agent creation or retry is provided.
  */
-export function installRunExecutionGuard(agentCtx, agent, { run: input, approval, hostVersion, signal } = {}) {
+export function installRunExecutionGuard(agentCtx, agent, { run: input, approval, hostVersion, signal, authorizeStream } = {}) {
   if (hostVersion !== '0.2.1-rc.2') fail('GUARD_VERSION');
   let run;
   try { run = validateRun(input); } catch { fail('GUARD_RUN'); }
-  if (!only(approval, ['approved', 'runId', 'requestId', 'sessionId', 'inputSha256', 'provider', 'model', 'maxTokens'])
+  if (!only(approval, ['approved', 'runId', 'requestId', 'sessionId', 'inputSha256', 'provider', 'model', 'maxTokens', 'reasoningEffort'])
     || Object.getPrototypeOf(approval) !== Object.prototype || Object.getOwnPropertySymbols(approval).length
     || Object.values(Object.getOwnPropertyDescriptors(approval)).some(d => !d.enumerable || !Object.hasOwn(d, 'value')))
     fail('GUARD_APPROVAL');
@@ -26,7 +26,9 @@ export function installRunExecutionGuard(agentCtx, agent, { run: input, approval
     || permit.sessionId !== run.plannedSessionId || permit.inputSha256 !== run.inputSha256
     || typeof permit.provider !== 'string' || !permit.provider.trim() || permit.provider.length > 200
     || typeof permit.model !== 'string' || !permit.model.trim() || permit.model.length > 200
-    || !Number.isSafeInteger(permit.maxTokens) || permit.maxTokens < 1 || run.status !== 'prepared') fail('GUARD_APPROVAL');
+    || !Number.isSafeInteger(permit.maxTokens) || permit.maxTokens < 1 || run.status !== 'prepared'
+    || permit.reasoningEffort !== undefined && permit.reasoningEffort !== 'off'
+    || authorizeStream !== undefined && typeof authorizeStream !== 'function') fail('GUARD_APPROVAL');
   if (agent?.id !== permit.sessionId || agent.session?.id !== permit.sessionId
     || agent.session.header?.isSeeded !== false || agent.session.seq !== 0 || typeof agent.cancel !== 'function'
     || typeof agent.whenIdle !== 'function' || typeof agentCtx?.agents?.currentInitiator !== 'function') fail('GUARD_AGENT');
@@ -39,7 +41,8 @@ export function installRunExecutionGuard(agentCtx, agent, { run: input, approval
   };
   const deny = code => { revoke(code); fail(code); };
   const route = config => {
-    if (config?.provider !== permit.provider || config.model !== permit.model || config.maxTokens !== permit.maxTokens) deny('GUARD_ROUTE');
+    if (config?.provider !== permit.provider || config.model !== permit.model || config.maxTokens !== permit.maxTokens
+      || config.reasoningEffort !== permit.reasoningEffort) deny('GUARD_ROUTE');
   };
   const position = payload => { active(); if (payload.turn !== 1 || payload.step !== 1) deny('GUARD_POSITION'); payload.signal?.throwIfAborted(); };
   const onAbort = () => revoke('GUARD_CANCELLED');
@@ -64,7 +67,7 @@ export function installRunExecutionGuard(agentCtx, agent, { run: input, approval
   agentCtx.on('agent/request', async (payload, next) => {
     position(payload); if (++proposals !== 1) deny('GUARD_RETRY');
     const config = await next(); active();
-    if (!only(config, ['provider', 'model', 'maxTokens'])) deny('GUARD_CONTROLS'); route(config); return config;
+    if (!only(config, ['provider', 'model', 'maxTokens', 'reasoningEffort'])) deny('GUARD_CONTROLS'); route(config); return config;
   });
   agentCtx.on('agent/request-error', () => deny('GUARD_RETRY'));
   // llm/stream uses the LLM service carrier, not an Agent scopeTarget. Filter
@@ -80,10 +83,18 @@ export function installRunExecutionGuard(agentCtx, agent, { run: input, approval
     if (!Array.isArray(options.messages) || !options.messages.every(message => ['user', 'developer', 'system'].includes(message.role)
       && text(message.content))) deny('GUARD_INPUT');
     streams++;
-    const downstream = next(); // Synchronous AsyncIterable contract; never Promise-wrap.
     return (async function* () {
       // One attempted stream consumes this candidate, success or failure.
       try {
+        active();
+        let authorization;
+        try { authorization = await authorizeStream?.(options); }
+        catch { deny('GUARD_REQUEST_DENIED'); }
+        active(); options.signal?.throwIfAborted();
+        authorization?.verify?.();
+        // Approval is awaited inside the generator, preserving the synchronous
+        // AsyncIterable API while deferring all downstream adapter dispatch.
+        const downstream = next();
         for await (const chunk of downstream) {
           active(); options.signal?.throwIfAborted();
           if (!['block-start', 'text-delta', 'block-end', 'usage', 'finish'].includes(chunk?.type)

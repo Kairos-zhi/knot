@@ -1,0 +1,49 @@
+{
+  "task": "KONT-RUN-011",
+  "archive_id": "kont-run-flash-live-20261023",
+  "role": "Maker",
+  "status": "offline_preflight_done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "53da61345f704e489b4f9b1bfbd2272d8f343dbf",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/run-request-gate.test.mjs tests/run-dispatch.test.mjs tests/run-contract.test.mjs tests/run-integrated.test.mjs tests/run-execution-guard.test.mjs", "exit": 0, "passed": 21, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "officialRuntime": "installed Electron RunAsNode 0.2.1-rc.2",
+    "adapter": "SYNTHETIC in-memory provider",
+    "integratedSyntheticProviderCalls": 8,
+    "defaultOrCancelledOrChangedActualApprovalAdapterCalls": 0,
+    "auditBeforeAdapterStreamVerified": true,
+    "finalSynchronousRequestFingerprintRecheck": true
+  },
+  "limits": {
+    "defaultMaxInputBytes": 8192,
+    "absoluteMaxInputBytes": 32768,
+    "defaultMaxOutputTokens": 256,
+    "absoluteMaxOutputTokens": 512,
+    "reasoningEffort": "off",
+    "toolFree": true
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "realModelCallsByMaker": 0,
+    "actualUserSessionReads": 0,
+    "profileOrCredentialAccess": false,
+    "newHttpOrApplyEntry": false,
+    "callerTerminalLogAccepted": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "installedOrDeployed": false,
+    "submittedOrPushedOrMerged": false,
+    "powerLossDurabilityClaim": false,
+    "providerHttpBytesFingerprintClaim": false,
+    "billingReceiptClaim": false
+  },
+  "remaining": [
+    "Independent Checker preflight",
+    "Root-only one-shot real model run with verified wire body, unique generation POST, price and budget policy",
+    "Actual usage, cost estimate vs service billing, terminal asset return and reopen readback evidence"
+  ]
+}

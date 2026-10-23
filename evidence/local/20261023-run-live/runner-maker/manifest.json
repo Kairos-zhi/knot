@@ -1,0 +1,36 @@
+{
+  "task": "KONT-RUN-011",
+  "role": "runner-maker",
+  "files": [
+    {
+      "path": "scripts/run-flash-verification.cjs",
+      "bytes": 15000,
+      "sha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485"
+    },
+    {
+      "path": "tests/run-flash-wire.test.cjs",
+      "bytes": 4941,
+      "sha256": "fbbad3b8261605e9e45a18df0fc2de6287272d6e1fac0779f54d514e270eabec"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/REPORT.md",
+      "bytes": 1425,
+      "sha256": "b42425e2b265502a233763e72f4d1c4162c5b0f894788ff1877604ec6aacb7fc"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/receipt.json",
+      "bytes": 407,
+      "sha256": "fda1ad88668fab939e605ea58e63450971c7a2dd507b36a0cca440a2c58b2f7d"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/focused.tap",
+      "bytes": 1082,
+      "sha256": "d471a7b45dbc0433ce7307ba7944165b6ed496e57fe9cb3b9dda91fc989ae892"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/check.log",
+      "bytes": 516,
+      "sha256": "5bdee4801a7a932de7a8a8a07f17cdb1bd1f1c7998583276b660447516a22b24"
+    }
+  ]
+}

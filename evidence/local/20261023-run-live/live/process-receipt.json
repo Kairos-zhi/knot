@@ -1,0 +1,8 @@
+{
+  "exitCode": 0,
+  "signal": null,
+  "stdout": "[llm-deepseek-account] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)\n{\"status\":\"returned\",\"generationPosts\":1,\"terminal\":\"completed\",\"output\":\"根据给定材料，Knot把材料、对话和产物关联到同一个工作现场。\",\"usage\":[{\"type\":\"usage\",\"usage\":{\"inputTokens\":158,\"outputTokens\":18,\"cacheReadTokens\":0,\"cacheWriteTokens\":0,\"totalTokens\":176}}],\"conservativeModelCostCeilingCny\":2.0992,\"settledInvoiceVerified\":false,\"reopened\":true}\n",
+  "stderr": "",
+  "runnerSha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485",
+  "finishedAt": "2026-10-23T15:50:17.058Z"
+}

@@ -1,0 +1,84 @@
+{
+  "task": "KONT-RUN-011",
+  "role": "independent Checker preflight",
+  "at": "2026-10-23T15:49:41.400Z",
+  "verdict": "PASS_PREFLIGHT_SINGLE_AUTHORIZED_FLASH_ATTEMPT",
+  "scope": "Pre-execution review only; root alone may execute the frozen runner once under existing user authorization",
+  "realRunAccepted": false,
+  "checkerGeneratedRequests": 0,
+  "coreFocused": {
+    "tests": 21,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "evidence": "focused.tap"
+  },
+  "wireFocused": {
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "evidence": "wire-focused.tap",
+    "actualOfficialSerializerIntercepted": true,
+    "networkRequests": 0
+  },
+  "runnerCheck": {
+    "mode": "check-only",
+    "exitCode": 0,
+    "generationPosts": 0,
+    "existingAccountAvailable": true,
+    "evidence": "runner-check.log"
+  },
+  "hashVerification": {
+    "manifestEntries": 15,
+    "productTestFiles": 7,
+    "allMatch": true,
+    "evidence": "preflight-hash-check.json",
+    "runnerSha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485"
+  },
+  "singleAttempt": {
+    "existingAttemptMarker": false,
+    "existingGenerationMarker": false,
+    "rootOnly": true,
+    "mode": "--execute-authorized-once",
+    "model": "deepseek-flash",
+    "provider": "deepseek-account",
+    "currency": "CNY",
+    "budget": 3,
+    "maxOutputTokens": 256,
+    "maxActualRequestBytes": 8192,
+    "maxWireBytes": 32768,
+    "maxGenerationPosts": 1,
+    "thinking": "disabled",
+    "toolsAllowed": false,
+    "redirectsAllowed": false,
+    "retriesAllowed": false
+  },
+  "pricing": {
+    "independentlyBrowsed": true,
+    "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "peakInputPerMillion": 2,
+    "peakOutputPerMillion": 8,
+    "conservativeContextTokens": 1048576,
+    "conservativeCeilingCny": 2.0992,
+    "settledInvoiceVerified": false
+  },
+  "verified": [
+    "Actual request immutable audit snapshot, exact receipt and cancellation/TOCTOU recheck immediately before downstream stream",
+    "Full approved system/developer/user content mapped to exact official serialized wire with strict route/tools/field controls",
+    "wx script-attempt marker and generation counter consumed before first await/transport",
+    "Read-only existing account record; no API key/login/refresh/credential write",
+    "Sticky cleanup failure rejects unsafe disposal; prior completed return stays committed",
+    "Fixed public material and isolated Knot store; no apply/HTTP or running Desktop deployment"
+  ],
+  "blockers": [],
+  "afterRootAttempt": "Read only usage, request audit/wire hashes, complete owned events, persisted Run/generated block and normal reopened readback; never repeat request",
+  "limitations": [
+    "Preflight is not actual Run completion or product acceptance",
+    "User grant is single model attempt under 3 CNY; no broadened deployment/identity/material authorization",
+    "Costs are conservatively bounded and later usage-estimated, not a settled billing receipt",
+    "Knot persistence lacks fsync/power-loss proof; no production recovery guarantee"
+  ]
+}

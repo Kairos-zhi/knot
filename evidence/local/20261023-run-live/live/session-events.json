@@ -1,0 +1,287 @@
+[
+  {
+    "type": "agent/inbox/spliced",
+    "seq": 0,
+    "time": 1792770616109,
+    "data": {
+      "target": "next-turn",
+      "start": 0,
+      "inserted": [
+        {
+          "source": {
+            "kind": "user",
+            "rpcId": "kont-flash-live-20261023-request-1"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"checked\":[{\"blocks\":[{\"content\":\"公开测试材料\",\"id\":\"b_title\",\"provenance\":[],\"source\":\"manual\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"},{\"content\":\"Knot把材料、对话和产物关联到同一个工作现场。\",\"id\":\"b_summary\",\"provenance\":[],\"source\":\"manual\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"}],\"id\":\"public-material\",\"summary\":\"Knot把材料、对话和产物关联到同一个工作现场。\",\"title\":\"公开测试材料\"}],\"draft\":\"仅根据给定材料，用一句简体中文概括Knot的用途。不使用工具，不扩展事实。\"}"
+            }
+          ],
+          "role": "user",
+          "id": "27e97926-e0d8-498f-9ea6-54f76d310ed3"
+        }
+      ]
+    }
+  },
+  {
+    "type": "turn/start",
+    "seq": 1,
+    "time": 1792770616111,
+    "data": {
+      "turn": 1
+    }
+  },
+  {
+    "type": "agent/inbox/spliced",
+    "seq": 2,
+    "time": 1792770616111,
+    "data": {
+      "target": "next-turn",
+      "start": 0,
+      "removedCount": 1,
+      "inserted": []
+    }
+  },
+  {
+    "type": "step/start",
+    "seq": 3,
+    "time": 1792770616113,
+    "data": {
+      "turn": 1,
+      "step": 1
+    }
+  },
+  {
+    "type": "system/message",
+    "seq": 4,
+    "time": 1792770616115,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "message": {
+        "role": "system",
+        "content": [],
+        "source": {
+          "kind": "system-prompt"
+        },
+        "id": "fa2aeac0-a6b0-4ccd-9bd8-093a4b167a6d"
+      }
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "user/message",
+    "seq": 5,
+    "time": 1792770616115,
+    "data": {
+      "source": {
+        "kind": "user",
+        "rpcId": "kont-flash-live-20261023-request-1"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"checked\":[{\"blocks\":[{\"content\":\"公开测试材料\",\"id\":\"b_title\",\"provenance\":[],\"source\":\"manual\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"},{\"content\":\"Knot把材料、对话和产物关联到同一个工作现场。\",\"id\":\"b_summary\",\"provenance\":[],\"source\":\"manual\",\"timestamp\":\"1970-01-01T00:00:00.000Z\"}],\"id\":\"public-material\",\"summary\":\"Knot把材料、对话和产物关联到同一个工作现场。\",\"title\":\"公开测试材料\"}],\"draft\":\"仅根据给定材料，用一句简体中文概括Knot的用途。不使用工具，不扩展事实。\"}"
+        }
+      ],
+      "role": "user",
+      "id": "27e97926-e0d8-498f-9ea6-54f76d310ed3"
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "request/header",
+    "seq": 6,
+    "time": 1792770616115,
+    "data": {
+      "header": {
+        "config": {
+          "provider": "deepseek-account",
+          "model": "deepseek-flash",
+          "reasoningEffort": "off",
+          "maxTokens": 256
+        }
+      },
+      "reason": "initial"
+    }
+  },
+  {
+    "type": "request/context",
+    "seq": 7,
+    "time": 1792770616115,
+    "data": {
+      "provider": "deepseek-account",
+      "model": "deepseek-flash",
+      "contextWindow": 1048576,
+      "systemPromptUpdate": "in-history"
+    }
+  },
+  {
+    "type": "assistant/message",
+    "seq": 8,
+    "time": 1792770617006,
+    "data": {
+      "turn": 1,
+      "step": 1,
+      "message": {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "根据给定材料，Knot把材料、对话和产物关联到同一个工作现场。"
+          }
+        ],
+        "source": {
+          "kind": "model",
+          "provider": "deepseek-account",
+          "model": "deepseek-flash",
+          "replayState": {
+            "response": {
+              "kind": "deepseek-messages",
+              "version": 1,
+              "model": "deepseek-flash"
+            },
+            "blocks": [
+              {
+                "type": "text"
+              }
+            ]
+          }
+        },
+        "id": "cc8d41db-6391-4442-8e17-da82dabc7688"
+      },
+      "usage": {
+        "inputTokens": 158,
+        "outputTokens": 18,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 176
+      },
+      "stream": [
+        {
+          "type": "chunk",
+          "time": 1792770616875,
+          "chunk": {
+            "type": "block-start",
+            "index": 0,
+            "blockType": "text"
+          }
+        },
+        {
+          "type": "text-chunks",
+          "time0": 1792770616876,
+          "index": 0,
+          "dt": [
+            71,
+            14,
+            0,
+            0,
+            0,
+            0,
+            15,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17,
+            0,
+            0,
+            1,
+            0
+          ],
+          "texts": [
+            "根据",
+            "给定",
+            "材料",
+            "，",
+            "K",
+            "not",
+            "把",
+            "材料",
+            "、",
+            "对话",
+            "和",
+            "产物",
+            "关联",
+            "到",
+            "同一个",
+            "工作",
+            "现场",
+            "。"
+          ]
+        },
+        {
+          "type": "chunk",
+          "time": 1792770616995,
+          "chunk": {
+            "type": "block-end",
+            "index": 0,
+            "block": {
+              "type": "text",
+              "text": "根据给定材料，Knot把材料、对话和产物关联到同一个工作现场。"
+            }
+          }
+        },
+        {
+          "type": "chunk",
+          "time": 1792770616996,
+          "chunk": {
+            "type": "usage",
+            "usage": {
+              "inputTokens": 158,
+              "outputTokens": 18,
+              "cacheReadTokens": 0,
+              "cacheWriteTokens": 0,
+              "totalTokens": 176
+            }
+          }
+        },
+        {
+          "type": "chunk",
+          "time": 1792770616996,
+          "chunk": {
+            "type": "finish",
+            "reason": {
+              "kind": "stop"
+            },
+            "replayState": {
+              "response": {
+                "kind": "deepseek-messages",
+                "version": 1,
+                "model": "deepseek-flash"
+              },
+              "blocks": [
+                {
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "surfaceOp": "append"
+  },
+  {
+    "type": "step/end",
+    "seq": 9,
+    "time": 1792770617007,
+    "data": {
+      "turn": 1,
+      "step": 1
+    }
+  },
+  {
+    "type": "turn/end",
+    "seq": 10,
+    "time": 1792770617007,
+    "data": {
+      "turn": 1,
+      "reason": {
+        "kind": "completed"
+      }
+    }
+  }
+]

@@ -21,6 +21,7 @@
 | KONT-RUN-008 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | S/checker/final-review.json；build＋focused5/5；受控Agent单次stream保护，未接执行入口 |
 | KONT-RUN-009 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | T/checker/final-review.json；build＋focused19/19；同Run持久占位／提交状态内部候选 |
 | KONT-RUN-010 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | U/checker/final-review.json；r2 build＋focused16/16；官方owned组件→synthetic原子回流 |
+| KONT-RUN-011 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | V/checker/final-review.json；core21＋wire4；唯一真实Flash请求／回流／重开，估算0.00046元 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -35,3 +36,4 @@ RUN-007 Gate：ACCEPT_SERIALIZABLE_READ_CONFIG_LIMITED；当前13＝11限定接�
 RUN-008（之“齐步走”）Gate：ACCEPT_EXECUTION_GUARD_LIMITED；S=evidence/local/20261022-run-guard；Maker与独立Checker build＋focused5/5，当前14＝12限定接受＋2关闭，完整产品接受0。只约束受控Agent，synthetic provider实测，真实模型0；完整请求授权／金额预算／持久防重与终态回流未接。下一卡接持久dispatch防重与执行状态，实际调用前集中确认身份／模型／成本与部署授权。
 2026-10-23之“齐步走”：RUN-009 Gate=ACCEPT_DURABLE_DISPATCH_LIMITED；T=evidence/local/20261023-run-dispatch；双方build＋focused19/19，当前15＝13限定接受＋2关闭，完整产品接受0。先持久占位再一次callback，同Run并发／正常重开拒重；submitted不等于完成，超时不等于远端取消。只做内部协调，无模型／部署；下一步集成guard、提交与受信终态回流，实际调用前仍需具体执行授权。
 之“按照战线快步推进”：RUN-010 r2 Gate=ACCEPT_OWNED_RUNTIME_INTEGRATION_LIMITED；U=evidence/local/20261023-run-integrated；双方build＋focused16/16，当前16＝14限定接受＋2关闭，完整产品接受0。官方Agent/Session完整事件链经synthetic provider回流一次；失败／取消／CAS／重复拒绝，清理失败持续拒绝关闭屏障，r1阻断与源码留样保留。未部署或调用真实模型；下一步补实际请求边界核准及明确执行授权，再做受控单次实跑，不把合成纵切当真实模型闭环。
+RUN-011：之明确deepseek-flash／3元且要求子agent并行，核心Maker与runnerMaker分文件并行，独立预检通过后根唯一实跑，Checker只读复核。Gate=ACCEPT_SINGLE_FLASH_RUN_LIMITED；当前17＝15限定接受＋2关闭，完整产品接受0。1生成POST、158输入／18输出、11条真实owned事件、completed、唯一generated来源块及独立重开通过；峰值估算0.00046元，非账单。本次授权已消费1/1，不再自动请求。下一步做在用桌面集成候选与正式工作站，保持宿主API／授权边界，不把隔离store试跑当已部署。

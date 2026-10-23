@@ -1,0 +1,15 @@
+{
+  "sourceResult": "evidence/local/20261023-run-live/live/result.json",
+  "pricingSource": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "currency": "CNY",
+  "userBudget": 3,
+  "generationPosts": 1,
+  "inputTokens": 158,
+  "outputTokens": 18,
+  "cacheReadTokens": 0,
+  "cacheWriteTokens": 0,
+  "peakRateUsageEstimate": 0.00046,
+  "conservativePreExecutionCeiling": 2.0992,
+  "withinBudget": true,
+  "settledInvoiceVerified": false
+}

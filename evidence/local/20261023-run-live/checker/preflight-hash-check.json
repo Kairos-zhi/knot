@@ -1,0 +1,100 @@
+{
+  "task": "KONT-RUN-011",
+  "at": "2026-10-23T15:48:41.827Z",
+  "manifestEntries": 15,
+  "productTestFiles": 7,
+  "allHashesMatch": true,
+  "checkerRealGenerationPosts": 0,
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/run-request-gate.mjs",
+      "bytes": 6372,
+      "sha256": "998238d5102fcd325c064de5edfd7d9030d4288a5d7307cb5dd7ccf26ceeea9d",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-executor.mjs",
+      "bytes": 8215,
+      "sha256": "dd48ed276aa76238da3b87019036db15574ac0eb2a30e67dd3c10ac0484b8660",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-execution-guard.mjs",
+      "bytes": 7222,
+      "sha256": "76c00b38213e9a4cab426e3f8b930e801ee8893d7711ac6347eeb3db8ba47b21",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "tests/run-request-gate.test.mjs",
+      "bytes": 7353,
+      "sha256": "22deef145015a3a49936c10d85e5fc32eca6c9eea324aab38f6f9bf341492794",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "tests/run-integrated-official-worker.cjs",
+      "bytes": 15633,
+      "sha256": "53d52c8152d90b1ba777b73d48a6ad6f2adf21358f1a66cbc83ba0107f54be1d",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/maker/REPORT.md",
+      "bytes": 3392,
+      "sha256": "68ff50507ff8cdfb0b764b96cd5d0412ab34d5335ebb625d6ae17f986831475d",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/maker/receipt.json",
+      "bytes": 1999,
+      "sha256": "c8235098d09fb8639b51405aaacedb7d87a5ba8b76fb50d757fd8dee13e34ee3",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/maker/build.log",
+      "bytes": 231,
+      "sha256": "cd352449a248d7b725b010fa147725d9e378aeb9e5c4f4869710641bd96291ee",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/maker/focused.tap",
+      "bytes": 6652,
+      "sha256": "cebbc7131f1d3ab2dba3f3b67a591bc9b4112c3a476704e11b722ddc3ba4f5e0",
+      "manifestRole": "maker"
+    },
+    {
+      "path": "scripts/run-flash-verification.cjs",
+      "bytes": 15000,
+      "sha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485",
+      "manifestRole": "runner-maker"
+    },
+    {
+      "path": "tests/run-flash-wire.test.cjs",
+      "bytes": 4941,
+      "sha256": "fbbad3b8261605e9e45a18df0fc2de6287272d6e1fac0779f54d514e270eabec",
+      "manifestRole": "runner-maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/REPORT.md",
+      "bytes": 1425,
+      "sha256": "b42425e2b265502a233763e72f4d1c4162c5b0f894788ff1877604ec6aacb7fc",
+      "manifestRole": "runner-maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/receipt.json",
+      "bytes": 407,
+      "sha256": "fda1ad88668fab939e605ea58e63450971c7a2dd507b36a0cca440a2c58b2f7d",
+      "manifestRole": "runner-maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/focused.tap",
+      "bytes": 1082,
+      "sha256": "d471a7b45dbc0433ce7307ba7944165b6ed496e57fe9cb3b9dda91fc989ae892",
+      "manifestRole": "runner-maker"
+    },
+    {
+      "path": "evidence/local/20261023-run-live/runner-maker/check.log",
+      "bytes": 516,
+      "sha256": "5bdee4801a7a932de7a8a8a07f17cdb1bd1f1c7998583276b660447516a22b24",
+      "manifestRole": "runner-maker"
+    }
+  ]
+}

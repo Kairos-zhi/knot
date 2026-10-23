@@ -1,5 +1,6 @@
 import { runHash, runPromptText, validateDispatchConstraints, validateRun } from './run.mjs';
 import { installRunExecutionGuard } from './run-execution-guard.mjs';
+import { createActualRequestGate } from './run-request-gate.mjs';
 
 export class RunExecutorError extends Error {
   constructor(code) { super(`Knot internal execution refused (${code})`); this.code = code; }
@@ -11,14 +12,15 @@ const fail = code => { throw new RunExecutorError(code); };
  * The caller owns the store: await dispose() BEFORE store.close(). A rejected
  * dispose is unsafe to close: reconcile/release the owned resources first. */
 export function createRunExecutor({ ctx, store, hostVersion, createUserMessage,
-  authorize = () => null, evidenceKind } = {}) {
+  authorize = () => null, authorizeRequest = () => null, requestAuditDirectory,
+  maxInputBytes = 8192, maxOutputTokens = 256, evidenceKind } = {}) {
   if (hostVersion !== '0.2.1-rc.2' || typeof ctx?.agents?.create !== 'function'
     || typeof createUserMessage !== 'function' || typeof authorize !== 'function'
     || !['synthetic-test', 'dsh-session-log'].includes(evidenceKind)) fail('EXECUTOR_CONFIG');
   let closed = false, disposal, cleanupFailed = false;
   const jobs = new Set();
   async function work(job, { runId, constraints, timeoutMs = 30000 }) {
-    let handle, guard, claim, timer, unobserve, observedSession, result, invalidEvents = false;
+    let handle, guard, claim, requestGate, timer, unobserve, observedSession, result, invalidEvents = false;
     const events = [];
     const signal = job.abort.signal;
     const active = () => { if (closed || signal.aborted) fail('EXECUTOR_CANCELLED'); };
@@ -47,14 +49,17 @@ export function createRunExecutor({ ctx, store, hostVersion, createUserMessage,
       claim = reserved.run.dispatchClaim;
       if (!reserved.acquired) return result = { status: 'duplicate', claim, executionAuthorized: false };
       active();
+      requestGate = createActualRequestGate({ run: reserved.run, authorizeRequest, auditDirectory: requestAuditDirectory,
+        signal, maxInputBytes, maxOutputTokens });
       const approval = { approved: true, runId: run.runId, requestId: run.requestId,
         sessionId: run.plannedSessionId, inputSha256: run.inputSha256,
-        provider: constraints.provider, model: constraints.model, maxTokens: constraints.maxTokens };
+        provider: constraints.provider, model: constraints.model, maxTokens: constraints.maxTokens, reasoningEffort: 'off' };
       handle = await ctx.agents.create({ sessionId: run.plannedSessionId, signal,
-        agentOptions: { provider: constraints.provider, model: constraints.model, maxTokens: constraints.maxTokens },
+        agentOptions: { provider: constraints.provider, model: constraints.model, maxTokens: constraints.maxTokens, reasoningEffort: 'off' },
         setup(agentCtx, agent) {
           active();
-          guard = installRunExecutionGuard(agentCtx, agent, { run: reserved.run, approval, hostVersion, signal });
+          guard = installRunExecutionGuard(agentCtx, agent, { run: reserved.run, approval, hostVersion, signal,
+            authorizeStream: options => requestGate.approve(options, agent.session) });
           observedSession = agent.session;
           // Public committed event notifications, installed before publication.
           // Exact object identity excludes all sibling Session activity.
@@ -75,14 +80,14 @@ export function createRunExecutor({ ctx, store, hostVersion, createUserMessage,
       if (events.at(-1)?.type !== 'turn/end' || events.at(-1)?.data.reason?.kind !== 'completed') fail('EXECUTOR_TERMINAL');
       const completed = await store.returnRun(runId, { sessionId: handle.agent.session.id, events, kind: evidenceKind },
         'runtime:owned-dsh', { signal });
-      return result = { status: 'returned', run: completed, executionAuthorized: false };
+      return result = { status: 'returned', run: completed, requestAudit: requestGate.status(), executionAuthorized: false };
     } catch (error) {
       if (claim) {
         // Failure cannot release a reservation or turn submitted into success.
         try { await store.settleRunDispatch(runId, claim.claimId, 'uncertain'); } catch {}
       }
       return result = { status: signal.aborted || closed ? 'cancelled' : 'failed',
-        code: error instanceof RunExecutorError ? error.code : 'EXECUTOR_FAILED', executionAuthorized: false };
+        code: error instanceof RunExecutorError ? error.code : 'EXECUTOR_FAILED', requestAudit: requestGate?.status(), executionAuthorized: false };
     } finally {
       clearTimeout(timer);
       // Keep fail-closed hooks until the exact owned Agent has drained and its

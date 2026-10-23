@@ -31,8 +31,15 @@ const official = createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_m
     ctx.llm.registerAdapter(['synthetic-only'], {
       providerInfo: id => ({ id, name: 'Synthetic test provider; never a network model' }),
       providerRetryPolicy: () => ({ mode: 'normal', maxRetries: 0 }),
-      async prepareCall(provider, model) { return { model: { provider, id: model, name: 'synthetic-model', inputModalities: ['text'] },
+      async prepareCall(provider, model) { return { model: { provider, id: model, name: 'synthetic-model', inputModalities: ['text'],
+        reasoning: { efforts: [{ id: 'off', name: 'Off' }], defaultEffort: 'off' } },
         async *stream(options) {
+          const owner = fixtures.find(f => f.run.plannedSessionId === options.sessionId);
+          const claim = owner.store.read().runs[0].dispatchClaim;
+          const audit = JSON.parse(await readFile(join(owner.config.requestAuditDirectory, `${claim.claimId}.request.json`)));
+          assert.equal(audit.receipt.requestSha256, audit.requestSha256);
+          assert.deepEqual(audit.request.options.messages, options.messages);
+          assert.deepEqual(audit.request.options.toolHistory, options.toolHistory);
           providerCalls++; providerStarted?.();
           if (mode === 'error') { yield { type: 'finish', reason: { kind: 'error', failure: { code: 'SYNTHETIC_ERROR', message: 'synthetic failure' } } }; return; }
           if (mode === 'wait') {
@@ -47,7 +54,14 @@ const official = createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_m
         } }; },
     });
     new AgentLoop(ctx, { agents: [], maxParallelToolCalls: 1 });
-    async function fixture(authorize = ({ binding }) => ({ approved: true, ...binding })) {
+    const approveRequest = ({ binding, requestSha256, request, inputBytes }) => {
+      assert.equal(request.options.provider, constraints.provider); assert.equal(request.options.model, constraints.model);
+      assert.equal(request.options.maxTokens, 64); assert.equal(request.options.reasoningEffort, 'off');
+      assert.ok(inputBytes <= 8192);
+      return { approved: true, ...binding, requestSha256, provider: constraints.provider, model: constraints.model,
+        maxTokens: 64, reasoningEffort: 'off' };
+    };
+    async function fixture(authorize = ({ binding }) => ({ approved: true, ...binding }), authorizeRequest = approveRequest) {
       const n = fixtures.length + 1, file = join(dir, `state-${n}.json`);
       const store = await new KontStore(file).init();
       const commands = [
@@ -60,7 +74,9 @@ const official = createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_m
       const { value: run, ok } = await store.command({ type: 'run.prepare', worksiteId: 'legacy', targetId: 'target',
         sessionId: `synthetic-owned-${n}`, requestId: `synthetic-request-${n}` });
       assert.equal(ok, true);
-      const config = { ctx, store, hostVersion, createUserMessage, evidenceKind: 'synthetic-test', ...(authorize ? { authorize } : {}) };
+      const config = { ctx, store, hostVersion, createUserMessage, evidenceKind: 'synthetic-test',
+        requestAuditDirectory: join(dir, `audit-${n}`), ...(authorize ? { authorize } : {}),
+        ...(authorizeRequest ? { authorizeRequest } : {}) };
       const executor = createRunExecutor(config);
       const f = { store, file, run, executor, config, baseline: store.read().assets.find(a => a.id === 'target') };
       fixtures.push(f); return f;
@@ -85,7 +101,7 @@ const official = createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_m
     const count = providerCalls;
     const concurrent = await Promise.all(Array.from({ length: 8 }, () => call(f)));
     await unobserve();
-    assert.equal(providerCalls, count + 1);
+    assert.equal(providerCalls, count + 1, JSON.stringify({ concurrent, observed }));
     const returned = concurrent.find(r => r.status === 'returned');
     assert.ok(returned, JSON.stringify({ concurrent, events: observed.map(e => [e.seq, e.type]) }));
     assert.equal(concurrent.filter(r => r.status === 'returned').length, 1);
@@ -136,6 +152,22 @@ const official = createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_m
     assert.equal((await call(authWait, { timeoutMs: 10 })).status, 'cancelled'); noOutput(authWait);
     assert.equal(authWait.store.read().runs[0].dispatchClaim, undefined);
     checks.push('authorization-timeout-zero-dispatch');
+    const requestDenied = await fixture(undefined, null), beforeRequestDeny = providerCalls;
+    assert.equal((await call(requestDenied)).status, 'failed');
+    assert.equal(providerCalls, beforeRequestDeny); noOutput(requestDenied);
+    const requestAbort = new AbortController();
+    const delayedApproval = await fixture(undefined, async snapshot => { requestAbort.abort(); return approveRequest(snapshot); });
+    assert.equal((await call(delayedApproval, { signal: requestAbort.signal })).status, 'cancelled');
+    assert.equal(providerCalls, beforeRequestDeny); noOutput(delayedApproval);
+    const requestChanged = await fixture(undefined, snapshot => {
+      const agent = ctx.agents.get(snapshot.binding.sessionId);
+      agent.session.append('request/header', { header: { config: { ...snapshot.request.requestHeader.config, maxTokens: 63 } }, reason: 'change' });
+      return approveRequest(snapshot);
+    });
+    assert.equal((await call(requestChanged)).status, 'failed');
+    assert.equal(providerCalls, beforeRequestDeny); noOutput(requestChanged);
+    checks.push('actual-request-default-deny-zero-adapter-stream', 'actual-request-cancelled-approval-zero-adapter-stream');
+    checks.push('official-header-change-during-approval-zero-adapter-stream');
     // Fault only the ownership wrapper AFTER the real official disposal. This
     // must not rewrite the already committed business outcome as a failure.
     mode = 'text';

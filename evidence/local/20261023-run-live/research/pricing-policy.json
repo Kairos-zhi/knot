@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-23T15:44:26.8433631Z",
+  "source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "model": "deepseek-flash",
+  "modelVersion": "DeepSeek-V4.1-Flash-1017",
+  "currency": "CNY",
+  "peakInputCacheMissPerMillion": 2,
+  "peakOutputPerMillion": 8,
+  "contextUpperTokens": 1048576,
+  "maxOutputTokens": 256,
+  "conservativeSingleGenerationUpperCny": 2.0992,
+  "userBudgetCny": 3,
+  "generationRequestLimit": 1,
+  "invoiceVerified": false
+}

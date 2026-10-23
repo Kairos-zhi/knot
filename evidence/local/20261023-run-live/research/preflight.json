@@ -1,0 +1,8 @@
+{
+  "phase": "metadata-only",
+  "provider": "deepseek-account",
+  "model": "deepseek-flash",
+  "metadataCalls": 1,
+  "generationPosts": 0,
+  "credentialsUnchanged": true
+}

@@ -1,0 +1,137 @@
+TAP version 13
+# Subtest: internal return cancellation before entry or while queued preserves bytes and emits nothing
+ok 1 - internal return cancellation before entry or while queued preserves bytes and emits nothing
+  ---
+  duration_ms: 83.755
+  type: 'test'
+  ...
+# Subtest: prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+ok 2 - prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+  ---
+  duration_ms: 78.9817
+  type: 'test'
+  ...
+# Subtest: synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+ok 3 - synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+  ---
+  duration_ms: 59.3236
+  type: 'test'
+  ...
+# Subtest: synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+ok 4 - synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+  ---
+  duration_ms: 86.2569
+  type: 'test'
+  ...
+# Subtest: target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+ok 5 - target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+  ---
+  duration_ms: 67.952
+  type: 'test'
+  ...
+# Subtest: failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+ok 6 - failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+  ---
+  duration_ms: 93.1459
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+ok 7 - SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+  ---
+  duration_ms: 56.0054
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+ok 8 - SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+  ---
+  duration_ms: 50.7016
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+ok 9 - SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+  ---
+  duration_ms: 32.6568
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+ok 10 - SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+  ---
+  duration_ms: 43.271
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+ok 11 - SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+  ---
+  duration_ms: 35.7774
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+ok 12 - SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+  ---
+  duration_ms: 42.0482
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+ok 13 - SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+  ---
+  duration_ms: 30.9648
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+ok 14 - SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+  ---
+  duration_ms: 21.5074
+  type: 'test'
+  ...
+# Subtest: official Agent setup and scoped runtime hooks constrain a synthetic provider
+ok 15 - official Agent setup and scoped runtime hooks constrain a synthetic provider
+  ---
+  duration_ms: 601.9612
+  type: 'test'
+  ...
+# Subtest: official owned AgentLoop/Session integrates guarded synthetic execution and persistent return
+ok 16 - official owned AgentLoop/Session integrates guarded synthetic execution and persistent return
+  ---
+  duration_ms: 986.8083
+  type: 'test'
+  ...
+# {"hostVersion":"0.2.1-rc.2","fixture":"official-AgentLoop-Session-synthetic-provider","checks":["default-deny-and-exact-authorization","actual-terminal-success-atomic-provenance-once","concurrent-and-reopen-no-provider-replay","official-failed-terminal-no-output-no-retry","target-CAS-no-output","external-cancel-timeout-dispose-fence","retained-executor-reference-closed","owned-Agent-handles-released","authorization-timeout-zero-dispatch","actual-request-default-deny-zero-adapter-stream","actual-request-cancelled-approval-zero-adapter-stream","official-header-change-during-approval-zero-adapter-stream","cleanup-fault-preserves-committed-return","post-commit-abort-preserves-returned","sticky-cleanup-failure-rejects-close-barrier-before-official-release"],"providerCalls":8,"realModelCalls":0,"realModelRunCompleted":false,"returnedEvidenceKind":"synthetic-test","completeOwnedEvents":11,"fullExecutionAuthorization":false}
+# Subtest: SYNTHETIC actual request approval records complete independent fingerprint and receipt; only once
+ok 17 - SYNTHETIC actual request approval records complete independent fingerprint and receipt; only once
+  ---
+  duration_ms: 48.3515
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC message/header/context and route/tools changes cannot reuse original request approval
+ok 18 - SYNTHETIC message/header/context and route/tools changes cannot reuse original request approval
+  ---
+  duration_ms: 218.0172
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC default deny, wrong claim receipt, byte/token caps, and audit write failure stay closed
+ok 19 - SYNTHETIC default deny, wrong claim receipt, byte/token caps, and audit write failure stay closed
+  ---
+  duration_ms: 132.0482
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC cancellation interrupts pending authorization and late approval cannot admit a stream
+ok 20 - SYNTHETIC cancellation interrupts pending authorization and late approval cannot admit a stream
+  ---
+  duration_ms: 24.4553
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC request mutation during authorization or after audit rejects before downstream stream
+ok 21 - SYNTHETIC request mutation during authorization or after audit rejects before downstream stream
+  ---
+  duration_ms: 104.0073
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1279.6137

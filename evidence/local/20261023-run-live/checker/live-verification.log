@@ -1,0 +1,41 @@
+{
+  "task": "KONT-RUN-011",
+  "role": "independent Checker actual-result verification",
+  "at": "2026-10-23T15:53:38.171Z",
+  "verdict": "LIVE_EVIDENCE_PASS",
+  "runnerHash": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485",
+  "generationPosts": 1,
+  "metadataCalls": 1,
+  "terminal": "completed",
+  "ownedEventCount": 11,
+  "inputTokens": 158,
+  "outputTokens": 18,
+  "cacheReadTokens": 0,
+  "totalTokens": 176,
+  "generatedBlocks": 1,
+  "provenance": [
+    "public-material"
+  ],
+  "output": "根据给定材料，Knot把材料、对话和产物关联到同一个工作现场。",
+  "requestSha256": "58fbe56d0beaef981be1752d1815ef5ae375e7f087427bd1fe7a519ac61ef885",
+  "eventSha256": "24a63cfb385f2fbadf25f8b664a70889f034efb8e99788f0109b7d8b37f90df4",
+  "wireSha256": "b0db0b6d0246f717a9e97e4e1533a4d48c4820989a5225407985705dd444635f",
+  "wireBytes": 781,
+  "requestApprovedBeforeTransportEvidence": true,
+  "observedRoute": {
+    "provider": "deepseek-account",
+    "model": "deepseek-flash"
+  },
+  "conservativeCostCeilingCny": 2.0992,
+  "budgetCny": 3,
+  "peakUsageEstimateCny": 0.00046,
+  "settledInvoiceVerified": false,
+  "normalReopenReadback": true,
+  "workspaceSha256": "be2a01ac22dc7df3f2b2c9fac6d50069cfba1dc52f74e334b47f957050ebba34",
+  "workspaceBytesUnchangedByChecker": true,
+  "lockNaturallyReleased": true,
+  "credentialUnchangedBasis": "Frozen runner result=true from in-memory before/after hash assertion; no credential values read/copied by Checker",
+  "checkerModelRequests": 0,
+  "runningDesktopDeployed": false,
+  "dshSessionPersistenceUsed": false
+}

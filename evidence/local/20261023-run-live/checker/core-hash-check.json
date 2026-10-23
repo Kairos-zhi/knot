@@ -1,0 +1,10 @@
+{
+  "task": "KONT-RUN-011",
+  "at": "2026-10-23T15:44:40.193Z",
+  "manifestEntries": 9,
+  "productTestFiles": 5,
+  "allHashesMatch": true,
+  "fullSuiteRun": false,
+  "realGenerationPostsByChecker": 0,
+  "scope": "core Maker only; root runner separately pending"
+}
