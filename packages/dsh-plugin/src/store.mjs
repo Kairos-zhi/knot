@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { createDefaultWorkspace } from '../lib/workspace-state.js';
 import { getBlocks } from '../lib/knot-model.js';
 import { applyCommand, normalizeSnapshot, KontError, reject, isRecord, text } from './kernel.mjs';
-import { prepareRun, returnRun, validateRuns, runHash } from './run.mjs';
+import { prepareRun, returnRun, validateRuns, runHash, claimRunDispatch, settleRunDispatch } from './run.mjs';
 export { KontError };
 
 const fresh = () => ({ schemaVersion: 4, revision: 0, seq: 0, assets: [], edges: [], workspace: createDefaultWorkspace(), titles: { legacy: '第一个工作现场' } });
@@ -83,6 +83,13 @@ export class KontStore {
   returnRun(runId, evidence, source = 'runtime:dsh') {
     return this.#commit({ commands: [{ runId, evidence }] }, source, true, null, true).then(result => result.results[0]);
   }
+  // Internal coordination only. Ordinary commands cannot reserve or settle dispatch.
+  claimRunDispatch(runId, constraints) {
+    return this.#commit({ commands: [{ runId, constraints }] }, 'runtime:dispatch', true, null, 'claim').then(r => r.results[0]);
+  }
+  settleRunDispatch(runId, claimId, outcome) {
+    return this.#commit({ commands: [{ runId, claimId, outcome }] }, 'runtime:dispatch', true, null, 'settle').then(r => r.results[0]);
+  }
   #commit(request, source, legacyCommand = false, imported = null, internalReturn = false) {
     if (this.#closing) return Promise.reject(new KontError('STORE_CLOSED', '现场存储已关闭', 503));
     // Freeze the call's payload before yielding to the writer queue. The
@@ -109,6 +116,8 @@ export class KontStore {
       const events = [], results = [];
       for (const command of request.commands) {
         const applied = imported ? { value: true, event: { type: 'snapshot.restored' } }
+          : internalReturn === 'claim' ? claimRunDispatch(next, command.runId, command.constraints)
+          : internalReturn === 'settle' ? settleRunDispatch(next, command.runId, command.claimId, command.outcome)
           : internalReturn ? returnRun(next, command.runId, command.evidence, applyCommand)
           : command?.type === 'run.prepare' ? prepareRun(next, command) : applyCommand(next, command);
         results.push(clone(applied.value));

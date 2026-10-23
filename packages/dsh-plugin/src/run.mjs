@@ -53,12 +53,22 @@ function validateInput(input) {
 }
 
 export function validateRun(run) {
-  check(exact(run, ['version', 'runId', 'requestId', 'plannedSessionId', 'targetId', 'targetSha256', 'createdAt', 'status', 'input', 'inputSha256', 'receipt']), 'Unknown run fields');
+  check(exact(run, ['version', 'runId', 'requestId', 'plannedSessionId', 'targetId', 'targetSha256', 'createdAt', 'status', 'input', 'inputSha256', 'receipt', 'dispatchClaim']), 'Unknown run fields');
   check(run.version === 1 && identity(run.runId) && identity(run.requestId) && identity(run.plannedSessionId)
     && identity(run.targetId) && /^[a-f0-9]{64}$/.test(run.targetSha256) && typeof run.createdAt === 'string'
     && Number.isFinite(Date.parse(run.createdAt)), 'Invalid run identity');
   validateInput(run.input);
   check(run.inputSha256 === runHash(run.input), 'Input digest mismatch');
+  if (run.dispatchClaim !== undefined) {
+    const c = run.dispatchClaim;
+    check(exact(c, ['claimId', 'runId', 'requestId', 'sessionId', 'inputSha256', 'constraints', 'constraintsSha256', 'claimedAt', 'state'])
+      && identity(c.claimId) && c.runId === run.runId && c.requestId === run.requestId
+      && c.sessionId === run.plannedSessionId && c.inputSha256 === run.inputSha256
+      && typeof c.claimedAt === 'string' && Number.isFinite(Date.parse(c.claimedAt))
+      && ['reserved', 'submitted', 'uncertain'].includes(c.state), 'Invalid dispatch claim');
+    validateDispatchConstraints(c.constraints);
+    check(c.constraintsSha256 === runHash(c.constraints), 'Dispatch constraint digest mismatch');
+  }
   check(run.status === 'prepared' || run.status === 'completed', 'Unknown run status');
   if (run.status === 'prepared') check(run.receipt === null, 'Prepared run cannot contain a terminal receipt');
   else {
@@ -100,6 +110,38 @@ export function prepareRun(state, command) {
     createdAt: new Date().toISOString(), status: 'prepared', input, inputSha256: runHash(input), receipt: null };
   state.runs = [...runs, validateRun(run)];
   return { value: clone(run), event: { type: 'run.prepared', runId: run.runId, requestId: run.requestId } };
+}
+
+/** A fixed request-boundary digest and route limits, not an authorization proof. */
+export function validateDispatchConstraints(value) {
+  check(exact(value, ['provider', 'model', 'maxTokens', 'requestSha256'])
+    && identity(value.provider) && identity(value.model)
+    && Number.isSafeInteger(value.maxTokens) && value.maxTokens > 0
+    && typeof value.requestSha256 === 'string' && /^[a-f0-9]{64}$/.test(value.requestSha256), 'Invalid dispatch constraints');
+  return clone(value);
+}
+
+export function claimRunDispatch(state, runId, constraints) {
+  constraints = validateDispatchConstraints(constraints);
+  const run = state.runs?.find(item => item.runId === runId);
+  check(run, 'Run does not exist', 'NOT_FOUND');
+  if (run.dispatchClaim) {
+    check(run.dispatchClaim.constraintsSha256 === runHash(constraints), 'Dispatch already binds other constraints', 'RUN_DISPATCH_CONFLICT');
+    return { value: { acquired: false, run: clone(run) } };
+  }
+  check(run.status === 'prepared', 'Only prepared Run can reserve dispatch', 'RUN_DISPATCH_CONFLICT');
+  run.dispatchClaim = { claimId: `claim_${randomUUID()}`, runId, requestId: run.requestId,
+    sessionId: run.plannedSessionId, inputSha256: run.inputSha256, constraints,
+    constraintsSha256: runHash(constraints), claimedAt: new Date().toISOString(), state: 'reserved' };
+  return { value: { acquired: true, run: clone(run) }, event: { type: 'run.dispatch-reserved', runId } };
+}
+
+export function settleRunDispatch(state, runId, claimId, outcome) {
+  const run = state.runs?.find(item => item.runId === runId), claim = run?.dispatchClaim;
+  check(claim && claim.claimId === claimId && ['submitted', 'uncertain'].includes(outcome), 'Invalid dispatch settlement');
+  check(claim.state === 'reserved', 'Dispatch already settled', 'RUN_DISPATCH_CONFLICT');
+  claim.state = outcome;
+  return { value: clone(claim), event: { type: 'run.dispatch-settled', runId, state: outcome } };
 }
 
 const textContent = content => {

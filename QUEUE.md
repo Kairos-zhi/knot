@@ -1,6 +1,6 @@
 # KONT 执行队列
 
-更新：2026-10-22。本页与STATE为当前入口；历史过程见docs/archive/QUEUE-20261022.md。
+更新：2026-10-23。本页与STATE为当前入口；历史过程见docs/archive/QUEUE-20261022.md。
 状态只允许：MAKER、CHECKER、GATE、ACCEPTED_LIMITED、CLOSED、BLOCKED。具体verdict及验收范围保留在原回执，不改写原历史冻结文件。
 
 | ID | 真实执行入口／本轮归档复核人 | 状态 | 证据与范围 |
@@ -19,6 +19,7 @@
 | KONT-RUN-006 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | P/checker/final-review.json；build＋focused12/12；同store绑定／卸载屏障，不新增HTTP或执行入口 |
 | KONT-RUN-007 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Q/checker/final-review.json；build＋focused9/9；JSON只读配置装配候选，不含真实profile解析／部署 |
 | KONT-RUN-008 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | S/checker/final-review.json；build＋focused5/5；受控Agent单次stream保护，未接执行入口 |
+| KONT-RUN-009 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | T/checker/final-review.json；build＋focused19/19；同Run持久占位／提交状态内部候选 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -31,3 +32,4 @@ RUN-006 Gate：ACCEPT_HOST_OBSERVER_BINDING_LIMITED；当前12＝10限定接受�
 当前RUN-007（之“快步前进”）：Q=evidence/local/20261022-run-config；只做正式装配配置，聚焦验证，无模型／在用部署权限增量。
 RUN-007 Gate：ACCEPT_SERIALIZABLE_READ_CONFIG_LIMITED；当前13＝11限定接受＋2关闭，完整产品接受0；实际库测试有ASAR anchor解析base适配，非真实Desktop profile部署，未重跑全量。
 RUN-008（之“齐步走”）Gate：ACCEPT_EXECUTION_GUARD_LIMITED；S=evidence/local/20261022-run-guard；Maker与独立Checker build＋focused5/5，当前14＝12限定接受＋2关闭，完整产品接受0。只约束受控Agent，synthetic provider实测，真实模型0；完整请求授权／金额预算／持久防重与终态回流未接。下一卡接持久dispatch防重与执行状态，实际调用前集中确认身份／模型／成本与部署授权。
+2026-10-23之“齐步走”：RUN-009 Gate=ACCEPT_DURABLE_DISPATCH_LIMITED；T=evidence/local/20261023-run-dispatch；双方build＋focused19/19，当前15＝13限定接受＋2关闭，完整产品接受0。先持久占位再一次callback，同Run并发／正常重开拒重；submitted不等于完成，超时不等于远端取消。只做内部协调，无模型／部署；下一步集成guard、提交与受信终态回流，实际调用前仍需具体执行授权。

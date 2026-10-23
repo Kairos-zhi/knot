@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+ok 1 - headless old commands create/connect/append/disconnect and preserve real schema-4 state after restart
+  ---
+  duration_ms: 52.959
+  type: 'test'
+  ...
+# Subtest: legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+ok 2 - legacy snapshot normalization keeps IDs, edge extension data, blocks and source; invalid restore preserves bytes
+  ---
+  duration_ms: 17.4582
+  type: 'test'
+  ...
+# Subtest: old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+ok 3 - old UI-only schema migrates into canonical snapshot without data loss or eager disk rewriting
+  ---
+  duration_ms: 21.1672
+  type: 'test'
+  ...
+# Subtest: unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+ok 4 - unimplemented commands and invalid blocks cannot become fake success; source is fixed by caller context
+  ---
+  duration_ms: 17.5296
+  type: 'test'
+  ...
+# Subtest: queued arguments and returned events are detached; failed batch emits nothing
+ok 5 - queued arguments and returned events are detached; failed batch emits nothing
+  ---
+  duration_ms: 20.3444
+  type: 'test'
+  ...
+# Subtest: bounded event buffer reports snapshot reset and failed IO emits no event
+ok 6 - bounded event buffer reports snapshot reset and failed IO emits no event
+  ---
+  duration_ms: 703.3956
+  type: 'test'
+  ...
+# Subtest: prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+ok 7 - prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+  ---
+  duration_ms: 92.7913
+  type: 'test'
+  ...
+# Subtest: synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+ok 8 - synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+  ---
+  duration_ms: 75.173
+  type: 'test'
+  ...
+# Subtest: synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+ok 9 - synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+  ---
+  duration_ms: 85.1063
+  type: 'test'
+  ...
+# Subtest: target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+ok 10 - target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+  ---
+  duration_ms: 68.3131
+  type: 'test'
+  ...
+# Subtest: failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+ok 11 - failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+  ---
+  duration_ms: 120.6413
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+ok 12 - SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+  ---
+  duration_ms: 51.8286
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+ok 13 - SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+  ---
+  duration_ms: 46.5342
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+ok 14 - SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+  ---
+  duration_ms: 30.176
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+ok 15 - SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+  ---
+  duration_ms: 42.7478
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+ok 16 - SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+  ---
+  duration_ms: 36.6945
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+ok 17 - SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+  ---
+  duration_ms: 36.0988
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+ok 18 - SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+  ---
+  duration_ms: 38.7272
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+ok 19 - SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+  ---
+  duration_ms: 34.6312
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1079.6815

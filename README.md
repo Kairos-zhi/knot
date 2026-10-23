@@ -66,4 +66,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-008](docs/tasks/KONT-RUN-008.md) 新增Agent setup作用域保护候选：显式绑定准备记录与provider/model/maxTokens，默认拒绝；限制无工具、一次LLM stream及取消后的调用。官方执行组件配合合成提供方验证，不接插件执行入口；完整上下文请求核准、金额预算、持久防重和真实终态回流仍未接通。一次stream不等于Provider内部HTTP零重试。
 
+[KONT-RUN-009](docs/tasks/KONT-RUN-009.md) 补内部持久提交防重：同Run先保存一次性占位，再调用submit；并发和正常重开后不再授予派发资格。`dispatchClaim`区分reserved/submitted/uncertain，接受只表示已提交；超时或回执保存失败不重发、不生成成功资产。复用现有存储，不提供新HTTP执行入口；仅合成callback测试，不含真实执行授权、远端exactly-once或断电耐久保证。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

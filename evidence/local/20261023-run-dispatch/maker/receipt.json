@@ -1,0 +1,36 @@
+{
+  "task": "KONT-RUN-009",
+  "archive_id": "kont-run-dispatch-20261023",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "81ce2c41aad5d5bf33b3554335142cc919348022",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/run-dispatch.test.mjs tests/run-contract.test.mjs tests/kernel.test.mjs", "exit": 0, "passed": 19, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "syntheticCallbacksOnly": true
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "realModelCalls": 0,
+    "actualUserSessionReads": 0,
+    "profileOrCredentialAccess": false,
+    "newHttpOrApplyEntry": false,
+    "newOrdinaryProtocolCommand": false,
+    "guardChanged": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "installedOrDeployed": false,
+    "submittedOrPushedOrMerged": false,
+    "powerLossDurabilityClaim": false,
+    "remoteExactlyOnceClaim": false
+  },
+  "remaining": [
+    "Independent Checker and Gate",
+    "Full context fingerprint, human identity and monetary authorization are not connected to dispatch",
+    "No automatic recovery/release/retry, actual execution or new terminal return path"
+  ]
+}
