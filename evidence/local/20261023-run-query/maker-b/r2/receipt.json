@@ -1,0 +1,12 @@
+{
+  "task": "KONT-RUN-012",
+  "role": "maker-b",
+  "revision": "r2",
+  "state": "FROZEN_FOR_CHECKER",
+  "focusedTests": { "passed": 4, "failed": 0, "exitCode": 0 },
+  "uiChanged": false,
+  "modelCalls": 0,
+  "deployment": false,
+  "independentAcceptance": false,
+  "limits": ["Projection candidate only", "Navigation references require current kernel resolution", "No human UI acceptance"]
+}

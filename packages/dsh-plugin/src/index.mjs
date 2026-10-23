@@ -5,6 +5,7 @@ import { KontStore, KontError } from './store.mjs';
 import { bindRunObserver } from './run-observer-binding.mjs';
 import { parseReadAuditConfig, resolveReadAudit, readAuditInject } from './read-audit-config.mjs';
 import { DshReadError } from './dsh-run-read.mjs';
+import { listRuns, getRun } from './run-query.mjs';
 export const name = 'kont-worksite';
 export const inject = ['webServer', 'connection'];
 
@@ -57,6 +58,17 @@ export function createProtocolHandler(store, connection, options = {}) {
       const identity = caller(req, connection, options);
       if (identity.refusal !== undefined) { protocolError(identity.refusal, identity.refusal === 401 ? 'UNAUTHORIZED' : 'FORBIDDEN', 'Request rejected'); return; }
       const url = new URL(req.url, 'http://localhost');
+      if (url.pathname === '/kont/runs' || url.pathname.startsWith('/kont/runs/')) {
+        if (req.method !== 'GET') { res.setHeader('allow', 'GET'); protocolError(405, 'METHOD_NOT_ALLOWED', 'GET required'); return; }
+        const state = store.read();
+        if (url.pathname === '/kont/runs') { sendJson(res, 200, listRuns(state)); return; }
+        const encoded = url.pathname.slice('/kont/runs/'.length);
+        if (!encoded || encoded.includes('/')) throw new KontError('NOT_FOUND', 'Unknown KONT route', 404);
+        let runId;
+        try { runId = decodeURIComponent(encoded); }
+        catch { throw new KontError('INVALID_RUN_ID', 'Invalid encoded Run identity'); }
+        sendJson(res, 200, getRun(state, runId)); return;
+      }
       if (url.pathname === '/kont/snapshot') {
         if (req.method !== 'GET') { res.setHeader('allow', 'GET'); protocolError(405, 'METHOD_NOT_ALLOWED', 'GET required'); return; }
         sendJson(res, 200, { ok: true, seq: store.read().seq, snapshot: store.snapshot() }); return;
@@ -159,4 +171,5 @@ export async function apply(ctx, config = {}) {
   catch (error) { await disposeStorage(); throw error; }
   ctx.effect(() => ctx.webServer.register({ kind: 'exact', path: '/kont/api/workspace', handler: createHandler(store, ctx.connection) }));
   for (const path of ['/kont/snapshot', '/kont/command', '/kont/events']) ctx.effect(() => ctx.webServer.register({ kind: 'exact', path, handler: protocol }));
+  ctx.effect(() => ctx.webServer.register({ kind: 'prefix', path: '/kont/runs', handler: protocol }));
 }

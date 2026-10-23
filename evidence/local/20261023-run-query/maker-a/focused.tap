@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 1 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 47.0808
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 2 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 111.4532
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 3 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 23.585
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 4 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 42.8547
+  type: 'test'
+  ...
+# Subtest: Run extension HTTP can prepare and read, but cannot forge runtime completion
+ok 5 - Run extension HTTP can prepare and read, but cannot forge runtime completion
+  ---
+  duration_ms: 52.5353
+  type: 'test'
+  ...
+# Subtest: Run projection distinguishes preparation, submission, uncertainty and evidence-backed output without private fields
+ok 6 - Run projection distinguishes preparation, submission, uncertainty and evidence-backed output without private fields
+  ---
+  duration_ms: 70.6267
+  type: 'test'
+  ...
+# Subtest: authenticated list/detail queries share one sequence snapshot and do not write bytes or emit events
+ok 7 - authenticated list/detail queries share one sequence snapshot and do not write bytes or emit events
+  ---
+  duration_ms: 85.8453
+  type: 'test'
+  ...
+# Subtest: Run query routes preserve caller authentication, loopback Host/Origin fence and GET-only methods
+ok 8 - Run query routes preserve caller authentication, loopback Host/Origin fence and GET-only methods
+  ---
+  duration_ms: 65.7147
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 518.2404

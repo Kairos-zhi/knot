@@ -1,0 +1,33 @@
+{
+  "task": "KONT-RUN-012",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "fcc3df54ece7d39f7c0999837df0d32d4f891d0b",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/run-query.test.mjs tests/protocol.test.mjs tests/plugin-lifecycle.test.mjs", "exit": 0, "passed": 8, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "queryWritesOrEvents": 0,
+    "syntheticRunFixtures": true
+  },
+  "boundaries": {
+    "readOnly": true,
+    "projectionFields": ["runId", "requestId", "sessionId", "targetId", "worksiteId", "phase", "hasOutput", "blockId"],
+    "newRoutesAreKnotExtension": true,
+    "frozenProtocolCoverageClaimChanged": false,
+    "readAuditScopeChanged": false,
+    "clientOrStylesChangedByA": false,
+    "realModelCalls": 0,
+    "actualUserSessionReads": 0,
+    "profileOrCredentialAccess": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "installedOrDeployed": false,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["Independent Checker and Gate", "B-line presentation integration and human/desktop acceptance remain separate"]
+}

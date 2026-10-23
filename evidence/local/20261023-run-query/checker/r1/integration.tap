@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: projectRun DTO integrates with view for every phase and historical output needs no current asset
+ok 1 - projectRun DTO integrates with view for every phase and historical output needs no current asset
+  ---
+  duration_ms: 12.928
+  type: 'test'
+  ...
+# Subtest: unauthenticated Run paths reject before any snapshot read
+ok 2 - unauthenticated Run paths reject before any snapshot read
+  ---
+  duration_ms: 0.934
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 194.6839

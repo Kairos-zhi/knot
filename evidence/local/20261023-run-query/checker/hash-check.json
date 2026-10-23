@@ -1,0 +1,99 @@
+{
+  "task": "KONT-RUN-012",
+  "checkedAt": "2026-10-23T16:07:33.706Z",
+  "matched": 13,
+  "mismatch": 0,
+  "files": [
+    {
+      "line": "maker-a",
+      "path": "packages/dsh-plugin/src/run-query.mjs",
+      "bytes": 1086,
+      "sha256": "8abc195d88c20578b8ddc4f4327a64803c27f7223c80c533bf6aa6d59494347e",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "bytes": 10445,
+      "sha256": "c3c65c217f6adfb077624a8e0c34a9a41fa9fd311a6505066f4910f915b32454",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "tests/run-query.test.mjs",
+      "bytes": 6319,
+      "sha256": "d64763035af4b382dc4d978b6471a56f169d6b46d88467bda0ccfe5de4e78197",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261023-run-query/maker-a/REPORT.md",
+      "bytes": 1969,
+      "sha256": "ec0921e184ac6509955f82b721045b51182a5e51bffd784523bae3b90233c432",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261023-run-query/maker-a/receipt.json",
+      "bytes": 1327,
+      "sha256": "67620e7dec928182a3325e8bfcb97a5eb086d9961a8cecc5350b572bb5a28986",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261023-run-query/maker-a/build.log",
+      "bytes": 231,
+      "sha256": "a6740d57f08ce72e6233a9ab29b243a902738c29b16b5afb783ee85828f0d195",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261023-run-query/maker-a/focused.tap",
+      "bytes": 2185,
+      "sha256": "83afbeb2fc8e9e772157fe22c920918633e1be9288045f7760b4d58c0e2eb87c",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "packages/dsh-plugin/src/run-status-view.mjs",
+      "bytes": 2507,
+      "sha256": "d7fadc0a7cd17f918196214b66a738e30dd29b453639ea329bb8ca6f876073f3",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "tests/run-status-view.test.mjs",
+      "bytes": 4351,
+      "sha256": "cd6dd4e33554d23ad1115e26699aa0484ed2d0e27cb1c414c194d4668cae14f2",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "docs/research/run-status-workstation-20261023.md",
+      "bytes": 2563,
+      "sha256": "ce919b75e396831de7f70a2349df62a0ad4b98e2d4a08e757126376ab0d737fb",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261023-run-query/maker-b/REPORT.md",
+      "bytes": 1421,
+      "sha256": "0feed96a20ce3977c6b6a11b73496a605894c2cf605ece568c2d4dfb47a2a663",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261023-run-query/maker-b/receipt.json",
+      "bytes": 392,
+      "sha256": "75ca3102998f36f93a35ebc01e01bd4bb9b1cb4729e1cd4b1f27e971b83641f5",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261023-run-query/maker-b/focused.tap",
+      "bytes": 1069,
+      "sha256": "86339b092eb9a115b27c2087216fc34d2d1f0a24a092eb684520422267eb8fad",
+      "match": true
+    }
+  ]
+}

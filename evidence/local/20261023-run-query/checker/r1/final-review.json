@@ -1,0 +1,65 @@
+{
+  "task": "KONT-RUN-012",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-24",
+  "baseCommit": "fcc3df54ece7d39f7c0999837df0d32d4f891d0b",
+  "verdict": "REJECT_P2_IDENTITY_CONTRACT_PENDING_R2",
+  "blockingFindings": [
+    {
+      "priority": "P2",
+      "code": "RUN_VIEW_IDENTITY_MISMATCH",
+      "evidence": "identity-boundary.json",
+      "detail": "projectRun accepts a legitimate prepared requestId containing an internal newline, while createRunStatusView rejects the projection."
+    }
+  ],
+  "validation": {
+    "frozenManifestEntriesMatched": 13,
+    "frozenManifestMismatches": 0,
+    "build": {
+      "command": "node scripts/build.mjs",
+      "exit": 0,
+      "log": "build.log"
+    },
+    "focused": {
+      "command": "node --test tests/run-query.test.mjs tests/protocol.test.mjs tests/plugin-lifecycle.test.mjs tests/run-status-view.test.mjs",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused.tap"
+    },
+    "independentProbes": {
+      "command": "node --test evidence/local/20261023-run-query/checker/integration.test.mjs",
+      "exit": 0,
+      "passed": 2,
+      "failed": 0,
+      "log": "integration.tap"
+    },
+    "fullSuiteRun": false,
+    "newModelRequests": 0,
+    "desktopDeployment": false
+  },
+  "acceptedScope": [
+    "Eight-field read-only Run projection and authenticated GET list/detail routes on the existing snapshot/seq and caller fences",
+    "prepared/submitted/uncertain/completed phases preserve dispatch and durable receipt semantics; reserved remains uncertain",
+    "No prompt, supplied material, audit, grant, credential or dispatch control is projected",
+    "Pure Chinese status view rejects malformed/contradictory DTOs, adds no retry/execution capability or false running signal",
+    "Independent projectRun-to-view integration across all four phases and unauthenticated rejection before zero snapshot reads",
+    "Existing protocol and lifecycle focused regression; read-only query bytes and event behavior"
+  ],
+  "limitations": [
+    "hasOutput/blockId are historical successful receipt references, not proof that the asset or block currently exists; navigation must resolve the kernel again",
+    "No actual UI/client change, screenshot/click verification or human workstation acceptance",
+    "No running Desktop installation/deployment, live Session access, model execution or new execution authorization",
+    "New Knot query extensions do not increase the previously frozen original protocol 5/16 coverage claim",
+    "Focused tests only; no full-suite total or full product acceptance is asserted"
+  ],
+  "evidence": [
+    "hash-check.json",
+    "build.log",
+    "focused.tap",
+    "integration.test.mjs",
+    "integration.tap",
+    "REPORT.md"
+  ]
+}

@@ -74,4 +74,6 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-011](docs/tasks/KONT-RUN-011.md) 补实际请求核准：完整LLM请求、Session事实与已持久claim绑定，默认拒绝；核准及审计落盘后在调用边界重核摘要，变化或取消均拒绝。单次真实`deepseek-flash`试跑已完成：官方账户与适配器、唯一生成POST、真实completed终态、单块带来源回流、正常重开读回。输入158／输出18 Token，按官方高峰价估算0.00046元（非结算账单），低于用户3元上限。该次授权已消费，不自动重复调用。仍为独立store验证，未部署在用Desktop；通用多用户身份／计费授权、持久DSH恢复与正式工作站体验未交付。
 
-`/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。
+`/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、在用桌面的生成／Run入口、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。
+
+[KONT-RUN-012](docs/tasks/KONT-RUN-012.md) 新增同权限的只读`GET /kont/runs`与`GET /kont/runs/<runId>`，只返回运行身份、四阶段与历史产物位置，不包含供料正文／请求审计。`createRunStatusView`把同一投影转换为工作站中文状态；已提交不代表正在运行，待核对不允许重发，完成记录不保证目标块目前仍存在。此为服务与呈现模型接缝，尚未接入正式工作站或部署在用Desktop。

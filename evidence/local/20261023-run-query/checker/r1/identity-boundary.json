@@ -1,0 +1,6 @@
+{
+  "validStoredRunProjected": true,
+  "requestId": "request\n1",
+  "viewRejected": "INVALID_RUN_STATUS_PROJECTION",
+  "finding": "P2: legitimate Run identity accepted by projectRun cannot be consumed by view"
+}

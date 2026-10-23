@@ -1,0 +1,43 @@
+{
+  "task": "KONT-RUN-012",
+  "line": "A",
+  "role": "Maker",
+  "baseCommit": "fcc3df54ece7d39f7c0999837df0d32d4f891d0b",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/run-query.mjs",
+      "bytes": 1086,
+      "sha256": "8abc195d88c20578b8ddc4f4327a64803c27f7223c80c533bf6aa6d59494347e"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "bytes": 10445,
+      "sha256": "c3c65c217f6adfb077624a8e0c34a9a41fa9fd311a6505066f4910f915b32454"
+    },
+    {
+      "path": "tests/run-query.test.mjs",
+      "bytes": 6319,
+      "sha256": "d64763035af4b382dc4d978b6471a56f169d6b46d88467bda0ccfe5de4e78197"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-a/REPORT.md",
+      "bytes": 1969,
+      "sha256": "ec0921e184ac6509955f82b721045b51182a5e51bffd784523bae3b90233c432"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-a/receipt.json",
+      "bytes": 1327,
+      "sha256": "67620e7dec928182a3325e8bfcb97a5eb086d9961a8cecc5350b572bb5a28986"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-a/build.log",
+      "bytes": 231,
+      "sha256": "a6740d57f08ce72e6233a9ab29b243a902738c29b16b5afb783ee85828f0d195"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-a/focused.tap",
+      "bytes": 2185,
+      "sha256": "83afbeb2fc8e9e772157fe22c920918633e1be9288045f7760b4d58c0e2eb87c"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "task": "KONT-RUN-012",
+  "role": "maker-b",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/run-status-view.mjs",
+      "bytes": 2685,
+      "sha256": "ae87da7383dc69fe7b61779c208c2ca861df0dfb1ab33e751d9498d94abb18fe"
+    },
+    {
+      "path": "tests/run-status-view.test.mjs",
+      "bytes": 2970,
+      "sha256": "29b1717fdafd6da02e38cb847a2fb0ffc58476355b95645bf1fbc793edbdf064"
+    },
+    {
+      "path": "docs/research/run-status-workstation-20261023.md",
+      "bytes": 2563,
+      "sha256": "ce919b75e396831de7f70a2349df62a0ad4b98e2d4a08e757126376ab0d737fb"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-b/REPORT.md",
+      "bytes": 1118,
+      "sha256": "737761d2d52ffb8bf72923fe3b09e54d6ea19fbc5e59ab833652a0a6162bb8eb"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-b/receipt.json",
+      "bytes": 372,
+      "sha256": "1c8a53abd6a7674018395c6fa1a1afa4a1d2b4c66dae95df14e0513128bdd17c"
+    },
+    {
+      "path": "evidence/local/20261023-run-query/maker-b/focused.tap",
+      "bytes": 818,
+      "sha256": "b6d4721b856b1f61def9745a49e8cdeaa72c2220a3c933d1d43b07d0a8b7bce0"
+    }
+  ]
+}

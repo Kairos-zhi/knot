@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 1 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 61.68
+  type: 'test'
+  ...
+# Subtest: open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+ok 2 - open Agent HTTP and browser compatibility use one kernel with the original command and snapshot envelopes
+  ---
+  duration_ms: 115.0021
+  type: 'test'
+  ...
+# Subtest: correct Bearer still rejects malicious Host, Origin and nonloopback peers
+ok 3 - correct Bearer still rejects malicious Host, Origin and nonloopback peers
+  ---
+  duration_ms: 20.6168
+  type: 'test'
+  ...
+# Subtest: SSE delivers durable ordered events and releases its subscription on disconnect
+ok 4 - SSE delivers durable ordered events and releases its subscription on disconnect
+  ---
+  duration_ms: 35.4451
+  type: 'test'
+  ...
+# Subtest: Run extension HTTP can prepare and read, but cannot forge runtime completion
+ok 5 - Run extension HTTP can prepare and read, but cannot forge runtime completion
+  ---
+  duration_ms: 37.1003
+  type: 'test'
+  ...
+# Subtest: Run projection distinguishes preparation, submission, uncertainty and evidence-backed output without private fields
+ok 6 - Run projection distinguishes preparation, submission, uncertainty and evidence-backed output without private fields
+  ---
+  duration_ms: 67.945
+  type: 'test'
+  ...
+# Subtest: authenticated list/detail queries share one sequence snapshot and do not write bytes or emit events
+ok 7 - authenticated list/detail queries share one sequence snapshot and do not write bytes or emit events
+  ---
+  duration_ms: 64.0618
+  type: 'test'
+  ...
+# Subtest: Run query routes preserve caller authentication, loopback Host/Origin fence and GET-only methods
+ok 8 - Run query routes preserve caller authentication, loopback Host/Origin fence and GET-only methods
+  ---
+  duration_ms: 45.6903
+  type: 'test'
+  ...
+# Subtest: shared phases communicate evidence honestly without execution or billing affordances
+ok 9 - shared phases communicate evidence honestly without execution or billing affordances
+  ---
+  duration_ms: 1.7407
+  type: 'test'
+  ...
+# Subtest: all phases retain the same target; only completed provides an immutable output location
+ok 10 - all phases retain the same target; only completed provides an immutable output location
+  ---
+  duration_ms: 1.0211
+  type: 'test'
+  ...
+# Subtest: invalid and contradictory projections fail closed without evaluating getters
+ok 11 - invalid and contradictory projections fail closed without evaluating getters
+  ---
+  duration_ms: 2.176
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 496.4129
