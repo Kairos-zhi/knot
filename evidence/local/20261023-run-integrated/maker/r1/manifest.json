@@ -1,0 +1,52 @@
+{
+  "task": "KONT-RUN-010",
+  "role": "Maker",
+  "baseCommit": "7a7aafde66f33694b41088fdff46ecde5a47bbc6",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "bytes": 10849,
+      "sha256": "f6caef0a66b617a634ea68d666542c4195063e4740e9c5fdc71877681eb03b69"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-executor.mjs",
+      "bytes": 7445,
+      "sha256": "a60766c97929bbe6e76d31bb56b9f6a48f6ec8c3b77907bb626eb9a732a57c28"
+    },
+    {
+      "path": "tests/run-contract.test.mjs",
+      "bytes": 11717,
+      "sha256": "6425652740ddc8033aaf0802dcffbe58add91389d710e1dbbf6dd7bd03ed34c3"
+    },
+    {
+      "path": "tests/run-integrated.test.mjs",
+      "bytes": 1018,
+      "sha256": "966da56a0562846ba4ffff9f0361208408f5d34cd87133e55516033746fe6176"
+    },
+    {
+      "path": "tests/run-integrated-official-worker.cjs",
+      "bytes": 11099,
+      "sha256": "77278395a50e76e155d6ff1fb1ec9d3825b7cfa965f1df1d7baf9c1415980af8"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/REPORT.md",
+      "bytes": 3248,
+      "sha256": "7e15d61ed01c1322f6380d6adfa23ac252056bf4286b2c5d2a3e60240fd3bc50"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/receipt.json",
+      "bytes": 1999,
+      "sha256": "1c542ab038f4684efdd5f91fb401c83e7b47fb085852371d237700ab1853e1b8"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/build.log",
+      "bytes": 231,
+      "sha256": "5f409d6c5a16e025198c2a25eb665886274c82a7c2459a9257bb5178a3c99c1a"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/focused.tap",
+      "bytes": 5066,
+      "sha256": "b5520b3067e5bc58c3a8bd72fd68aa73c2d04a0da5cd6ffa8eb0bf8b53ba7c2b"
+    }
+  ]
+}

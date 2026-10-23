@@ -1,0 +1,72 @@
+{
+  "task": "KONT-RUN-010",
+  "archive_id": "kont-run-integrated-20261023",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "7a7aafde66f33694b41088fdff46ecde5a47bbc6",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": {
+      "command": "node scripts/build.mjs",
+      "exit": 0,
+      "log": "build.log"
+    },
+    "focused": {
+      "command": "node --test tests/run-dispatch.test.mjs tests/run-contract.test.mjs tests/run-integrated.test.mjs tests/run-execution-guard.test.mjs",
+      "exit": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "log": "focused.tap"
+    },
+    "fullSuiteRun": false,
+    "officialRuntime": "installed Electron RunAsNode 0.2.1-rc.2",
+    "officialComponents": [
+      "Cordis",
+      "AgentRegistry",
+      "AgentLoop",
+      "SessionStore",
+      "SessionProjectionRegistry",
+      "SystemPrompt",
+      "ToolRuntime",
+      "LlmRuntime"
+    ],
+    "adapter": "SYNTHETIC in-memory provider",
+    "integratedSyntheticProviderCalls": 8,
+    "successfulOwnedEventCount": 11,
+    "evidenceKind": "synthetic-test",
+    "deprecatedSessionSnapshotApiUsed": false,
+    "dshSessionPersistenceUsed": false,
+    "cleanupFaultInjection": "ownership wrappers throw before or after real official handle.dispose; returned outcome retained; sticky EXECUTOR_CLEANUP barrier rejection verified; pre-release fixture manually releases real handle only after asserting rejection"
+  },
+  "boundaries": {
+    "executionAuthorized": false,
+    "fullExecutionAuthorization": false,
+    "realModelCalls": 0,
+    "actualUserSessionReads": 0,
+    "profileOrCredentialAccess": false,
+    "newHttpOrApplyEntry": false,
+    "callerTerminalLogAccepted": false,
+    "guardChanged": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "installedOrDeployed": false,
+    "submittedOrPushedOrMerged": false,
+    "powerLossDurabilityClaim": false,
+    "remoteExactlyOnceClaim": false
+  },
+  "remaining": [
+    "Independent Checker and Gate",
+    "Full context fingerprint, human identity and monetary authorization are not connected",
+    "No real model execution, desktop entry, automatic recovery or end-user acceptance"
+  ],
+  "revision": "r2",
+  "previousFrozenRevision": "r1/manifest.json",
+  "cleanupBarrier": {
+    "failureIsSticky": true,
+    "disposeRejects": "EXECUTOR_CLEANUP",
+    "callerMustNotAutomaticallyCloseStoreOnRejection": true
+  }
+}

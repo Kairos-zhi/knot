@@ -1,0 +1,9 @@
+{
+  "task": "KONT-RUN-010",
+  "revision": "r2",
+  "at": "2026-10-23T08:50:16.303Z",
+  "manifestEntries": 11,
+  "productTestFiles": 5,
+  "allHashesMatch": true,
+  "fullSuiteRun": false
+}

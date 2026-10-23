@@ -1,0 +1,107 @@
+TAP version 13
+# Subtest: internal return cancellation before entry or while queued preserves bytes and emits nothing
+ok 1 - internal return cancellation before entry or while queued preserves bytes and emits nothing
+  ---
+  duration_ms: 107.1521
+  type: 'test'
+  ...
+# Subtest: prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+ok 2 - prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart
+  ---
+  duration_ms: 132.0463
+  type: 'test'
+  ...
+# Subtest: synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+ok 3 - synthetic completed log returns one stable generated block atomically; identical retry is a no-op
+  ---
+  duration_ms: 99.6061
+  type: 'test'
+  ...
+# Subtest: synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+ok 4 - synthetic failure/cancel/unknown/partial/gap/correlation/context cases preserve prepared state and bytes
+  ---
+  duration_ms: 121.5602
+  type: 'test'
+  ...
+# Subtest: target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+ok 5 - target CAS rejects changed/deleted asset; snapshot restore preserves journal and rejects forged receipt
+  ---
+  duration_ms: 108.8269
+  type: 'test'
+  ...
+# Subtest: failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+ok 6 - failed return persistence cannot emit or expose a generated block; corrupted Run input is rejected on reopen
+  ---
+  duration_ms: 102.6649
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+ok 7 - SYNTHETIC dispatch: concurrent caller owns the sole callback; accepted is only submitted; reopen refuses replay
+  ---
+  duration_ms: 71.3816
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+ok 8 - SYNTHETIC dispatch: claim write failure invokes no callback, emits no events, and preserves bytes
+  ---
+  duration_ms: 108.1694
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+ok 9 - SYNTHETIC dispatch: throwing callback stays uncertain and cannot retry even after reopen
+  ---
+  duration_ms: 43.7858
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+ok 10 - SYNTHETIC dispatch: timeout consumes reservation; late acceptance cannot update it
+  ---
+  duration_ms: 46.7271
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+ok 11 - SYNTHETIC dispatch: receipt save failure leaves reserved bytes and never resubmits
+  ---
+  duration_ms: 43.229
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+ok 12 - SYNTHETIC dispatch: restore preserves claim, rejects old export/replacement, ordinary commands cannot dispatch
+  ---
+  duration_ms: 55.7885
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+ok 13 - SYNTHETIC dispatch: old prepared record remains byte compatible; constraints freeze before yielding
+  ---
+  duration_ms: 53.9352
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+ok 14 - SYNTHETIC dispatch: invalid constraints reject before callback or mutation
+  ---
+  duration_ms: 33.1341
+  type: 'test'
+  ...
+# Subtest: official Agent setup and scoped runtime hooks constrain a synthetic provider
+ok 15 - official Agent setup and scoped runtime hooks constrain a synthetic provider
+  ---
+  duration_ms: 902.8241
+  type: 'test'
+  ...
+# Subtest: official owned AgentLoop/Session integrates guarded synthetic execution and persistent return
+ok 16 - official owned AgentLoop/Session integrates guarded synthetic execution and persistent return
+  ---
+  duration_ms: 1248.0046
+  type: 'test'
+  ...
+# {"hostVersion":"0.2.1-rc.2","fixture":"official-AgentLoop-Session-synthetic-provider","checks":["default-deny-and-exact-authorization","actual-terminal-success-atomic-provenance-once","concurrent-and-reopen-no-provider-replay","official-failed-terminal-no-output-no-retry","target-CAS-no-output","external-cancel-timeout-dispose-fence","retained-executor-reference-closed","owned-Agent-handles-released","authorization-timeout-zero-dispatch","cleanup-fault-preserves-committed-return","post-commit-abort-preserves-returned","sticky-cleanup-failure-rejects-close-barrier-before-official-release"],"providerCalls":8,"realModelCalls":0,"realModelRunCompleted":false,"returnedEvidenceKind":"synthetic-test","completeOwnedEvents":11,"fullExecutionAuthorization":false}
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1692.7241

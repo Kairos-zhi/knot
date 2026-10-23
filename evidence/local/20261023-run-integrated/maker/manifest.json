@@ -1,0 +1,67 @@
+{
+  "task": "KONT-RUN-010",
+  "role": "Maker",
+  "baseCommit": "7a7aafde66f33694b41088fdff46ecde5a47bbc6",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "bytes": 10849,
+      "sha256": "f6caef0a66b617a634ea68d666542c4195063e4740e9c5fdc71877681eb03b69"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-executor.mjs",
+      "bytes": 7656,
+      "sha256": "39851ff880404bbb46b12873f8488d7bfd656433443767fc03ffa5d152a3c2f6"
+    },
+    {
+      "path": "tests/run-contract.test.mjs",
+      "bytes": 11717,
+      "sha256": "6425652740ddc8033aaf0802dcffbe58add91389d710e1dbbf6dd7bd03ed34c3"
+    },
+    {
+      "path": "tests/run-integrated.test.mjs",
+      "bytes": 1127,
+      "sha256": "27da3b078c3acf36779383f7649103b30438dc1e0674d0b52da9bdf42756bcfa"
+    },
+    {
+      "path": "tests/run-integrated-official-worker.cjs",
+      "bytes": 13050,
+      "sha256": "0b674217081bade45486552fb637d563913b4e78270eed1f3adedac6699a40bf"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/REPORT.md",
+      "bytes": 4013,
+      "sha256": "06fd8dc3043f6b4cb688a53031e3a68b4ee92bd73319046a889e286c546fc1db"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/receipt.json",
+      "bytes": 2475,
+      "sha256": "208fdf6001c8e0c27a930fccb6a16af3636034a667838d29363bde2dfaf7da73"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/build.log",
+      "bytes": 231,
+      "sha256": "97cb10839e7e85140b1f15f3761d23504ab602dc2f83fe1e2acaa9763d613022"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/focused.tap",
+      "bytes": 5144,
+      "sha256": "fbbb513b232be10494d97e8c497706f119d015f51a43a0a4fdde6e805d65aefc"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/r1/manifest.json",
+      "bytes": 1732,
+      "sha256": "60174d4ec19c18b2f8fa473e34a273d2cfefdf557f8643eb88dac1d84ef3fbe3"
+    },
+    {
+      "path": "evidence/local/20261023-run-integrated/maker/r1/receipt.json",
+      "bytes": 1999,
+      "sha256": "1c542ab038f4684efdd5f91fb401c83e7b47fb085852371d237700ab1853e1b8"
+    }
+  ],
+  "revision": "r2",
+  "preservedR1": {
+    "manifest": "evidence/local/20261023-run-integrated/maker/r1/manifest.json",
+    "frozenPathPrefix": "evidence/local/20261023-run-integrated/maker/r1/frozen/"
+  }
+}

@@ -80,8 +80,8 @@ export class KontStore {
   }
   /** Internal adapter entry only; no HTTP command dispatches here. Evidence authenticity
    * is the future adapter's responsibility. Current tests supply labelled synthetic logs. */
-  returnRun(runId, evidence, source = 'runtime:dsh') {
-    return this.#commit({ commands: [{ runId, evidence }] }, source, true, null, true).then(result => result.results[0]);
+  returnRun(runId, evidence, source = 'runtime:dsh', { signal } = {}) {
+    return this.#commit({ commands: [{ runId, evidence }] }, source, true, null, true, signal).then(result => result.results[0]);
   }
   // Internal coordination only. Ordinary commands cannot reserve or settle dispatch.
   claimRunDispatch(runId, constraints) {
@@ -90,7 +90,7 @@ export class KontStore {
   settleRunDispatch(runId, claimId, outcome) {
     return this.#commit({ commands: [{ runId, claimId, outcome }] }, 'runtime:dispatch', true, null, 'settle').then(r => r.results[0]);
   }
-  #commit(request, source, legacyCommand = false, imported = null, internalReturn = false) {
+  #commit(request, source, legacyCommand = false, imported = null, internalReturn = false, returnSignal) {
     if (this.#closing) return Promise.reject(new KontError('STORE_CLOSED', '现场存储已关闭', 503));
     // Freeze the call's payload before yielding to the writer queue. The
     // snapshot validator rejects accessors/non-JSON values on the actual model.
@@ -101,6 +101,7 @@ export class KontStore {
     }
     catch (error) { return Promise.reject(error); }
     const result = this.#queue.then(async () => {
+      returnSignal?.throwIfAborted();
       text(source, 200, '操作来源');
       if (!source.trim()) reject('INVALID_SOURCE', '操作来源无效');
       if (!isRecord(request)) reject('INVALID_COMMAND', '请求格式无效');
@@ -132,6 +133,7 @@ export class KontStore {
       const temporary = `${this.file}.${randomUUID()}.tmp`;
       try {
         await writeFile(temporary, serialized, { flag: 'wx', mode: 0o600 });
+        returnSignal?.throwIfAborted();
         await rename(temporary, this.file);
       } catch (error) { await unlink(temporary).catch(() => {}); throw error; }
       this.#state = valid;

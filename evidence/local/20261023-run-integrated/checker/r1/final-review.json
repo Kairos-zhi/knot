@@ -1,0 +1,56 @@
+{
+  "task": "KONT-RUN-010",
+  "role": "independent Checker",
+  "checker": "run_checker",
+  "at": "2026-10-23T08:46:13.582Z",
+  "verdict": "REJECT_CLEANUP_BARRIER",
+  "blockers": [
+    {
+      "priority": 2,
+      "code": "EXECUTOR_CLEANUP_BARRIER",
+      "file": "packages/dsh-plugin/src/run-executor.mjs",
+      "detail": "Cleanup errors only mark a completed job result; the job is removed from jobs and later dispose resolves. A pre-release underlying handle disposal failure can leave owned resources live while the caller is told the disposal barrier completed.",
+      "requiredFix": "Persist cleanup failure in executor lifetime and reject/report unsafe disposal after draining, including errors from already completed jobs; retain committed returned outcome separately. Test a real owned-handle wrapper failure before release, then manually clean up the fixture."
+    }
+  ],
+  "manifestEntries": 9,
+  "productTestFiles": 5,
+  "allHashesMatch": true,
+  "buildExitCode": 0,
+  "focused": {
+    "command": "node --test tests/run-dispatch.test.mjs tests/run-contract.test.mjs tests/run-integrated.test.mjs tests/run-execution-guard.test.mjs",
+    "exitCode": 0,
+    "tests": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fullSuiteRun": false,
+  "officialIntegratedFixture": {
+    "runtime": "installed official 0.2.1 Electron/AgentLoop/Session with synthetic adapter",
+    "syntheticProviderCalls": 7,
+    "successfulCompleteOwnedEvents": 11,
+    "evidenceKind": "synthetic-test",
+    "dshSessionPersistenceUsed": false
+  },
+  "acceptedScope": [],
+  "limitations": [
+    "Trusted binding callback, not full-context/human/money execution authorization",
+    "Runtime-owned in-memory events, not persisted DSH Session-log evidence",
+    "No real model Run or apply/HTTP/Desktop deployment/product acceptance",
+    "Cooperative cancellation/drain; cleanup fault probe throws after real disposal, not arbitrary cleanup failure recovery",
+    "No power-loss durability, remote exactly-once, automatic recovery or Provider-internal HTTP retry proof"
+  ],
+  "executionAuthorized": false,
+  "fullExecutionAuthorization": false,
+  "realModelCalls": 0,
+  "actualUserSessionsRead": 0,
+  "productCodeModifiedByChecker": false,
+  "evidence": [
+    "REPORT.md",
+    "build.log",
+    "focused.tap",
+    "hash-check.json"
+  ],
+  "validatedNormalChainOnly": true
+}

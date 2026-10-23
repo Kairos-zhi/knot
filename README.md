@@ -68,4 +68,8 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 
 [KONT-RUN-009](docs/tasks/KONT-RUN-009.md) 补内部持久提交防重：同Run先保存一次性占位，再调用submit；并发和正常重开后不再授予派发资格。`dispatchClaim`区分reserved/submitted/uncertain，接受只表示已提交；超时或回执保存失败不重发、不生成成功资产。复用现有存储，不提供新HTTP执行入口；仅合成callback测试，不含真实执行授权、远端exactly-once或断电耐久保证。
 
+[KONT-RUN-010](docs/tasks/KONT-RUN-010.md) 将默认拒绝的服务侧许可、持久占位、受保护的官方Agent和原子回流串为内部候选。通过publish前订阅的公开`session/event`收集本次owned Session完整序列，核对实际completed终态后才回流；并发／重开不再派发，失败／取消／目标CAS冲突不追加成功资产。关闭须先await executor.dispose再关闭store；提交后取消或清理错误保留已落盘成功事实。官方组件＋合成提供方实测，产物标synthetic-test；没有新HTTP/apply入口、在用桌面部署、完整上下文／真人身份／金额授权或持久DSH日志恢复。
+
+若执行器发生任何清理异常，后续`dispose()`会持续拒绝，调用方不能自动关闭store，须先核对并释放仍存活的owned资源；业务写入结果与清理错误分别报告。
+
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、真实生成／Run、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。

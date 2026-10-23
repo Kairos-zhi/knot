@@ -1,0 +1,15 @@
+# RUN-010 独立复核
+
+结论：`REJECT_CLEANUP_BARRIER`，待一项生命周期窄修复。
+
+阻断P2：清理异常只写result.cleanupFailed，job随后从jobs删除；executor.dispose仍resolve，调用方按API说明dispose→store.close会把未确定已释放的owned资源误当drain完成。需sticky记录清理失败，dispose在等待后拒绝／明确不安全关闭；此前已完成job的失败也必须保留。业务returned事实应继续保留，不能反向改写失败。补真实owned handle在实际dispose前抛错的隔离负例，验证dispose拒绝，并由测试手动收拾夹具。现有after-real-dispose故障只证明结果不被覆盖，不能证明此屏障。
+
+以下正常链验证仍成立：独立构建通过，同范围聚焦 **16/16通过**（dispatch8、run-contract6、guard1、集成1），失败0、跳过0；9份manifest条目、其中5份产品／测试哈希一致。未跑全量。
+
+直接审查确认唯一store取prepared Run，默认deny，服务许可精确回签四元与constraints摘要；先持久claim，仅本次acquired者创建owned新Agent，setup安装现有guard，准确rpcId/input followup。公开session/event订阅在publish前安装，严格Session对象身份、seq从0连续与最终Session.seq计数核验，不接受外部终态日志、不用deprecated快照API，不放宽旧returnRun白名单。whenIdle只作drain；必须真实组件completed turn/end后通过原目标CAS与同事务回流。
+
+本次独立测试实际运行官方0.2.1 Electron/Cordis/AgentRegistry/AgentLoop/Session等组件及内存synthetic adapter：7次synthetic provider调用，成功路径11条完整owned事件；仅一generated块、provenance准确。默认／错授权零dispatch，并发8次与正常重开不重发，provider失败、取消、超时、CAS均无伪成功资产，等待授权超时不创建Session，owned Agent释放，dispose后保留executor引用closed。store.returnRun的signal在writer队列入口及rename前fence；新增已取消／排队取消负例通过。提交后事件内abort不撤销已落盘returned；真实handle已dispose后的注入异常仅附cleanupFailed，不覆写成功结果。
+
+限定：内部trusted authorize仍不是完整上下文请求指纹、真人身份或金额核准；requestSha256仍为提供的约束绑定值，executionAuthorized/fullExecutionAuthorization=false。这里是owned官方runtime的完整内存事件流，**不是持久DSH Session日志**；只有Knot存储落盘。synthetic-test回执不是实际模型Run。没有apply／HTTP执行入口、在用Desktop部署、自动恢复或产品验收；原rename无fsync及Provider内部HTTP重试限定不变。取消与drain依赖底层组件合作；清理故障测试仅在真实dispose完成后抛错，不证明任意底层清理失败均已释放，cleanupFailed必须保留为单独问题。
+
+证据：build.log、focused.tap、hash-check.json。Checker未改产品代码，未读真实用户Session／凭据、未模型调用／安装／push／合并。正常链通过不解除上述生命周期阻断。

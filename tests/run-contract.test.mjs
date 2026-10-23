@@ -39,6 +39,23 @@ function syntheticEvidence(run, reason = { kind: 'completed' }) {
   return { sessionId: run.plannedSessionId, kind: 'synthetic-test', events: entries.map(([type, data], seq) => ({ type, data, seq, time: 1792627200000 + seq })) };
 }
 
+test('internal return cancellation before entry or while queued preserves bytes and emits nothing', async t => {
+  const { store, file, prepare } = await fixture(t);
+  const { value: run } = await store.command(prepare);
+  const bytes = await readFile(file), state = store.read();
+  let events = 0;
+  store.subscribe(() => events++);
+  const prior = new AbortController(); prior.abort();
+  await assert.rejects(store.returnRun(run.runId, syntheticEvidence(run), 'runtime:synthetic', { signal: prior.signal }));
+  const queued = new AbortController();
+  const pending = store.returnRun(run.runId, syntheticEvidence(run), 'runtime:synthetic', { signal: queued.signal });
+  queued.abort();
+  await assert.rejects(pending);
+  assert.deepEqual(await readFile(file), bytes);
+  assert.deepEqual(store.read(), state);
+  assert.equal(events, 0);
+});
+
 test('prepared Run freezes explicit supply and prompt wire, never executes; journal survives restart', async t => {
   const { store, file, prepare } = await fixture(t);
   const baseline = store.read();

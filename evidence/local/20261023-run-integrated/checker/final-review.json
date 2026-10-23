@@ -1,0 +1,62 @@
+{
+  "task": "KONT-RUN-010",
+  "role": "independent Checker",
+  "checker": "run_checker",
+  "at": "2026-10-23T08:50:17.190Z",
+  "verdict": "ACCEPT_OWNED_RUNTIME_INTEGRATION_LIMITED",
+  "blockers": [],
+  "manifestEntries": 11,
+  "productTestFiles": 5,
+  "allHashesMatch": true,
+  "buildExitCode": 0,
+  "focused": {
+    "command": "node --test tests/run-dispatch.test.mjs tests/run-contract.test.mjs tests/run-integrated.test.mjs tests/run-execution-guard.test.mjs",
+    "exitCode": 0,
+    "tests": 16,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fullSuiteRun": false,
+  "officialIntegratedFixture": {
+    "runtime": "installed official 0.2.1 Electron/AgentLoop/Session with synthetic adapter",
+    "syntheticProviderCalls": 8,
+    "successfulCompleteOwnedEvents": 11,
+    "evidenceKind": "synthetic-test",
+    "dshSessionPersistenceUsed": false
+  },
+  "acceptedScope": [
+    "Prepared Run through exact internal binding, persisted claim and owned guarded Agent",
+    "Complete public owned-Session event correlation and actual component terminal check",
+    "Atomic target-CAS synthetic artifact return, duplicate refusal and cancellation fences",
+    "Sticky cleanup failure rejects unsafe close barrier while preserving committed returned outcome"
+  ],
+  "limitations": [
+    "Trusted callback is not full-context/human/money execution authorization",
+    "Runtime-owned in-memory events, not persisted DSH Session-log evidence",
+    "No real model Run or apply/HTTP/Desktop deployment/product acceptance",
+    "Rejected disposal is unsafe to auto-close store; explicit resource reconciliation required, no automatic cleanup recovery",
+    "No power-loss durability, remote exactly-once or Provider-internal HTTP retry proof"
+  ],
+  "executionAuthorized": false,
+  "fullExecutionAuthorization": false,
+  "realModelCalls": 0,
+  "actualUserSessionsRead": 0,
+  "productCodeModifiedByChecker": false,
+  "evidence": [
+    "REPORT.md",
+    "build.log",
+    "focused.tap",
+    "hash-check.json"
+  ],
+  "validatedNormalChainOnly": false,
+  "revision": "r2",
+  "priorReview": "r1/final-review.json",
+  "resolvedBlockers": [
+    {
+      "code": "EXECUTOR_CLEANUP_BARRIER",
+      "fix": "Sticky cleanup failure persists across jobs and makes dispose reject EXECUTOR_CLEANUP after draining; caller must not automatically close store",
+      "test": "Actual owned-handle wrapper throws before real release; disposal rejects, registry retains Agent and store remains open; fixture manually releases; repeated disposal still rejects"
+    }
+  ]
+}

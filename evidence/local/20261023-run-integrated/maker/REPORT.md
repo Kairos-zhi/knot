@@ -1,0 +1,17 @@
+# KONT-RUN-010 Maker r2
+
+基线7a7aafde66f33694b41088fdff46ecde5a47bbc6；未提交，待独立Checker与Gate。
+
+新增内部createRunExecutor：从唯一KontStore取prepared Run，默认拒绝；可信authorize必须回签approved及runId/requestId/sessionId/inputSha256/constraintsSha256。占位复用RUN009唯一写队列；仅acquired者调用实际ctx.agents.create，新Session setup安装RUN008 guard，followup使用准确rpcId及冻结输入。提交接受只记submitted；等待whenIdle后仍必须有实际completed turn/end，完整证据经原returnRun校验和目标CAS原子回流。并发/重开重复只返回既有claim，不再创建Agent或调用provider。
+
+公开session/event在setup、publish前订阅，只收集严格相同Session对象的已提交冻结事件；seq自0连续且最终数量等于Session.seq（本次成功11条）。不使用deprecated snapshotEvents/eventAt/ownEvents，不修改/过滤/拼造官方事件，不接受调用者terminal日志。原窄returnRun即兼容本次官方完整事件，未放宽tool/context支持。这里是owned官方事件流证据，不是DSH Session持久日志；仅Knot存储实际落盘。
+
+外部signal、整个execute超时和dispose关闭入口并abort；guard取消所持Agent，等待guard/官方owned handle释放，保留引用只能返回closed。调用方必须先await executor.dispose，再store.close。returnRun可选signal在队列开始、rename前检查，取消阻断尚未提交的回流；已经写成功的事实不能被后到取消撤销。清理异常与业务结果分开：持久returned保留returned并附cleanupFailed，原始异常不外泄。
+
+官方隔离程序实际加载installed 0.2.1-rc.2 Cordis/AgentRegistry/SessionStore/SessionProjectionRegistry/SystemPrompt/ToolRuntime/LlmRuntime/AgentLoop，以synthetic in-memory adapter运行。没有profile manager、真实用户Session/凭据、网络模型或DSH持久化。8次synthetic provider调用覆盖成功、provider error、目标CAS、外部cancel、timeout、dispose及清理故障成功路径。故障注入仅包装真实owned handle.dispose，覆盖实际释放后抛错以及释放前抛错；后者实测Agent仍在registry，dispose拒绝后由夹具明确手动释放。Agent/Session/Loop均为官方实际对象。
+
+构建通过；focused16/16（dispatch8、run-contract6含新增取消队列回归、guard官方1、集成官方1）。集成worker内另核默认拒绝/错绑定零dispatch、并发8次只一次provider、正常close/reopen拒重、单块generated及provenance=['material']、失败与取消无输出、CAS无输出、授权等待超时零Session、Agent释放、留存executor关闭、清理故障不误报已提交结果；在run.returned提交后事件内abort仍保留returned。原始命令及官方汇总见build.log/focused.tap。
+
+边界：synthetic成功receipt明确synthetic-test，不是实际模型Run；realModelCalls=0，executionAuthorized/fullExecutionAuthorization=false。authorize仅为内部绑定许可，完整上下文请求指纹、真人身份、金额预算未串接；requestSha256是调用者提供的绑定值。无apply/HTTP执行入口、UI、部署、安装、vendor/历史证据/guard变更。沿用rename无fsync，不宣称断电耐久、远端exactly-once、自动恢复或Provider内部零重试。
+
+R2修复Checker P2：任一job的guard/handle/observer清理异常被sticky记录；包括早已结束的job，dispose等待在途完成后仍以脱敏EXECUTOR_CLEANUP拒绝。returned+cleanupFailed保持业务事实，调用方收到关闭屏障拒绝不得自动store.close。官方负例分别验证释放后抛错、真实handle释放前抛错；后者证实资源仍owned、store仍可写，然后仅由夹具手动释放，后续dispose仍拒绝。正常dispose路径保持。r1报告/回执/日志/manifest保存在r1/，其原始清单对应文件逐字节镜像在r1/frozen/<原路径>，未改历史RUN004-009证据。R2同范围build及16/16 focused，无全量。
