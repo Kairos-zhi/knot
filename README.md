@@ -77,3 +77,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 `/kont/api/workspace` 只为最初 UI 候选保留兼容，不能成为另一个资产权威。正式前端、在用桌面的生成／Run入口、外部 Codex／Hermes、MCP／A2A、细粒度权限和生产部署仍未交付。本轮不替换既有运行实例，也不将绿色表单作为 Apple 对标结果。
 
 [KONT-RUN-012](docs/tasks/KONT-RUN-012.md) 新增同权限的只读`GET /kont/runs`与`GET /kont/runs/<runId>`，只返回运行身份、四阶段与历史产物位置，不包含供料正文／请求审计。`createRunStatusView`把同一投影转换为工作站中文状态；已提交不代表正在运行，待核对不允许重发，完成记录不保证目标块目前仍存在。此为服务与呈现模型接缝，尚未接入正式工作站或部署在用Desktop。
+
+[KONT-RUN-013](docs/tasks/KONT-RUN-013.md) 在客户端当前工作旁接入只读运行状态面板，window/card/icon共用一个查询源。加载、失败、切换及卸载会隔离旧记录；产物定位从当前snapshot重新解析，只读显示标题／块正文，失效不重建或重跑。bundle内置view/source/panel模块与既有风格样式；以实际打包产物和语义树程序化验证，不使用截图或模拟点击。本轮为未部署的界面候选，无新模型请求，非人的体验验收。

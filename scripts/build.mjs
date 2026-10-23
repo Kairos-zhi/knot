@@ -31,6 +31,16 @@ const snapshot = section(sources['services/asset-persistence.ts'], 'const isReco
 const adapter = `import {createDefaultWorkspace,validateWorkspace} from './workspace-state.js';\nconst failure=(code,message)=>({ok:false,error:{code,message}});\nconst KNOT_INPUT_PORT={portID:'in'},KNOT_OUTPUT_PORT={portID:'out'};\nconst WorkflowLineEntity={portInfoToLineId:({from,to,fromPort,toPort})=>\`\${from}_\${fromPort||''}-\${to||''}_\${toPort||''}\`};\n`;
 await writeFile(new URL('snapshot.js', output), adapter + stripTypeScriptTypes(projection + '\n' + snapshot));
 const client = await readFile(new URL('packages/dsh-plugin/src/client.cjs', root), 'utf8');
-const css = await readFile(new URL('packages/dsh-plugin/src/style.css', root), 'utf8');
-await writeFile(new URL('client.js', output), `window.__ModuleLoader__.load({id:"@kont/dsh-plugin",factory:(require)=>{const exports={};const CSS=${JSON.stringify(css)};\n${client}\nreturn exports;}});\n`);
+const css = await readFile(new URL('packages/dsh-plugin/src/style.css', root), 'utf8')
+  + '\n' + await readFile(new URL('packages/dsh-plugin/src/run-status-panel.css', root), 'utf8');
+const statusView = await readFile(new URL('packages/dsh-plugin/src/run-status-view.mjs', root), 'utf8');
+if (!statusView.includes('export function createRunStatusView(') || /\bimport\s/.test(statusView)) throw new Error('Unexpected Run view module shape');
+const statusPanel = await readFile(new URL('packages/dsh-plugin/src/run-status-panel.cjs', root), 'utf8');
+const statusSource = await readFile(new URL('packages/dsh-plugin/src/run-status-source.cjs', root), 'utf8');
+const localModules = `const hostRequire=require; const localCache=Object.create(null); const localModules={
+"@kont/run-status-view":(require,exports)=>{${statusView.replace('export function createRunStatusView(', 'function createRunStatusView(')}\nexports.createRunStatusView=createRunStatusView;},
+"@kont/run-status-panel":(require,exports)=>{${statusPanel}},
+"@kont/run-status-source":(require,exports)=>{${statusSource}}};
+require=name=>{if(!Object.hasOwn(localModules,name))return hostRequire(name);if(!Object.hasOwn(localCache,name)){const value={};localCache[name]=value;localModules[name](require,value);}return localCache[name];};`;
+await writeFile(new URL('client.js', output), `window.__ModuleLoader__.load({id:"@kont/dsh-plugin",factory:(require)=>{const exports={};const CSS=${JSON.stringify(css)};\n${localModules}\n${client}\nreturn exports;}});\n`);
 console.log('Built KONT host core and DSH browser bundle.');

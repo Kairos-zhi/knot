@@ -1,0 +1,36 @@
+{
+  "task": "KONT-RUN-013",
+  "role": "maker-b",
+  "files": [
+    {
+      "path": "packages/dsh-plugin/src/run-status-panel.cjs",
+      "bytes": 2937,
+      "sha256": "5db266047a20ee70fb61a0ebbb7bf21233957f9283785775ef0a4cc48ed2264c"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-status-panel.css",
+      "bytes": 865,
+      "sha256": "ad046224a890523bfbb7ff8cc5e8c7348a75c785d23ab1d85cf990276fcdfa4b"
+    },
+    {
+      "path": "tests/run-status-panel.test.mjs",
+      "bytes": 4707,
+      "sha256": "5b8b24301af880b2cbd193ad39ddce232c6b0f6485b38f4344f3e51c3f2eaf33"
+    },
+    {
+      "path": "evidence/local/20261024-run-panel/maker-b/REPORT.md",
+      "bytes": 1638,
+      "sha256": "629b2777f159784ca23ff3f6d0912c7355f63453032fc48897e4b4a6fd6121c6"
+    },
+    {
+      "path": "evidence/local/20261024-run-panel/maker-b/receipt.json",
+      "bytes": 379,
+      "sha256": "9288ddce916db4f5823f1170c7014700f87bbc4b0402947b7b8520025f09391c"
+    },
+    {
+      "path": "evidence/local/20261024-run-panel/maker-b/focused.tap",
+      "bytes": 1135,
+      "sha256": "bbb2a5d11057049904f1b6e99ac9f1440b10ef9d73fe59a8bb7ba5ed115ae348"
+    }
+  ]
+}

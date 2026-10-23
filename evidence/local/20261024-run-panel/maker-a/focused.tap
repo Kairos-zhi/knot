@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 12.1565
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 2 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 51.4369
+  type: 'test'
+  ...
+# Subtest: built client embeds local panel/view/source, shares all presentations, and locates without a write request
+ok 3 - built client embeds local panel/view/source, shares all presentations, and locates without a write request
+  ---
+  duration_ms: 14.2208
+  type: 'test'
+  ...
+# Subtest: Run source uses only same-origin GET; switching cancels and fences late old-scene responses
+ok 4 - Run source uses only same-origin GET; switching cancels and fences late old-scene responses
+  ---
+  duration_ms: 3.3416
+  type: 'test'
+  ...
+# Subtest: Run source rejects sequence regression/private fields/errors and lets manual refresh recover
+ok 5 - Run source rejects sequence regression/private fields/errors and lets manual refresh recover
+  ---
+  duration_ms: 1.5893
+  type: 'test'
+  ...
+# Subtest: Run source drops same-scene out-of-order responses and clears subscribers/cancels on disposal
+ok 6 - Run source drops same-scene out-of-order responses and clears subscribers/cancels on disposal
+  ---
+  duration_ms: 1.3883
+  type: 'test'
+  ...
+# Subtest: output location resolves only a current-site block and observes deletion without recreating it
+ok 7 - output location resolves only a current-site block and observes deletion without recreating it
+  ---
+  duration_ms: 0.9233
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 324.1801

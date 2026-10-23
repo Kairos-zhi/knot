@@ -1,0 +1,11 @@
+{
+  "task": "KONT-RUN-013",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "focusedTests": { "passed": 4, "failed": 0, "exitCode": 0 },
+  "scope": ["Read-only React status panel", "Independent existing-token styles", "Semantic tree and callback contract tests"],
+  "modelCalls": 0,
+  "deployment": false,
+  "humanUiAcceptance": false,
+  "independentAcceptance": false
+}

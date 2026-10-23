@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-24；之要求继续子agent并行，RUN-012 r2只读状态／工作站viewmodel已限定接受。RUN-011单次模型授权已消费，不自动再请求。
+更新：2026-10-24；之要求继续推进，RUN-013只读现场面板候选已限定接受。RUN-011单次模型授权已消费，不自动再请求。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -23,11 +23,12 @@
 | RUN-010 | ACCEPTED_LIMITED | U/checker/final-review.json；r2 build＋focused16/16；owned运行组件／原子synthetic回流 |
 | RUN-011 | ACCEPTED_LIMITED | V/checker/final-review.json；core21＋wire4；真实Flash 1POST／completed／单块来源／独立重开 |
 | RUN-012 | ACCEPTED_LIMITED | W/checker/final-review.json；A8＋B r2 4项，集成／认证2项；只读接口与viewmodel |
+| RUN-013 | ACCEPTED_LIMITED | X/checker/final-review.json；build＋11项／独立bundle组合1项；只读面板候选 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 当前桌面：D:\DSH-Desktop，官方0.2.1-rc.2普通启动；已加载Knot，无临时调试端口。原Headless／3081未替换。
-- 上轮回执：V/controller/receipt.json；本轮回执：W/controller/receipt.json（W=20261023-run-query）；索引：evidence/RUN-012-INDEX.json；旧索引与收口保持。
+- 上轮回执：W/controller/receipt.json（W=20261023-run-query）；本轮回执：X/controller/receipt.json（X=20261024-run-panel）；索引：evidence/RUN-013-INDEX.json；旧索引与收口保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前18单元＝16项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。RUN-012 r2已Gate：原权限只读Run查询与同契约中文状态模型；未接正式UI／在用部署。本轮新增模型0，RUN-011单次授权1/1已用（158入／18出，峰值估算0.00046元，非账单）。
+- 当前19单元＝17项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。RUN-013已Gate：当前现场只读状态面板／共享查询源与当前块定位，实际bundle程序化组合通过；非ReactDOM／视觉／人的体验验收，未部署在用Desktop。新增模型0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。

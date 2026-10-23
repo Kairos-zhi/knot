@@ -1,4 +1,6 @@
 const { createElement: h, useState, useEffect, useSyncExternalStore } = require('react');
+const { RunStatusPanel } = require('@kont/run-status-panel');
+const { createRunStatusSource, resolveRunOutput } = require('@kont/run-status-source');
 exports.inject = ['slots', 'layout'];
 exports.apply = function apply(ctx) {
   // Runtime inventory only: no product data or identity enters this receipt.
@@ -23,10 +25,13 @@ exports.apply = function apply(ctx) {
   };
   try {
   let snapshot = { data: null, error: '', busy: false };
+  let closed = false;
+  const runSource = createRunStatusSource({ fetch: (...args) => fetch(...args), baseURI: document.baseURI });
   const listeners = new Set();
   const drafts = new Map();
-  const emit = patch => { snapshot = { ...snapshot, ...patch }; listeners.forEach(fn => fn()); };
+  const emit = patch => { if (!closed) { snapshot = { ...snapshot, ...patch }; listeners.forEach(fn => fn()); } };
   const source = { subscribe: fn => { listeners.add(fn); return () => listeners.delete(fn); }, read: () => snapshot };
+  ctx.effect(() => () => { closed = true; runSource.dispose(); listeners.clear(); drafts.clear(); });
   const api = async (body) => {
     const response = await fetch(new URL('kont/api/workspace', document.baseURI), body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), credentials: 'same-origin' } : { credentials: 'same-origin' });
     let data;
@@ -36,8 +41,15 @@ exports.apply = function apply(ctx) {
   };
   const refresh = async () => {
     if (snapshot.busy) return;
+    runSource.invalidate(snapshot.data?.workspace.activeWorksiteId ?? null);
     emit({ busy: true, error: '' });
-    try { emit({ data: await api() }); } catch (error) { emit({ error: error.message }); }
+    try {
+      const data = await api(); emit({ data });
+      if (!closed) runSource.refresh(data.workspace.activeWorksiteId, data.seq);
+    } catch (error) {
+      emit({ error: error.message });
+      runSource.invalidate(snapshot.data?.workspace.activeWorksiteId ?? null, '暂时无法更新现场，请刷新重试。');
+    }
     finally { emit({ busy: false }); }
   };
   const mutate = async commands => {
@@ -54,12 +66,17 @@ exports.apply = function apply(ctx) {
   };
   function Workstation() {
     const state = useSyncExternalStore(source.subscribe, source.read);
+    const runState = useSyncExternalStore(runSource.subscribe, runSource.read);
     const [newScene, setNewScene] = useState('');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [preview, setPreview] = useState(null);
+    const [locateReference, setLocateReference] = useState(null);
     const [, redraw] = useState(0);
     useEffect(() => { if (!snapshot.data) refresh(); }, []);
+    const activeSite = state.data?.workspace.activeWorksiteId;
+    useEffect(() => { setLocateReference(null); runSource.setWorksite(activeSite, state.data?.seq ?? 0); }, [activeSite, state.data?.seq]);
+    useEffect(() => { if (state.busy || state.error) setLocateReference(null); }, [state.busy, state.error]);
     if (!state.data) return h('section', { className: 'kont-root kont-loading' }, h('h1', null, 'KONT'), h('p', { role: state.error ? 'alert' : 'status' }, state.error || '正在打开工作现场…'), h('button', { onClick: refresh, disabled: state.busy }, '重新连接'));
     const { workspace, assets, titles, revision } = state.data;
     const site = workspace.worksites.find(item => item.id === workspace.activeWorksiteId);
@@ -68,6 +85,12 @@ exports.apply = function apply(ctx) {
     const view = workspace.presentations.find(item => item.worksiteId === site.id && !item.closed);
     const mode = view?.kind ?? 'window';
     const selected = assets.filter(asset => site.checkedIds.includes(asset.id) && !site.excludedIds.includes(asset.id));
+    const located = !state.busy && !state.error ? resolveRunOutput(state.data, locateReference) : null;
+    const onLocate = reference => {
+      // Never trust a historical block address without the current snapshot.
+      if (resolveRunOutput(snapshot.data, reference)) setLocateReference({ ...reference });
+      else setLocateReference(null);
+    };
     const btn = (label, onClick, props = {}) => h('button', { type: 'button', disabled: state.busy, onClick, ...props }, label);
     const changeMode = kind => mutate([view ? { type: 'presentation.update', presentationId: view.id, kind } : { type: 'presentation.open', id: `view:${site.id}`, worksiteId: site.id, kind }]);
     const reveal = async () => {
@@ -84,6 +107,12 @@ exports.apply = function apply(ctx) {
           ...workspace.worksites.map(item => btn(titles[item.id], () => { setPreview(null); mutate([{ type: 'worksite.activate', worksiteId: item.id }]); }, { key: item.id, className: `kont-scene ${item.id === site.id ? 'is-active' : ''}`, 'aria-pressed': item.id === site.id })),
           h('form', { onSubmit: async event => { event.preventDefault(); if (await mutate([{ type: 'scene.create', title: newScene }])) { setNewScene(''); setPreview(null); } } }, h('input', { 'aria-label': '新现场名称', placeholder: '给新现场起个名字', value: newScene, maxLength: 200, disabled: state.busy, onChange: event => setNewScene(event.target.value) }), h('button', { disabled: state.busy || !newScene.trim(), type: 'submit' }, '＋ 新建现场'))),
         h('main', { className: 'kont-site' }, h('div', { className: 'kont-site-title' }, h('div', null, h('p', { className: 'kont-eyebrow' }, '当前工作'), h('h1', null, titles[site.id])), h('div', { className: 'kont-actions', 'aria-label': '现场呈现' }, ...[['window', '展开'], ['card', '卡片'], ['icon', '图标']].map(([kind, label]) => btn(label, () => changeMode(kind), { key: kind, 'aria-pressed': mode === kind })))),
+          h(RunStatusPanel, { runs: !state.busy && !state.error && runState.worksiteId === site.id ? runState.runs : [], worksiteId: site.id, assets,
+            loading: state.busy || runState.worksiteId !== site.id || runState.loading,
+            error: state.error ? '暂时无法更新现场，请刷新重试。' : runState.worksiteId === site.id ? runState.error : '',
+            onRefresh: refresh, onLocate }),
+          located && h('section', { className: 'kont-preview', 'aria-label': '运行产物' }, h('h2', null, located.title),
+            h('p', null, located.content), h('button', { type: 'button', onClick: () => setLocateReference(null) }, '关闭产物预览')),
           mode !== 'window' ? h('div', { className: `kont-compact kont-${mode}` }, h('h2', null, mode === 'icon' ? '◉' : titles[site.id]), h('p', null, `${selected.length} 份供给 · 草稿与材料已保留`), btn('回到现场', () => changeMode('window'))) : h('div', { className: 'kont-columns' },
             h('section', { className: 'kont-materials' }, h('h2', null, '这次用哪些材料'), h('p', { className: 'kont-muted' }, `已选 ${selected.length} 份 · 只供给当前现场`),
               assets.length === 0 && h('div', { className: 'kont-empty' }, '先放入一份参考、讨论或想法。'),

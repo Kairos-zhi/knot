@@ -1,0 +1,34 @@
+{
+  "task": "KONT-RUN-013",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "423fe426deb4f6f288a670430ebe332fd4e9b563",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/run-status-source.test.mjs tests/run-panel-client.test.mjs tests/client-bundle.test.mjs tests/plugin-lifecycle.test.mjs", "exit": 0, "passed": 7, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "sourceUsesNewReadOnlyContract": true,
+    "sharedAcrossPresentations": true,
+    "readOnlyLocationWrites": 0,
+    "workspaceRefreshWaitAndFailureFence": true,
+    "rendererTreeVerificationIsDesktopDeployment": false,
+    "trackedGeneratedBundleIncluded": true
+  },
+  "boundaries": {
+    "realModelCalls": 0,
+    "actualUserSessionReads": 0,
+    "profileOrCredentialAccess": false,
+    "serverOrReadAuditChanged": false,
+    "BComponentStyleOrViewmodelChangedByA": false,
+    "oldEditorFieldsOrFeaturesAdded": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "installedOrDeployed": false,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["Independent Checker and Gate", "Official Desktop deployment and human visual acceptance are separate"]
+}

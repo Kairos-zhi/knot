@@ -1,0 +1,120 @@
+{
+  "task": "KONT-RUN-013",
+  "matched": 16,
+  "mismatch": 0,
+  "generatedBundleRebuildMatched": true,
+  "files": [
+    {
+      "line": "maker-a",
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "bytes": 13081,
+      "sha256": "997394500ec19bd01f007667e338158980af95673bb154ef50bbc8e8136874c4",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "packages/dsh-plugin/src/run-status-source.cjs",
+      "bytes": 3439,
+      "sha256": "cbcb27472d6bdbee4c67161471e20f814d4dae28ab6943d8bb5ecc42d24dfafb",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "scripts/build.mjs",
+      "bytes": 4138,
+      "sha256": "785b79ef81266a857b98520c073162f73d543022643e6af6d181d6dd7e1d61df",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "packages/dsh-plugin/lib/client.js",
+      "bytes": 27493,
+      "sha256": "afef577a91639f90b4ca3814f9b02998da11d9624432be36b0167788c64909f7",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "tests/run-status-source.test.mjs",
+      "bytes": 4861,
+      "sha256": "0c9fc99fd56469453674f2e4d94ca7be7dfe8e87589544c2f7bc03474be6296b",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "tests/run-panel-client.test.mjs",
+      "bytes": 5266,
+      "sha256": "fc0b74b69e2caeb38daa8e24397367030f773c3ec56314c02631b4994a325c1b",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-run-panel/maker-a/REPORT.md",
+      "bytes": 2385,
+      "sha256": "4e5d71b14fadfe539ae42f01bca4935d659543d236c19411cae31a111da7f72a",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-run-panel/maker-a/receipt.json",
+      "bytes": 1396,
+      "sha256": "b35f3bb630ba5c23a898d7a5ae5df32b70d7c5ab0b356887e613f69ef3933d48",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-run-panel/maker-a/build.log",
+      "bytes": 231,
+      "sha256": "922220cbf9ba246aaa79ec10381b656e5a72fe0cc8a1f057a27e6f50fd1df31a",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-run-panel/maker-a/focused.tap",
+      "bytes": 1901,
+      "sha256": "e0ffe5a1acdde6f79f37d5fb278b6a76b854893b07e06566d3fafb9f74fa14e4",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "packages/dsh-plugin/src/run-status-panel.cjs",
+      "bytes": 2937,
+      "sha256": "5db266047a20ee70fb61a0ebbb7bf21233957f9283785775ef0a4cc48ed2264c",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "packages/dsh-plugin/src/run-status-panel.css",
+      "bytes": 865,
+      "sha256": "ad046224a890523bfbb7ff8cc5e8c7348a75c785d23ab1d85cf990276fcdfa4b",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "tests/run-status-panel.test.mjs",
+      "bytes": 4707,
+      "sha256": "5b8b24301af880b2cbd193ad39ddce232c6b0f6485b38f4344f3e51c3f2eaf33",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-run-panel/maker-b/REPORT.md",
+      "bytes": 1638,
+      "sha256": "629b2777f159784ca23ff3f6d0912c7355f63453032fc48897e4b4a6fd6121c6",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-run-panel/maker-b/receipt.json",
+      "bytes": 379,
+      "sha256": "9288ddce916db4f5823f1170c7014700f87bbc4b0402947b7b8520025f09391c",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-run-panel/maker-b/focused.tap",
+      "bytes": 1135,
+      "sha256": "bbb2a5d11057049904f1b6e99ac9f1440b10ef9d73fe59a8bb7ba5ed115ae348",
+      "match": true
+    }
+  ]
+}

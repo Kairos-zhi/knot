@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 9.4022
+  type: 'test'
+  ...
+# Subtest: real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+ok 2 - real Cordis awaits KONT asynchronous disposal and permits immediate storage reopen
+  ---
+  duration_ms: 55.8109
+  type: 'test'
+  ...
+# Subtest: built client embeds local panel/view/source, shares all presentations, and locates without a write request
+ok 3 - built client embeds local panel/view/source, shares all presentations, and locates without a write request
+  ---
+  duration_ms: 16.2737
+  type: 'test'
+  ...
+# Subtest: panel shows only current worksite and readable semantic names without raw runtime IDs
+ok 4 - panel shows only current worksite and readable semantic names without raw runtime IDs
+  ---
+  duration_ms: 2.3913
+  type: 'test'
+  ...
+# Subtest: loading, failed query, empty current site and invalid DTO never show stale records or paid retry controls
+ok 5 - loading, failed query, empty current site and invalid DTO never show stale records or paid retry controls
+  ---
+  duration_ms: 0.5425
+  type: 'test'
+  ...
+# Subtest: completed output navigation requires current target and block and preserves missing history
+ok 6 - completed output navigation requires current target and block and preserves missing history
+  ---
+  duration_ms: 1.5511
+  type: 'test'
+  ...
+# Subtest: untrusted target titles remain text nodes and uncertainty never offers a generation action
+ok 7 - untrusted target titles remain text nodes and uncertainty never offers a generation action
+  ---
+  duration_ms: 0.995
+  type: 'test'
+  ...
+# Subtest: Run source uses only same-origin GET; switching cancels and fences late old-scene responses
+ok 8 - Run source uses only same-origin GET; switching cancels and fences late old-scene responses
+  ---
+  duration_ms: 3.1934
+  type: 'test'
+  ...
+# Subtest: Run source rejects sequence regression/private fields/errors and lets manual refresh recover
+ok 9 - Run source rejects sequence regression/private fields/errors and lets manual refresh recover
+  ---
+  duration_ms: 1.7807
+  type: 'test'
+  ...
+# Subtest: Run source drops same-scene out-of-order responses and clears subscribers/cancels on disposal
+ok 10 - Run source drops same-scene out-of-order responses and clears subscribers/cancels on disposal
+  ---
+  duration_ms: 1.5315
+  type: 'test'
+  ...
+# Subtest: output location resolves only a current-site block and observes deletion without recreating it
+ok 11 - output location resolves only a current-site block and observes deletion without recreating it
+  ---
+  duration_ms: 0.9289
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 352.0347
