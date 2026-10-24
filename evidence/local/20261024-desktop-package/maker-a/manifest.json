@@ -1,0 +1,54 @@
+{
+  "task": "KONT-DESKTOP-014",
+  "line": "A",
+  "role": "Maker",
+  "baseCommit": "3ccb26ffb6b1f80e313f0d657924460a6f38f446",
+  "candidateContentManifest": "evidence/local/20261024-desktop-package/candidate/manifest.json",
+  "files": [
+    {
+      "path": "scripts/prepare-desktop-candidate.mjs",
+      "bytes": 9812,
+      "sha256": "cf426380ab685447c6a9b0840f8d5592d5d695d8b99f0bd9f61f33e6ed1f3442"
+    },
+    {
+      "path": "tests/desktop-candidate.test.mjs",
+      "bytes": 5449,
+      "sha256": "6f955f8fea62e675c94330a9c1f1dfecec67cd7a2e9ac45f0ff35bf5c0d3071e"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-a/REPORT.md",
+      "bytes": 2703,
+      "sha256": "38412c2458b7e44fa27b1c7905b28926efee7f060ca4c1068444248bb2043b8f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-a/receipt.json",
+      "bytes": 1715,
+      "sha256": "774a5203641d34e0db578679cd7232e2019e8bed24347289d30b7e52d3171e6f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-a/build.log",
+      "bytes": 231,
+      "sha256": "15b44adc1704fb5b974a900d4a765e0ae3dd1242a4d595c33b44d48adbe6984f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-a/focused.tap",
+      "bytes": 1248,
+      "sha256": "c9155373d9984d765aebb75cf8336954a8ee865413acdfd4d0bb6c7277e5b55f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-a/candidate-result.json",
+      "bytes": 455,
+      "sha256": "c1ce1d9af9a60e4dc97870041549e910618a26efcd918a2053aec2ba8201a91d"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/candidate/manifest.json",
+      "bytes": 8760,
+      "sha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/candidate/manifest.sha256",
+      "bytes": 80,
+      "sha256": "0bd8d9462f68eda1bda288798700d5a2e9cf7a9e05dbcebd2409f2b1fe754427"
+    }
+  ]
+}

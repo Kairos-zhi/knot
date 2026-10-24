@@ -1,0 +1,20 @@
+{
+  "task": "KONT-RUN-014",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "candidateManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "focusedTests": { "passed": 2, "failed": 0, "exitCode": 0 },
+  "officialManagerInstall": true,
+  "isolatedProfileOnly": true,
+  "application": "restart-required",
+  "installedFilesMatchedCandidate": 25,
+  "actualRuntimeApply": true,
+  "rendererModuleFactoryAndSlots": true,
+  "actualDesktopDeployment": false,
+  "modelCalls": 0,
+  "credentialsRead": false,
+  "userSessionsRead": false,
+  "versionExemption": false,
+  "rollbackArtifactPrepared": false,
+  "independentAcceptance": false
+}

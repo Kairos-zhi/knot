@@ -1,0 +1,10 @@
+{
+  "candidate": "evidence/local/20261024-desktop-package/candidate",
+  "manifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "files": 25,
+  "sourceBaseCommit": "3ccb26ffb6b1f80e313f0d657924460a6f38f446",
+  "targetHostVersion": "0.2.1-rc.2",
+  "layout": "sibling-local-directories",
+  "portability": "unverified-directory-candidate-not-a-standalone-tarball",
+  "compatibility": "declared-target-only-not-a-test-result"
+}

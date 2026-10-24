@@ -1,0 +1,40 @@
+{
+  "task": "KONT-DESKTOP-014",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "3ccb26ffb6b1f80e313f0d657924460a6f38f446",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "candidate": {
+    "path": "../candidate",
+    "layout": "sibling-local-directories",
+    "files": 25,
+    "manifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "packageVersions": { "@kont/desktop-bundle": "0.1.0", "@kont/dsh-plugin": "0.1.0" },
+    "targetHostVersion": "0.2.1-rc.2",
+    "targetDeclarationIsCompatibilityAcceptance": false,
+    "standaloneTarballPortabilityClaim": false,
+    "dependency": "packages/desktop-bundle file:../dsh-plugin resolves packages/dsh-plugin"
+  },
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/desktop-candidate.test.mjs tests/client-bundle.test.mjs", "exit": 0, "passed": 4, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "candidateInventoryAndBytesVerified": true,
+    "reproducibleAcrossTwoFreshDirectories": true
+  },
+  "boundaries": {
+    "productSourceOrBuildBytesChanged": false,
+    "realModelCalls": 0,
+    "profileOrCredentialAccessByA": false,
+    "packageManagerOrNetworkInstallByA": false,
+    "inUseDesktopChanged": false,
+    "asarChanged": false,
+    "vendorChanged": false,
+    "historyEvidenceChanged": false,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["B final official manager isolated validation of this exact candidate", "Independent Checker and Gate", "Any in-use Desktop deployment requires separate authorization"]
+}

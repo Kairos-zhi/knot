@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: browser bundle joins native DSH slots and disposes its stylesheet
+ok 1 - browser bundle joins native DSH slots and disposes its stylesheet
+  ---
+  duration_ms: 13.973
+  type: 'test'
+  ...
+# Subtest: official manager offline installs candidate and copied runtime/renderer apply in isolation
+ok 2 - official manager offline installs candidate and copied runtime/renderer apply in isolation
+  ---
+  duration_ms: 11199.077
+  type: 'test'
+  ...
+# Subtest: official manager refuses incompatible candidate without a version exemption
+ok 3 - official manager refuses incompatible candidate without a version exemption
+  ---
+  duration_ms: 2927.5155
+  type: 'test'
+  ...
+# Subtest: directory candidate is reproducible, hash verified, exact-host declared and preserves sibling dependency without a portable tarball claim
+ok 4 - directory candidate is reproducible, hash verified, exact-host declared and preserves sibling dependency without a portable tarball claim
+  ---
+  duration_ms: 1264.7202
+  type: 'test'
+  ...
+# Subtest: candidate refuses existing outputs, source/path overlaps, redirected parents and wrong base without replacing bytes
+ok 5 - candidate refuses existing outputs, source/path overlaps, redirected parents and wrong base without replacing bytes
+  ---
+  duration_ms: 3963.3929
+  type: 'test'
+  ...
+# Subtest: candidate verification rejects changed bytes, extra private files and unlisted directories
+ok 6 - candidate verification rejects changed bytes, extra private files and unlisted directories
+  ---
+  duration_ms: 790.19
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14680.683

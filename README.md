@@ -79,3 +79,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 [KONT-RUN-012](docs/tasks/KONT-RUN-012.md) 新增同权限的只读`GET /kont/runs`与`GET /kont/runs/<runId>`，只返回运行身份、四阶段与历史产物位置，不包含供料正文／请求审计。`createRunStatusView`把同一投影转换为工作站中文状态；已提交不代表正在运行，待核对不允许重发，完成记录不保证目标块目前仍存在。此为服务与呈现模型接缝，尚未接入正式工作站或部署在用Desktop。
 
 [KONT-RUN-013](docs/tasks/KONT-RUN-013.md) 在客户端当前工作旁接入只读运行状态面板，window/card/icon共用一个查询源。加载、失败、切换及卸载会隔离旧记录；产物定位从当前snapshot重新解析，只读显示标题／块正文，失效不重建或重跑。bundle内置view/source/panel模块与既有风格样式；以实际打包产物和语义树程序化验证，不使用截图或模拟点击。本轮为未部署的界面候选，无新模型请求，非人的体验验收。
+
+[KONT-DESKTOP-014](docs/tasks/KONT-DESKTOP-014.md) 提供25文件目录候选、清单摘要及打包／验证工具。候选位于`evidence/local/20261024-desktop-package/candidate`，保持两个package同级；副本精确限定官方0.2.1-rc.2。官方manager离线隔离安装、版本拒绝、复制后服务／renderer验证已通过；不等于在用Desktop部署。实际安装与旧代码回滚准备见[部署方案](docs/research/desktop-candidate-install-20261024.md)，不能用已变化的repo路径冒充旧代码回滚副本。

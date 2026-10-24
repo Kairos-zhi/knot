@@ -1,0 +1,41 @@
+{
+  "task": "KONT-RUN-014",
+  "role": "maker-b",
+  "files": [
+    {
+      "path": "scripts/verify-desktop-candidate.cjs",
+      "bytes": 7705,
+      "sha256": "58258fdb278586447c06a0e7d657c0ab77bc84c8df372cf2021b9dc100837ac1"
+    },
+    {
+      "path": "tests/desktop-candidate-isolation.test.mjs",
+      "bytes": 3502,
+      "sha256": "6ee21be84513e79d23436350c52a9cb7a97d34f3e7c9a60f7ea1610c61b22532"
+    },
+    {
+      "path": "docs/research/desktop-candidate-install-20261024.md",
+      "bytes": 3538,
+      "sha256": "783a2bf05da10510660337dac2d9441484258be7a0caeb4c5a874f0f1894a053"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-b/REPORT.md",
+      "bytes": 2081,
+      "sha256": "9b75345ef3c04b114e1748353a486f76808f3b528aa5974e64accfc445bd80e0"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-b/receipt.json",
+      "bytes": 668,
+      "sha256": "5707d0342768c8a1c36844ff00d9293cbeb3aca1c0d183f76e4eeadc75a4023f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-b/focused.tap",
+      "bytes": 592,
+      "sha256": "78b24c36f08e6ed629fdddee44ad1b81d13e161c4e3fdc7febfde00f7b842bc6"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-package/maker-b/isolated-install.json",
+      "bytes": 651,
+      "sha256": "545a5f9b39eb153745ee7285f9ed5fcdb5bd471ef6a0823e77c91d6a439cb89f"
+    }
+  ]
+}
