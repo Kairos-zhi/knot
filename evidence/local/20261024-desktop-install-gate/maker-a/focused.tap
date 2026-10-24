@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: SYNTHETIC grant: persistent reservation precedes exact RPC; concurrent/rebuilt/process-reopened approvals cannot replay
+ok 1 - SYNTHETIC grant: persistent reservation precedes exact RPC; concurrent/rebuilt/process-reopened approvals cannot replay
+  ---
+  duration_ms: 210.3539
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC absent/forged/cloned/expired or drifted approval cannot call install or transport authorization
+ok 2 - SYNTHETIC absent/forged/cloned/expired or drifted approval cannot call install or transport authorization
+  ---
+  duration_ms: 13.2187
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC error/timeout/result-save failure retain reservation and never retry; late receipt cannot overwrite uncertainty
+ok 3 - SYNTHETIC error/timeout/result-save failure retain reservation and never retry; late receipt cannot overwrite uncertainty
+  ---
+  duration_ms: 109.8041
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC source drift and redirected/unwritable ledger reject before callback
+ok 4 - SYNTHETIC source drift and redirected/unwritable ledger reject before callback
+  ---
+  duration_ms: 47.5226
+  type: 'test'
+  ...
+# Subtest: SYNTHETIC post-reservation drift and unconsumed late permit fail closed with permanent reservation
+ok 5 - SYNTHETIC post-reservation drift and unconsumed late permit fail closed with permanent reservation
+  ---
+  duration_ms: 67.5924
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 590.1852

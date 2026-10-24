@@ -1,0 +1,41 @@
+{
+  "task": "KONT-DESKTOP-019",
+  "role": "maker-b",
+  "files": [
+    {
+      "path": "scripts/desktop-quiescent-install.mjs",
+      "bytes": 7550,
+      "sha256": "52a5632e48f44e51e575a6ffcde99e6ded0f10e7277d59e50019e9b97b1bbcf8"
+    },
+    {
+      "path": "scripts/desktop-install-transport-policy.mjs",
+      "bytes": 3053,
+      "sha256": "a2ed9f4f36f2e1239e6e551c4545d86c8a2550af3b3aff69917e096757be44ce"
+    },
+    {
+      "path": "tests/desktop-quiescent-install.test.mjs",
+      "bytes": 8638,
+      "sha256": "ce063aeceac8be1daacf293163c766bfbefb820c4ac040ee86118523309257df"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/REPORT.md",
+      "bytes": 3011,
+      "sha256": "a422dbd549993b80d2f5a35a81c8975ffa4f504e50ace28ed3cedf47178a6f28"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/receipt.json",
+      "bytes": 717,
+      "sha256": "0840146b41e0db088c2818300535a0e221621676ddb04c8015a81b576eb89f4f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/focused.tap",
+      "bytes": 2776,
+      "sha256": "5e6826251af676e811c3a72bba24a486b27834a8d540992286e01d64449be2e7"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/official-isolated-install.json",
+      "bytes": 337,
+      "sha256": "f5771d82a6f126ecb4ab18f29d28264f09730d12b1e1f0e90d42264d31b83df9"
+    }
+  ]
+}

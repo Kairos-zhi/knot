@@ -1,0 +1,33 @@
+{
+  "format": "kont-maker-freeze/v1",
+  "baseCommit": "9bb7fea0d915f4e06fdd5bb92a083fbcbdb2a09d",
+  "role": "maker-a",
+  "files": [
+    {
+      "path": "scripts/desktop-install-execution.mjs",
+      "sha256": "f362d22a70fbfe2e753b6435bfe3ef5d20985b8c814974b0e39aebc02761351b",
+      "bytes": 10565
+    },
+    {
+      "path": "tests/desktop-install-execution.test.mjs",
+      "sha256": "51ee34ef53b37639929e5b87096caabe8d6c66f3d3ab59e90d2b79066f75089b",
+      "bytes": 12076
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/REPORT.md",
+      "sha256": "b465127b40872eb02aac3d2fed16b45d127cdc7ff340eade0bdbd0c149d0f6e1",
+      "bytes": 1625
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/receipt.json",
+      "sha256": "96eac99926e1062d6f1c029aae57e164d22656a249d88c6bd4ba5ef97823b4aa",
+      "bytes": 756
+    },
+    {
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/focused.tap",
+      "sha256": "9597382e25e3d0ce8f20020f14cc8dbb4bea5cea73b623e206ebf96b1033cd63",
+      "bytes": 1551
+    }
+  ],
+  "card": "KONT-DESKTOP-019"
+}

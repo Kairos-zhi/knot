@@ -89,3 +89,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 [KONT-DESKTOP-017](docs/tasks/KONT-DESKTOP-017.md) 提供保留旧界面和入口、复用已审Run数据层的13文件派生恢复候选。五阶段运行记录／派发占位／回执与来源经恢复编辑及新版重开保留，非法快照替换和占位重授被拒绝；官方离线隔离安装、独立A3＋B4通过。它是新组合，不能冒称原样旧包或生产迁移已接受；旧入口会获得现代store的run.prepare／snapshot journal语义。016安装门保持，详见[恢复范围](docs/research/desktop-recovery-20261024.md)。
 
 [KONT-DESKTOP-018](docs/tasks/KONT-DESKTOP-018.md) 将升级与派生恢复候选绑定到固定现场文件摘要。原文件只读，014→017→014兼容写入仅发生在私人临时副本，完整状态比较且不输出正文；当前样本2资产／0Run通过，原hash与原锁未改。独立9/9，仅接受配对预检；真实含Run恢复、安装／正常重启及生产部署未接受，安装opt-in仍拒绝。见[预检范围](docs/research/desktop-paired-preflight-20261024.md)。
+
+[KONT-DESKTOP-019](docs/tasks/KONT-DESKTOP-019.md) 新增初始升级的一次性声明／持久占位／私有dispatch permit，以及固定quiescent官方manager transport。独立16/16、临时官方安装一次25文件一致；synthetic与生产隔离，异常／超时保留不确定且不自动重试。真实安装许可为0，尚未更新Desktop；超时不等于已派发操作取消，生产完整context/cache与active仍待真实验证。具体待批准目标见[安装方案](docs/research/desktop-install-gate-20261024.md)。

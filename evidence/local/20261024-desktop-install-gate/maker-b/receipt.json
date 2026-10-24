@@ -1,0 +1,21 @@
+{
+  "task": "KONT-DESKTOP-019",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "focusedTests": { "passed": 11, "failed": 0, "exitCode": 0 },
+  "actualOfficialManagerIsolatedInstall": true,
+  "syntheticAuthorizationOnly": true,
+  "copiedFilesMatched": 25,
+  "officialInstallCalls": 1,
+  "enabled": true,
+  "application": "restart-required",
+  "missingForgedAndReusedDispatchPermitRejected": true,
+  "productionTransportRejectsSynthetic": true,
+  "copiedProductionModuleRejected": true,
+  "legacyDebugFileChanged": false,
+  "productionProfileTouched": false,
+  "productionOtherDependenciesAndCacheVerified": false,
+  "productionDeploymentAccepted": false,
+  "modelCalls": 0,
+  "independentAcceptance": false
+}

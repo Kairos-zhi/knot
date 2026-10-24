@@ -1,0 +1,13 @@
+{
+  "syntheticAuthorization": true,
+  "officialManagerInstall": true,
+  "enabled": true,
+  "application": "restart-required",
+  "calls": 1,
+  "filesMatched": 25,
+  "productionTransportRejectedSynthetic": true,
+  "directWithoutPermitRejected": true,
+  "reusedPermitRejected": true,
+  "productionProfileTouched": false,
+  "modelCalls": 0
+}

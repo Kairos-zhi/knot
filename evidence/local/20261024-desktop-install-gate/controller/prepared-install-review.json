@@ -1,0 +1,27 @@
+{
+  "task": "KONT-DESKTOP-019",
+  "preparedPlan": {
+    "descriptor": {
+      "format": "kont-desktop-one-shot-upgrade/v1",
+      "action": "upgrade",
+      "upgradeSpec": "file:C:/Users/x2270/Documents/ChatGPT/KONT/evidence/local/20261024-desktop-package/candidate/packages/desktop-bundle",
+      "upgradeManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+      "recoveryManifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+      "dataSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+      "method": "pluginManager/installBundle",
+      "options": {
+        "enabled": true,
+        "saveExact": true,
+        "requestId": "kont-upgrade-52dd73b28c348f85176a0e077688d3b470f9f679"
+      }
+    },
+    "descriptorSha256": "928f28736af4fc2f820e9d4eae53341872e6890d401e9932bda32028830d77a9",
+    "expiresAt": 1792847115715,
+    "deploymentReady": false,
+    "authorizationRequired": true,
+    "callerDeclarationIsIdentityProof": false
+  },
+  "humanApprovalIssued": false,
+  "productionInstallAttempted": false,
+  "modelCalls": 0
+}

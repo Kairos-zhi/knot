@@ -1,0 +1,97 @@
+{
+  "task": "KONT-DESKTOP-019",
+  "manifestEntriesMatched": 12,
+  "mismatch": 0,
+  "legacyClientAndDebugUnchanged": true,
+  "descriptorSha256": "928f28736af4fc2f820e9d4eae53341872e6890d401e9932bda32028830d77a9",
+  "actualReadonlyPrepareMatched": true,
+  "productionApprovalClaimAbsent": true,
+  "humanGrantIssuedByChecker": false,
+  "executionOrTransportConstructedByChecker": false,
+  "entries": [
+    {
+      "line": "maker-a",
+      "path": "scripts/desktop-install-execution.mjs",
+      "bytes": 10565,
+      "sha256": "f362d22a70fbfe2e753b6435bfe3ef5d20985b8c814974b0e39aebc02761351b",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "tests/desktop-install-execution.test.mjs",
+      "bytes": 12076,
+      "sha256": "51ee34ef53b37639929e5b87096caabe8d6c66f3d3ab59e90d2b79066f75089b",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/REPORT.md",
+      "bytes": 1625,
+      "sha256": "b465127b40872eb02aac3d2fed16b45d127cdc7ff340eade0bdbd0c149d0f6e1",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/receipt.json",
+      "bytes": 756,
+      "sha256": "96eac99926e1062d6f1c029aae57e164d22656a249d88c6bd4ba5ef97823b4aa",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-a/focused.tap",
+      "bytes": 1551,
+      "sha256": "9597382e25e3d0ce8f20020f14cc8dbb4bea5cea73b623e206ebf96b1033cd63",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "scripts/desktop-quiescent-install.mjs",
+      "bytes": 7550,
+      "sha256": "52a5632e48f44e51e575a6ffcde99e6ded0f10e7277d59e50019e9b97b1bbcf8",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "scripts/desktop-install-transport-policy.mjs",
+      "bytes": 3053,
+      "sha256": "a2ed9f4f36f2e1239e6e551c4545d86c8a2550af3b3aff69917e096757be44ce",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "tests/desktop-quiescent-install.test.mjs",
+      "bytes": 8638,
+      "sha256": "ce063aeceac8be1daacf293163c766bfbefb820c4ac040ee86118523309257df",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/REPORT.md",
+      "bytes": 3011,
+      "sha256": "a422dbd549993b80d2f5a35a81c8975ffa4f504e50ace28ed3cedf47178a6f28",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/receipt.json",
+      "bytes": 717,
+      "sha256": "0840146b41e0db088c2818300535a0e221621676ddb04c8015a81b576eb89f4f",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/focused.tap",
+      "bytes": 2776,
+      "sha256": "5e6826251af676e811c3a72bba24a486b27834a8d540992286e01d64449be2e7",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-install-gate/maker-b/official-isolated-install.json",
+      "bytes": 337,
+      "sha256": "f5771d82a6f126ecb4ab18f29d28264f09730d12b1e1f0e90d42264d31b83df9",
+      "match": true
+    }
+  ]
+}

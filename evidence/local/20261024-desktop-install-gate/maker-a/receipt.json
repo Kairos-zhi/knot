@@ -1,0 +1,22 @@
+{
+  "card": "KONT-DESKTOP-019",
+  "role": "maker-a",
+  "status": "ready-for-independent-checker",
+  "scope": "one-shot-initial-upgrade-execution-gate",
+  "authorizationEvidence": "synthetic-test-only",
+  "humanGrantsIssued": 0,
+  "productionInstallCalls": 0,
+  "realModelCalls": 0,
+  "focusedCommand": "node --test tests/desktop-install-execution.test.mjs",
+  "focusedPassed": 5,
+  "focusedFailed": 0,
+  "jointFocusedPassed": 7,
+  "jointOfficialTemporaryManagerEvidenceOwner": "maker-b",
+  "build": "not-run-scripts-only-no-product-or-candidate-changes",
+  "privatePermitRequired": true,
+  "postReservationFence": true,
+  "persistentReservationNeverReleased": true,
+  "runtimeActiveProven": false,
+  "deploymentAccepted": false,
+  "commitCreated": false
+}
