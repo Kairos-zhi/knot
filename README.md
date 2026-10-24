@@ -83,3 +83,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 [KONT-DESKTOP-014](docs/tasks/KONT-DESKTOP-014.md) 提供25文件目录候选、清单摘要及打包／验证工具。候选位于`evidence/local/20261024-desktop-package/candidate`，保持两个package同级；副本精确限定官方0.2.1-rc.2。官方manager离线隔离安装、版本拒绝、复制后服务／renderer验证已通过；不等于在用Desktop部署。实际安装与旧代码回滚准备见[部署方案](docs/research/desktop-candidate-install-20261024.md)，不能用已变化的repo路径冒充旧代码回滚副本。
 
 [KONT-DESKTOP-015](docs/tasks/KONT-DESKTOP-015.md) 从真实已安装副本保存旧12项代码与2项原package，未从仓库重建或改写旧peer。回滚目录位于`evidence/local/20261024-desktop-rollback/candidate`；官方离线隔离重装、旧kernel与renderer工厂及独立7/7检查通过。仅证明代码可重装，不代表升级后数据可降级或生产回滚；正式安装前仍须绑定已审spec、核实时状态和数据兼容，见[回滚范围](docs/research/desktop-rollback-20261024.md)。
+
+[KONT-DESKTOP-016](docs/tasks/KONT-DESKTOP-016.md) 新增绑定可信升级／回滚包与旧installed来源的只读管理计划，inspect前复核文件与持久选择，安装保持拒绝。冻结新旧store合成实测表明：虽然同为schema4，旧版成功写入会抹掉五种阶段的Run journal，资产／provenance保留也不代表安全降级。独立A13＋B4通过，仅接受预检与拒绝门；未部署或验证生产数据。下一步补保留运行记录的兼容恢复方案，详见[数据风险与预检](docs/research/desktop-preflight-20261024.md)。

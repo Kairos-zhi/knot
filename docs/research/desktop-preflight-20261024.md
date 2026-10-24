@@ -1,0 +1,13 @@
+# 已审候选与数据预检
+
+本卡延续DESKTOP-014／015，不实际部署。管理工具必须从可信manifest与完整库存产生升级／回滚spec；旧repo安装路径不再作为新工具的候选来源。复用既有官方manager RPC与安全结果投影，不读取认证材料，不开调试端口。
+
+新管理入口只做升级／回滚候选inspect与官方列表读取，生成计划时及inspect前重新校验两份冻结包、旧installed来源与持久选择证据。失效／伪造／过期计划和文件或选择漂移应在调用transport前拒绝。生产数据兼容与执行授权未证，安装即使显式opt-in也应拒绝，不接受一个调用者布尔值替代数据实证。旧管理API保留历史行为，本卡不调用其安装入口。
+
+兼容检查使用两份冻结包的实际KontStore，所有写入仅在全新D:/Temp合成目录。旧store将schema4规范化为assets/edges/workspace，再补revision/seq/titles；新store还保留并验证runs。这意味着相同schemaVersion无法证明能安全降级：旧版可能打开时不修改磁盘，却在下一次普通成功写入时抹掉新Run的派发占位与完成回执。必须检查读、写、再打开后的journal和来源信息，而不只看资产正文。
+
+生产状态仍未读取或接受。合成往返检查用于判断明确的不兼容机制，不证明某份真实用户数据无损；不自动备份／恢复用户数据，不修改旧回滚候选来掩盖不兼容。若检查证实Run丢失，应保留拒绝门并规划向前兼容的代码恢复方案，再单独完成真实状态核对与正常重启安排。
+
+实证结果：使用014升级与015旧代码的固定可信摘要，prepared／reserved／submitted／uncertain／completed五种合成持久状态均出现Run数量1→旧内存0→旧版普通成功编辑后新代码重开0。旧版只读打开与关闭不会改原磁盘hash，因此只测只读重开会漏掉问题。资产与completed生成块及provenance保留，仍无法恢复已丢的dispatchClaim／receipt。旧无Run材料的双向编辑往返通过，只支持这个窄样本，不取消含Run降级拒绝。报告返回UNSAFE_DOWNGRADE_RUN_JOURNAL_LOSS，所有生产许可保持false。
+
+新管理工具为pre-upgrade只读计划，依赖当前旧installed字节与持久选择未变，不提供安装后跳阶段的调用者开关。每次inspect重核候选与旧来源，再构造既有官方RPC；install opt-in也返回DATA_COMPATIBILITY_BLOCKED且不调用transport。尚未连接在用官方manager，没有当前active、实际inspect接受或Desktop加载证据。

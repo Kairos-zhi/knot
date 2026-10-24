@@ -26,6 +26,7 @@
 | KONT-RUN-013 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | X/checker/final-review.json；build＋11项及bundle组合1项；无模型／部署 |
 | KONT-DESKTOP-014 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Y/checker/final-review.json；build＋6项，25文件一致，官方离线隔离安装；未改在用profile |
 | KONT-DESKTOP-015 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Z/checker/final-review.json；旧12项／原package2项／15冻结项一致，独立7/7 |
+| KONT-DESKTOP-016 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AA/checker/final-review.json；13冻结项，独立A13＋B4；仅只读预检／危险降级拒绝 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -45,3 +46,4 @@ RUN-012 r2：两制作线并行、独立Checker查出opaque身份兼容P2并返�
 RUN-013：两线并行完成共享只读source/client/bundle与面板，独立Checker Gate=ACCEPT_READONLY_RUN_PANEL_LIMITED。build＋聚焦11/11、自有实际bundle组合1/1，16冻结项一致；当前19＝17限定接受＋2关闭。冻结前workspace刷新遮旧数据风险已修；窗口／卡片／图标共用状态，当前块只读定位。非ReactDOM／视觉／人的体验验收，未部署在用Desktop，无新增模型。下一步准备受支持Desktop插件管理器部署包与隔离装配验证，不能手改在用profile/签名ASAR或复用已消费模型授权。
 DESKTOP-014：Gate=ACCEPT_DESKTOP_CANDIDATE_PACKAGE_LIMITED；目录候选25文件、16冻结项一致，独立build＋6/6，官方manager在临时profile离线安装、版本拒绝与复制后runtime/renderer验证通过。当前20＝18限定接受＋2关闭。需要重启且enabled:false，不能冒称热装或在用部署；旧已安装代码rollback副本尚未准备。下一步先捕获并验证旧代码回滚候选，再经官方manager更新与正常重启验证；不动用户资产或模型授权。
 DESKTOP-015：之“快步推进”，Gate=ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED；从真实installed捕获12项与2项原package，实际转换0，peer／代码不变。双方冻结15项一致，独立7/7，官方离线临时profile重装及旧runtime／renderer工厂验证通过。当前21＝19限定接受＋2关闭。原spec／选择是持久配置证据，非live manager或active查询；代码可重装不证明新数据降级或生产回滚。新增模型0，未在用profile写／桌面启停／部署／push／合并。下一步适配安装管理工具以绑定已审升级／回滚候选，补数据兼容预检；实际更新与正常重启另行核准，不能直接使用旧repo spec。
+DESKTOP-016：之“继续”，Gate=ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGRADE_DETECTION_LIMITED；13冻结项一致，独立A13（新3＋原RPC9＋archive1）与B4分两次通过，非全量。新工具固定014／015可信pin与原installed12/profile/selection、只读pre-upgrade计划；伪造／过期／篡改拒绝，显式安装仍DATA_COMPATIBILITY_BLOCKED/evaluate0。五Run阶段经旧版普通写入后journal1→0、资产／provenance仍在；代码可装不能证明数据可降级。当前22＝20限定接受＋2关闭。下一步补Run journal兼容恢复方案，再做真实数据预检、实际部署核准和安装后源fence转换；本轮无生产资产读、在用profile写／桌面启停／模型／push／合并。

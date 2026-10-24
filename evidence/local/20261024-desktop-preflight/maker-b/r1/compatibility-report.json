@@ -1,0 +1,170 @@
+{
+  "kind": "kont-synthetic-data-compatibility/v1",
+  "codeArtifacts": {
+    "newManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "oldManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336"
+  },
+  "dataSource": "new-isolated-synthetic-stores-only",
+  "productionDataVerified": false,
+  "modelCalls": 0,
+  "experiments": [
+    {
+      "phase": "prepared",
+      "schemaVersion": 4,
+      "beforeHash": "686ec532d6f284c66ac1e159f6d6473485ab2fa59a4786f9976dcde957800a53",
+      "afterReadOnlyHash": "686ec532d6f284c66ac1e159f6d6473485ab2fa59a4786f9976dcde957800a53",
+      "afterOldWriteHash": "f2ad215cfe5f08b7df7e59da1fc8024e6b5abb0e9b601967fd2f1714d05f6325",
+      "beforeRunCount": 1,
+      "oldMemoryRunCount": 0,
+      "beforeRunStates": [
+        {
+          "status": "prepared",
+          "dispatchState": null,
+          "hasReceipt": false
+        }
+      ],
+      "afterOldWriteRunCount": 0,
+      "beforeRunsHash": "0dc8a882951961495cc0154fe3f4fc19f460c398ed86e16e5e028fc6088d629b",
+      "afterOldWriteRunsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assetsPreserved": true,
+      "generatedBefore": [],
+      "generatedAfter": [],
+      "generatedAndProvenancePreserved": true
+    },
+    {
+      "phase": "reserved",
+      "schemaVersion": 4,
+      "beforeHash": "7e071d7fddc14969c893bf06420b2ad95246a83d4bbf6c3ce1e53bb6b2e6d847",
+      "afterReadOnlyHash": "7e071d7fddc14969c893bf06420b2ad95246a83d4bbf6c3ce1e53bb6b2e6d847",
+      "afterOldWriteHash": "9ad80aace529e56eebb9887b82911fac3af6f3871e0a0ab2c54f976efae9d4de",
+      "beforeRunCount": 1,
+      "oldMemoryRunCount": 0,
+      "beforeRunStates": [
+        {
+          "status": "prepared",
+          "dispatchState": "reserved",
+          "hasReceipt": false
+        }
+      ],
+      "afterOldWriteRunCount": 0,
+      "beforeRunsHash": "ec316c24ddcc40943472a3ceed4771e6db3d3a0c3a014f1b3fd59198566994df",
+      "afterOldWriteRunsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assetsPreserved": true,
+      "generatedBefore": [],
+      "generatedAfter": [],
+      "generatedAndProvenancePreserved": true
+    },
+    {
+      "phase": "submitted",
+      "schemaVersion": 4,
+      "beforeHash": "66de41447e744b759aef615bc60288a717f7da1dd875485bfa12228aa7ce0aee",
+      "afterReadOnlyHash": "66de41447e744b759aef615bc60288a717f7da1dd875485bfa12228aa7ce0aee",
+      "afterOldWriteHash": "8702d844da32d0c0d96f236253adf1411b0908be964af207e054ef14f78210b3",
+      "beforeRunCount": 1,
+      "oldMemoryRunCount": 0,
+      "beforeRunStates": [
+        {
+          "status": "prepared",
+          "dispatchState": "submitted",
+          "hasReceipt": false
+        }
+      ],
+      "afterOldWriteRunCount": 0,
+      "beforeRunsHash": "f4f28b2d24046d91f2da7bee733a5d04764630afd8e5eee651a084067197515c",
+      "afterOldWriteRunsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assetsPreserved": true,
+      "generatedBefore": [],
+      "generatedAfter": [],
+      "generatedAndProvenancePreserved": true
+    },
+    {
+      "phase": "uncertain",
+      "schemaVersion": 4,
+      "beforeHash": "8cca9ab9844c327f9cc01296c61070a9e3d257c635d6ab05648b35ccd71a45ca",
+      "afterReadOnlyHash": "8cca9ab9844c327f9cc01296c61070a9e3d257c635d6ab05648b35ccd71a45ca",
+      "afterOldWriteHash": "8702d844da32d0c0d96f236253adf1411b0908be964af207e054ef14f78210b3",
+      "beforeRunCount": 1,
+      "oldMemoryRunCount": 0,
+      "beforeRunStates": [
+        {
+          "status": "prepared",
+          "dispatchState": "uncertain",
+          "hasReceipt": false
+        }
+      ],
+      "afterOldWriteRunCount": 0,
+      "beforeRunsHash": "3bbb7fabf117d5b2ffaf2ca7224dc540fa2cc58b72b05fc17ff640ea284dd2ce",
+      "afterOldWriteRunsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assetsPreserved": true,
+      "generatedBefore": [],
+      "generatedAfter": [],
+      "generatedAndProvenancePreserved": true
+    },
+    {
+      "phase": "completed",
+      "schemaVersion": 4,
+      "beforeHash": "d0bbd9c73b56c94c3526e60ecaa96554e3e75a096f31a587d06a1258ed8cb0d3",
+      "afterReadOnlyHash": "d0bbd9c73b56c94c3526e60ecaa96554e3e75a096f31a587d06a1258ed8cb0d3",
+      "afterOldWriteHash": "30056610edf2bb2e9041ffbb36bcab877570cb925ed188d7289ce5a75a3a59fd",
+      "beforeRunCount": 1,
+      "oldMemoryRunCount": 0,
+      "beforeRunStates": [
+        {
+          "status": "completed",
+          "dispatchState": "submitted",
+          "hasReceipt": true
+        }
+      ],
+      "afterOldWriteRunCount": 0,
+      "beforeRunsHash": "a2e7e7acd44a22f01e12098945a9a0f7fbb62c895d2c3b563bbef649390a7367",
+      "afterOldWriteRunsHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assetsPreserved": true,
+      "generatedBefore": [
+        {
+          "assetId": "target",
+          "blockId": "b2",
+          "content": "Synthetic output only",
+          "provenance": [
+            "public-source"
+          ]
+        }
+      ],
+      "generatedAfter": [
+        {
+          "assetId": "target",
+          "blockId": "b2",
+          "content": "Synthetic output only",
+          "provenance": [
+            "public-source"
+          ]
+        }
+      ],
+      "generatedAndProvenancePreserved": true
+    }
+  ],
+  "legacyRoundTrip": {
+    "oldBeforeHash": "a2f924930ba58fe65f6eb61c423e29e17a4a1bc6312c24d261377d7a5656a7cb",
+    "afterNewReadHash": "a2f924930ba58fe65f6eb61c423e29e17a4a1bc6312c24d261377d7a5656a7cb",
+    "afterNewWriteHash": "c734df3954685bf42b9078810eee1e5c6e2f01f06a4a0f75e4a1b96039dbd64b",
+    "afterOldWriteHash": "3fdcbbd8e4c391cda5f4388f7396b8e952e503349a551a91a30a8080f46401f0",
+    "initialHadRunJournal": false,
+    "newMemoryRunCount": 0,
+    "finalRunCount": 0,
+    "assetsPreserved": true,
+    "provenancePreserved": true
+  },
+  "preflight": {
+    "allowed": false,
+    "code": "UNSAFE_DOWNGRADE_RUN_JOURNAL_LOSS",
+    "downgradeSafeForSyntheticRuns": false,
+    "unsafePhases": [
+      "prepared",
+      "reserved",
+      "submitted",
+      "uncertain",
+      "completed"
+    ],
+    "syntheticLegacyAssetRoundTrip": true,
+    "productionDataVerified": false
+  }
+}

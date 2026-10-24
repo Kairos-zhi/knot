@@ -1,0 +1,41 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "79dd8d1b8fff9aed821d1f520b64cabf83032e92",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/desktop-deployment-plan.test.mjs tests/desktop-host-client.test.mjs", "exit": 0, "passed": 12, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "fullSuiteRun": false,
+    "formalReadonlyPrepare": "readonly-prepare.json",
+    "tamperFixturesAreIsolatedCopies": true,
+    "actualEvaluateCalls": 0,
+    "blockedInstallEvaluateCalls": 0
+  },
+  "plan": {
+    "phase": "pre-upgrade",
+    "deploymentReady": false,
+    "issuance": "in-process WeakMap, immutable, 10 minute expiry",
+    "upgradeSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "rollbackSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+    "arbitrarySpecOrBooleanDataCompatibilityAccepted": false,
+    "allowInstallTrueStillBlocked": true,
+    "afterUpgradeOrRollbackCapabilityIssued": false
+  },
+  "boundaries": {
+    "legacyClientOrDebugChanged": false,
+    "productSourceOrLibChanged": false,
+    "oldFrozenArtifactsChanged": false,
+    "actualProfileOrAsarWrites": false,
+    "sessionCredentialProviderOrUserAssetReads": false,
+    "liveManagerConnectedOrQueried": false,
+    "desktopStartedOrStopped": false,
+    "realModelCalls": 0,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["Independent Checker and Gate", "Production data compatibility and actual deployment authorization", "Future reviewed post-install source-fence transitions"]
+}

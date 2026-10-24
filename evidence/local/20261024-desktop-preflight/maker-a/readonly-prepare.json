@@ -1,0 +1,35 @@
+{
+  "plan": {
+    "kind": "kont-reviewed-desktop-preflight/v1",
+    "id": "d827d9d2-4ed6-4562-87dc-3cbb693324db",
+    "expiresAt": 1792829149569,
+    "phase": "pre-upgrade",
+    "upgrade": {
+      "spec": "file:C:/Users/x2270/Documents/ChatGPT/KONT/evidence/local/20261024-desktop-package/candidate/packages/desktop-bundle",
+      "manifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8"
+    },
+    "rollback": {
+      "spec": "file:C:/Users/x2270/Documents/ChatGPT/KONT/evidence/local/20261024-desktop-rollback/candidate/packages/desktop-bundle",
+      "manifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336"
+    },
+    "sourceFence": {
+      "selectionReceiptSha256": "4b58d8ceb1e75867b7e3f7adbd60fbc8795af850b8a0351cd9dbebeff82902bf",
+      "originalInstalledBytesRequired": true
+    },
+    "deploymentReady": false,
+    "blockers": [
+      "PRODUCTION_DATA_COMPATIBILITY_NOT_VERIFIED",
+      "ACTUAL_DEPLOYMENT_NOT_AUTHORIZED"
+    ]
+  },
+  "checks": {
+    "bothReviewedArtifactsVerified": true,
+    "originalInstalled12BytesAndInventoryVerified": true,
+    "originalProfileMetadataAndSelectionReceiptVerified": true
+  },
+  "evaluateCalls": 0,
+  "liveManagerQueried": false,
+  "actualInstall": false,
+  "profileWrites": false,
+  "modelCalls": 0
+}

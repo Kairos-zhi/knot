@@ -1,0 +1,16 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "focusedTests": { "passed": 3, "failed": 0, "exitCode": 0 },
+  "codeSources": "Reviewed frozen 014 candidate and 015 installed-old-code capture",
+  "dataSource": "New D:/Temp synthetic stores only",
+  "runPhasesTested": ["prepared", "reserved", "submitted", "uncertain", "completed"],
+  "journalLossAfterOldMutation": true,
+  "defaultPreflight": "UNSAFE_DOWNGRADE_RUN_JOURNAL_LOSS",
+  "productionDataVerified": false,
+  "productionDataRead": false,
+  "modelCalls": 0,
+  "deployment": false,
+  "independentAcceptance": false
+}

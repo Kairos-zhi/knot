@@ -1,0 +1,11 @@
+# DESKTOP016 Maker B
+
+新增desktop-data-compatibility.mjs与desktop-data-compatibility.test.mjs，不改014/015冻结候选或A文件。已读STATE和desktop-rollback说明；两代码artifact均先通过各自完整inventory/hash verifier，直接import冻结src/lib，不build。新数据文件全部在新建D:/Temp/kont-data-compatibility-*，没有生产数据文件路径参数，未读取真实kont-data资产、profile会话或凭据，模型0。
+
+实证旧无Run数据经旧写→新读/写→旧读/写→新重开，资产及provenance保留；读操作不改磁盘字节。此为窄legacy合成路径通过，不外推生产数据兼容。
+
+新版本真实持久API分别生成prepared/reserved/submitted/uncertain/completed五状态，completed用明确synthetic-test证据真实returnRun产生单块/receipt。每个样本beforeRunStates记录实际状态/claim/receipt，Run count1。旧store init/read时内存Run count立即0，但init/read/close磁盘hash保持；旧worksite.update成功写入后journal落盘消失，新版本重开Run count0。前后文件hash、journal hash、asset hash比较及generated/provenance记录见compatibility-report.json。completed产物和来源仍在不等于receipt/防重状态还在，schemaVersion同4不证明可降级。
+
+纯desktopDataCompatibilityPreflight默认拒绝：缺报告/矛盾计数为COMPATIBILITY_PROBE_REQUIRED；本报告UNSAFE_DOWNGRADE_RUN_JOURNAL_LOSS，五phase均unsafe；即使synthetic报告假定无loss仍拒绝生产许可PRODUCTION_DATA_NOT_VERIFIED。没有迁移、备份恢复、降级写入或平行store实现；下一步生产部署必须针对该journal丢失风险另定策略，不应仅以旧代码可重装放行。
+
+ r2保留r1证据镜像，入口强制新旧manifest摘要等于本卡固定已审摘要，不接受调用者任意自声明pin；目录可迁移但digest不可更换，错pin在读取包或创建store前拒绝。聚焦4/4 exit0：新增固定pin拒绝负例，保留legacy双向资产/provenance，五phase旧只读/旧写字节与journal差别、completed真实生成块来源，pure default-deny生产边界。程序不接受真实数据文件输入，结束先close所有owned stores、校验绝对临时根后清理。未全量、未模型/部署/提交，等待独立Checker和根Gate。生产数据兼容仍未验证；旧代码对含Run数据的安全降级已由合成实证否定。

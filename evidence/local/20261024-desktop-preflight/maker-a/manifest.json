@@ -1,0 +1,43 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "line": "A",
+  "role": "Maker",
+  "baseCommit": "79dd8d1b8fff9aed821d1f520b64cabf83032e92",
+  "files": [
+    {
+      "path": "scripts/desktop-deployment-plan.mjs",
+      "bytes": 8518,
+      "sha256": "edf372bf9c2734e08d7b8dd9a9fd85eb6c6ecef9d47a22285a59a5c7fb02dd08"
+    },
+    {
+      "path": "tests/desktop-deployment-plan.test.mjs",
+      "bytes": 6044,
+      "sha256": "4697927b34a105882d8c7fc0738d8a0e2fd83f1ed944dfc36b8049724f56dbdc"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/REPORT.md",
+      "bytes": 3010,
+      "sha256": "eb0ff209e32c246120afd58c9012a045cf09de0e85f5c89bff3b87338b6b6c6d"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/receipt.json",
+      "bytes": 1773,
+      "sha256": "8135f0cd66d5174b8a73e017deeea3154c50674acdb21d87e7d9f9aec89b2043"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/build.log",
+      "bytes": 231,
+      "sha256": "c9c4a698c9bad07f3e99a9f67ce10c21211afaf0d42e02f9479b9db9a09c3e7f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/focused.tap",
+      "bytes": 3052,
+      "sha256": "df686951109b353a5dba55ece562bcedeb8d1d0f59ec169db0f7849fe56090ae"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/readonly-prepare.json",
+      "bytes": 1307,
+      "sha256": "3d6cf1e0cf605de25f9c17a166385500e34f7e45d7fa6dacd1480aa8934bae4b"
+    }
+  ]
+}

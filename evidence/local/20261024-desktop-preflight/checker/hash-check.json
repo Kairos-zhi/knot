@@ -1,0 +1,90 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "frozenManifestEntriesMatched": 13,
+  "mismatch": 0,
+  "upgradeManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "rollbackManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+  "unchangedInstalledSourceFiles": 12,
+  "profilePackageStable": true,
+  "profilePackageSha256": "074125faf53fc9832aa075e35617adfa773806a6321dc0267b9e969d0e9d5283",
+  "entries": [
+    {
+      "line": "maker-a",
+      "path": "scripts/desktop-deployment-plan.mjs",
+      "sha256": "edf372bf9c2734e08d7b8dd9a9fd85eb6c6ecef9d47a22285a59a5c7fb02dd08",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "tests/desktop-deployment-plan.test.mjs",
+      "sha256": "4697927b34a105882d8c7fc0738d8a0e2fd83f1ed944dfc36b8049724f56dbdc",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/REPORT.md",
+      "sha256": "eb0ff209e32c246120afd58c9012a045cf09de0e85f5c89bff3b87338b6b6c6d",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/receipt.json",
+      "sha256": "8135f0cd66d5174b8a73e017deeea3154c50674acdb21d87e7d9f9aec89b2043",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/build.log",
+      "sha256": "c9c4a698c9bad07f3e99a9f67ce10c21211afaf0d42e02f9479b9db9a09c3e7f",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/focused.tap",
+      "sha256": "df686951109b353a5dba55ece562bcedeb8d1d0f59ec169db0f7849fe56090ae",
+      "match": true
+    },
+    {
+      "line": "maker-a",
+      "path": "evidence/local/20261024-desktop-preflight/maker-a/readonly-prepare.json",
+      "sha256": "3d6cf1e0cf605de25f9c17a166385500e34f7e45d7fa6dacd1480aa8934bae4b",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "scripts/desktop-data-compatibility.mjs",
+      "sha256": "3cbef1932184336d8b218bd0802bff8e8692443801a9ef9d718845e59b12907d",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "tests/desktop-data-compatibility.test.mjs",
+      "sha256": "727508a3e046053a061f40c782ab67083323f2a2be8122efc089ca32fa1c2405",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-preflight/maker-b/REPORT.md",
+      "sha256": "aa8e28b44ad91a4f463398fe4611b5c844b45a7acae9b34ad3833586bad82f3d",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-preflight/maker-b/receipt.json",
+      "sha256": "c322089bd1c2e360da9b46da4ebfb019bd884c65f6531ccac8818aa8ea977631",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-preflight/maker-b/focused.tap",
+      "sha256": "76015956631b3fdb32efb4b2e6b525c20cae367caf3f6257d40a91a68f37a0f6",
+      "match": true
+    },
+    {
+      "line": "maker-b",
+      "path": "evidence/local/20261024-desktop-preflight/maker-b/compatibility-report.json",
+      "sha256": "11ee91381f6682944d8b15f3c8fb7ef80e4c574d45397a9eb4b488d5a28e7cbb",
+      "match": true
+    }
+  ]
+}

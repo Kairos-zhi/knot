@@ -1,0 +1,30 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "plan": {
+    "kind": "kont-reviewed-desktop-preflight/v1",
+    "id": "b7f457d3-ca3a-4bb9-a685-ee67f12dce89",
+    "expiresAt": 1792829254952,
+    "phase": "pre-upgrade",
+    "upgrade": {
+      "spec": "file:C:/Users/x2270/Documents/ChatGPT/KONT/evidence/local/20261024-desktop-package/candidate/packages/desktop-bundle",
+      "manifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8"
+    },
+    "rollback": {
+      "spec": "file:C:/Users/x2270/Documents/ChatGPT/KONT/evidence/local/20261024-desktop-rollback/candidate/packages/desktop-bundle",
+      "manifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336"
+    },
+    "sourceFence": {
+      "selectionReceiptSha256": "4b58d8ceb1e75867b7e3f7adbd60fbc8795af850b8a0351cd9dbebeff82902bf",
+      "originalInstalledBytesRequired": true
+    },
+    "deploymentReady": false,
+    "blockers": [
+      "PRODUCTION_DATA_COMPATIBILITY_NOT_VERIFIED",
+      "ACTUAL_DEPLOYMENT_NOT_AUTHORIZED"
+    ]
+  },
+  "bothExplicitInstallTargetsRefused": true,
+  "installCode": "DATA_COMPATIBILITY_BLOCKED",
+  "evaluateCalls": 0,
+  "actualLiveConnection": false
+}
