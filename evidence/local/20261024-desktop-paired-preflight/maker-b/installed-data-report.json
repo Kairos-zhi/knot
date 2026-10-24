@@ -1,0 +1,13 @@
+{
+  "sourceSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+  "schemaVersion": 4,
+  "assetCount": 2,
+  "runCount": 0,
+  "validatedOnPrivateTemporaryCopy": true,
+  "readAndWriteRoundTripPreserved": true,
+  "upgradeManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "recoveryManifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+  "productionDeploymentAccepted": false,
+  "modelCalls": 0,
+  "productionFileUnchanged": true
+}

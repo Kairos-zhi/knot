@@ -1,0 +1,36 @@
+{
+  "task": "KONT-DESKTOP-018",
+  "role": "maker-b-root",
+  "files": [
+    {
+      "path": "scripts/desktop-installed-data-preflight.mjs",
+      "bytes": 7287,
+      "sha256": "c451728dc189ff4a6dbc2974eac910e6e97cbf00c02e568c50faa81c7fcc28b7"
+    },
+    {
+      "path": "tests/desktop-installed-data-preflight.test.mjs",
+      "bytes": 3316,
+      "sha256": "11efcf5339f9d82d28d20332331d25a525118f9e09778973e9448471a0cc48fd"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/REPORT.md",
+      "bytes": 1551,
+      "sha256": "3f4cec714f6bbf2e961191e1821c7c1b472676e3aafb028cd691a22bad07bfe8"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/receipt.json",
+      "bytes": 690,
+      "sha256": "18ea0e77e1fc0e0fcdcd52d9f6ad0ec8ebce5552fec5ade2e2bf1bca6a9ae25d"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/focused.tap",
+      "bytes": 882,
+      "sha256": "f6ebc63277ce7ecf5536517eeb728fedf1ae48914d90ac1fa808b409a3f9e171"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/installed-data-report.json",
+      "bytes": 518,
+      "sha256": "ac0384dd26194c81cb8cd0382e3f2b690e44b2fbd1e09e98af5e1eec453db67e"
+    }
+  ]
+}

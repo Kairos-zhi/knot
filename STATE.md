@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-24；之“推进／继续”，DESKTOP-017派生恢复候选已独立限定接受；DESKTOP-016安装拒绝门保持。在用profile未改，模型授权不自动续用。
+更新：2026-10-24；之再次“继续”，DESKTOP-018配对与固定现场副本预检已独立限定接受；安装仍关闭，模型授权不自动续用。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -28,11 +28,12 @@
 | DESKTOP-015 | ACCEPTED_LIMITED | Z/checker/final-review.json；15冻结项／旧安装12项／原package2项一致，独立7/7 |
 | DESKTOP-016 | ACCEPTED_LIMITED | AA/checker/final-review.json；13冻结项，独立A13＋B4；五阶段Run丢失检测／安装拒绝 |
 | DESKTOP-017 | ACCEPTED_LIMITED | AB/checker/final-review.json；17冻结项／13候选项，独立A3＋B4；五阶段journal保留 |
+| DESKTOP-018 | ACCEPTED_LIMITED | AC/checker/final-review.json；11冻结项，独立9/9，真实2资产／0Run副本无损、原hash未变 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；历史已验证普通启动加载Knot。DESKTOP-015本轮进程观察未见主进程，未主动启停，不冒称当前active。原Headless／3081未替换。
-- 上轮回执：AA/controller/receipt.json（AA=20261024-desktop-preflight）；本轮回执：AB/controller/receipt.json（AB=20261024-desktop-recovery）；索引：evidence/DESKTOP-017-INDEX.json；旧索引与收口保持。
+- 上轮回执：AB/controller/receipt.json（AB=20261024-desktop-recovery）；本轮回执：AC/controller/receipt.json（AC=20261024-desktop-paired-preflight）；索引：evidence/DESKTOP-018-INDEX.json；旧索引与收口保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前23单元＝21项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。DESKTOP-017 Gate仅接受13项派生恢复候选与合成兼容：独立A3＋B4、17冻结项一致，五阶段完整journal／claim／receipt、restore与拒重、官方离线隔离安装／旧renderer通过。非原样旧包，现代数据层带来run.prepare／snapshot journal语义；生产数据与部署未接受。下一步把新恢复pin接入受控部署预检。原015／016证据与安装拒绝不变，新增模型0，RUN-011授权1/1已用。
+- 当前24单元＝22项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。018配对014升级与017恢复，11制作冻结项一致，独立9/9及真实入口复核通过；固定现场2资产／0Run私人副本完整往返，原文件hash／原锁未改。实际含Run恢复仍只有合成证据；两个安装目标allowInstall:true仍拒绝、evaluate0，deploymentReady=false。下一步补一次性安装授权执行入口与真实manager／正常重启安排，不能从副本预检直接推成已部署。新增模型0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。

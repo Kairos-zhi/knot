@@ -1,0 +1,13 @@
+# KONT-DESKTOP-018 Maker A · paired read-only preflight
+
+基线7da386a9648852756b4ac93d17d00f2ddbb98ef9。仅新增desktop-recovery-preflight.mjs与对应test，未改016源码/旧证据/产品，未build或commit。
+
+prepareDesktopRecoveryPreflight()只调用内部016 prepare、017固定摘要774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d完整候选校验及根提供的probeInstalledDesktopData/recheckInstalledDesktopData。调用者不能提供data report、phase、pin或spec。数据报告仅接受固定schema4、数量、sha及明确private-copy roundtrip/原文件不变/生产部署未接受标志；公开plan只保留这些脱敏字段，不含正文/ID或报告任意扩展。
+
+plan深冻结、WeakMap进程内发行，expiry不晚于016父计划，克隆/伪造/过期拒绝；配对014 upgrade与017 derived recovery，仍为pre-upgrade、deploymentReady=false。createRecoveryPreflightManager(evaluate,{plan})提供inspectUpgrade/inspectRecovery及只读lists。所有入口经016 manager.inspectUpgrade的本地桥，原014/015库存、旧installed12源/选择/profile fence照常执行；桥内再核017全部库存/hash及固定data sha，之后只将一条官方表达式交用户evaluator。recovery对父inspect模板的upgrade spec要求恰好一次JSON literal再换成已核017固定spec；list沿用原managerExpression，结果沿用safeManagerResult。没有额外live inspect或新协议。
+
+installBundle无true拒绝INSTALL_OPT_IN_REQUIRED；即使allowInstall:true仍DEPLOYMENT_AUTHORIZATION_REQUIRED，零用户evaluate，不生成裸安装capability。复制验证不是正式生产部署接受，不能用dataCompatible布尔或自报阶段跳过授权、原source/profile与数据漂移门。
+
+focused6/6：新配对3＋016原3。新测试把模块/候选复制进temp，明确mock016与data-helper seam，不读取/写入真实生产data或profile；mock只证明新wrapper委派及绑定逻辑，不冒充真实现场复制实证。覆盖upgrade/recovery/list准确spec/协议、脱敏、无裸安装、外传report/spec/pin/phase拒绝、克隆/伪造/expiry拒绝、每次inspect对mock data/source漂移及额外恢复文件零evaluate。016原回归只读核既有旧installed源码/metadata，篡改也只在临时副本。临时回收先核tmpdir父与固定前缀。
+
+根提供helper的真实固定文件probe、临时副本canonical读写及调用实证由controller/Checker另跑，A未把mock结果称真实兼容。未连接/安装/启动/退出Desktop，未模型、凭据/Session/provider访问、生产文件或profile/ASAR写入，旧014/015/016/017冻结件未改；待独立Checker/Gate。

@@ -1,0 +1,21 @@
+{
+  "task": "KONT-DESKTOP-018",
+  "role": "maker-b-root",
+  "state": "FROZEN_FOR_CHECKER",
+  "baseCommit": "7da386a9648852756b4ac93d17d00f2ddbb98ef9",
+  "focusedPassed": 3,
+  "focusedFailed": 0,
+  "actualFixedFileProbeExit": 0,
+  "sourceSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+  "actualAssetCount": 2,
+  "actualRunCount": 0,
+  "allWritesOnNewPrivateCopy": true,
+  "productionFileUnchanged": true,
+  "productionDeploymentAccepted": false,
+  "privateValuesInEvidence": false,
+  "originalStoreInitializedOrLockWritten": false,
+  "sessionOrCredentialReads": false,
+  "desktopStartedOrInstalled": false,
+  "modelCalls": 0,
+  "independentAcceptance": false
+}

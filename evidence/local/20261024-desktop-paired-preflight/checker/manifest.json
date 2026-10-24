@@ -1,0 +1,31 @@
+{
+  "task": "KONT-DESKTOP-018",
+  "role": "independent-checker",
+  "files": [
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/checker/REPORT.md",
+      "bytes": 2640,
+      "sha256": "a121163e05d60c9bfed3d8716050de01d8596ccb44509c19f0e12c469401ba42"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/checker/final-review.json",
+      "bytes": 1430,
+      "sha256": "3ddecb3156cb0e2e36de6d766c00ce697c665dc43cb2e2f9b661855551135b98"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/checker/focused.tap",
+      "bytes": 2475,
+      "sha256": "e3b73704bbe69f983f5f058b065f41070800458fb9dd16c4d848bcaf54dac421"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/checker/manifest-check.json",
+      "bytes": 1605,
+      "sha256": "727b75e11d94e2cafbcb8449e7c05b3a2ebcdaf453d59d8e5deb226c589e5654"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/checker/actual-preflight.json",
+      "bytes": 968,
+      "sha256": "0c5a6f6d48dcee3fc2cb4888063c8e4fd1182aeef9ac72e1e1f1489bc7472bc4"
+    }
+  ]
+}

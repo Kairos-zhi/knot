@@ -28,6 +28,7 @@
 | KONT-DESKTOP-015 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Z/checker/final-review.json；旧12项／原package2项／15冻结项一致，独立7/7 |
 | KONT-DESKTOP-016 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AA/checker/final-review.json；13冻结项，独立A13＋B4；仅只读预检／危险降级拒绝 |
 | KONT-DESKTOP-017 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AB/checker/final-review.json；17冻结项／13候选项，独立A3＋B4，合成journal完整 |
+| KONT-DESKTOP-018 | run_maker＋根Maker B / live_runner_maker Checker / 中控Gate | ACCEPTED_LIMITED | AC/checker/final-review.json；11冻结项／独立9/9，真实无Run样本副本通过，原文件不改 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -49,3 +50,4 @@ DESKTOP-014：Gate=ACCEPT_DESKTOP_CANDIDATE_PACKAGE_LIMITED；目录候选25文�
 DESKTOP-015：之“快步推进”，Gate=ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED；从真实installed捕获12项与2项原package，实际转换0，peer／代码不变。双方冻结15项一致，独立7/7，官方离线临时profile重装及旧runtime／renderer工厂验证通过。当前21＝19限定接受＋2关闭。原spec／选择是持久配置证据，非live manager或active查询；代码可重装不证明新数据降级或生产回滚。新增模型0，未在用profile写／桌面启停／部署／push／合并。下一步适配安装管理工具以绑定已审升级／回滚候选，补数据兼容预检；实际更新与正常重启另行核准，不能直接使用旧repo spec。
 DESKTOP-016：之“继续”，Gate=ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGRADE_DETECTION_LIMITED；13冻结项一致，独立A13（新3＋原RPC9＋archive1）与B4分两次通过，非全量。新工具固定014／015可信pin与原installed12/profile/selection、只读pre-upgrade计划；伪造／过期／篡改拒绝，显式安装仍DATA_COMPATIBILITY_BLOCKED/evaluate0。五Run阶段经旧版普通写入后journal1→0、资产／provenance仍在；代码可装不能证明数据可降级。当前22＝20限定接受＋2关闭。下一步补Run journal兼容恢复方案，再做真实数据预检、实际部署核准和安装后源fence转换；本轮无生产资产读、在用profile写／桌面启停／模型／push／合并。
 DESKTOP-017：之“推进／继续”，Gate=ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED；13项派生候选，旧11项＋014 store/run两项；独立A3＋B4，17冻结项一致，五阶段完整journal／claim／receipt与restore拒绝覆盖、占位拒重及prepared首claim保持，官方离线临时profile复制13项／runtime／旧renderer通过。当前23＝21限定接受＋2关闭。旧入口获得现代run.prepare／snapshot journal语义，非完全旧行为；未证明生产数据兼容／实际恢复部署。Checker完成书面回执后末条消息额度中断，根已读完整final-review／REPORT／测试与hash文件，不冒称再跑；不影响既有完成复核。下一步接入新恢复pin和部署预检；016安装拒绝、015原旧包危险降级结论不改，无生产读／部署／模型／push／合并。
+DESKTOP-018：之再次“继续”，Gate=ACCEPT_PAIRED_PREFLIGHT_LIMITED；根B固定现场只读probe、A新模块配对014／017，live_runner_maker未参与本卡制作而独立复核9/9／11冻结项及真实prepare通过。现场2资产／0Run，原hash e0359bb6...及原锁不变，私人副本完整canonical读写往返，报告无正文ID；不证明真实含Run恢复或生产迁移。两目标install allowtrue均DEPLOYMENT_AUTHORIZATION_REQUIRED、evaluate0，未liveHost／桌面启停／部署／模型。当前24＝22限定接受＋2关闭。下一步补一次性安装授权执行入口与真实manager核对／正常重启安排；旧代码／候选／016拒绝门未改，不自动授予部署许可。

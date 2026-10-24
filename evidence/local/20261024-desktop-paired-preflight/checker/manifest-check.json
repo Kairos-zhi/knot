@@ -1,0 +1,61 @@
+{
+  "count": 11,
+  "allMatch": true,
+  "checks": [
+    {
+      "path": "scripts/desktop-recovery-preflight.mjs",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "tests/desktop-recovery-preflight.test.mjs",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-a/REPORT.md",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-a/receipt.json",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-a/focused.tap",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "scripts/desktop-installed-data-preflight.mjs",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "tests/desktop-installed-data-preflight.test.mjs",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/REPORT.md",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/receipt.json",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/focused.tap",
+      "bytesMatch": true,
+      "hashMatch": true
+    },
+    {
+      "path": "evidence/local/20261024-desktop-paired-preflight/maker-b/installed-data-report.json",
+      "bytesMatch": true,
+      "hashMatch": true
+    }
+  ]
+}

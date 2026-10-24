@@ -1,0 +1,28 @@
+TAP version 13
+# Subtest: private-copy probe preserves all state except its deliberate draft/revision changes and discloses only summary
+ok 1 - private-copy probe preserves all state except its deliberate draft/revision changes and discloses only summary
+  ---
+  duration_ms: 224.0811
+  type: 'test'
+  ...
+# Subtest: unknown fields and malformed journals fail closed without leaking values or touching caller data
+ok 2 - unknown fields and malformed journals fail closed without leaking values or touching caller data
+  ---
+  duration_ms: 162.9247
+  type: 'test'
+  ...
+# Subtest: probe requires bounded bytes and valid JSON before any store is created
+ok 3 - probe requires bounded bytes and valid JSON before any store is created
+  ---
+  duration_ms: 0.5184
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 540.8922

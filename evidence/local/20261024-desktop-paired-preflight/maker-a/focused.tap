@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: reviewed plan pins both artifacts, exact inspect RPC, original source fence, and remains blocked; no live connection
+ok 1 - reviewed plan pins both artifacts, exact inspect RPC, original source fence, and remains blocked; no live connection
+  ---
+  duration_ms: 547.3653
+  type: 'test'
+  ...
+# Subtest: forged/cloned/expired plans and arbitrary pins/options make zero evaluate calls
+ok 2 - forged/cloned/expired plans and arbitrary pins/options make zero evaluate calls
+  ---
+  duration_ms: 189.5408
+  type: 'test'
+  ...
+# Subtest: each inspect rechecks artifact bytes/inventory and pinned selection before any evaluate
+ok 3 - each inspect rechecks artifact bytes/inventory and pinned selection before any evaluate
+  ---
+  duration_ms: 331.521
+  type: 'test'
+  ...
+# Subtest: paired plan consumes internal probe, retains blocked readiness, and sends exact upgrade/recovery/list RPC only
+ok 4 - paired plan consumes internal probe, retains blocked readiness, and sends exact upgrade/recovery/list RPC only
+  ---
+  duration_ms: 975.4378
+  type: 'test'
+  ...
+# Subtest: paired plans reject caller reports/spec/phase/pin, clones, forgeries and expiry before evaluation
+ok 5 - paired plans reject caller reports/spec/phase/pin, clones, forgeries and expiry before evaluation
+  ---
+  duration_ms: 255.7026
+  type: 'test'
+  ...
+# Subtest: each paired inspect fences data/source drift and complete recovery inventory before evaluation
+ok 6 - each paired inspect fences data/source drift and complete recovery inventory before evaluation
+  ---
+  duration_ms: 501.9236
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1932.4483

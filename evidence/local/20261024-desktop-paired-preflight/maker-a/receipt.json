@@ -1,0 +1,41 @@
+{
+  "task": "KONT-DESKTOP-018",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "baseCommit": "7da386a9648852756b4ac93d17d00f2ddbb98ef9",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "validation": {
+    "focused": { "command": "node --test tests/desktop-recovery-preflight.test.mjs tests/desktop-deployment-plan.test.mjs", "exit": 0, "passed": 6, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "buildRun": false,
+    "fullSuiteRun": false,
+    "newTestsUseExplicitIsolated016AndDataHelperMocks": true,
+    "newMockTestsAreActualProductionProbeEvidence": false,
+    "actualProductionDataReadByMaker": false,
+    "original016SourceMetadataRegressionReadOnly": true,
+    "blockedInstallUserEvaluateCalls": 0
+  },
+  "plan": {
+    "phase": "pre-upgrade",
+    "recoveryPin": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+    "deploymentReady": false,
+    "privateCopyProbeIsProductionDeploymentAcceptance": false,
+    "prepareAcceptsCallerDataReportOrPhaseOrPinOrSpec": false,
+    "everyInspectRechecksOriginalSourceAndRecoveryAndDataHash": true,
+    "allowInstallTrueStillRefuses": "DEPLOYMENT_AUTHORIZATION_REQUIRED",
+    "actualInstallCapabilityIssued": false
+  },
+  "boundaries": {
+    "old016SourceOrHistoricalEvidenceChanged": false,
+    "productSourceOrLibChanged": false,
+    "productionDataOrProfileOrAsarWrites": false,
+    "sessionCredentialProviderReads": false,
+    "liveManagerConnectedOrQueried": false,
+    "desktopStartedOrStopped": false,
+    "realModelCalls": 0,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["Root data-helper actual fixed-file probe evidence", "Independent Checker and Gate", "Separate real deployment authorization and production acceptance"]
+}
