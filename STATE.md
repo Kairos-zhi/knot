@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-24；之“继续”，DESKTOP-016候选绑定与不安全降级预检已独立限定接受；deploymentReady=false。在用profile未改，模型授权不自动续用。
+更新：2026-10-24；之“推进／继续”，DESKTOP-017派生恢复候选已独立限定接受；DESKTOP-016安装拒绝门保持。在用profile未改，模型授权不自动续用。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -27,11 +27,12 @@
 | DESKTOP-014 | ACCEPTED_LIMITED | Y/checker/final-review.json；25文件／16冻结项一致，build＋6项官方隔离检查 |
 | DESKTOP-015 | ACCEPTED_LIMITED | Z/checker/final-review.json；15冻结项／旧安装12项／原package2项一致，独立7/7 |
 | DESKTOP-016 | ACCEPTED_LIMITED | AA/checker/final-review.json；13冻结项，独立A13＋B4；五阶段Run丢失检测／安装拒绝 |
+| DESKTOP-017 | ACCEPTED_LIMITED | AB/checker/final-review.json；17冻结项／13候选项，独立A3＋B4；五阶段journal保留 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；历史已验证普通启动加载Knot。DESKTOP-015本轮进程观察未见主进程，未主动启停，不冒称当前active。原Headless／3081未替换。
-- 上轮回执：Z/controller/receipt.json（Z=20261024-desktop-rollback）；本轮回执：AA/controller/receipt.json（AA=20261024-desktop-preflight）；索引：evidence/DESKTOP-016-INDEX.json；旧索引与收口保持。
+- 上轮回执：AA/controller/receipt.json（AA=20261024-desktop-preflight）；本轮回执：AB/controller/receipt.json（AB=20261024-desktop-recovery）；索引：evidence/DESKTOP-017-INDEX.json；旧索引与收口保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前22单元＝20项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。DESKTOP-016 Gate仅接受已审双包绑定、只读计划与不安全降级检测；独立A13＋B4，13冻结项一致，原installed12及profile未变。五阶段Run在旧版写入后丢失，deploymentReady=false，显式安装仍拒绝且evaluate0。下一步补保留Run journal的兼容恢复方案，再做真实数据预检及部署授权／安装后状态转换。DESKTOP-015仍只证明代码可重装。新增模型0，RUN-011授权1/1已用。
+- 当前23单元＝21项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。DESKTOP-017 Gate仅接受13项派生恢复候选与合成兼容：独立A3＋B4、17冻结项一致，五阶段完整journal／claim／receipt、restore与拒重、官方离线隔离安装／旧renderer通过。非原样旧包，现代数据层带来run.prepare／snapshot journal语义；生产数据与部署未接受。下一步把新恢复pin接入受控部署预检。原015／016证据与安装拒绝不变，新增模型0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。

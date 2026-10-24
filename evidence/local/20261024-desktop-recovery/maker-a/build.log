@@ -1,0 +1,1 @@
+NOT RUN: this derivation copies reviewed frozen bytes; no old/new package build was invoked.

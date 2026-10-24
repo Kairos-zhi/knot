@@ -1,0 +1,136 @@
+{
+  "kind": "kont-derived-recovery-data/v1",
+  "identity": "derived-recovery-not-original-installed-rollback",
+  "newManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "recoveryManifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+  "syntheticDataOnly": true,
+  "phases": [
+    {
+      "phase": "prepared",
+      "beforeHash": "7b7a4326ee377d11987bc1bca62b6c3318a77bab393ac55ad1884c407386c84d",
+      "readHash": "7b7a4326ee377d11987bc1bca62b6c3318a77bab393ac55ad1884c407386c84d",
+      "afterMutationHash": "b79c06a6416c2b46b8778015bce06e923c2cff93e986204bb4118d3fcd7adcb3",
+      "afterRestoreHash": "9d4169690b340c81c567a07baeb2e218beb2df46f6e75d4634ae35eb18c547e6",
+      "reopenedHash": "9d4169690b340c81c567a07baeb2e218beb2df46f6e75d4634ae35eb18c547e6",
+      "beforeJournalHash": "3f162b0fda0b0c69aff542a43cad5d255ea7e8c57b667629f682c1a76d822e2c",
+      "reopenedJournalHash": "3f162b0fda0b0c69aff542a43cad5d255ea7e8c57b667629f682c1a76d822e2c",
+      "runState": {
+        "status": "prepared",
+        "dispatch": null,
+        "hasReceipt": false
+      },
+      "generated": [],
+      "assetsAndProvenancePreserved": true,
+      "eraseRestoreRefused": true,
+      "foreignJournalRestoreRefused": true,
+      "absentJournalRestorePreserved": true,
+      "duplicateClaimRefused": null,
+      "preparedFirstClaimAcquired": true,
+      "changedConstraintsRefused": false
+    },
+    {
+      "phase": "reserved",
+      "beforeHash": "d0aba71464847b9fd4ba7dd06b8fc2c840872fefeac67292b858c6547f1f9d0a",
+      "readHash": "d0aba71464847b9fd4ba7dd06b8fc2c840872fefeac67292b858c6547f1f9d0a",
+      "afterMutationHash": "91bda1b7005d4e9042a69c1358d5d429c3193b058d3c9605e2fdeb34b35428c0",
+      "afterRestoreHash": "56c99ab8e97587fb259d09eb2c018a911d5c0d3d482ae1e916486a87080fe2e6",
+      "reopenedHash": "56c99ab8e97587fb259d09eb2c018a911d5c0d3d482ae1e916486a87080fe2e6",
+      "beforeJournalHash": "60cc8059abd3404313133da6fff0bcc14067e9acaf0b63eb50a31d2372ee1331",
+      "reopenedJournalHash": "60cc8059abd3404313133da6fff0bcc14067e9acaf0b63eb50a31d2372ee1331",
+      "runState": {
+        "status": "prepared",
+        "dispatch": "reserved",
+        "hasReceipt": false
+      },
+      "generated": [],
+      "assetsAndProvenancePreserved": true,
+      "eraseRestoreRefused": true,
+      "foreignJournalRestoreRefused": true,
+      "absentJournalRestorePreserved": true,
+      "duplicateClaimRefused": true,
+      "preparedFirstClaimAcquired": null,
+      "changedConstraintsRefused": true
+    },
+    {
+      "phase": "submitted",
+      "beforeHash": "15c192ec06ae8b317efc9cc044bfe8a8ad69935344fabc168691138119f6a290",
+      "readHash": "15c192ec06ae8b317efc9cc044bfe8a8ad69935344fabc168691138119f6a290",
+      "afterMutationHash": "e9b0a1ca9a40a622774718c9a5ef4087d2a2d42f2e2436521263806b4c8aa28c",
+      "afterRestoreHash": "0eb8e66af8b56f440554ac58eee7ffc73a3e424dbd6e92b198f0bccfa2a3a6fa",
+      "reopenedHash": "0eb8e66af8b56f440554ac58eee7ffc73a3e424dbd6e92b198f0bccfa2a3a6fa",
+      "beforeJournalHash": "3ca09716daed4bcd67b9330fb83a80a01d05fc5d6ef897c38b9ea83a86d787f8",
+      "reopenedJournalHash": "3ca09716daed4bcd67b9330fb83a80a01d05fc5d6ef897c38b9ea83a86d787f8",
+      "runState": {
+        "status": "prepared",
+        "dispatch": "submitted",
+        "hasReceipt": false
+      },
+      "generated": [],
+      "assetsAndProvenancePreserved": true,
+      "eraseRestoreRefused": true,
+      "foreignJournalRestoreRefused": true,
+      "absentJournalRestorePreserved": true,
+      "duplicateClaimRefused": true,
+      "preparedFirstClaimAcquired": null,
+      "changedConstraintsRefused": true
+    },
+    {
+      "phase": "uncertain",
+      "beforeHash": "790e709d9820c94357e9f22d8cbb691d2344f057564d0208263f7ef3b0ea1d95",
+      "readHash": "790e709d9820c94357e9f22d8cbb691d2344f057564d0208263f7ef3b0ea1d95",
+      "afterMutationHash": "6f6b89f984292ac0a0ce62d16544eeb4caea60c03b4e53f5e9b5ebc6cc13bcfd",
+      "afterRestoreHash": "254d7c635d08185580ec4a812343a2d62abaaa4bab92534c1de76edd2121a757",
+      "reopenedHash": "254d7c635d08185580ec4a812343a2d62abaaa4bab92534c1de76edd2121a757",
+      "beforeJournalHash": "640dc99ed5209e11207608fe3601289605b16f873671c13e0f28871fb7d2bd1e",
+      "reopenedJournalHash": "640dc99ed5209e11207608fe3601289605b16f873671c13e0f28871fb7d2bd1e",
+      "runState": {
+        "status": "prepared",
+        "dispatch": "uncertain",
+        "hasReceipt": false
+      },
+      "generated": [],
+      "assetsAndProvenancePreserved": true,
+      "eraseRestoreRefused": true,
+      "foreignJournalRestoreRefused": true,
+      "absentJournalRestorePreserved": true,
+      "duplicateClaimRefused": true,
+      "preparedFirstClaimAcquired": null,
+      "changedConstraintsRefused": true
+    },
+    {
+      "phase": "completed",
+      "beforeHash": "e37d20856ba5a115b0fa67eb74cf7787ee8e0c6eb1a06ec3cb877daa45380538",
+      "readHash": "e37d20856ba5a115b0fa67eb74cf7787ee8e0c6eb1a06ec3cb877daa45380538",
+      "afterMutationHash": "172a891af8b039e9d5ce841b958e1ac49f7586cb86a539840048ab049adf4b30",
+      "afterRestoreHash": "fa8ad1b536313d0a99c24ec5bfd890377ec79ed5945c1c6b8adbab1a124d9da7",
+      "reopenedHash": "fa8ad1b536313d0a99c24ec5bfd890377ec79ed5945c1c6b8adbab1a124d9da7",
+      "beforeJournalHash": "24ab5f0c4b31e83302a864c1ad74e6bea5adf71fbf173600f90f6e994c5711fe",
+      "reopenedJournalHash": "24ab5f0c4b31e83302a864c1ad74e6bea5adf71fbf173600f90f6e994c5711fe",
+      "runState": {
+        "status": "completed",
+        "dispatch": "submitted",
+        "hasReceipt": true
+      },
+      "generated": [
+        {
+          "assetId": "target",
+          "id": "b1",
+          "content": "Synthetic output only",
+          "provenance": [
+            "public-source"
+          ]
+        }
+      ],
+      "assetsAndProvenancePreserved": true,
+      "eraseRestoreRefused": true,
+      "foreignJournalRestoreRefused": true,
+      "absentJournalRestorePreserved": true,
+      "duplicateClaimRefused": true,
+      "preparedFirstClaimAcquired": null,
+      "changedConstraintsRefused": true
+    }
+  ],
+  "modelCalls": 0,
+  "productionDataVerified": false,
+  "deploymentAuthorized": false
+}

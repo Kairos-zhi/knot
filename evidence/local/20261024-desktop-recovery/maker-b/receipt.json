@@ -1,0 +1,20 @@
+{
+  "task": "KONT-DESKTOP-017",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "recoveryManifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+  "focusedTests": { "passed": 4, "failed": 0, "exitCode": 0 },
+  "candidateIdentity": "derived-recovery-not-original-installed-rollback",
+  "durableRunPhasesPreserved": ["prepared", "reserved", "submitted", "uncertain", "completed"],
+  "absentJournalRestorePreserved": true,
+  "explicitJournalReplacementRefused": true,
+  "durableClaimReplayRefused": true,
+  "officialManagerOfflineInstall": true,
+  "installedFilesMatched": 13,
+  "application": "restart-required",
+  "productionDataVerified": false,
+  "productionDataRead": false,
+  "modelCalls": 0,
+  "deploymentAuthorized": false,
+  "independentAcceptance": false
+}

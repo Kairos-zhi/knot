@@ -1,0 +1,56 @@
+{
+  "task": "KONT-DESKTOP-017",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-24",
+  "preparationBaseCommit": "d7e5702444e81443c78af353c1e6e49a4ba7d666",
+  "verdict": "ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED",
+  "blockingImplementationFindings": [],
+  "deploymentReady": false,
+  "candidate": {
+    "manifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+    "path": "evidence/local/20261024-desktop-recovery/candidate",
+    "identity": "derived-recovery-not-original-installed-rollback",
+    "files": 13,
+    "from015OldShell": 11,
+    "from014ModernStoreAndRun": 2,
+    "codeOrPackageTransformations": 0
+  },
+  "validation": {
+    "frozenManifestEntriesMatched": 17,
+    "candidateFilesMatched": 13,
+    "mismatch": 0,
+    "sharedKernelAndThreeLibsByteIdentical": true,
+    "aFocused": { "command": "node --test tests/desktop-recovery.test.mjs", "passed": 3, "failed": 0, "skipped": 0, "exit": 0, "log": "a-focused.tap" },
+    "bFocused": { "command": "node --test tests/desktop-recovery-isolation.test.mjs", "passed": 4, "failed": 0, "skipped": 0, "exit": 0, "log": "b-focused.tap" },
+    "additionalPureProbe": "Completed record without an existing claim rejects new claim without mutation; reused exact 014 run bytes",
+    "officialIsolatedManagerInstallation": true,
+    "all13CopiedFilesMatched": true,
+    "officialCopiedRuntimeAndOldRendererFactoryVerified": true,
+    "application": "restart-required",
+    "enabled": false,
+    "versionExemption": false,
+    "management016ScriptUnchanged": true,
+    "buildOrOldArtifactRebuild": false,
+    "fullSuiteRun": false,
+    "productionDataRead": false,
+    "inUseDesktopDeploymentOrLaunch": false,
+    "modelCalls": 0
+  },
+  "acceptedScope": [
+    "Fixed 014/015 source pins and complete inventory bind an explicitly derived 13-file recovery with old shell and exact modern data layer",
+    "Unsafe paths, output overwrite, extra inventory, tampered bytes and source relabeling/pin mapping changes rejected",
+    "Five synthetic Run stages retain complete journal hashes/deep equality through recovery read, ordinary edit, absent-runs restore and 014 reopen",
+    "Explicit empty/different journals fail restore without changing disk bytes; assets/generated provenance remain preserved",
+    "Existing claims cannot reacquire or change constraints, completed cannot gain new dispatch, and prepared retains legitimate first-claim behavior",
+    "Official offline manager copies the 13 reviewed files into a new temporary profile; isolated old entry/kernel/auth/SSE/disposal/durable readback and old renderer factory/slots verified"
+  ],
+  "limitations": [
+    "Derived recovery is not byte-identical original installed rollback; original 015 artifact and 016 unsafe-downgrade evidence remain valid and unchanged",
+    "Old entry with modern store supports authenticated Run journal snapshots and run.prepare semantics; this is not entirely old behavior, and claim/return remain internal",
+    "Synthetic current-schema preservation does not prove real user data migration, arbitrary future schema compatibility or production recovery acceptance",
+    "016 management tool keeps its original pins and blocked installation path; acceptance here neither binds the new spec nor authorizes deployment",
+    "No actual Desktop installation/restart, live manager active inventory, model request, production assets/Session/credential reads or profile/ASAR writes",
+    "Isolated renderer factory evidence does not establish ReactDOM/visual or human experience acceptance; no full-suite or protocol coverage expansion"
+  ],
+  "evidence": ["a-focused.tap", "b-focused.tap", "hash-check.json", "hash-check.log", "verify-evidence.mjs", "REPORT.md"]
+}

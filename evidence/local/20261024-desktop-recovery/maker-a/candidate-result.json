@@ -1,0 +1,19 @@
+{
+  "manifestSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+  "format": "kont-desktop-directory-recovery/v1",
+  "identity": "derived-recovery-not-original-installed-rollback",
+  "files": 13,
+  "fromUpgrade": 2,
+  "fromRollback": 11,
+  "sourcePins": {
+    "upgrade": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "rollback": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336"
+  },
+  "sharedKernelAndLibVerified": [
+    "src/kernel.mjs",
+    "lib/knot-model.js",
+    "lib/snapshot.js",
+    "lib/workspace-state.js"
+  ],
+  "allArtifactBytesEqualFrozenSources": true
+}

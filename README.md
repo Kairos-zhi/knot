@@ -85,3 +85,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 [KONT-DESKTOP-015](docs/tasks/KONT-DESKTOP-015.md) 从真实已安装副本保存旧12项代码与2项原package，未从仓库重建或改写旧peer。回滚目录位于`evidence/local/20261024-desktop-rollback/candidate`；官方离线隔离重装、旧kernel与renderer工厂及独立7/7检查通过。仅证明代码可重装，不代表升级后数据可降级或生产回滚；正式安装前仍须绑定已审spec、核实时状态和数据兼容，见[回滚范围](docs/research/desktop-rollback-20261024.md)。
 
 [KONT-DESKTOP-016](docs/tasks/KONT-DESKTOP-016.md) 新增绑定可信升级／回滚包与旧installed来源的只读管理计划，inspect前复核文件与持久选择，安装保持拒绝。冻结新旧store合成实测表明：虽然同为schema4，旧版成功写入会抹掉五种阶段的Run journal，资产／provenance保留也不代表安全降级。独立A13＋B4通过，仅接受预检与拒绝门；未部署或验证生产数据。下一步补保留运行记录的兼容恢复方案，详见[数据风险与预检](docs/research/desktop-preflight-20261024.md)。
+
+[KONT-DESKTOP-017](docs/tasks/KONT-DESKTOP-017.md) 提供保留旧界面和入口、复用已审Run数据层的13文件派生恢复候选。五阶段运行记录／派发占位／回执与来源经恢复编辑及新版重开保留，非法快照替换和占位重授被拒绝；官方离线隔离安装、独立A3＋B4通过。它是新组合，不能冒称原样旧包或生产迁移已接受；旧入口会获得现代store的run.prepare／snapshot journal语义。016安装门保持，详见[恢复范围](docs/research/desktop-recovery-20261024.md)。
