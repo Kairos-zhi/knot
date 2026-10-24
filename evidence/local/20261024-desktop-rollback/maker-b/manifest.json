@@ -1,0 +1,36 @@
+{
+  "task": "KONT-DESKTOP-015",
+  "role": "maker-b",
+  "files": [
+    {
+      "path": "scripts/verify-desktop-rollback.cjs",
+      "bytes": 8549,
+      "sha256": "ffb5385e3f05bf44b0a8bb863bea98f1def04893a01a449af22266b2083f7489"
+    },
+    {
+      "path": "tests/desktop-rollback-isolation.test.mjs",
+      "bytes": 3042,
+      "sha256": "0289dda86a5b047a738e7674d21c05e55c46f9b8001383ed2ef23278e2ee1528"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-rollback/maker-b/REPORT.md",
+      "bytes": 2047,
+      "sha256": "51417a949867fafa1785c7cbdcdeed3f5c9aab7d458a83669eeada923fdac9f7"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-rollback/maker-b/receipt.json",
+      "bytes": 709,
+      "sha256": "daf8c4ae39da4ce624ae187e0467d17a24d09c8985ba35b2ed40d73ef633482f"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-rollback/maker-b/focused.tap",
+      "bytes": 816,
+      "sha256": "6adc6b8e849694d36d125f6e719ee673edd6a86dec7ebc8e7c3c05376116be95"
+    },
+    {
+      "path": "evidence/local/20261024-desktop-rollback/maker-b/isolated-install.json",
+      "bytes": 955,
+      "sha256": "624d19f8e1dfbc045a68df261d929be495a74cb9e097bd25abf8388e8df1cf52"
+    }
+  ]
+}

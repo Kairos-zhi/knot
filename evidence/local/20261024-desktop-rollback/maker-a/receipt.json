@@ -1,0 +1,45 @@
+{
+  "task": "KONT-DESKTOP-015",
+  "line": "A",
+  "role": "Maker",
+  "status": "done_pending_check",
+  "acceptance": "none",
+  "preparationBaseCommit": "338ef08b57b2f29859df77cbf0e85f1f115f39bb",
+  "rollbackCodeSource": "actual-installed-package-bytes-not-repository-code",
+  "report": "REPORT.md",
+  "manifest": "manifest.json",
+  "candidate": {
+    "path": "../candidate",
+    "format": "kont-desktop-directory-rollback/v1",
+    "manifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+    "productFiles": 12,
+    "originalPackageFiles": 2,
+    "actualCaptureTransformations": 0,
+    "peerAndCodeBytesUnchanged": true,
+    "legacyRepositorySpecUsedAsSource": false,
+    "sourceBeforeAndAfterBytesAndInventoryMatch": true,
+    "standaloneTarballPortabilityClaim": false
+  },
+  "validation": {
+    "build": { "command": "node scripts/build.mjs", "exit": 0, "log": "build.log" },
+    "focused": { "command": "node --test tests/desktop-rollback.test.mjs", "exit": 0, "passed": 4, "failed": 0, "skipped": 0, "log": "focused.tap" },
+    "installedSourceRecheck": "installed-source-recheck.json",
+    "fullSuiteRun": false,
+    "actualInstalledCaptureIsSeparateFromSyntheticTests": true,
+    "bOfficialManagerAndElectronVerification": "separate maker-b evidence"
+  },
+  "boundaries": {
+    "profileReadsByA": "package.json and only resolved @kont package code directories",
+    "profileOrAsarWrites": false,
+    "sessionOrCredentialOrProviderReads": false,
+    "repositoryProductSourceUsedForOldCode": false,
+    "productSourceOrLibChanged": false,
+    "realModelCalls": 0,
+    "packageManagerOrNetworkInstallByA": false,
+    "desktopStartedOrStopped": false,
+    "currentDesktopActiveClaim": false,
+    "vendorOrHistoryEvidenceChanged": false,
+    "submittedOrPushedOrMerged": false
+  },
+  "remaining": ["Independent Checker and Gate", "Any actual code rollback deployment and user-data recovery are separate"]
+}

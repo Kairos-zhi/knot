@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: old-layout rollback installs through official offline manager and actual copied runtime/renderer
+ok 1 - old-layout rollback installs through official offline manager and actual copied runtime/renderer
+  ---
+  duration_ms: 4050.9231
+  type: 'test'
+  ...
+# Subtest: rollback refuses unreviewed manifest before creating an installation profile
+ok 2 - rollback refuses unreviewed manifest before creating an installation profile
+  ---
+  duration_ms: 273.4042
+  type: 'test'
+  ...
+# Subtest: rollback refuses unlisted package configuration before invoking manager
+ok 3 - rollback refuses unlisted package configuration before invoking manager
+  ---
+  duration_ms: 268.3874
+  type: 'test'
+  ...
+# Subtest: rollback captures old installed bytes instead of legacy repository spec and preserves original package bytes and peer gates
+ok 4 - rollback captures old installed bytes instead of legacy repository spec and preserves original package bytes and peer gates
+  ---
+  duration_ms: 162.813
+  type: 'test'
+  ...
+# Subtest: rollback relocates only an absolute installed dependency label, retaining both original manifests and every code byte
+ok 5 - rollback relocates only an absolute installed dependency label, retaining both original manifests and every code byte
+  ---
+  duration_ms: 104.1658
+  type: 'test'
+  ...
+# Subtest: rollback refuses extra inventory/dependencies, peer drift, relative escape and resolver escape without creating output
+ok 6 - rollback refuses extra inventory/dependencies, peer drift, relative escape and resolver escape without creating output
+  ---
+  duration_ms: 161.8236
+  type: 'test'
+  ...
+# Subtest: rollback hash verification refuses changed code and extra files; output cannot overlap installed code
+ok 7 - rollback hash verification refuses changed code and extra files; output cannot overlap installed code
+  ---
+  duration_ms: 148.1908
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4757.8173

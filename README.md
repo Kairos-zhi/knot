@@ -81,3 +81,5 @@ Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目
 [KONT-RUN-013](docs/tasks/KONT-RUN-013.md) 在客户端当前工作旁接入只读运行状态面板，window/card/icon共用一个查询源。加载、失败、切换及卸载会隔离旧记录；产物定位从当前snapshot重新解析，只读显示标题／块正文，失效不重建或重跑。bundle内置view/source/panel模块与既有风格样式；以实际打包产物和语义树程序化验证，不使用截图或模拟点击。本轮为未部署的界面候选，无新模型请求，非人的体验验收。
 
 [KONT-DESKTOP-014](docs/tasks/KONT-DESKTOP-014.md) 提供25文件目录候选、清单摘要及打包／验证工具。候选位于`evidence/local/20261024-desktop-package/candidate`，保持两个package同级；副本精确限定官方0.2.1-rc.2。官方manager离线隔离安装、版本拒绝、复制后服务／renderer验证已通过；不等于在用Desktop部署。实际安装与旧代码回滚准备见[部署方案](docs/research/desktop-candidate-install-20261024.md)，不能用已变化的repo路径冒充旧代码回滚副本。
+
+[KONT-DESKTOP-015](docs/tasks/KONT-DESKTOP-015.md) 从真实已安装副本保存旧12项代码与2项原package，未从仓库重建或改写旧peer。回滚目录位于`evidence/local/20261024-desktop-rollback/candidate`；官方离线隔离重装、旧kernel与renderer工厂及独立7/7检查通过。仅证明代码可重装，不代表升级后数据可降级或生产回滚；正式安装前仍须绑定已审spec、核实时状态和数据兼容，见[回滚范围](docs/research/desktop-rollback-20261024.md)。

@@ -1,0 +1,63 @@
+{
+  "task": "KONT-DESKTOP-015",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-24",
+  "preparationBaseCommit": "338ef08b57b2f29859df77cbf0e85f1f115f39bb",
+  "verdict": "ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED",
+  "blockingFindings": [],
+  "candidate": {
+    "path": "evidence/local/20261024-desktop-rollback/candidate",
+    "manifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+    "productFiles": 12,
+    "originalPackageFiles": 2,
+    "actualTransformations": 0,
+    "sourceKind": "installed-bytes-not-repository",
+    "peerDependenciesUnchanged": "0.1.7-rc.2 || 0.2.1-rc.2"
+  },
+  "validation": {
+    "frozenManifestEntriesMatched": 15,
+    "installedSourceFilesMatched": 12,
+    "originalPackagesMatched": 2,
+    "mismatch": 0,
+    "sourceReadbackBeforeAndAfterFocused": true,
+    "profilePackageStable": true,
+    "profilePackageSha256": "074125faf53fc9832aa075e35617adfa773806a6321dc0267b9e969d0e9d5283",
+    "persistentSelectionEvidenceConsistent": true,
+    "liveManagerOrActiveInventoryQueried": false,
+    "focused": {
+      "command": "KONT_DESKTOP_ROLLBACK=<absolute frozen candidate> node --test tests/desktop-rollback.test.mjs tests/desktop-rollback-isolation.test.mjs",
+      "exit": 0, "passed": 7, "failed": 0, "skipped": 0, "log": "focused.tap"
+    },
+    "officialIsolatedManagerInstall": true,
+    "all12InstalledCopiedBytesMatched": true,
+    "officialOldRuntimeAndRendererFactoryVerified": true,
+    "application": "restart-required",
+    "restartReason": "no-hmr",
+    "enabled": false,
+    "versionExemption": false,
+    "checkerBuiltOldCandidate": false,
+    "fullSuiteRun": false,
+    "modelCalls": 0,
+    "inUseProfileWrites": false,
+    "signedAsarWrites": false,
+    "actualUserSessionCredentialOrAssetReads": false,
+    "desktopLaunchRestartOrDeployment": false
+  },
+  "acceptedScope": [
+    "Resolver-bound old installed package code capture, original package retention and trusted manifest verification",
+    "Actual old 12-file inventory captured byte-for-byte with no repository product substitution or rebuilding",
+    "Reconstructed sibling file dependency, unchanged exact existing peer alternatives and zero actual capture transformations",
+    "Output overwrite/unsafe overlap, resolver escape, extra inventory/dependencies, peer drift and tampered artifacts rejected",
+    "Official offline manager installs reviewed candidate into fresh temporary profile; copied code equals rollback inventory",
+    "Copied old kernel/auth/SSE/disposal/schema4 synthetic durable readback and renderer factory/slots/disposal work in isolation"
+  ],
+  "limitations": [
+    "Official readProfileManifest projection plus stable package hash supports persistent dependency/selection facts only; standalone manager.listBundles operation-error is not a successful live manager or active fiber query",
+    "Code reinstallability is not production rollback or compatibility with newer schema, Run journals, Session or user asset data; no real user data downgrade was tested",
+    "Before an actual update/rollback, revalidate installed code/selection/hash, query live official manager state, and separately prove data compatibility and normal restart arrangements",
+    "No in-use Desktop installation, launch or restart; enabled:false/restart-required is not hot loading or an active Desktop claim",
+    "Renderer factory/slots evidence does not establish actual ReactDOM, visual or human experience acceptance",
+    "No model request, portable standalone tarball, full suite, full product acceptance or frozen protocol coverage expansion"
+  ],
+  "evidence": ["focused.tap", "hash-check.json", "hash-check.log", "verify-evidence.mjs", "REPORT.md"]
+}

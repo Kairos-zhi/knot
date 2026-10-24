@@ -25,6 +25,7 @@
 | KONT-RUN-012 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | W/checker/final-review.json；A8＋B r2 4项、独立集成／认证2项；无新增模型请求 |
 | KONT-RUN-013 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | X/checker/final-review.json；build＋11项及bundle组合1项；无模型／部署 |
 | KONT-DESKTOP-014 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Y/checker/final-review.json；build＋6项，25文件一致，官方离线隔离安装；未改在用profile |
+| KONT-DESKTOP-015 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | Z/checker/final-review.json；旧12项／原package2项／15冻结项一致，独立7/7 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -43,3 +44,4 @@ RUN-011：之明确deepseek-flash／3元且要求子agent并行，核心Maker与
 RUN-012 r2：两制作线并行、独立Checker查出opaque身份兼容P2并返修通过；Gate=ACCEPT_RUN_QUERY_VIEW_LIMITED。A8项与B最终4项、集成／未认证零读取2项通过；未全量。当前18＝16限定接受＋2关闭，完整产品接受0。只读Run契约／中文状态模型已收口，无新UI／模型／部署；下一步将该状态接到正式工作站呈现，不扩写旧表单。
 RUN-013：两线并行完成共享只读source/client/bundle与面板，独立Checker Gate=ACCEPT_READONLY_RUN_PANEL_LIMITED。build＋聚焦11/11、自有实际bundle组合1/1，16冻结项一致；当前19＝17限定接受＋2关闭。冻结前workspace刷新遮旧数据风险已修；窗口／卡片／图标共用状态，当前块只读定位。非ReactDOM／视觉／人的体验验收，未部署在用Desktop，无新增模型。下一步准备受支持Desktop插件管理器部署包与隔离装配验证，不能手改在用profile/签名ASAR或复用已消费模型授权。
 DESKTOP-014：Gate=ACCEPT_DESKTOP_CANDIDATE_PACKAGE_LIMITED；目录候选25文件、16冻结项一致，独立build＋6/6，官方manager在临时profile离线安装、版本拒绝与复制后runtime/renderer验证通过。当前20＝18限定接受＋2关闭。需要重启且enabled:false，不能冒称热装或在用部署；旧已安装代码rollback副本尚未准备。下一步先捕获并验证旧代码回滚候选，再经官方manager更新与正常重启验证；不动用户资产或模型授权。
+DESKTOP-015：之“快步推进”，Gate=ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED；从真实installed捕获12项与2项原package，实际转换0，peer／代码不变。双方冻结15项一致，独立7/7，官方离线临时profile重装及旧runtime／renderer工厂验证通过。当前21＝19限定接受＋2关闭。原spec／选择是持久配置证据，非live manager或active查询；代码可重装不证明新数据降级或生产回滚。新增模型0，未在用profile写／桌面启停／部署／push／合并。下一步适配安装管理工具以绑定已审升级／回滚候选，补数据兼容预检；实际更新与正常重启另行核准，不能直接使用旧repo spec。

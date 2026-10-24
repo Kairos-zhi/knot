@@ -1,0 +1,21 @@
+{
+  "task": "KONT-DESKTOP-015",
+  "role": "maker-b",
+  "state": "FROZEN_FOR_CHECKER",
+  "rollbackManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+  "focusedTests": { "passed": 3, "failed": 0, "exitCode": 0 },
+  "installedOldFilesMatched": 12,
+  "originalPackageRecordsValidated": 2,
+  "officialManagerInstall": true,
+  "application": "restart-required",
+  "isolatedProfileOnly": true,
+  "actualOldRuntimeApply": true,
+  "oldRendererFactoryAndSlots": true,
+  "actualDesktopDeployment": false,
+  "currentDesktopActiveVerified": false,
+  "modelCalls": 0,
+  "credentialsRead": false,
+  "userSessionsRead": false,
+  "versionExemption": false,
+  "independentAcceptance": false
+}

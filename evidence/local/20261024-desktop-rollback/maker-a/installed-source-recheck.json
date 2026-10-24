@@ -1,0 +1,68 @@
+{
+  "candidateManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+  "completeInventoryStable": true,
+  "all12SourceBytesMatchCapture": true,
+  "profilePackageMetadataUnchanged": true,
+  "rows": [
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "sourceSha256": "64ece206237ba3048e3ed75f275c1c967d6d300c48dc78f2e13ddb923c91d978",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "sourceSha256": "77acb53882a6f240766c077a921b357441fa82fee7abb9859ab3a35dea765930",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "sourceSha256": "8ffb54c2aebc043902f5746b835eb94e8bb7d7259ee37061be53b2f3420b6758",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/knot-model.js",
+      "sourceSha256": "cc941f6a79c0f06379679faaed3fb4ad3823e0e52dc8e4fc35228e379c3bf8e9",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/snapshot.js",
+      "sourceSha256": "7eec9b84f108e0412e95d82c1cf57b4ee6d8a2da4b28320a75292469bf1bea94",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/lib/workspace-state.js",
+      "sourceSha256": "e52cf42cfcd4a6b2366d734074c31a05f11ff106073ff8ea0e9da415e0c304a4",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sourceSha256": "a4332bf747d1da3b6bc4969044e7afda8bc1e20b3442fa489396aca347ea67fb",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "sourceSha256": "8eef5a9cb17a390373e824584a499df8c2fe5e41bdc4e943de19f42e30325eb9",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "sourceSha256": "37cb8e75f5defcde35d4261a7722477c4fa309c3f7410921e1f7d98f4d6031bf",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "sourceSha256": "0ca5bb7766eb9483ca6051bfc5302256a27095af7a237e85a4bcbf3220c5dece",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "sourceSha256": "6fb84b5cd24636e277c3689d5e0973154ec859e23567fdcdcfa05001778f8597",
+      "matchesCapturedSource": true
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "sourceSha256": "a275653e20b64ddf14a0eabac48a48b5c1445bf2a8f2d5c440b74fd60c7084e8",
+      "matchesCapturedSource": true
+    }
+  ]
+}
