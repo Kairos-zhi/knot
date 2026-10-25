@@ -2,6 +2,7 @@ import { mkdir, open, lstat, realpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { readFileSync, lstatSync, realpathSync } from 'node:fs';
 import { prepareDesktopRecoveryPreflight, createRecoveryPreflightManager } from './desktop-recovery-preflight.mjs';
 import { managerExpression, safeManagerResult, INSTALL_SPEC } from './desktop-host-client.mjs';
 
@@ -36,9 +37,18 @@ async function ledgerDirectory(kind) {
   return namespace;
 }
 async function exclusiveJson(path, value) {
+  const serialized = `${JSON.stringify(value)}\n`;
   const handle = await open(path, 'wx', 0o600);
-  try { await handle.writeFile(`${JSON.stringify(value)}\n`); await handle.sync(); }
+  try { await handle.writeFile(serialized); await handle.sync(); return sha(serialized); }
   finally { await handle.close(); }
+}
+function reservationFence(reservation) {
+  if (!reservation) return;
+  for (const [path, digest] of reservation.files) {
+    const stat = lstatSync(path);
+    if (!stat.isFile() || stat.isSymbolicLink() || !same(path, realpathSync(path))
+      || sha(readFileSync(path).toString()) !== digest) fail('TRANSPORT_RESERVATION_CHANGED');
+  }
 }
 
 /** Preparation performs the real 018 private-copy preflight but cannot install.
@@ -61,6 +71,34 @@ export async function prepareDeploymentApproval(config = {}) {
   prepared.set(result, { preflight }); return result;
 }
 
+/** A single, evidence-linked successor to the fixed failed 020 attempt. The
+ * initial API/descriptor remain unchanged and permanently deny their replay. */
+export async function prepareReconciledDeploymentApproval(config = {}) {
+  exact(config, []);
+  const initial = await prepareDeploymentApproval();
+  const state = prepared.get(initial);
+  const { prepareFixedReconciledEvidence } = await import('./desktop-reconciled-evidence.mjs');
+  const reconciliation = await prepareFixedReconciledEvidence();
+  if (reconciliation.parentDescriptorSha256 !== '928f28736af4fc2f820e9d4eae53341872e6890d401e9932bda32028830d77a9'
+    || initial.descriptor.dataSha256 !== reconciliation.originalDataSha256) fail('RECONCILED_PARENT_BINDING');
+  const binding = { ...initial.descriptor, format: 'kont-desktop-reconciled-upgrade/v1',
+    reconciliation, successor: 1 };
+  delete binding.options;
+  const options = { enabled: true, saveExact: true, requestId: `kont-reconciled-${sha(binding).slice(0, 40)}` };
+  const descriptor = { ...binding, options }, descriptorSha256 = sha(descriptor);
+  const result = freeze({ descriptor, descriptorSha256, expiresAt: initial.expiresAt,
+    deploymentReady: false, authorizationRequired: true, callerDeclarationIsIdentityProof: false });
+  prepared.set(result, { ...state, reconciliation }); return result;
+}
+
+async function executionFence(state) {
+  await createRecoveryPreflightManager(async () => ({ status: 'accepted' }), { plan: state.preflight }).inspectUpgrade();
+  if (state.reconciliation) {
+    const { recheckFixedReconciledEvidence } = await import('./desktop-reconciled-evidence.mjs');
+    await recheckFixedReconciledEvidence(state.reconciliation);
+  }
+}
+
 /** Only a trusted caller can assert that explicit human permission was obtained.
  * This declaration is recorded, not independently authenticated as human identity. */
 export function approveDeployment(plan, declaration) {
@@ -81,7 +119,8 @@ export function approveDeployment(plan, declaration) {
 
 /** Validation only: cannot issue a grant, extend expiry or replace bound args. */
 export function getInstallationTransportAuthorization(approval) {
-  active(approval);
+  const state = active(approval);
+  reservationFence(state.transportReservation);
   return freeze({ kind: approval.kind, method: 'pluginManager/installBundle',
     requestId: approval.requestId, approvalHash: approval.approvalHash,
     descriptorSha256: approval.descriptorSha256, expiresAt: approval.expiresAt,
@@ -96,6 +135,7 @@ export function consumeInstallationTransportPermit(dispatchPermit, approval) {
   if (!state || state.approval !== approval) fail('UNISSUED_DISPATCH_PERMIT');
   if (state.consumed) fail('DISPATCH_PERMIT_CONSUMED');
   if (!state.open) fail('EXPIRED_DISPATCH_PERMIT');
+  reservationFence(state.reservation);
   state.consumed = true;
   return state.payload;
 }
@@ -109,15 +149,32 @@ export async function executeApprovedUpgrade(approval, config = {}) {
   if (typeof evaluate !== 'function' || !Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) fail('INVALID_TRANSPORT');
   // Local inspect bridge invokes all 018/016 artifact, data, source and selection
   // checks, without handing a read expression to the installation transport.
-  await createRecoveryPreflightManager(async () => ({ status: 'accepted' }), { plan: state.preflight }).inspectUpgrade();
+  await executionFence(state);
   active(approval);
   const namespace = await ledgerDirectory(approval.kind);
   const key = approval.approvalHash, claimFile = resolve(namespace, `${key}.claim.json`), resultFile = resolve(namespace, `${key}.result.json`);
   const metadata = { format: 'kont-desktop-install-ledger/v1', action: 'upgrade', approvalHash: key,
     descriptorSha256: key, kind: approval.kind, statementSha256: state.statementSha256,
     upgradeManifestSha256: upgradePin, recoveryManifestSha256: recoveryPin,
-    dataSha256: state.plan.descriptor.dataSha256, requestId: approval.requestId, expiresAt: approval.expiresAt };
-  try { await exclusiveJson(claimFile, { ...metadata, state: 'reserved', reservedAt: new Date().toISOString() }); }
+    dataSha256: state.plan.descriptor.dataSha256, requestId: approval.requestId, expiresAt: approval.expiresAt,
+    ...(state.reconciliation ? { parentDescriptorSha256: state.reconciliation.parentDescriptorSha256,
+      reconciliationSha256: state.reconciliation.evidenceSha256 } : {}) };
+  let parentFile, parentDigest;
+  if (state.reconciliation) {
+    const parent = state.reconciliation.parentDescriptorSha256;
+    parentFile = resolve(namespace, `${parent}.remediation.claim.json`);
+    try {
+      parentDigest = await exclusiveJson(parentFile, {
+        format: 'kont-single-reconciled-child/v1', parentDescriptorSha256: parent,
+        childDescriptorSha256: key, reconciliationSha256: state.reconciliation.evidenceSha256 });
+    } catch (error) {
+      if (error.code === 'EEXIST') return { acquired: false, state: 'uncertain', approvalHash: key,
+        code: 'PARENT_SUCCESSOR_EXISTS', deploymentAccepted: false };
+      fail('PARENT_SUCCESSOR_WRITE_FAILED');
+    }
+  }
+  let claimDigest;
+  try { claimDigest = await exclusiveJson(claimFile, { ...metadata, state: 'reserved', reservedAt: new Date().toISOString() }); }
   catch (error) {
     if (error.code === 'EEXIST') return { acquired: false, state: 'uncertain', approvalHash: key, code: 'RESERVATION_EXISTS', deploymentAccepted: false };
     fail('RESERVATION_WRITE_FAILED'); // partial reservation is never deleted
@@ -126,8 +183,9 @@ export async function executeApprovedUpgrade(approval, config = {}) {
   try {
     // Reservation I/O is a gap in which the fixed source/data may have changed.
     // A refusal here keeps the reservation permanently, without dispatch.
-    await createRecoveryPreflightManager(async () => ({ status: 'accepted' }), { plan: state.preflight }).inspectUpgrade();
+    await executionFence(state);
     active(approval);
+    if (state.reconciliation) state.transportReservation = { files: [[parentFile, parentDigest], [claimFile, claimDigest]] };
     const payload = freeze({ ...getInstallationTransportAuthorization(approval),
       args: { spec: state.plan.descriptor.upgradeSpec, options: { ...state.plan.descriptor.options } } });
     const args = payload.args;
@@ -136,7 +194,7 @@ export async function executeApprovedUpgrade(approval, config = {}) {
     if (template.split(old).length !== 2) fail('RPC_TEMPLATE_DRIFT');
     const expression = template.replace(old, JSON.stringify(args.spec));
     const dispatchPermit = Object.freeze({});
-    permitState = { approval, payload, consumed: false, open: true };
+    permitState = { approval, payload, consumed: false, open: true, reservation: state.transportReservation };
     dispatchPermits.set(dispatchPermit, permitState);
     const raw = await Promise.race([
       Promise.resolve().then(() => { active(approval); return evaluate(expression, { approval, dispatchPermit }); }),

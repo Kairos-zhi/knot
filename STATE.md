@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-25；DESKTOP-020单次安装失败，旧代码与数据保持，已普通打开官方Desktop；021隔离修复pnpm store兼容，模型授权不续用。
+更新：2026-10-25；020失败保全且旧桌面普通打开；021 store修复与022单次后续能力已独立限定接受，待具体方案新许可，不续用模型授权。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -32,12 +32,12 @@
 | DESKTOP-019 | ACCEPTED_LIMITED | AD/checker/final-review.json；12冻结项／独立16项，临时官方安装1次／25文件一致 |
 | DESKTOP-020 | CLOSED | AE/checker/final-review.json；一次安装失败，旧12／profile／data保全，普通旧桌面启动读回 |
 | DESKTOP-021 | ACCEPTED_LIMITED | AF/checker/final-review.json；11冻结项／独立9项，既存store／file-link依赖隔离25项一致 |
-| DESKTOP-022 | MAKER | AG=20261025-desktop-reconciled-attempt；失败和解后的独立单次执行方案，仅开发／synthetic |
+| DESKTOP-022 | ACCEPTED_LIMITED | AG/checker/final-review.json；20冻结项／独立10项＋资格11／谓词5场景；已审proposal1da1...5df4 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
-- 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；历史已验证普通启动加载Knot。DESKTOP-015本轮进程观察未见主进程，未主动启停，不冒称当前active。原Headless／3081未替换。
-- 上轮回执：AC/controller/receipt.json（AC=20261024-desktop-paired-preflight）；本轮回执：AD/controller/receipt.json（AD=20261024-desktop-install-gate）；索引：evidence/DESKTOP-019-INDEX.json；旧索引与收口保持。
+- 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；020根普通打开旧版，独立5进程／无debug／原锁读回，窗口存在且有响应；新升级active未验。原Headless／3081未替换。
+- 最新回执：AG/controller/receipt.json；索引：evidence/DESKTOP-022-INDEX.json，020／021及旧索引保持。短交接：docs/handoff/20261025-desktop-resume.md。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前28单元＝24项ACCEPTED_LIMITED＋3项CLOSED＋1项MAKER，完整产品接受0。020仅执行一次，ERR_PNPM_UNEXPECTED_STORE，独立CLOSED_FAILED_INSTALL_PRESERVED；旧12项及profile／data原hash保持，claim／transport／uncertain全部保留。普通无调试旧Desktop已打开，独立5进程／原锁读回，非升级active证据。021仅限定接受store修复，022制作保留parent的单次后续方案，不重试生产。新增模型0，RUN-011授权1/1已用。
+- 当前28单元＝25项ACCEPTED_LIMITED＋3项CLOSED，完整产品接受0。020仅执行一次，ERR_PNPM_UNEXPECTED_STORE，独立CLOSED_FAILED_INSTALL_PRESERVED；旧12项及profile／data原hash保持，claim／transport／uncertain全部保留。旧Desktop已普通打开，021修复及022能力限定接受；具体proposal SHA=1da1b0dc0adf0a3bac2840113dc9e149e731e9ceac633b26e38757e053ae5df4，仍无新human／父后续claim／生产安装。下一步集中取得新许可与正常退出，fresh018完整计划精确同hash才可执行一次；不清marker／强杀／模拟点击。新增DS Flash调用0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。

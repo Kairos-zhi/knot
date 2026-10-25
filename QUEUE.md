@@ -32,7 +32,7 @@
 | KONT-DESKTOP-019 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AD/checker/final-review.json；独立16/16／12冻结项，真实临时安装1次／25文件一致 |
 | KONT-DESKTOP-020 | 根唯一执行 / run_checker只读复核 / live_runner_maker运行脚本 | CLOSED | AE/checker/final-review.json；安装失败保全，旧桌面普通启动；升级未接受 |
 | KONT-DESKTOP-021 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AF/checker/final-review.json；独立9/9／11冻结，既存file-link隔离25文件一致 |
-| KONT-DESKTOP-022 | live_runner_maker / run_checker / 中控Gate | MAKER | AG=20261025-desktop-reconciled-attempt；parent→child单次方案，开发隔离，不生产 |
+| KONT-DESKTOP-022 | live_runner_maker＋run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AG/checker/final-review.json；20冻结／10项＋资格11／谓词5，proposal已审，不生产 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -59,3 +59,4 @@ DESKTOP-019：之“快步推进。快步”，Gate=ACCEPT_ONE_SHOT_INSTALL_GATE
 DESKTOP-020：之直接回复“我授权”，根接续已审方案唯一approve／execute；run_checker独立只读预检通过，禁止子agent安装或重试。真实结果／25已装字节／其他依赖与选择／数据hash先核，再正常打开和服务／renderer注册只读验证。失败或不确定保留占位并诊断，不清标记／强杀／重发，不模型。未事后复核前不Gate。
 DESKTOP-020执行增量：一次官方manager失败ERR_PNPM_UNEXPECTED_STORE，结果uncertain；独立读回旧12文件/profile/data不变，无候选部分更新。2026-10-25根普通无调试启动官方旧Desktop，进程与数据锁存在、原hash保持，等待事后复核；不声称升级或renderer已验。DESKTOP-021修复明确store-dir与既存.modules.yaml冲突，只隔离验证并保留旧授权占位。
 DESKTOP-021收口：ACCEPT_RECORDED_PNPM_STORE_FIX_LIMITED，官方pnpm11.28.5源码依据、11冻结项一致／独立9/9，既存file/link与空profile各真实隔离升级一次／25文件匹配，非Knot依赖／选择保持；生产resolver只读通过，原hash／020标记未动，不代表实际安装或active。022另制固定parent的单次后续方案，不因修复自动重发。
+DESKTOP-022收口：ACCEPT_FIXED_PARENT_SINGLE_SUCCESSOR_CAPABILITY_LIMITED，独立20/20冻结／focused10/10及helper资格11负例／实际生成writer谓词5分类；真实隔离6并发仅1次manager／25字节一致，018与资格为mock。具体proposal1da1b0dc...ae5df4另获独立纯计算复核；只读分拆helper非完整fresh018，尚无新human／生产parent链接或子claim。待明确新许可、从托盘正常退出与fresh018精确同hash，才可一次真实后续并另核active；不清旧记录／不模型。当前28＝25限定接受＋3关闭；建议本轮收口后按短接续卡换新窗口。
