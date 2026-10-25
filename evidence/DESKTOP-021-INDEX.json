@@ -1,0 +1,112 @@
+{
+  "task": "KONT-DESKTOP-021",
+  "archive_id": "kont-desktop-store-fix-20261025",
+  "verdict": "ACCEPT_RECORDED_PNPM_STORE_FIX_LIMITED",
+  "validation": {
+    "makerManifestSha256": "967b4e1c26aa58041cb1d97d11c6dd4e3aef83ce89ae68c1c1f118e9e71f6cc2",
+    "frozenFilesMatched": 11,
+    "mismatch": 0,
+    "officialPnpmVersion": "11.28.5",
+    "officialPnpmSourceSha256Matched": true,
+    "focused": {
+      "command": "node --test tests/desktop-pnpm-store.test.mjs tests/desktop-quiescent-install.test.mjs tests/desktop-install-execution.test.mjs",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "log": "focused.tap"
+    },
+    "parserNegativeCases": 17,
+    "emptyPrivateStoreJunctionRejected": true,
+    "officialTemporaryProfileInstalls": 2,
+    "installCallsPerTemporaryProfile": 1,
+    "candidateFilesMatchedPerProfile": 25,
+    "existingRecordedStoreFileLinkDependenciesAndSelectionPreserved": true,
+    "readonlyProductionResolver": "recorded-profile: D:/.pnpm-store/v11",
+    "productionModulesProfileAndDataUnchanged": true,
+    "old020ClaimTransportResultUnchanged": true,
+    "productionApproveExecuteInstallOrDesktopLifecycleCalls": 0,
+    "buildOrFullSuiteRun": false,
+    "modelCalls": 0
+  },
+  "productionDeploymentAccepted": false,
+  "productionRetries": 0,
+  "modelCalls": 0,
+  "files": [
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/focused.tap",
+      "bytes": 2806,
+      "sha256": "c082cdee34b6a622a95c0b22aa38aeb3b679726c72a9ea360c6391b2699c6460"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/manifest.json",
+      "bytes": 2290,
+      "sha256": "967b4e1c26aa58041cb1d97d11c6dd4e3aef83ce89ae68c1c1f118e9e71f6cc2"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/official-install.empty.json",
+      "bytes": 458,
+      "sha256": "a29b94df006e75e06f84b9a0f147e26566598e15f3658befc7551aff86286dfa"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/official-install.existing.json",
+      "bytes": 455,
+      "sha256": "84da695091011c4473ff030e79f34fea8cee9feea28b1c145117f959e9ff175c"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/official-pnpm-source.txt",
+      "bytes": 2866,
+      "sha256": "d2f9d69ee7a6b002caece114c993f86a3f8d28cc9a1089a34b2a11e6e764f5a3"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/receipt.json",
+      "bytes": 921,
+      "sha256": "f40d941d83ff39f28ee6cb5c37cd398cc964cae3ab7cb5b0d41e92837095586a"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/REPORT.md",
+      "bytes": 2068,
+      "sha256": "da0ce1afcf586f791f14c298592297428283dc221c31e4469d405dc69cb47dac"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/maker/source.json",
+      "bytes": 362,
+      "sha256": "d448880d7955689d498d2d4fbff01f916866af243fde24028b804903b711326b"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/final-review.json",
+      "bytes": 3281,
+      "sha256": "130643e02a3af504bfef821ae55a76c258d01d7609263f099d02965a67870db5"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/focused.tap",
+      "bytes": 2805,
+      "sha256": "8f53991d6fe9eb54c181b073e8feb83145f89c206bf8980609eb8fc11e7223ac"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/hash-check.json",
+      "bytes": 2712,
+      "sha256": "6cc38d6ba67093b6e5a06eef774676792901b3b8295b46c700f1412743d7f632"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/hash-check.log",
+      "bytes": 224,
+      "sha256": "f848143cd7bec32045e3e9fb422b5745ec49bc3844f9b85f6c99726712a94aec"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/REPORT.md",
+      "bytes": 2231,
+      "sha256": "ff87b6e2a9c9632602f7d944df1a1e6a4634b4538be65e3b9828f386dfc5f6c5"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/checker/verify-evidence.mjs",
+      "bytes": 3641,
+      "sha256": "2c3376618d77d57ee94870a178e54aa0d8f9e47e95f1d8d4fc4749845dd6b355"
+    },
+    {
+      "path": "evidence/local/20261025-desktop-store-fix/controller/receipt.json",
+      "bytes": 1327,
+      "sha256": "038dc581b146f3aab738cde5095a018ba619a6fb31b7337b9597aafebf571dc9"
+    }
+  ]
+}

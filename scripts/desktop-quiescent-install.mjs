@@ -8,6 +8,7 @@ import { getInstallationTransportAuthorization, consumeInstallationTransportPerm
 import { validateDesktopInstallExpression } from './desktop-install-transport-policy.mjs';
 import { safeManagerResult } from './desktop-host-client.mjs';
 import { verifyDesktopCandidate } from './prepare-desktop-candidate.mjs';
+import { resolveDesktopProfileStore } from './desktop-pnpm-store.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const anchor = 'D:/DSH-Desktop/app/resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/package.json';
 const runtime = 'D:/DSH-Desktop/app/resources/runtime/primary-runtime/dependencies';
@@ -67,13 +68,14 @@ function factory(isolated) {
       assert.equal(official('@deepseek-ai/dsh/package.json').version, '0.2.1-rc.2');
       const { Context } = official('@deepseek-ai/cordis');
       const { PluginManager } = official('@deepseek-ai/dsh-plugin-manager');
+      const store = await resolveDesktopProfileStore(profile, join(ledger, 'pnpm-store'));
       if (closed) fail('TRANSPORT_CLOSED');
       ctx = new Context();
       ctx.provide('profileContext', { name: isolated ? 'kont-isolated-upgrade' : 'desktop', dir: profile,
         home: isolated ? root : 'D:/DSH-Desktop/home', cwd: root, installAnchor: anchor,
         startedBundles: [], patchPath: join(profile, 'cordis.patch.yml'), overlays: [],
         packageManager: { command: join(runtime, 'node/bin/node.exe'),
-          args: [join(runtime, 'pnpm/bin/pnpm.cjs'), '--offline', '--ignore-scripts', '--config.auto-install-peers=false', '--store-dir', join(ledger, 'pnpm-store')],
+          args: [join(runtime, 'pnpm/bin/pnpm.cjs'), '--offline', '--ignore-scripts', '--config.auto-install-peers=false', '--store-dir', store.storeDir],
           env: { SystemRoot: process.env.SystemRoot, PATH: process.env.PATH, TEMP: process.env.TEMP,
             TMP: process.env.TMP, USERPROFILE: root, HOME: root, npm_config_userconfig: npmrc, npm_config_globalconfig: npmrc } } });
       const manager = new PluginManager(ctx, { outputBytes: 32768, lockWaitMs: 1000, inspectTimeoutMs: 10000,
@@ -81,6 +83,7 @@ function factory(isolated) {
       if (!isolated) await quiescent();
       if (closed) fail('TRANSPORT_CLOSED');
       getInstallationTransportAuthorization(approval); // Expiry may have elapsed during local preparation.
+      if (canonical(await resolveDesktopProfileStore(profile, join(ledger, 'pnpm-store'))) !== canonical(store)) fail('PROFILE_STORE_CHANGED');
       // Official manager alone owns profile/package changes. No user plugin
       // loader, HMR, credentials, Session runtime or model is initialized.
       const result = await manager.installBundle(request.args.spec, request.args.options);

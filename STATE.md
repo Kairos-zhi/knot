@@ -31,12 +31,13 @@
 | DESKTOP-018 | ACCEPTED_LIMITED | AC/checker/final-review.json；11冻结项，独立9/9，真实2资产／0Run副本无损、原hash未变 |
 | DESKTOP-019 | ACCEPTED_LIMITED | AD/checker/final-review.json；12冻结项／独立16项，临时官方安装1次／25文件一致 |
 | DESKTOP-020 | CLOSED | AE/checker/final-review.json；一次安装失败，旧12／profile／data保全，普通旧桌面启动读回 |
-| DESKTOP-021 | MAKER | AF=20261025-desktop-store-fix；修复既存store冲突候选，仅隔离实测，不重放生产安装 |
+| DESKTOP-021 | ACCEPTED_LIMITED | AF/checker/final-review.json；11冻结项／独立9项，既存store／file-link依赖隔离25项一致 |
+| DESKTOP-022 | MAKER | AG=20261025-desktop-reconciled-attempt；失败和解后的独立单次执行方案，仅开发／synthetic |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；历史已验证普通启动加载Knot。DESKTOP-015本轮进程观察未见主进程，未主动启停，不冒称当前active。原Headless／3081未替换。
 - 上轮回执：AC/controller/receipt.json（AC=20261024-desktop-paired-preflight）；本轮回执：AD/controller/receipt.json（AD=20261024-desktop-install-gate）；索引：evidence/DESKTOP-019-INDEX.json；旧索引与收口保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前27单元＝23项ACCEPTED_LIMITED＋3项CLOSED＋1项MAKER，完整产品接受0。020仅执行一次，ERR_PNPM_UNEXPECTED_STORE，独立CLOSED_FAILED_INSTALL_PRESERVED；旧12项及profile／data原hash保持，claim／transport／uncertain全部保留。普通无调试旧Desktop已打开，独立5进程／原锁读回，非升级active证据。021只修复候选与隔离验证，不重试生产。新增模型0，RUN-011授权1/1已用。
+- 当前28单元＝24项ACCEPTED_LIMITED＋3项CLOSED＋1项MAKER，完整产品接受0。020仅执行一次，ERR_PNPM_UNEXPECTED_STORE，独立CLOSED_FAILED_INSTALL_PRESERVED；旧12项及profile／data原hash保持，claim／transport／uncertain全部保留。普通无调试旧Desktop已打开，独立5进程／原锁读回，非升级active证据。021仅限定接受store修复，022制作保留parent的单次后续方案，不重试生产。新增模型0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。

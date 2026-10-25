@@ -19,12 +19,12 @@ test('transport accepts only exact official JSON envelope and rejects arbitrary 
     value.replace('desktop-package/candidate', 'desktop-recovery/candidate'), 'globalThis.fetch("https://elsewhere.invalid")'])
     assert.throws(() => validateDesktopInstallExpression(changed), { code: 'UNREVIEWED_EXPRESSION' });
 });
-test('synthetic approval executes one real official offline install in a new profile and cannot enter production transport', async t => {
+for (const existing of [false, true]) test(`synthetic approval executes one real official offline install (${existing ? 'existing file/link dependencies and recorded store' : 'empty profile'}) and cannot enter production transport`, async t => {
   const root = await mkdtemp('D:/Temp/kont-official-install-test-');
   t.after(async () => { const target = resolve(root); assert.equal(dirname(target), resolve('D:/Temp'));
     assert.ok(target.split(/[\\/]/).at(-1).startsWith('kont-official-install-test-')); await rm(target, { recursive: true, force: true }); });
   await mkdir(join(root, 'scripts'));
-  for (const name of ['desktop-install-execution.mjs', 'desktop-quiescent-install.mjs', 'desktop-install-transport-policy.mjs', 'desktop-host-client.mjs', 'prepare-desktop-candidate.mjs'])
+  for (const name of ['desktop-install-execution.mjs', 'desktop-quiescent-install.mjs', 'desktop-pnpm-store.mjs', 'desktop-install-transport-policy.mjs', 'desktop-host-client.mjs', 'prepare-desktop-candidate.mjs'])
     await copyFile(`scripts/${name}`, join(root, 'scripts', name));
   const copiedCandidate = join(root, 'evidence/local/20261024-desktop-package/candidate');
   await cp(candidate, copiedCandidate, { recursive: true });
@@ -40,6 +40,22 @@ test('synthetic approval executes one real official offline install in a new pro
   const worker = `
     const assert=require('node:assert/strict'),{readFile}=require('node:fs/promises'),{createRequire}=require('node:module'),{dirname,join}=require('node:path'),{pathToFileURL}=require('node:url');
     (async()=>{const root=${JSON.stringify(root)};
+    const existing=${existing};
+    let recordedStore, originalSelection, originalDependencies;
+    if(existing){
+      const fs=require('node:fs/promises'),{spawnSync}=require('node:child_process');
+      for(const type of ['file','link']){const dir=join(root,'keep-'+type);await fs.mkdir(dir);await fs.writeFile(join(dir,'package.json'),JSON.stringify({name:'@local/keep-'+type,version:'1.0.0',main:'index.cjs'}));await fs.writeFile(join(dir,'index.cjs'),'module.exports="SYNTHETIC_KEEP_'+type+'";');}
+      const profilePath=join(root,'profile/package.json');const p=JSON.parse(await readFile(profilePath,'utf8'));
+      p.dependencies={'@local/keep-file':'file:../keep-file','@local/keep-link':'link:../keep-link'};
+      p.dsh.profile.bundles=['@local/keep-file'];await fs.writeFile(profilePath,JSON.stringify(p));
+      originalSelection=[...p.dsh.profile.bundles];originalDependencies={...p.dependencies};
+      const runtime='D:/DSH-Desktop/app/resources/runtime/primary-runtime/dependencies';
+      const seed=spawnSync(join(runtime,'node/bin/node.exe'),[join(runtime,'pnpm/bin/pnpm.cjs'),'install','--offline','--ignore-scripts','--config.auto-install-peers=false','--store-dir',join(root,'existing-store')],{cwd:join(root,'profile'),env:{...process.env,HOME:root,USERPROFILE:root},encoding:'utf8',windowsHide:true,timeout:20000});
+      assert.equal(seed.status,0,seed.stderr||seed.stdout);
+      const official=require('node:module').createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/package.json');
+      recordedStore=official('yaml').parse(await readFile(join(root,'profile/node_modules/.modules.yaml'),'utf8')).storeDir;
+      assert.ok(recordedStore.replaceAll('\\\\','/').endsWith('/existing-store/v11'));
+    }
     const api=await import(pathToFileURL(join(root,'scripts/desktop-install-execution.mjs')).href);
     const{managerExpression,INSTALL_SPEC}=await import(pathToFileURL(join(root,'scripts/desktop-host-client.mjs')).href);
     const transportApi=await import(pathToFileURL(join(root,'scripts/desktop-quiescent-install.mjs')).href);
@@ -59,7 +75,14 @@ test('synthetic approval executes one real official offline install in a new pro
     const req=createRequire(join(root,'profile/package.json'));const bundle=req.resolve('@kont/desktop-bundle/package.json');const plugin=createRequire(bundle).resolve('@kont/dsh-plugin/package.json');
     const manifest=JSON.parse(await readFile(join(root,'evidence/local/20261024-desktop-package/candidate/manifest.json'),'utf8'));for(const file of manifest.files){const prefix=file.path.startsWith('packages/desktop-bundle/')?'packages/desktop-bundle/':'packages/dsh-plugin/';const dir=prefix.includes('desktop-bundle')?dirname(bundle):dirname(plugin);assert.deepEqual(await readFile(join(dir,file.path.slice(prefix.length))),await readFile(join(root,'evidence/local/20261024-desktop-package/candidate',file.path)));}
     const profile=JSON.parse(await readFile(join(root,'profile/package.json'),'utf8'));assert.ok(profile.dsh.profile.bundles.includes('@kont/desktop-bundle'));
-    console.log(JSON.stringify({syntheticAuthorization:true,officialManagerInstall:true,enabled:true,application:result.managerReceipt.application,calls,filesMatched:manifest.files.length,productionTransportRejectedSynthetic:true,directWithoutPermitRejected:true,reusedPermitRejected:true,productionProfileTouched:false,modelCalls:0}));
+    if(existing){
+      const official=require('node:module').createRequire('D:/DSH-Desktop/app/resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/package.json');
+      assert.equal(official('yaml').parse(await readFile(join(root,'profile/node_modules/.modules.yaml'),'utf8')).storeDir,recordedStore);
+      for(const [name,spec]of Object.entries(originalDependencies))assert.equal(profile.dependencies[name],spec);
+      assert.deepEqual(profile.dsh.profile.bundles.filter(n=>n!=='@kont/desktop-bundle'),originalSelection);
+      assert.equal(req('@local/keep-file'),'SYNTHETIC_KEEP_file');assert.equal(req('@local/keep-link'),'SYNTHETIC_KEEP_link');
+    }
+    console.log(JSON.stringify({syntheticAuthorization:true,officialManagerInstall:true,enabled:true,application:result.managerReceipt.application,calls,filesMatched:manifest.files.length,existingDependencies:existing,recordedStorePreserved:existing,nonKnotDependenciesAndSelectionPreserved:existing,productionTransportRejectedSynthetic:true,directWithoutPermitRejected:true,reusedPermitRejected:true,productionProfileTouched:false,modelCalls:0}));
     })().catch(error=>{console.error(error);process.exitCode=1;});
   `;
   const result = spawnSync('D:/DSH-Desktop/app/DeepSeek Harness.exe', ['-e', worker],
@@ -68,5 +91,5 @@ test('synthetic approval executes one real official offline install in a new pro
   const receipt = JSON.parse(result.stdout.trim());
   assert.equal(receipt.filesMatched, 25); assert.equal(receipt.calls, 1);
   assert.equal(receipt.officialManagerInstall, true); assert.equal(receipt.productionProfileTouched, false);
-  if (process.env.KONT_INSTALL_TEST_RECEIPT) await writeFile(process.env.KONT_INSTALL_TEST_RECEIPT, JSON.stringify(receipt, null, 2));
+  if (process.env.KONT_INSTALL_TEST_RECEIPT) await writeFile(process.env.KONT_INSTALL_TEST_RECEIPT + (existing ? '.existing.json' : '.empty.json'), JSON.stringify(receipt, null, 2));
 });
