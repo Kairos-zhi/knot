@@ -30,6 +30,8 @@
 | KONT-DESKTOP-017 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AB/checker/final-review.json；17冻结项／13候选项，独立A3＋B4，合成journal完整 |
 | KONT-DESKTOP-018 | run_maker＋根Maker B / live_runner_maker Checker / 中控Gate | ACCEPTED_LIMITED | AC/checker/final-review.json；11冻结项／独立9/9，真实无Run样本副本通过，原文件不改 |
 | KONT-DESKTOP-019 | run_maker＋live_runner_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AD/checker/final-review.json；独立16/16／12冻结项，真实临时安装1次／25文件一致 |
+| KONT-DESKTOP-020 | 根唯一执行 / run_checker只读复核 / live_runner_maker运行脚本 | CLOSED | AE/checker/final-review.json；安装失败保全，旧桌面普通启动；升级未接受 |
+| KONT-DESKTOP-021 | run_maker / run_checker / 中控Gate | MAKER | AF=20261025-desktop-store-fix；既存store兼容修复，隔离验证，不重试生产 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -53,3 +55,5 @@ DESKTOP-016：之“继续”，Gate=ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGR
 DESKTOP-017：之“推进／继续”，Gate=ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED；13项派生候选，旧11项＋014 store/run两项；独立A3＋B4，17冻结项一致，五阶段完整journal／claim／receipt与restore拒绝覆盖、占位拒重及prepared首claim保持，官方离线临时profile复制13项／runtime／旧renderer通过。当前23＝21限定接受＋2关闭。旧入口获得现代run.prepare／snapshot journal语义，非完全旧行为；未证明生产数据兼容／实际恢复部署。Checker完成书面回执后末条消息额度中断，根已读完整final-review／REPORT／测试与hash文件，不冒称再跑；不影响既有完成复核。下一步接入新恢复pin和部署预检；016安装拒绝、015原旧包危险降级结论不改，无生产读／部署／模型／push／合并。
 DESKTOP-018：之再次“继续”，Gate=ACCEPT_PAIRED_PREFLIGHT_LIMITED；根B固定现场只读probe、A新模块配对014／017，live_runner_maker未参与本卡制作而独立复核9/9／11冻结项及真实prepare通过。现场2资产／0Run，原hash e0359bb6...及原锁不变，私人副本完整canonical读写往返，报告无正文ID；不证明真实含Run恢复或生产迁移。两目标install allowtrue均DEPLOYMENT_AUTHORIZATION_REQUIRED、evaluate0，未liveHost／桌面启停／部署／模型。当前24＝22限定接受＋2关闭。下一步补一次性安装授权执行入口与真实manager核对／正常重启安排；旧代码／候选／016拒绝门未改，不自动授予部署许可。
 DESKTOP-019：之“快步推进。快步”，Gate=ACCEPT_ONE_SHOT_INSTALL_GATE_LIMITED；独立16/16、12制作冻结项匹配，临时官方manager enabled:true安装一次／25复制文件一致。wx+sync后再fence、私有permit单次消费、持久claim及transport marker；重建／并发／重开／超时／回执保存失败不重试。synthetic不能进固定生产工厂；已消费transport超时仍可能继续准备/安装，不能当取消或清标记重试。生产descriptor 928f...77a9只读复核、真实human grant0／生产claim无。Checker完整书面Review完成后末条消息容量错误，根已读回完整测试／hash／final-review。当前25＝23限定接受＋2关闭。下一步需明确实际安装授权，再以新鲜预检走官方生产manager一次安装与正常打开验证；完整context／cache／active及恢复安装未验，无生产写／模型／push／合并。
+DESKTOP-020：之直接回复“我授权”，根接续已审方案唯一approve／execute；run_checker独立只读预检通过，禁止子agent安装或重试。真实结果／25已装字节／其他依赖与选择／数据hash先核，再正常打开和服务／renderer注册只读验证。失败或不确定保留占位并诊断，不清标记／强杀／重发，不模型。未事后复核前不Gate。
+DESKTOP-020执行增量：一次官方manager失败ERR_PNPM_UNEXPECTED_STORE，结果uncertain；独立读回旧12文件/profile/data不变，无候选部分更新。2026-10-25根普通无调试启动官方旧Desktop，进程与数据锁存在、原hash保持，等待事后复核；不声称升级或renderer已验。DESKTOP-021修复明确store-dir与既存.modules.yaml冲突，只隔离验证并保留旧授权占位。

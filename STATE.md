@@ -1,6 +1,6 @@
 # KONT 中控指针
 
-更新：2026-10-24；之“快步推进。快步”，DESKTOP-019一次性执行门已独立限定接受；真实安装授权本轮0，模型授权不续用。
+更新：2026-10-25；DESKTOP-020单次安装失败，旧代码与数据保持，已普通打开官方Desktop；021隔离修复pnpm store兼容，模型授权不续用。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
 | 单元 | 状态 | 证据（根见下） |
@@ -30,11 +30,13 @@
 | DESKTOP-017 | ACCEPTED_LIMITED | AB/checker/final-review.json；17冻结项／13候选项，独立A3＋B4；五阶段journal保留 |
 | DESKTOP-018 | ACCEPTED_LIMITED | AC/checker/final-review.json；11冻结项，独立9/9，真实2资产／0Run副本无损、原hash未变 |
 | DESKTOP-019 | ACCEPTED_LIMITED | AD/checker/final-review.json；12冻结项／独立16项，临时官方安装1次／25文件一致 |
+| DESKTOP-020 | CLOSED | AE/checker/final-review.json；一次安装失败，旧12／profile／data保全，普通旧桌面启动读回 |
+| DESKTOP-021 | MAKER | AF=20261025-desktop-store-fix；修复既存store冲突候选，仅隔离实测，不重放生产安装 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。
 - 交付宿主：D:\DSH-Desktop，官方0.2.1-rc.2；历史已验证普通启动加载Knot。DESKTOP-015本轮进程观察未见主进程，未主动启停，不冒称当前active。原Headless／3081未替换。
 - 上轮回执：AC/controller/receipt.json（AC=20261024-desktop-paired-preflight）；本轮回执：AD/controller/receipt.json（AD=20261024-desktop-install-gate）；索引：evidence/DESKTOP-019-INDEX.json；旧索引与收口保持。
 - 旧叙事完整保留：[STATE归档](docs/archive/STATE-20261022.md)；旧QUEUE见同目录归档。
-- 当前25单元＝23项ACCEPTED_LIMITED＋2项CLOSED，完整产品接受0。019 Gate限定接受一次性初始升级门，独立16/16、12制作冻结项一致；临时官方enabled:true安装1次／复制25项匹配。真实只读descriptor 928f2873...77a9复核，生产claim不存在、human grant0。超时uncertain不是取消，已消费transport可能继续，不自动重试。下一步明确批准后才新鲜预检、官方生产manager安装一次并正常打开验证；生产context/cache/active仍未验，恢复安装未实现。新增模型0，RUN-011授权1/1已用。
+- 当前27单元＝23项ACCEPTED_LIMITED＋3项CLOSED＋1项MAKER，完整产品接受0。020仅执行一次，ERR_PNPM_UNEXPECTED_STORE，独立CLOSED_FAILED_INSTALL_PRESERVED；旧12项及profile／data原hash保持，claim／transport／uncertain全部保留。普通无调试旧Desktop已打开，独立5进程／原锁读回，非升级active证据。021只修复候选与隔离验证，不重试生产。新增模型0，RUN-011授权1/1已用。
 - 未决：在用Desktop执行入口／正式Apple工作站、通用多用户授权／完整命令面／per-Agent权限、持久DSH Session恢复、强杀／断电与生产交付；dispose拒绝时不得自动关闭store。不得沿用已消费的单次授权再次付费请求。
