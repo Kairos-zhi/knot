@@ -10,6 +10,11 @@ const freeze = value => { if (object(value) || Array.isArray(value)) { Object.va
 export class DshReadError extends Error {
   constructor(code) { super(`DSH observation refused (${code})`); this.code = code; }
 }
+// Only this factory's actual handle.close catch can establish a cleanup failure.
+// A trusted callback may reject with any public error code; that is not proof
+// that this observer failed to release its acquired handle.
+const closeFailures = new WeakSet();
+export const isDshReadCleanupFailure = error => closeFailures.has(error);
 const requireThat = (condition, code = 'DSH_NARROW_SCHEMA') => { if (!condition) throw new DshReadError(code); };
 const textParts = content => {
   requireThat(Array.isArray(content) && content.length > 0 && content.length <= 1000);
@@ -181,9 +186,12 @@ export function createDshRunObserver({ hostVersion, persistence, Session, readRu
       failure = signal?.aborted ? new DshReadError('DSH_READ_CANCELLED')
         : error instanceof DshReadError ? error : new DshReadError('DSH_READ_FAILED');
     } finally {
-      if (handle) try { await handle.close(); } catch { failure ??= new DshReadError('DSH_CLOSE_FAILED'); }
+      if (handle) try { await handle.close(); } catch {
+        failure = new DshReadError('DSH_CLOSE_FAILED');
+        closeFailures.add(failure);
+      }
     }
-    if (signal?.aborted) failure = new DshReadError('DSH_READ_CANCELLED');
+    if (signal?.aborted && !isDshReadCleanupFailure(failure)) failure = new DshReadError('DSH_READ_CANCELLED');
     if (failure) throw failure;
     return result;
   } });

@@ -6,10 +6,13 @@ const clone = value => structuredClone(value);
 const canonical = value => JSON.stringify(value, (_, item) => isRecord(item)
   ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
 export const runHash = value => createHash('sha256').update(canonical(value)).digest('hex');
-const identity = value => typeof value === 'string' && value.trim().length > 0 && value.length <= 200;
+// Inherited Core references are opaque: test non-emptiness without rewriting
+// their literal value. Run-owned identities and route values keep their limit.
+const opaqueReference = value => typeof value === 'string' && value.trim().length > 0;
+const boundedIdentity = value => opaqueReference(value) && value.length <= 200;
 const exact = (value, keys) => isRecord(value) && Object.keys(value).every(key => keys.includes(key));
 const check = (condition, message, code = 'INVALID_RUN') => { if (!condition) reject(code, message); };
-const nullableIdentity = value => value === null || identity(value);
+const nullableReference = value => value === null || opaqueReference(value);
 
 /** Explicit supply only. Historical provenance never expands this list. */
 export function compileRunInput(state, worksiteId) {
@@ -38,8 +41,8 @@ export function dshPromptRequest(run) {
 
 function validateInput(input) {
   check(exact(input, ['worksiteId', 'assetId', 'conversationId', 'agentId', 'draft', 'materials', 'revision', 'seq']), 'Invalid input fields');
-  check(identity(input.worksiteId) && nullableIdentity(input.assetId) && nullableIdentity(input.conversationId)
-    && nullableIdentity(input.agentId) && typeof input.draft === 'string' && input.draft.length <= 50000, 'Invalid input identity/draft');
+  check(opaqueReference(input.worksiteId) && nullableReference(input.assetId) && nullableReference(input.conversationId)
+    && nullableReference(input.agentId) && typeof input.draft === 'string' && input.draft.length <= 50000, 'Invalid input identity/draft');
   check(Number.isSafeInteger(input.revision) && input.revision >= 0 && Number.isSafeInteger(input.seq) && input.seq >= 0, 'Invalid input revision');
   check(Array.isArray(input.materials) && input.materials.length <= 500, 'Invalid input materials');
   const assets = input.materials.map(material => {
@@ -54,15 +57,15 @@ function validateInput(input) {
 
 export function validateRun(run) {
   check(exact(run, ['version', 'runId', 'requestId', 'plannedSessionId', 'targetId', 'targetSha256', 'createdAt', 'status', 'input', 'inputSha256', 'receipt', 'dispatchClaim']), 'Unknown run fields');
-  check(run.version === 1 && identity(run.runId) && identity(run.requestId) && identity(run.plannedSessionId)
-    && identity(run.targetId) && /^[a-f0-9]{64}$/.test(run.targetSha256) && typeof run.createdAt === 'string'
+  check(run.version === 1 && boundedIdentity(run.runId) && boundedIdentity(run.requestId) && boundedIdentity(run.plannedSessionId)
+    && opaqueReference(run.targetId) && /^[a-f0-9]{64}$/.test(run.targetSha256) && typeof run.createdAt === 'string'
     && Number.isFinite(Date.parse(run.createdAt)), 'Invalid run identity');
   validateInput(run.input);
   check(run.inputSha256 === runHash(run.input), 'Input digest mismatch');
   if (run.dispatchClaim !== undefined) {
     const c = run.dispatchClaim;
     check(exact(c, ['claimId', 'runId', 'requestId', 'sessionId', 'inputSha256', 'constraints', 'constraintsSha256', 'claimedAt', 'state'])
-      && identity(c.claimId) && c.runId === run.runId && c.requestId === run.requestId
+      && boundedIdentity(c.claimId) && c.runId === run.runId && c.requestId === run.requestId
       && c.sessionId === run.plannedSessionId && c.inputSha256 === run.inputSha256
       && typeof c.claimedAt === 'string' && Number.isFinite(Date.parse(c.claimedAt))
       && ['reserved', 'submitted', 'uncertain'].includes(c.state), 'Invalid dispatch claim');
@@ -74,7 +77,7 @@ export function validateRun(run) {
   else {
     const r = run.receipt;
     check(exact(r, ['sessionId', 'turn', 'startSeq', 'promptSeq', 'endSeq', 'logSha256', 'outputSha256', 'blockId', 'evidenceKind'])
-      && r.sessionId === run.plannedSessionId && identity(r.blockId)
+      && r.sessionId === run.plannedSessionId && opaqueReference(r.blockId)
       && ['dsh-session-log', 'synthetic-test'].includes(r.evidenceKind), 'Invalid run receipt');
     check(Number.isSafeInteger(r.turn) && r.turn > 0 && Number.isSafeInteger(r.startSeq) && r.startSeq >= 0
       && Number.isSafeInteger(r.promptSeq) && r.promptSeq > r.startSeq
@@ -94,7 +97,7 @@ export function validateRuns(value) {
 
 export function prepareRun(state, command) {
   check(exact(command, ['type', 'requestId', 'sessionId', 'worksiteId', 'targetId', 'baseSeq']), 'Unknown preparation fields');
-  check(identity(command.requestId) && identity(command.sessionId) && identity(command.worksiteId) && identity(command.targetId), 'Explicit request/session/worksite/target identities required');
+  check(boundedIdentity(command.requestId) && boundedIdentity(command.sessionId) && opaqueReference(command.worksiteId) && opaqueReference(command.targetId), 'Explicit request/session/worksite/target identities required');
   const runs = state.runs ?? [];
   const existing = runs.find(run => run.requestId === command.requestId);
   if (existing) {
@@ -115,7 +118,7 @@ export function prepareRun(state, command) {
 /** A fixed request-boundary digest and route limits, not an authorization proof. */
 export function validateDispatchConstraints(value) {
   check(exact(value, ['provider', 'model', 'maxTokens', 'requestSha256'])
-    && identity(value.provider) && identity(value.model)
+    && boundedIdentity(value.provider) && boundedIdentity(value.model)
     && Number.isSafeInteger(value.maxTokens) && value.maxTokens > 0
     && typeof value.requestSha256 === 'string' && /^[a-f0-9]{64}$/.test(value.requestSha256), 'Invalid dispatch constraints');
   return clone(value);

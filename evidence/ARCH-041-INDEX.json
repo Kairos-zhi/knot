@@ -1,0 +1,163 @@
+{
+  "task": "KONT-ARCH-041",
+  "archive_id": "kont-arch-presentation-20261026",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_PRESENTATION_LIVE_STATE_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "checkerReceipt": "evidence/local/20261026-arch-presentation/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 89,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 14,
+  "priorFilesPreserved": 85,
+  "acceptedScope": "Main presentation follows first live registered instance; no implicit window for closed/absent views; explicit kind reveal preserves identity, with independent always-available HUD and epoch-checked Run inspector",
+  "migrationOrOldReaderCompatibilityAccepted": false,
+  "productOrHostAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "rootCommitOrDeployment": false,
+  "files": [
+    {
+      "path": "docs/api/presentation-state-contract.md",
+      "bytes": 1592,
+      "sha256": "a35ffbc7258c41e1e3fe5ef41340c43ca6fe9eb540a715230ced21a405b34690"
+    },
+    {
+      "path": "docs/tasks/KONT-ARCH-041.md",
+      "bytes": 2949,
+      "sha256": "1a9a5ae4ad37f252a357a4ecb4c9febdb6ebbf6920f090e55815716cd30f0542"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/archive.mjs",
+      "bytes": 4145,
+      "sha256": "bcefbf5da0106e3ff38f1122e9698aaae55b8047efcbd4b740b7676b2fb885e4"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/REPORT.md",
+      "bytes": 4259,
+      "sha256": "9b68e42a3e50bf1283827d9282b58eb7bc192112653e4c759f3fe655838214ac"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/audit.json",
+      "bytes": 35287,
+      "sha256": "5ed87e48a8c7e7bc9eb0af16e6631050c5039539418b52f958cfc008270ac0e5"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/audit.mjs",
+      "bytes": 3919,
+      "sha256": "f04662da674d6c68e88bb4de62cbca03e7980c5f7fc9cf487ba49b654ce821a9"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/build.log",
+      "bytes": 231,
+      "sha256": "9e8138cba0fc6d182f195ff4e3c692c25740d4e910164b548a7fcf1b15e6a6a2"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/final-review.json",
+      "bytes": 5470,
+      "sha256": "10ce44f576284e23dbbd6c1496b61800575bb3bc90df4b09113a6edc81dca9af"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/focused.tap",
+      "bytes": 22771,
+      "sha256": "cabfc375f43e7d562899d4c7e591bd756d764d85308f01f0ae2824343d89d2fc"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/own-cases.tap",
+      "bytes": 1616,
+      "sha256": "e13a05fb7a8ff6c65c46ca68a8ffd3370c08dc361cd3e81043657e5a2c36a35f"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/own-cases.test.mjs",
+      "bytes": 7104,
+      "sha256": "d55e43ff99a9a86313f0d901a8a76ef41aede8d88f1658345e5c6a9a7334c0d0"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/checker/write-final.mjs",
+      "bytes": 4221,
+      "sha256": "75bb2e69733bbe68248a745930f5bdc5ba8c752cfeb9bab4e0d7f1ff4760f0f7"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/controller/CLOSEOUT.md",
+      "bytes": 802,
+      "sha256": "5273042318c9801c92731d87b429d710d1ae7a6aac345c868e35ef569b5562bd"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/controller/baseline.json",
+      "bytes": 13670,
+      "sha256": "54ffe6f8b13e9a1c8caca848ddb3fbab1db5221389cefc7a5f1ad5e8e697a3c1"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/controller/receipt.json",
+      "bytes": 915,
+      "sha256": "5dd83c06705569de20cebc1515fcfa8c38d45861977af7fce2310b1fa0ad56ab"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/ARCH-04-source.json",
+      "bytes": 2501,
+      "sha256": "e124e86bb858774cf436f592a98bddbe4f77f5eef7fbad72fc4d8400c2a83beb"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/REPORT.md",
+      "bytes": 2597,
+      "sha256": "00e808fed88884502f2f33b8b474104f527a9a6225a2ee96c4c436f81d1bd50e"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/TASK.md",
+      "bytes": 5394,
+      "sha256": "5addb4125a4cb5f2d24fc55aa0adbb96941348c53d7dcd664127c552b6759c2d"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/baseline.json",
+      "bytes": 13304,
+      "sha256": "835ad3dfe8317cbef06a3a89021c539a8441a4663da00d211c1d523762f9cec1"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/build.log",
+      "bytes": 231,
+      "sha256": "5251e4f4476dc99e10e6e625bbe49b6a1cb7c968d032ac50d4239cb8eae5e414"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/focused-tests.log",
+      "bytes": 22778,
+      "sha256": "82ef47f3d2d2b6bdd78d52803ee648e1794e3dbed3b52b9d6c358bd3d8b06ad0"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/manifest.json",
+      "bytes": 2393,
+      "sha256": "0d7f1c390ca5c2c50dd1379367789ffc524d4679c26ee59db8b3d1784e9a3d95"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/old-fixture-change.json",
+      "bytes": 469,
+      "sha256": "fb7dea2826f64231b65cac3f48c651c1e883c5fd1eac9676bcf4eb4e79c94789"
+    },
+    {
+      "path": "evidence/local/20261026-arch-presentation/maker/protection-check.json",
+      "bytes": 7415,
+      "sha256": "3e51b9463f0eb1924435378a0a94841bfa9327123e3db41705c98beed682a087"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "bytes": 57941,
+      "sha256": "e28a11fb02f0d39d86dba8be33733921c9e364633ca7f8734f8495cf6af04164"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "bytes": 40957,
+      "sha256": "dcf2f95e53592c89dede65967f597a3bc46c53acdf5bb3f2721385a213bddd49"
+    },
+    {
+      "path": "tests/arch-presentation-state.test.mjs",
+      "bytes": 11136,
+      "sha256": "d1ab55c24702e6e9775d3ae73acda25bd083efbd7cb51c4c421592f75339fa04"
+    },
+    {
+      "path": "tests/workspace-recovery-client.test.mjs",
+      "bytes": 11603,
+      "sha256": "f78e87403d12ff65d597c5848371efe25b8a729a8fc333e5b676cdd8957700a8"
+    }
+  ]
+}

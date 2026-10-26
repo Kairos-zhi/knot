@@ -16,7 +16,7 @@ const dto = (phase, worksiteId = 'site:current') => ({ runId: `run:secret:${phas
   sessionId: 'session:secret', targetId: 'target:1', worksiteId, phase,
   hasOutput: phase === 'completed', blockId: phase === 'completed' ? 'output:1' : null });
 const asset = { id: 'target:1', title: '公开材料目标', blocks: [{ id: 'output:1', content: 'public' }] };
-const base = { worksiteId: 'site:current', assets: [asset], runs: [dto('completed')] };
+const base = { worksiteId: 'site:current', assets: [asset], assetSeq: 4, runSeq: 4, runs: [dto('completed')] };
 function all(node) { return !node || typeof node !== 'object' ? [] : [node, ...node.children.flat(Infinity).flatMap(all)]; }
 function text(node) { return !node || typeof node === 'boolean' ? '' : typeof node !== 'object' ? String(node) : node.children.flat(Infinity).map(text).join(' '); }
 const buttons = node => all(node).filter(item => item.type === 'button');

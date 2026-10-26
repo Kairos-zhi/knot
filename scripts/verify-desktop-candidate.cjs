@@ -2,28 +2,26 @@
 // Installs into a newly created isolated profile, never the running Desktop.
 const assert = require('node:assert/strict');
 const { createRequire } = require('node:module');
-const { mkdtemp, readFile, writeFile, rm, access } = require('node:fs/promises');
+const { mkdtemp, readFile, writeFile, rm, access, realpath } = require('node:fs/promises');
 const { resolve, join, dirname, relative, isAbsolute } = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { runInNewContext } = require('node:vm');
 const { createHash } = require('node:crypto');
-const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const anchor = 'D:/DSH-Desktop/app/resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/package.json';
 const runtime = 'D:/DSH-Desktop/app/resources/runtime/primary-runtime/dependencies';
 
-async function verifyDesktopCandidate(candidateRoot, expectedManifestSha256) {
+async function verifyDesktopCandidate(candidateRoot, expectedManifestSha256, options = {}) {
+  assert.ok(options && typeof options === 'object' && !Array.isArray(options));
+  assert.ok(Object.keys(options).every(key => key === 'workstation'));
+  assert.ok(options.workstation === undefined || typeof options.workstation === 'boolean');
   const root = resolve(candidateRoot);
   assert.match(expectedManifestSha256 ?? '', /^[a-f0-9]{64}$/);
-  const bytes = await readFile(join(root, 'manifest.json'));
-  assert.equal(hash(bytes), expectedManifestSha256, 'Reviewed candidate manifest digest required');
-  const manifest = JSON.parse(bytes);
-  assert.equal(manifest.format, 'kont-desktop-directory-candidate/v1');
-  assert.ok(Array.isArray(manifest.files) && manifest.files.length === 25);
-  for (const file of manifest.files) {
-    assert.match(file.path, /^packages\/(desktop-bundle|dsh-plugin)\/(?:package\.json|cordis\.patch\.yml|(?:src|lib)\/[a-z0-9.-]+)$/);
-    const artifact = await readFile(join(root, file.path));
-    assert.equal(artifact.length, file.bytes); assert.equal(hash(artifact), file.sha256);
-  }
+  // Share the exact versioned inventory, checksum and directory fences with
+  // preparation. The official manager adds runtime compatibility, not a second
+  // looser definition of what belongs in a reviewed candidate.
+  const { verifyDesktopCandidate: verifyInventory } = await import('./prepare-desktop-candidate.mjs');
+  const { manifest } = await verifyInventory(root, expectedManifestSha256);
+  if (options.workstation) assert.equal(manifest.format, 'kont-desktop-directory-candidate/v2', 'Workstation integration requires the current inventory');
   const bundleDir = join(root, 'packages/desktop-bundle');
   const pluginDir = join(root, 'packages/dsh-plugin');
   const bundle = JSON.parse(await readFile(join(bundleDir, 'package.json'), 'utf8'));
@@ -65,11 +63,20 @@ async function verifyDesktopCandidate(candidateRoot, expectedManifestSha256) {
     const pluginPath = dirname(installedPlugin);
     const inside = relative(dir, pluginPath);
     assert.ok(inside && !inside.startsWith('..') && !isAbsolute(inside), 'Installed plugin must be copied inside temporary profile');
-    for (const file of manifest.files) {
-      const path = file.path.replace(/^packages\/(desktop-bundle|dsh-plugin)\//, '');
-      const installedPath = file.path.startsWith('packages/desktop-bundle/') ? dirname(installedBundle) : pluginPath;
-      assert.deepEqual(await readFile(join(installedPath, path)), await readFile(join(root, file.path)), file.path);
+    async function verifyInstalledFiles() {
+      for (const file of manifest.files) {
+        const path = file.path.replace(/^packages\/(desktop-bundle|dsh-plugin)\//, '');
+        const installedPath = file.path.startsWith('packages/desktop-bundle/') ? dirname(installedBundle) : pluginPath;
+        const installedFile = join(installedPath, path);
+        const actualFile = await realpath(installedFile), withinProfile = relative(await realpath(dir), actualFile);
+        assert.ok(withinProfile && !withinProfile.startsWith('..') && !isAbsolute(withinProfile), 'Copied artifact must remain in its temporary profile');
+        const bytes = await readFile(installedFile);
+        assert.equal(bytes.length, file.bytes);
+        assert.equal(createHash('sha256').update(bytes).digest('hex'), file.sha256, file.path);
+        assert.deepEqual(bytes, await readFile(join(root, file.path)), file.path);
+      }
     }
+    await verifyInstalledFiles();
     const application = spawnSync(process.execPath, [resolve('tests/desktop-compat-worker.cjs')], {
       env: { ...environment, ELECTRON_RUN_AS_NODE: '1', KONT_PLUGIN_ENTRY: join(pluginPath, 'src/index.mjs') },
       encoding: 'utf8', windowsHide: true, timeout: 30000 });
@@ -87,12 +94,27 @@ async function verifyDesktopCandidate(candidateRoot, expectedManifestSha256) {
     assert.equal(registrations.some(row => row.spec.name === 'main' && row.spec.key === 'kont'), true);
     effects.reverse().forEach(dispose => dispose()); assert.equal(style.removed, true);
     await assert.rejects(access(join(dir, 'compatibility.json')), { code: 'ENOENT' });
+    let workstation;
+    if (options.workstation) {
+      const installedRoot = await realpath(pluginPath), profileRoot = await realpath(dir);
+      const withinProfile = relative(profileRoot, installedRoot);
+      assert.ok(withinProfile && !withinProfile.startsWith('..') && !isAbsolute(withinProfile));
+      const integrated = spawnSync(process.execPath, [resolve(__dirname, '../tests/desktop-workstation-worker.mjs')], {
+        env: { ...environment, ELECTRON_RUN_AS_NODE: '1', KONT_INSTALLED_PLUGIN_ROOT: installedRoot,
+          KONT_ISOLATED_PROFILE_ROOT: profileRoot },
+        encoding: 'utf8', windowsHide: true, timeout: 30000,
+      });
+      assert.equal(integrated.status, 0, integrated.stderr || integrated.stdout || String(integrated.error));
+      workstation = JSON.parse(integrated.stdout.trim());
+      await verifyInstalledFiles();
+    }
     return { version: applied.version, officialManagerInspect: inspected.status,
       officialManagerInstall: 'completed-in-isolated-profile', application: installed.application,
       enabled: false, runtimeApply: applied.checks, rendererModuleAndSlots: true,
       packageCopied: true, installedFilesMatched: manifest.files.length, candidateManifestSha256: expectedManifestSha256,
       versionExemptions: false, networkPackageResolution: false,
-      liveDesktopTouched: false, actualDesktopDeployment: false, modelCalls: 0 };
+      liveDesktopTouched: false, actualDesktopDeployment: false, modelCalls: 0,
+      ...(workstation ? { workstation, installedFilesUnchangedAfterWorkstation: true } : {}) };
   } finally {
     await ctx.fiber.dispose();
     const target = resolve(dir), parent = resolve('D:/Temp');
@@ -102,6 +124,10 @@ async function verifyDesktopCandidate(candidateRoot, expectedManifestSha256) {
 }
 module.exports = { verifyDesktopCandidate };
 if (require.main === module || (process.argv[1] && resolve(process.argv[1]) === __filename)) {
-  verifyDesktopCandidate(process.argv[2], process.argv[3]).then(value => console.log(JSON.stringify(value)))
+  const args = process.argv.slice(2);
+  if (args.length < 2 || args.length > 3 || args[2] !== undefined && args[2] !== '--workstation') {
+    throw new Error('Usage: verify-desktop-candidate.cjs <candidate> <reviewed-manifest-sha256> [--workstation]');
+  }
+  verifyDesktopCandidate(args[0], args[1], { workstation: args[2] === '--workstation' }).then(value => console.log(JSON.stringify(value)))
     .catch(error => { console.error(error); process.exitCode = 1; });
 }

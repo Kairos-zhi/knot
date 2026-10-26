@@ -38,6 +38,7 @@ test('built client embeds local panel/view/source, shares all presentations, and
     return { ok: true, json: async () => vm.runInContext('JSON.parse(payload)', context) };
   };
   const context = vm.createContext({ window, document, URL, AbortController, fetch,
+    EventSource: class { addEventListener() {} close() {} },
     payload: JSON.stringify({ ok: true, seq: 4, runs: [{ runId: 'r1', requestId: 'q1', sessionId: 's1', targetId: 'target', worksiteId: 'one', phase: 'completed', hasOutput: true, blockId: 'b1' }] }) });
   vm.runInContext(bundle, context);
   const exported = definition.factory(name => { assert.equal(name, 'react', 'local aliases must not escape to host require'); return react; });

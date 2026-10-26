@@ -6,6 +6,7 @@ import { bindRunObserver } from './run-observer-binding.mjs';
 import { parseReadAuditConfig, resolveReadAudit, readAuditInject } from './read-audit-config.mjs';
 import { DshReadError } from './dsh-run-read.mjs';
 import { listRuns, getRun } from './run-query.mjs';
+import { createWorksitePreview } from './worksite-preview.mjs';
 export const name = 'kont-worksite';
 export const inject = ['webServer', 'connection'];
 
@@ -58,6 +59,30 @@ export function createProtocolHandler(store, connection, options = {}) {
       const identity = caller(req, connection, options);
       if (identity.refusal !== undefined) { protocolError(identity.refusal, identity.refusal === 401 ? 'UNAUTHORIZED' : 'FORBIDDEN', 'Request rejected'); return; }
       const url = new URL(req.url, 'http://localhost');
+      if (url.pathname.startsWith('/kont/worksites/')) {
+        if (req.method !== 'GET') {
+          res.setHeader('allow', 'GET');
+          protocolError(405, 'METHOD_NOT_ALLOWED', 'GET required');
+          return;
+        }
+        // Match the encoded path first: an encoded slash belongs to the ID.
+        const match = /^\/kont\/worksites\/([^/]+)\/preview$/.exec(url.pathname);
+        if (!match) {
+          throw new KontError('NOT_FOUND', 'Unknown KONT route', 404);
+        }
+        let worksiteId;
+        try {
+          worksiteId = decodeURIComponent(match[1]);
+        } catch {
+          throw new KontError('INVALID_WORKSITE_ID', 'Invalid encoded worksite identity');
+        }
+        // Sequence and supply must describe the same snapshot, even if another
+        // client changes the worksite immediately after this read.
+        const state = store.read();
+        const preview = createWorksitePreview(state, worksiteId);
+        sendJson(res, 200, { ok: true, seq: state.seq, preview });
+        return;
+      }
       if (url.pathname === '/kont/runs' || url.pathname.startsWith('/kont/runs/')) {
         if (req.method !== 'GET') { res.setHeader('allow', 'GET'); protocolError(405, 'METHOD_NOT_ALLOWED', 'GET required'); return; }
         const state = store.read();
@@ -149,27 +174,43 @@ export async function apply(ctx, config = {}) {
   if (agentToken.length < 32 || /\s/.test(agentToken)) throw new Error('KONT agent token is invalid');
   const store = await new KontStore(resolve(dataDirectory, 'worksites.json')).init();
   const protocol = createProtocolHandler(store, ctx.connection, { agentToken, agentSource: process.env.KONT_AGENT_SOURCE || 'agent:local' });
-  let observerBinding;
+  let observerOwner, storageDisposal;
+  const bindObserverOwner = (scope, options) => {
+    if (storageDisposal) throw new DshReadError('DSH_OBSERVER_CLOSED');
+    if (observerOwner && !observerOwner.released) throw new DshReadError('DSH_OBSERVER_OWNER_BUSY');
+    const binding = bindRunObserver(scope, store, options);
+    let disposal;
+    const owner = { released: false, dispose() {
+      if (!disposal) disposal = binding.dispose().then(() => { owner.released = true; });
+      return disposal;
+    } };
+    observerOwner = owner;
+    return owner;
+  };
   // Cordis awaits effect disposers; an async event listener is not a shutdown
   // barrier and could let the process exit before the lock was unlinked.
-  const disposeStorage = async () => {
-    protocol.dispose();
-    try { await observerBinding?.dispose(); } finally { await store.close(); }
+  const disposeStorage = () => {
+    if (!storageDisposal) storageDisposal = (async () => {
+      protocol.dispose();
+      await observerOwner?.dispose();
+      await store.close();
+    })();
+    return storageDisposal;
   };
   ctx.effect(() => disposeStorage, 'kont-worksite.storage');
   try {
     if (audit.enabled) {
       if (readAuditInject.some(name => !ctx.get(name))) throw new DshReadError('DSH_HOST_CAPABILITY_MISSING');
       const dependency = ctx.inject(readAuditInject, async scope => {
-        const binding = bindRunObserver(scope, store, await resolveReadAudit(scope, audit));
-        observerBinding = binding;
-        scope.effect(() => () => binding.dispose(), 'kont-worksite.read-audit');
+        const owner = bindObserverOwner(scope, await resolveReadAudit(scope, audit));
+        scope.effect(() => () => owner.dispose(), 'kont-worksite.read-audit');
       });
       await dependency.await();
-    } else observerBinding = bindRunObserver(ctx, store);
+    } else bindObserverOwner(ctx);
   }
   catch (error) { await disposeStorage(); throw error; }
   ctx.effect(() => ctx.webServer.register({ kind: 'exact', path: '/kont/api/workspace', handler: createHandler(store, ctx.connection) }));
   for (const path of ['/kont/snapshot', '/kont/command', '/kont/events']) ctx.effect(() => ctx.webServer.register({ kind: 'exact', path, handler: protocol }));
   ctx.effect(() => ctx.webServer.register({ kind: 'prefix', path: '/kont/runs', handler: protocol }));
+  ctx.effect(() => ctx.webServer.register({ kind: 'prefix', path: '/kont/worksites/', handler: protocol }));
 }

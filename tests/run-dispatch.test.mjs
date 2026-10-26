@@ -116,7 +116,9 @@ test('SYNTHETIC dispatch: restore preserves claim, rejects old export/replacemen
   const before = f.store.snapshot();
   await invoke(f, () => ({ accepted: true }));
   const claim = f.store.read().runs[0].dispatchClaim;
-  const omitted = structuredClone(before); delete omitted.runs;
+  // A full Store export requires its journal. This fixture intentionally
+  // exercises the legacy unmarked import path that preserves the live journal.
+  const omitted = structuredClone(before); delete omitted.format; delete omitted.runs;
   await f.store.restoreSnapshot(omitted);
   assert.deepEqual(f.store.read().runs[0].dispatchClaim, claim);
   await assert.rejects(f.store.restoreSnapshot(before), { code: 'RUN_RESTORE_CONFLICT' });

@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 
 export const TARGET_HOST_VERSION = '0.2.1-rc.2';
 const defaultRoot = fileURLToPath(new URL('../', import.meta.url));
-const productFiles = [
+const legacyProductFiles = [
   'packages/desktop-bundle/package.json', 'packages/desktop-bundle/cordis.patch.yml',
   'packages/dsh-plugin/package.json',
   ...['client.cjs', 'dsh-run-read.mjs', 'index.mjs', 'kernel.mjs', 'read-audit-config.mjs',
@@ -16,7 +16,12 @@ const productFiles = [
     .map(name => `packages/dsh-plugin/src/${name}`),
   ...['client.js', 'knot-model.js', 'snapshot.js', 'workspace-state.js'].map(name => `packages/dsh-plugin/lib/${name}`),
 ].sort();
-export const DESKTOP_CANDIDATE_FILES = Object.freeze(productFiles);
+export const LEGACY_DESKTOP_CANDIDATE_FILES = Object.freeze(legacyProductFiles);
+// The public current inventory is used by preparation; v1 remains read-only.
+export const DESKTOP_CANDIDATE_FILES = Object.freeze([
+  ...legacyProductFiles, 'packages/dsh-plugin/src/worksite-preview.mjs',
+].sort());
+const productFiles = DESKTOP_CANDIDATE_FILES;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const samePath = (a, b) => process.platform === 'win32' ? resolve(a).toLowerCase() === resolve(b).toLowerCase() : resolve(a) === resolve(b);
 const inside = (path, root) => { const part = relative(root, path); return !part || !part.startsWith(`..${sep}`) && part !== '..' && !isAbsolute(part); };
@@ -81,7 +86,7 @@ export async function prepareDesktopCandidate({ sourceRoot = defaultRoot, output
     artifacts.set(path, bytes);
     files.push({ path, bytes: bytes.length, sha256: hash(bytes), sourceSha256: hash(original), transformation });
   }
-  const manifest = { format: 'kont-desktop-directory-candidate/v1', sourceBaseCommit, sourceState: 'tracked-product-files-match-base',
+  const manifest = { format: 'kont-desktop-directory-candidate/v2', sourceBaseCommit, sourceState: 'tracked-product-files-match-base',
     targetHostVersion: TARGET_HOST_VERSION, layout: 'sibling-local-directories',
     portability: 'unverified-directory-candidate-not-a-standalone-tarball',
     compatibility: 'declared-target-only-not-a-test-result', packages: records,
@@ -109,10 +114,19 @@ export async function verifyDesktopCandidate(outputDir, expectedManifestSha256) 
   if (expectedManifestSha256 && digest !== expectedManifestSha256) reject('manifest digest mismatch');
   if ((await regular(resolve(output, 'manifest.sha256'))).toString('utf8') !== `${digest}  manifest.json\n`) reject('manifest checksum mismatch');
   const manifest = JSON.parse(manifestBytes);
-  if (manifest.format !== 'kont-desktop-directory-candidate/v1'
-    || JSON.stringify(manifest.files?.map(f => f.path)) !== JSON.stringify(productFiles)) reject('manifest inventory mismatch');
-  const expected = new Set(['manifest.json', 'manifest.sha256', ...productFiles]);
-  const directories = new Set(productFiles.flatMap(path => path.split('/').slice(0, -1).map((_, index, parts) => parts.slice(0, index + 1).join('/'))));
+  let expectedFiles;
+  if (manifest.format === 'kont-desktop-directory-candidate/v1') {
+    expectedFiles = LEGACY_DESKTOP_CANDIDATE_FILES;
+  } else if (manifest.format === 'kont-desktop-directory-candidate/v2') {
+    expectedFiles = DESKTOP_CANDIDATE_FILES;
+  } else {
+    reject('unknown manifest format');
+  }
+  if (JSON.stringify(manifest.files?.map(f => f.path)) !== JSON.stringify(expectedFiles)) {
+    reject('manifest inventory mismatch');
+  }
+  const expected = new Set(['manifest.json', 'manifest.sha256', ...expectedFiles]);
+  const directories = new Set(expectedFiles.flatMap(path => path.split('/').slice(0, -1).map((_, index, parts) => parts.slice(0, index + 1).join('/'))));
   async function walk(path, prefix = '') {
     for (const name of await readdir(path)) {
       const relativePath = prefix + name, full = resolve(path, name), info = await lstat(full);

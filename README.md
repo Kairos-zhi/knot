@@ -29,7 +29,9 @@ npm run build
 npm test
 ```
 
-当前完整测试51/51通过，无失败／跳过；在原44项上新增只读审计7组，含官方Electron/Session/JSONL实际库的隔离合成会话测试，不调用模型。此前实际官方桌面Host/client、同内核操作及普通重启证据保持历史限定接受，本轮没有重跑桌面安装／启停。构建使用 Node 类型擦除 API，有实验性警告。
+RUN-005历史完整测试51/51通过，无失败／跳过；在原44项上新增只读审计7组，含官方Electron/Session/JSONL实际库的隔离合成会话测试，不调用模型。后续任务的当前聚焦覆盖以STATE及对应独立回执为准，不把历史51项称为当前全量。此前实际官方桌面Host/client、同内核操作及普通重启证据保持历史限定接受，本轮没有重跑桌面安装／启停。构建使用 Node 类型擦除 API，有实验性警告。
+
+客户端维护入口与边界见[供给预览](docs/api/worksite-preview.md)、[失败与恢复](docs/api/workspace-recovery.md)、[响应接纳](docs/api/workspace-response.md)、[变化通知](docs/api/workspace-events.md)。开发源码通过不代表在用桌面已更新，具体状态见任务卡。
 
 ## 服务层隔离启动（测试）
 
@@ -51,6 +53,7 @@ npm start
 | `GET /kont/snapshot` | `{ok, seq, snapshot}`，snapshot 使用既有 `schemaVersion: 4` |
 | `POST /kont/command` | 原命令 `{type, ...}` 与 `{ok, value}`／`{ok:false,error}` 信封 |
 | `GET /kont/events?since=<seq>` | 有序 SSE；重启、缓存缺口或无效历史要求重新取 snapshot |
+| `GET /kont/worksites/<encodedWorksiteId>/preview` | 同次快照的seq与现场供给预览；024开发源码，尚未部署，见[契约与维护位置](docs/api/worksite-preview.md) |
 
 Agent 发送 `Authorization: Bearer <token>`，token 由插件在独立数据目录的 `agent-token` 文件生成，或由宿主环境提供；来源身份由宿主映射，调用体不能自行认领身份。仅接受受限 loopback／Host／Origin。浏览器通过 DSH Connection 鉴权，调用同一存储和内核。
 

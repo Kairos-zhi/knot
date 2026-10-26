@@ -2,13 +2,77 @@ import { mkdir, readFile, writeFile, rename, unlink, open } from 'node:fs/promis
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { createDefaultWorkspace } from '../lib/workspace-state.js';
-import { getBlocks } from '../lib/knot-model.js';
-import { applyCommand, normalizeSnapshot, KontError, reject, isRecord, text } from './kernel.mjs';
+import { createWorksitePreview } from './worksite-preview.mjs';
+import { applyCommand, normalizeSnapshot, normalizeOrganization, KontError, reject, isRecord, text } from './kernel.mjs';
 import { prepareRun, returnRun, validateRuns, runHash, claimRunDispatch, settleRunDispatch } from './run.mjs';
 export { KontError };
 
-const fresh = () => ({ schemaVersion: 4, revision: 0, seq: 0, assets: [], edges: [], workspace: createDefaultWorkspace(), titles: { legacy: '第一个工作现场' } });
+const fresh = () => ({ schemaVersion: 4, revision: 0, seq: 0, assets: [], edges: [], workspace: createDefaultWorkspace(), titles: { legacy: '第一个工作现场' }, organization: { version: 1, folders: [] } });
 const clone = value => structuredClone(value);
+const STORE_SNAPSHOT_FORMAT = 'kont-store-snapshot/v1';
+const defaultTitle = worksiteId => worksiteId === 'legacy' ? '第一个工作现场' : worksiteId;
+const isDefaultTitle = (worksiteId, title) => title === worksiteId || title === defaultTitle(worksiteId);
+
+// The marker is owned by the Store contract, not Canvas schemaVersion. Check
+// it before core normalization can discard a future/invalid format claim.
+function isFullStoreSnapshot(value) {
+  const marker = Object.getOwnPropertyDescriptor(value, 'format');
+  if (!marker) return false;
+  if (!marker.enumerable || !Object.hasOwn(marker, 'value') || marker.value !== STORE_SNAPSHOT_FORMAT)
+    reject('UNSUPPORTED_STORE_SNAPSHOT_FORMAT', '不支持的完整Store快照格式');
+  const keys = ['format', 'schemaVersion', 'assets', 'edges', 'workspace', 'titles', 'organization', 'runs'];
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  if (![Object.prototype, null].includes(Object.getPrototypeOf(value)) || Object.getOwnPropertySymbols(value).length
+    || Object.keys(descriptors).some(key => !keys.includes(key))) reject('INVALID_STORE_SNAPSHOT', '完整Store快照字段无效');
+  for (const key of ['schemaVersion', 'assets', 'edges', 'workspace']) {
+    if (!descriptors[key]?.enumerable || !Object.hasOwn(descriptors[key], 'value'))
+      reject('INVALID_STORE_SNAPSHOT', '完整Store快照缺少核心字段');
+  }
+  if (value.schemaVersion !== 4 || !Array.isArray(value.assets) || !Array.isArray(value.edges) || !isRecord(value.workspace))
+    reject('INVALID_STORE_SNAPSHOT', '完整Store快照核心格式无效');
+  for (const [key, code] of [['titles', 'TITLES_RESTORE_REQUIRED'], ['organization', 'ORGANIZATION_RESTORE_REQUIRED'], ['runs', 'RUN_RESTORE_CONFLICT']]) {
+    if (!descriptors[key]?.enumerable || !Object.hasOwn(descriptors[key], 'value'))
+      reject(code, '完整Store快照缺少业务元数据');
+  }
+  if (value.runs === undefined) reject('RUN_RESTORE_CONFLICT', '完整Store快照必须显式包含Run记录');
+  return true;
+}
+
+function normalizeTitles(value, workspace, allowMissing = false) {
+  const invalid = () => reject('INVALID_TITLES', '现场名称表格式或覆盖范围无效');
+  if (value === undefined && allowMissing) value = {};
+  if (!isRecord(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value))
+    || Object.getOwnPropertySymbols(value).length) invalid();
+  const result = {};
+  for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(value))) {
+    if (!key.trim() || !descriptor.enumerable || !Object.hasOwn(descriptor, 'value')
+      || typeof descriptor.value !== 'string' || descriptor.value.length > 200) invalid();
+    Object.defineProperty(result, key, { value: descriptor.value, enumerable: true, writable: true, configurable: true });
+  }
+  for (const site of workspace.worksites) {
+    if (!Object.hasOwn(result, site.id)) {
+      if (!allowMissing) invalid();
+      Object.defineProperty(result, site.id, { value: defaultTitle(site.id), enumerable: true, writable: true, configurable: true });
+    }
+    text(result[site.id], 200, '现场标题');
+  }
+  return result;
+}
+
+function prepareStoreRestore(value) {
+  if (!isRecord(value)) reject('INVALID_STORE_SNAPSHOT', '恢复快照必须为普通数据');
+  const full = isFullStoreSnapshot(value);
+  const snapshot = normalizeSnapshot(value);
+  const titles = Object.getOwnPropertyDescriptor(value, 'titles');
+  const organization = Object.getOwnPropertyDescriptor(value, 'organization');
+  const runs = Object.getOwnPropertyDescriptor(value, 'runs');
+  if (titles && !Object.hasOwn(titles, 'value')) reject('INVALID_TITLES', '现场名称表必须为普通数据');
+  if (organization && !Object.hasOwn(organization, 'value')) reject('INVALID_ORGANIZATION', '现场文件夹组织必须为普通数据');
+  if (runs && !Object.hasOwn(runs, 'value')) reject('RUN_RESTORE_CONFLICT', 'Run记录必须为普通数据');
+  return { snapshot, titles: titles ? normalizeTitles(titles.value, snapshot.workspace) : null,
+    organization: organization ? normalizeOrganization(organization.value, snapshot.workspace) : null,
+    runs: runs && (full || runs.value !== undefined) ? validateRuns(clone(runs.value)) : null };
+}
 
 /** One authoritative schema-4 snapshot with atomic persistence and post-commit events. */
 export class KontStore {
@@ -28,6 +92,7 @@ export class KontStore {
   }
   #validate(input) {
     if (!isRecord(input)) reject('INVALID_STORE', '现场存储损坏，已停止写入', 503);
+    const full = isFullStoreSnapshot(input);
     let value = input;
     // Only the explicitly identified old candidate receives these defaults.
     // Its bytes are left intact until an actual successful mutation occurs.
@@ -48,16 +113,19 @@ export class KontStore {
       if (asset.blocks?.length > 1000) reject('STORE_LIMIT', '结内块过多');
       for (const block of asset.blocks ?? []) text(block.content, 50000, '块正文');
     }
-    const titles = isRecord(value.titles) ? clone(value.titles) : {};
+    if (Object.hasOwn(value, 'titles') && value.titles === undefined) reject('INVALID_TITLES', '现场名称表不能为undefined');
+    const titles = normalizeTitles(value.titles, snapshot.workspace, !full);
     for (const site of snapshot.workspace.worksites) {
       text(site.draft, 50000, '草稿');
-      if (!Object.hasOwn(titles, site.id)) Object.defineProperty(titles, site.id, { value: site.id, enumerable: true, writable: true, configurable: true });
-      text(titles[site.id], 200, '现场标题');
     }
-    return { ...snapshot, revision, seq, titles, ...(value.runs !== undefined ? { runs: validateRuns(value.runs) } : {}) };
+    const organization = normalizeOrganization(Object.hasOwn(value, 'organization') ? value.organization : { version: 1, folders: [] }, snapshot.workspace);
+    return { ...snapshot, revision, seq, titles, organization, ...(value.runs !== undefined ? { runs: validateRuns(value.runs) } : {}) };
   }
   read() { return clone(this.#state); }
-  snapshot() { const { revision, seq, titles, ...snapshot } = this.read(); return snapshot; }
+  // Complete business export; local CAS counters remain owned by the target.
+  snapshot() { const { revision, seq, ...snapshot } = this.read(); return { format: STORE_SNAPSHOT_FORMAT, ...snapshot, runs: snapshot.runs ?? [] }; }
+  // Explicitly lossy Canvas projection for consumers of the frozen core only.
+  coreSnapshot() { return normalizeSnapshot(this.read()); }
   subscribe(listener) {
     if (this.#closing) reject('STORE_CLOSED', '现场存储已关闭', 503);
     this.#listeners.add(listener); return () => this.#listeners.delete(listener);
@@ -96,8 +164,7 @@ export class KontStore {
     // snapshot validator rejects accessors/non-JSON values on the actual model.
     try {
       request = clone(request);
-      if (imported) imported = { snapshot: normalizeSnapshot(imported),
-        runs: imported.runs === undefined ? null : validateRuns(clone(imported.runs)) };
+      if (imported) imported = prepareStoreRestore(imported);
     }
     catch (error) { return Promise.reject(error); }
     const result = this.#queue.then(async () => {
@@ -112,7 +179,14 @@ export class KontStore {
       // runtime attestations. An exported journal must exactly match this store.
       if (imported?.runs !== null && imported?.runs !== undefined
         && runHash(imported.runs) !== runHash(this.#state.runs ?? [])) reject('RUN_RESTORE_CONFLICT', 'Snapshot cannot replace Run evidence');
-      const next = imported ? { ...imported.snapshot, revision: this.#state.revision, seq: this.#state.seq, titles: {},
+      if (imported && imported.organization === null && this.#state.organization.folders.length)
+        reject('ORGANIZATION_RESTORE_REQUIRED', '恢复快照须显式包含现有文件夹组织');
+      if (imported && imported.titles === null && Object.entries(this.#state.titles).some(([id, title]) => !isDefaultTitle(id, title)))
+        reject('TITLES_RESTORE_REQUIRED', '恢复快照须显式包含现有业务名称');
+      const next = imported ? { ...imported.snapshot, revision: this.#state.revision, seq: this.#state.seq,
+        titles: imported.titles ?? normalizeTitles(Object.fromEntries(imported.snapshot.workspace.worksites.map(site =>
+          [site.id, Object.hasOwn(this.#state.titles, site.id) ? this.#state.titles[site.id] : defaultTitle(site.id)])), imported.snapshot.workspace),
+        organization: imported.organization ?? { version: 1, folders: [] },
         ...(this.#state.runs !== undefined ? { runs: clone(this.#state.runs) } : {}) } : this.read();
       const events = [], results = [];
       for (const command of request.commands) {
@@ -150,13 +224,7 @@ export class KontStore {
     return this.#commit({ revision, commands: [{ type: 'snapshot.restore' }] }, source, false, snapshot).then(({ state }) => state);
   }
   preview(worksiteId) {
-    const state = this.read();
-    const site = state.workspace.worksites.find(site => site.id === worksiteId);
-    if (!site) reject('NOT_FOUND', '现场不存在', 404);
-    return { worksiteId: site.id, draft: site.draft, materials: site.checkedIds.filter(id => !site.excludedIds.includes(id)).map(id => {
-      const asset = state.assets.find(asset => asset.id === id);
-      return { id: asset.id, title: asset.title, summary: asset.summary, blocks: getBlocks(asset) };
-    }) };
+    return createWorksitePreview(this.read(), worksiteId);
   }
   close() {
     if (this.#closePromise) return this.#closePromise;

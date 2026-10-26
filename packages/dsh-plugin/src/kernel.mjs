@@ -13,6 +13,43 @@ export const text = (value, max, name) => {
 };
 const id = value => typeof value === 'string' && value.trim().length > 0;
 const only = (value, keys) => Object.keys(value).every(key => keys.includes(key));
+
+/** Store-owned flat organization extension; never changes the frozen Workspace
+ * or grants supply. Reconstruct ordinary data so callers retain no aliases. */
+export function normalizeOrganization(value, workspace) {
+  const invalid = () => reject('INVALID_ORGANIZATION', '现场文件夹组织格式或引用无效');
+  const record = (item, keys) => {
+    if (!isRecord(item) || ![Object.prototype, null].includes(Object.getPrototypeOf(item))
+      || Object.getOwnPropertySymbols(item).length) invalid();
+    const descriptors = Object.getOwnPropertyDescriptors(item);
+    if (Object.keys(descriptors).length !== keys.length || keys.some(key => !descriptors[key]?.enumerable
+      || !Object.hasOwn(descriptors[key], 'value'))) invalid();
+  };
+  const array = item => {
+    if (!Array.isArray(item) || Object.getPrototypeOf(item) !== Array.prototype || item.length > 200
+      || Object.getOwnPropertySymbols(item).length || Object.getOwnPropertyNames(item).length !== item.length + 1) invalid();
+    const descriptors = Object.getOwnPropertyDescriptors(item);
+    for (let index = 0; index < item.length; index++)
+      if (!descriptors[index]?.enumerable || !Object.hasOwn(descriptors[index], 'value')) invalid();
+  };
+  record(value, ['version', 'folders']);
+  if (value.version !== 1) invalid();
+  array(value.folders);
+  const siteIds = new Set(workspace.worksites.map(site => site.id)), folderIds = new Set(), assigned = new Set();
+  const folders = value.folders.map(folder => {
+    record(folder, ['id', 'title', 'worksiteIds']);
+    if (!id(folder.id) || folder.id.length > 200 || folderIds.has(folder.id)
+      || typeof folder.title !== 'string' || folder.title.length > 200 || !folder.title.trim()) invalid();
+    folderIds.add(folder.id); array(folder.worksiteIds);
+    const worksiteIds = folder.worksiteIds.map(worksiteId => {
+      if (!id(worksiteId) || !siteIds.has(worksiteId) || assigned.has(worksiteId)) invalid();
+      assigned.add(worksiteId); return worksiteId;
+    });
+    return { id: folder.id, title: folder.title.trim(), worksiteIds };
+  });
+  if (assigned.size > 200) invalid();
+  return { version: 1, folders };
+}
 export function normalizeSnapshot(snapshot) {
   const result = normalizeCanvasSnapshot(snapshot);
   if (!result.ok) reject(result.error.code, result.error.message, 400);
@@ -27,6 +64,42 @@ const event = (type, details) => ({ type, ...details });
 export function applyCommand(next, command) {
   if (!isRecord(command) || !id(command.type)) reject('INVALID_COMMAND', '操作格式无效');
   switch (command.type) {
+    case 'folder.create':
+    case 'folder.rename':
+    case 'folder.assign': {
+      const keys = command.type === 'folder.create' ? ['type', 'id', 'title', 'baseSeq']
+        : command.type === 'folder.rename' ? ['type', 'folderId', 'title', 'baseSeq'] : ['type', 'worksiteId', 'folderId', 'baseSeq'];
+      if (!only(command, keys)) reject('INVALID_COMMAND', '文件夹操作字段无效');
+      const organization = normalizeOrganization(Object.hasOwn(next, 'organization') ? next.organization : { version: 1, folders: [] }, next.workspace);
+      if (command.type === 'folder.create') {
+        if (!id(command.id) || command.id.length > 200) reject('INVALID_ID', '文件夹标识无效');
+        if (organization.folders.some(folder => folder.id === command.id)) reject('DUPLICATE_ID', '文件夹标识已存在');
+        if (organization.folders.length >= 200) reject('STORE_LIMIT', '文件夹数量已达本轮上限');
+        const title = text(command.title, 200, '文件夹标题').trim();
+        if (!title) reject('INVALID_INPUT', '请填写文件夹标题');
+        organization.folders.push({ id: command.id, title, worksiteIds: [] });
+        next.organization = organization;
+        return { value: command.id, event: event('folder.created', { folderId: command.id, title }) };
+      }
+      const folder = organization.folders.find(item => item.id === command.folderId);
+      if (command.type === 'folder.rename') {
+        if (!folder) reject('NOT_FOUND', '文件夹不存在');
+        const title = text(command.title, 200, '文件夹标题').trim();
+        if (!title) reject('INVALID_INPUT', '请填写文件夹标题');
+        if (folder.title === title) return { value: folder.id };
+        folder.title = title; next.organization = organization;
+        return { value: folder.id, event: event('folder.renamed', { folderId: folder.id, title }) };
+      }
+      if (!next.workspace.worksites.some(site => site.id === command.worksiteId)) reject('NOT_FOUND', '现场不存在');
+      if (command.folderId !== null && !folder) reject('NOT_FOUND', '文件夹不存在');
+      const previous = organization.folders.find(item => item.worksiteIds.includes(command.worksiteId));
+      if ((previous?.id ?? null) === command.folderId) return { value: { worksiteId: command.worksiteId, folderId: command.folderId } };
+      if (previous) previous.worksiteIds = previous.worksiteIds.filter(siteId => siteId !== command.worksiteId);
+      if (folder) folder.worksiteIds.push(command.worksiteId);
+      next.organization = organization;
+      return { value: { worksiteId: command.worksiteId, folderId: command.folderId },
+        event: event('folder.assigned', { worksiteId: command.worksiteId, folderId: command.folderId }) };
+    }
     case 'knot.create': {
       const assetId = command.id ?? `knot_${randomUUID()}`;
       if (!id(assetId)) reject('INVALID_ID', 'Invalid asset identity');

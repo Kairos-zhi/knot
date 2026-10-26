@@ -1,7 +1,17 @@
 # KONT 执行队列
 
-更新：2026-10-24。本页与STATE为当前入口；历史过程见docs/archive/QUEUE-20261022.md。
+更新：2026-10-27；044派生恢复承载独立build/36项已限定接受；045精确发布准备独立限定接受，Gate等待具体本地执行例外许可。最终112计划与终读以045/controller/final-execution-plan.json、checker/final-readback.json为准；未提交或制正式候选，未在用部署。
 状态只允许：MAKER、CHECKER、GATE、ACCEPTED_LIMITED、CLOSED、BLOCKED。具体verdict及验收范围保留在原回执，不改写原历史冻结文件。
+
+037收口：Maker自测79项→独立Checker build/91项→provider范围措辞docs-only r2（已测代码/原日志未变）→根Gate ACCEPT_WORKSITE_FOLDER_CLIENT_LIMITED→evidence/WORKSTATION-037-INDEX.json。同Store文件夹分组/创建改名/移入移出接通，窄接纳/回显防错清输入；未归组sentinel、同名标题/特殊ID、CAS/晚输入与原HUD/工作岛回归通过。64保护文件保持，原69保留、现73；后端/helper/旧证据未改。真实宿主/人验及G3整体、G4/G5仍未完成，036旧读者兼容边界保留；032旧提交清单须重审，无新提交/部署许可。
+
+036收口：Maker自测42项→独立Checker build/61项→兼容说明docs-only r2核已测代码/日志未变→根Gate ACCEPT_WORKSITE_FOLDER_CONTRACT_LIMITED→evidence/WORKSTATION-036-INDEX.json。单Store文件夹引用与共用三命令、人Agent HTTP同效、CAS/事件/恢复及Run保护通过；60保护文件一致，原63路径保留、现69。core/旧二进制不保证扩展迁移降级；无文件夹UI/完整Project或生产部署。后续客户端消费本契约，不另建状态；G3整体/真实宿主/人验/G4/G5待验，032旧提交范围须重审。
+
+035收口：子Maker自测53项→独立Checker build/75项→根Gate ACCEPT_WORK_ISLAND_OVERVIEW_RETURN_LIMITED→归档evidence/WORKSTATION-035-INDEX.json。只读概览沿同Run源/唯一view标签，返回沿033原子保存/唤出；未知归属key分域/禁导航及CAS失败、迟到查询隔离通过。保护53文件保持，helper仅获准新增同realm DTO测试输入。原59路径保留、现63；未在用部署/模型或Git提交发布。W5/G3文件夹与整体交互、真实宿主和人验、G4/G5仍未完成，032旧提交范围须重审。
+
+034收口：子Maker r2自测55项→独立Checker build/68项→根Gate ACCEPT_WORKSITE_HUD_CONTINUITY_LIMITED→归档evidence/WORKSTATION-034-INDEX.json。三态唯一HUD复用既有provider草稿/保存/预览；未知Agent标识待核对，无新运行入口或后端。原55路径保留，现59；保护50及Maker18冻结匹配。树位置/key不代验真实ReactDOM焦点/输入法/人的体验，G3整体/G4/G5未完成。后续仍沿W5/G3文件夹/工作岛等原文缺口推进；032旧提交清单须重审。
+
+033收口：子Maker→自核验53项→独立Checker build/58项→根Gate ACCEPT_WORKSITE_LIBRARY_REUSE_LIMITED→归档evidence/WORKSTATION-033-INDEX.json。只接受资源库摘要及同现场呈现唤出复用；运行状态/供给/资产无第二权威，人的体验未代验。原50路径保留、现55路径，032旧50/48计划须重审，未获新的提交/发布许可。后续继续W5/G3的既有工作站组织与连续性，不将本片当G3整体或G4/G5通过。
 
 | ID | 真实执行入口／本轮归档复核人 | 状态 | 证据与范围 |
 |---|---|---|---|
@@ -33,6 +43,29 @@
 | KONT-DESKTOP-020 | 根唯一执行 / run_checker只读复核 / live_runner_maker运行脚本 | CLOSED | AE/checker/final-review.json；安装失败保全，旧桌面普通启动；升级未接受 |
 | KONT-DESKTOP-021 | run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AF/checker/final-review.json；独立9/9／11冻结，既存file-link隔离25文件一致 |
 | KONT-DESKTOP-022 | live_runner_maker＋run_maker / run_checker / 中控Gate | ACCEPTED_LIMITED | AG/checker/final-review.json；20冻结／10项＋资格11／谓词5，proposal已审，不生产 |
+| KONT-DESKTOP-023 | 根唯一执行 / deployment_checker独立只读 / 中控Gate | ACCEPTED_LIMITED | AH/checker/final-review.json；一次安装25/25、临时active与修复后普通Host启动；active端口设置仅至下次Windows启动 |
+| KONT-WORKSTATION-024 | workstation_maker / 独立Checker / 中控Gate | ACCEPTED_LIMITED | AI/checker/final-review.json；独立build/32项与维护性通过，共用供给预览/只读契约，不部署 |
+| KONT-DESKTOP-025 | workstation_maker / 独立Checker / 中控Gate | ACCEPTED_LIMITED | AJ/checker/final-review.json；独立build/21项、旧25原pin保持、新26官方隔离加载，真实root干净HEAD门不改 |
+| KONT-WORKSTATION-026 | workstation_maker / 独立Checker / 中控Gate | ACCEPTED_LIMITED | AK/checker/final-review.json；独立build/23项，同源共用预览与保存/迟到隔离；未部署 |
+| KONT-WORKSTATION-027 | workstation_maker / 独立Checker / 中控Gate | ACCEPTED_LIMITED | AL/checker/final-review.json；独立build/20项，纯阅读区/来源计数；SSR不可用，未部署 |
+| KONT-WORKSTATION-028 | workstation_maker / deployment_checker / 中控Gate | ACCEPTED_LIMITED | AM/checker/final-review.json；独立build/34项，保存失败与显式恢复；未部署 |
+| KONT-WORKSTATION-029 | workstation_maker / deployment_checker / 中控Gate | ACCEPTED_LIMITED | AN/checker/final-review.json；独立build/42项，工作站响应接纳边界，未部署 |
+| KONT-WORKSTATION-030 | workstation_maker / deployment_checker / 中控Gate | ACCEPTED_LIMITED | AO/checker/final-review.json；独立build/56项，现场变化通知，未部署 |
+| KONT-DESKTOP-031 | workstation_maker / deployment_checker / 中控Gate | ACCEPTED_LIMITED | AP/checker/final-review.json；独立build/58项、安装副本纵切与旧默认通过；非在用部署 |
+| KONT-RELEASE-032 | workstation_maker / deployment_checker / 中控Gate | GATE | AQ/checker/final-review.json；历史准备初审通过，033后旧50/48冻结须重审，未stage/commit |
+| KONT-WORKSTATION-033 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-worksite-library/checker/final-review.json；独立build/58项，资源库摘要/唤出复用，无部署 |
+| KONT-WORKSTATION-034 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-worksite-hud/checker/final-review.json；独立build/68项，三态共用输入HUD，无部署 |
+| KONT-WORKSTATION-035 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-work-island/checker/final-review.json；独立build/75项，同Run源概览/返回现场，无部署 |
+| KONT-WORKSTATION-036 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-worksite-folders/checker/final-review.json；独立build/61项，同Store文件夹组织契约，无UI部署 |
+| KONT-WORKSTATION-037 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-worksite-folders-client/checker/final-review.json；独立build/91项，同契约文件夹资源库，无部署 |
+| KONT-ARCH-038 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-state/checker/final-review.json；独立build/66项，ARCH-01限定修复，无部署 |
+| KONT-ARCH-039 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-lifecycle/checker/final-review.json；独立build/34项，ARCH-02限定修复 |
+| KONT-ARCH-040 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-epoch/checker/final-review.json；独立build/74项，ARCH-03限定修复 |
+| KONT-ARCH-041 | workstation_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-presentation/checker/final-review.json；独立build/89项，ARCH-04限定修复 |
+| KONT-ARCH-042 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-identities/checker/final-review.json；独立build/85项，ARCH-05限定修复，无部署 |
+| KONT-COMPAT-043 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-reader-pairing/checker/final-review.json；独立build/31项，离线读/导出预检，不授迁移/恢复/部署许可 |
+| KONT-COMPAT-044 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-recovery-roundtrip/checker/final-review.json；独立build/36项，具体synthetic恢复承载通过，不授生产恢复许可 |
+| KONT-RELEASE-045 | workstation_maker / workstation_checker / 中控Gate | GATE | evidence/local/20261027-release-preparation-refresh/checker/final-review.json；准备独立接受，112最终计划/控制终读见controller与checker/final-readback.json；未授权本地提交/正式候选或PR例外 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
@@ -60,3 +93,23 @@ DESKTOP-020：之直接回复“我授权”，根接续已审方案唯一approv
 DESKTOP-020执行增量：一次官方manager失败ERR_PNPM_UNEXPECTED_STORE，结果uncertain；独立读回旧12文件/profile/data不变，无候选部分更新。2026-10-25根普通无调试启动官方旧Desktop，进程与数据锁存在、原hash保持，等待事后复核；不声称升级或renderer已验。DESKTOP-021修复明确store-dir与既存.modules.yaml冲突，只隔离验证并保留旧授权占位。
 DESKTOP-021收口：ACCEPT_RECORDED_PNPM_STORE_FIX_LIMITED，官方pnpm11.28.5源码依据、11冻结项一致／独立9/9，既存file/link与空profile各真实隔离升级一次／25文件匹配，非Knot依赖／选择保持；生产resolver只读通过，原hash／020标记未动，不代表实际安装或active。022另制固定parent的单次后续方案，不因修复自动重发。
 DESKTOP-022收口：ACCEPT_FIXED_PARENT_SINGLE_SUCCESSOR_CAPABILITY_LIMITED，独立20/20冻结／focused10/10及helper资格11负例／实际生成writer谓词5分类；真实隔离6并发仅1次manager／25字节一致，018与资格为mock。具体proposal1da1b0dc...ae5df4另获独立纯计算复核；只读分拆helper非完整fresh018，尚无新human／生产parent链接或子claim。待明确新许可、从托盘正常退出与fresh018精确同hash，才可一次真实后续并另核active；不清旧记录／不模型。当前28＝25限定接受＋3关闭；建议本轮收口后按短接续卡换新窗口。
+
+DESKTOP-023初次普通启动失败阶段：之在新窗口明确“已退出，可以推进”，根完整fresh018与已审1da1...5df4精确匹配后唯一安装，manager exit0/restart-required；独立25/25字节、非Knot依赖与选择、原data保持。临时loopback实际plugin active与主区/侧栏注册、workspace/snapshot/runs同源读回通过；验证器错误snapshot比较已按原契约修正，失败记录保留。固定app.quit正常退出后，第一次无debug普通启动失败，之截图与官方日志为authenticateWebHost的bad port；该阶段曾BLOCKED，不把窗口响应视为软件可用。
+
+DESKTOP-023最终：之另明确“我确认”授权管理员临时IPv4 TCP动态范围49152–65535/store=active。首个辅助进程因WindowsPS5.1无BOM脚本编码解析失败，未执行任何set；仅ASCII元数据修正并经实际5.1独立解析后，唯一set成功。读回同时观察v6TCP范围变化，隔离断言失败结果保留并已披露，v4UDP保持，不证明精确底层联动actor；没有额外setter或回退。最终普通Host运行5进程/50967/无debug/认证401/无新crash独立通过。用户确认近期操作解释现场版本8→20，当前data不再冒称原hash。Gate=ACCEPT_INSTALLED_AND_NORMAL_STARTUP_LIMITED，AH=20261025-desktop-successor-installed，29＝26限定接受＋3关闭。临时设置仅至下次Windows启动，永久网络修复/正式Apple体验/普通renderer直接复查/新模型或完整Run未接受；无重装/清占位/强杀/Windows重启/push/merge，本地状态文档未提交。
+
+WORKSTATION-024：之“稳步推进开发”并要求人类可维护标准；共用纯供给预览＋旧store委派＋受限只读GET，独立冻结6项（4产品/测试、2报告日志）一致，build及32/32专项与相关回归通过。Gate=ACCEPT_SHARED_WORKSITE_PREVIEW_QUERY_LIMITED；AI=20261025-worksite-preview，30＝27限定接受＋3关闭。维护性审查通过，无额外框架/状态/依赖；seq同次read，供给排除/顺序/来源/深层无别名、编码和权限拒绝验证。未前端接入或在用部署；旧014候选工具25inventory未含新module，下一张打包须版本化并保留旧25核验，不直接扩清单破坏旧pin。不动已装候选/用户数据/模型/系统，本地未提交/push/merge。
+
+DESKTOP-025：之“开始”承接打包适配，Gate=ACCEPT_VERSIONED_DESKTOP_INVENTORY_LIMITED。显式v1冻结25/v2当前26，官方cjs复用唯一清单核验；11冻结项（5产品测试helper＋6日志报告）一致，独立build/21项通过。真实014原pin及25文件前后保持，新26官方离线临时profile安装/复制/index加载与renderer工厂、真实incompatible拒绝通过；初轮Windows文件symlink EPERM留样后改目录junction验证，不申请权限或跳过。31＝28限定接受＋3关闭，AJ=20261025-desktop-inventory。真实root未提交/新module未受追踪，prepare继续拒绝；测试fixture提交不冒充真实发布提交，未制备root正式候选/未部署，不续用生产安装/系统/模型授权。
+
+WORKSTATION-026：之“可以继续”后接入共用GET预览，Gate=ACCEPT_SHARED_PREVIEW_CLIENT_CONSUMPTION_LIMITED。独立build/23项、10冻结记录一致（4制作、1生成bundle、5报告日志）；保存先于GET、失败零GET、保存中编辑/组件卸载/现场变化零GET、忽略abort/延迟JSON/旧失败迟到隔离、严格seq及新draft留存通过。人类维护性通过，无新框架/依赖/供给规则复制。旧runtime-draft rawrequire seam改实际built factory，原leaveguard断言保持；仅新增preview读取错误固定提示，旧workspace保存错误不重构。32＝29限定接受＋3关闭；AK=20261025-worksite-preview-client，组件语义非ReactDOM/正式UI/人的体验。后端/清单/旧候选保持，未生产/模型/系统/真实root提交推送合并。
+
+WORKSTATION-027：最新027收口：Gate=ACCEPT_SUPPLY_PREVIEW_PANEL_LIMITED，33＝30限定接受＋3关闭。纯SupplyPreviewPanel沿用026生命周期，材料数量、默认收起原文/来源标签/历史条数、坏DTO整体抑制与无副作用通过；独立build/20项，9冻结项保持，人类维护性通过。AL=evidence/local/20261025-supply-preview-panel，evidence/WORKSTATION-027-INDEX.json。旧014原pin25及当前26清单保持；官方ASAR依赖不可解析，SSR未执行，语义树不代表实际浏览器/正式Apple体验。未部署/生产/模型/系统/真实root提交推送合并。
+
+最新028收口：Gate=ACCEPT_WORKSPACE_RECOVERY_LIMITED，34＝31限定接受＋3关闭。子Maker制作，独立build/34项及8冻结项通过，人类维护性通过。固定workspace错误、失败屏障/手动刷新、不自动重放、busy中性状态和孤立draft离页保护；旧026/027断言与旧014pin25/当前26保持。AM=evidence/local/20261025-workspace-recovery，evidence/WORKSTATION-028-INDEX.json。刷新不证明未知命令是否执行，草稿只在本页内存，无跨重启/恢复UI/正式Apple体验/在用部署。无生产/模型/系统/真实root提交推送合并。
+
+最新029收口：Gate=ACCEPT_WORKSPACE_RESPONSE_ADMISSION_LIMITED，35＝32限定接受＋3关闭。子Maker制作，独立build/42项、9冻结项与维护性通过。JSON先接纳后emit/清draft：实际读取字段/同类身份/独立版本floor、原现场全部草稿echo；未知字段原对象保持，不复制完整schema。旧028只修真实POST成功fixture，断言保持；旧014pin25/current26保持。AN=evidence/local/20261025-workspace-response，evidence/WORKSTATION-029-INDEX.json；维护API与README历史测试表述已核。不是所有命令效果/幂等或跨重启恢复；未正式Apple/浏览器/人验或在用部署，无生产/模型/系统/真实root提交推送合并。
+
+最新030收口：Gate=ACCEPT_WORKSPACE_CHANGE_NOTIFICATION_LIMITED，36＝33限定接受＋3关闭。子Maker制作，独立build/56项、10冻结项与维护性通过。唯一挂载SSE流、请求前close/接纳新seq后重建，变化/reset/断线清旧并要求手动刷新，不自动业务读写/replay。生命周期/ownwrite竞态及隔离真实HTTP SSE契约通过；不是actual dsh-app长流或原子实时同步。AO=evidence/local/20261025-workspace-events，evidence/WORKSTATION-030-INDEX.json。旧014pin25/current26保持。未正式Apple/浏览器/人验或在用部署，无生产/模型/系统/真实root提交推送合并。
+
+最新031收口：Gate=ACCEPT_INSTALLED_WORKSTATION_INTEGRATION_LIMITED，37＝34限定接受＋3关闭。子Maker制作，独立build/58项与10冻结项、人类维护性通过。官方offline新26复制后服务/index/store与renderer factory-hook经真实HTTP/SSE测试桥跑10行为，三路径/hash核实、前后26字节保持/subscriptions0；另独立旧014原pin25默认官方验证exit0。AP=evidence/local/20261025-installed-workstation，evidence/DESKTOP-031-INDEX.json。fixture commit/pin不是root release；synthetic header与官方cookie验证分开。未actual dsh-app/native EventSource/ReactDOM/人的体验/在用部署，无生产/模型/系统/真实root提交推送合并。
