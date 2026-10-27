@@ -1,0 +1,3 @@
+- insert:
+    - id: kont-worksite
+      name: '@kont/dsh-plugin'

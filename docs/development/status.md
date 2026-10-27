@@ -1,5 +1,7 @@
 # 当前开发状态
 
+2026-10-27 增量：本分支正在接入 [Knot 桌面模块](../../knot-desktop/README.md)，实施与独立 Gate 以根 [STATE.md](../../STATE.md) 及 [048 任务](desktop-integration.md)为准。桌面能力此前已有分项限定接受；它们不自动证明本次迁入正确或已部署。下文保留 2026-10-18 的原前端合并与验证记录，旧“DSH 尚未在本仓库”的描述指当时基线。
+
 状态核对：2026-10-18。代码基线为 main 合并提交 `40582f04020ecfb6bebd1b38f17e64797ec8d3e6`。[PR #8](https://github.com/Kairos-zhi/knot/pull/8)已合并，包含原 PR #6；后者也已被 GitHub 标记为 MERGED。本页只更新文档，不重新执行模型或产品测试。
 
 ## 已合入与已接受
