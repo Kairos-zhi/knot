@@ -14,3 +14,7 @@ yarn-error.log*
 *~
 .cache/
 .rsbuild/
+
+# Preserve local evidence and legacy runtime across checkout synchronization.
+/evidence/local/
+/.runtime/
