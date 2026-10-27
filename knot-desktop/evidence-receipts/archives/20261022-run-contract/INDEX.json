@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261022-run-contract",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261022-run-contract",
+      "path": "archives/20261022-run-contract/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-run-contract/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "31968e7d552eb7fecbdc86f16d5b2edb2d9c6a32fc97a94be0f836043dc72f02",
+      "publishedSha256": "94a4047ee21d328e8f9ae4c314285f81e7533f0a26363a324aac451f32f28726",
+      "sourceBytes": 2463,
+      "publishedBytes": 2459,
+      "originalOutcome": "ACCEPT_RUN_CONTRACT_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261022-run-contract",
+      "path": "archives/20261022-run-contract/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-run-contract/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "468871444b50f778736b181b966c8bd86558b774f3e48d280cd7ab0ca193fb54",
+      "publishedSha256": "4ea569364e7e5d397cf5fde3a5137bce893c7e4395787baf8dfbfa810f597a15",
+      "sourceBytes": 2636,
+      "publishedBytes": 2637,
+      "originalOutcome": "ACCEPT_RUN_CONTRACT_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261022-run-contract",
+      "path": "archives/20261022-run-contract/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-run-contract/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "e2c81139a9e024fea845b022243e24a330fd14cac5505c0fc123402996716060",
+      "publishedSha256": "e2c81139a9e024fea845b022243e24a330fd14cac5505c0fc123402996716060",
+      "sourceBytes": 4304,
+      "publishedBytes": 4304,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

@@ -1,0 +1,100 @@
+{
+  "task": "KONT-WORKSTATION-030",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T11:36:04.114Z",
+  "verdict": "ACCEPT_WORKSPACE_CHANGE_NOTIFICATION_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "489f090245411ee1d8c26a6606990fc9061ee38ac09afbbe579fc7a38e8223a1",
+    "frozenEntriesMatched": 10,
+    "sourceTestsAndHelpers": 4,
+    "generatedBundle": 1,
+    "reportAndLogs": 5,
+    "mismatch": 0,
+    "independentBuild": {
+      "runtime": "official bundled Node",
+      "command": "node scripts/build.mjs",
+      "exitCode": 0
+    },
+    "focused": {
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "newEventsTests": 10,
+      "newEventsRealHTTPContractTests": 1,
+      "relatedExisting": 43,
+      "checkerOwn": 3,
+      "log": "focused.tap",
+      "command": "node --test tests/workspace-events-client.test.mjs tests/workspace-response-client.test.mjs tests/workspace-recovery-client.test.mjs tests/worksite-preview-client.test.mjs tests/supply-preview-panel.test.mjs tests/runtime-draft.test.mjs tests/run-panel-client.test.mjs tests/client-bundle.test.mjs tests/worksite.test.mjs tests/protocol.test.mjs evidence/local/20261025-workspace-events/checker/independent.test.mjs"
+    },
+    "ownCases": [
+      "Actual captured old message/error callbacks stay inert after refresh replaces stream",
+      "Equal reset with inherited previous frame id remains valid and causes manual refresh barrier",
+      "Pending initial GET after component cleanup never creates a stream",
+      "Old own-write event callback during deferred POST JSON cannot misclassify acknowledged write"
+    ],
+    "makerCasesIndependentlyExecuted": [
+      "One same-origin credentials stream at accepted seq; lower/equal ordinary seq ignored and higher seq barriers",
+      "Malformed frame/id/reset/error/missing capability/constructor exception close with fixed message",
+      "Own POST closes old stream and opens at confirmed new seq; later backlog notification still barriers",
+      "Manual refresh failure stays closed and success restores exactly one stream without POST replay",
+      "Component/plugin cleanup and pending read/write completion cannot reopen while unmounted",
+      "True remount from current known seq and error remount stays closed",
+      "Notification clears visible or pending preview and invalidates Run output view"
+    ],
+    "realHttpScope": "New isolated synthetic KontStore and loopback HTTP server verify authenticated replay id/data, cold-start reset without id, invalid cursor/unauthenticated refusal and disconnect subscription release",
+    "legacyFixtureReview": {
+      "runPanelOnlyEventSourceDependencyStubAdded": true,
+      "oldAssertionsRetained": true,
+      "unmountComponentSemanticsUnchanged": true,
+      "newRemountResetsHookLifecycle": true
+    },
+    "old014OriginalPin25Verified": true,
+    "currentInventory26Unchanged": true,
+    "gitDiffCheckExitCode": 0
+  },
+  "maintainability": {
+    "passed": true,
+    "ownership": "startWorkspaceEvents, stopWorkspaceEvents and requireWorkspaceRefresh own one stream/generation; existing snapshot.error remains manual recovery barrier",
+    "flow": "Workspace request closes/invalidate old stream; only accepted response including draft echo can resubscribe from new snapshot seq",
+    "noOwnSourceInferenceOrPendingEventCache": true,
+    "noNewFrameworkStateMachineParallelStoreDependencyProductFileOrInventoryExpansion": true,
+    "notificationData": "Only sequence/reset marker used; no event business body merged or shown",
+    "lifecycle": "Separate mounted/provider-closed checks and generation/handle identity reject queued stale callbacks; close prevents native automatic reconnect"
+  },
+  "documentationReview": {
+    "matchesImplementation": true,
+    "files": [
+      {
+        "path": "docs/api/workspace-events.md",
+        "sha256": "956acca1f06856245700741c728339200726deaeecb41e55d1c61bbe58adad40"
+      },
+      {
+        "path": "README.md",
+        "sha256": "5f6111393d65c1ac43e75e8d84abc8377fca9db6c7e54bb152c5c205c1a36aae"
+      }
+    ],
+    "rootMayUpdateMakingStatusAfterGate": true,
+    "workspaceWideSequenceClarificationConfirmed": true
+  },
+  "acceptedScope": [
+    "Mounted-workstation change notification through EventSource-shaped interface and manual-refresh write barrier",
+    "Sequence/reset/lifecycle/own-write race handling with no automatic workspace GET, POST or replay",
+    "Actual built factory/hook regressions plus isolated real HTTP SSE service contract"
+  ],
+  "limitations": [
+    "Fake EventSource client composition plus isolated HTTP SSE is not a real browser/native EventSource or dsh-app protocol long-stream validation",
+    "Snapshot reading and subscription are not atomic and not guaranteed absolutely realtime; backend revision rejection remains final stale-write boundary",
+    "Only while mounted; no global background observation, complete event history or Last-Event-ID recovery",
+    "Notification is not a business command receipt and manual refresh does not resolve historical unknown write execution",
+    "No ReactDOM/browser layout, visual or human Apple experience acceptance",
+    "No production data/profile/ledger, desktop lifecycle/install, system setting, credential/user Session, model, root commit/push/merge, formal root release candidate, full Run or full product acceptance",
+    "No full suite or SSR retry/dependency installation; current focused56 only"
+  ],
+  "evidence": [
+    "review-plan.md",
+    "independent.test.mjs",
+    "focused.tap",
+    "REPORT.md"
+  ]
+}

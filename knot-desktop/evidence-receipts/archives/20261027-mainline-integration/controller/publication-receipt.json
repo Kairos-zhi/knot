@@ -1,0 +1,25 @@
+{
+  "task": "KNOT-INTEGRATION-048",
+  "branch": "codex/knot-desktop-integration-048",
+  "head": "ed54934095a2788405d1c7839067735fe265807f",
+  "base": "main",
+  "baseCommit": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "url": "https://github.com/Kairos-zhi/knot/pull/15",
+  "draft": true,
+  "state": "open",
+  "merged": false,
+  "commits": 1,
+  "changedFiles": 300,
+  "executionGate": "ACCEPT_MAINLINE_MODULE_CANDIDATE_ISOLATION_LIMITED",
+  "executionReviewSha256": "cb63af8f868ed43c243941f67c4c53d83a9dca6e73067cf53f7fc16d9a9ab2b3",
+  "candidateManifestSha256": "7ac0e3ab13b680de16403bcf62ff290959bfdf9fa7024f804e6885f2e7308c18",
+  "pullRequestAttached": true,
+  "forcePush": false,
+  "productionDeployment": false,
+  "modelCalls": 0,
+  "oldPRsUnmodified": [
+    12,
+    13,
+    14
+  ]
+}

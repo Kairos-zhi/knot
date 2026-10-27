@@ -1,0 +1,39 @@
+{
+  "task": "KONT-DESKTOP-015",
+  "archive_id": "kont-desktop-rollback-20261024",
+  "baseCommit": "338ef08b57b2f29859df77cbf0e85f1f115f39bb",
+  "commit": "79dd8d1b8fff9aed821d1f520b64cabf83032e92",
+  "verdict": "ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED",
+  "cleanTrackedWorktree": true,
+  "candidateManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+  "validation": {
+    "frozenMatched": 15,
+    "stagedHashesVerified": 51,
+    "focusedFailed": 0,
+    "focusedPassed": 7,
+    "independentChecker": true,
+    "originalPackageFilesMatched": 2,
+    "installedSourceFilesMatched": 12,
+    "actualTransformations": 0
+  },
+  "counts": {
+    "total": 21,
+    "acceptedLimited": 19,
+    "fullProductAcceptance": 0,
+    "closed": 2
+  },
+  "operations": {
+    "modelCalls": 0,
+    "push": false,
+    "profileWrites": false,
+    "desktopStartOrStop": false,
+    "merge": false
+  },
+  "limitations": [
+    "Persistent official-parser metadata is not live manager or active runtime inventory",
+    "Code reinstallability is not newer-data downgrade or production rollback",
+    "Renderer factory is not human UI acceptance"
+  ],
+  "next": "Bind reviewed upgrade/rollback candidates in management tool and prepare data compatibility preflight before separately authorized Desktop update",
+  "recordedAt": "2026-10-24T15:42:04.4631595+08:00"
+}

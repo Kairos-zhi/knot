@@ -1,0 +1,90 @@
+{
+  "task": "KONT-DESKTOP-016",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-24",
+  "baseCommit": "79dd8d1b8fff9aed821d1f520b64cabf83032e92",
+  "verdict": "ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGRADE_DETECTION_LIMITED",
+  "blockingImplementationFindings": [],
+  "deploymentReady": false,
+  "remainingDeploymentBlockers": [
+    "PRODUCTION_DATA_COMPATIBILITY_NOT_VERIFIED",
+    "UNSAFE_DOWNGRADE_RUN_JOURNAL_LOSS",
+    "ACTUAL_DEPLOYMENT_NOT_AUTHORIZED"
+  ],
+  "validation": {
+    "frozenManifestEntriesMatched": 13,
+    "mismatch": 0,
+    "upgradeManifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "rollbackManifestSha256": "d5fe688ab0927f4badd46d6e4f9a3d2a78ea13529a91ecb7edca62e358647336",
+    "installedOldSourceFilesUnchanged": 12,
+    "profilePackageStable": true,
+    "productAndLegacyClientUnchangedAgainstBase": true,
+    "aFocused": {
+      "command": "node --test tests/desktop-deployment-plan.test.mjs tests/desktop-host-client.test.mjs tests/desktop-host-archive.test.mjs",
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "log": "a-focused.tap",
+      "countNote": "Requested A12 plus one read-only archive regression; no full-suite claim"
+    },
+    "bFocused": {
+      "command": "node --test tests/desktop-data-compatibility.test.mjs",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "log": "b-focused.tap"
+    },
+    "actualReadonlyPrepare": {
+      "passed": true,
+      "bothExplicitInstallTargetsBlocked": true,
+      "evaluateCalls": 0,
+      "log": "readonly-prepare.json"
+    },
+    "buildOrOldArtifactRebuildByChecker": false,
+    "fullSuiteRun": false,
+    "actualLiveConnectionOrDeployment": false,
+    "productionDataReads": false,
+    "modelCalls": 0
+  },
+  "acceptedScope": [
+    "Privately issued immutable expiring pre-upgrade plans bind fixed reviewed 014/015 hashes/specs and original installed code/selection",
+    "Inspect rechecks artifact inventory/bytes and installed metadata/source before exact existing RPC envelope evaluation; forged/cloned/expired/tampered plans fail",
+    "Default and explicitly opted-in install paths remain blocked with zero evaluate calls; caller booleans do not prove compatibility",
+    "Actual frozen new/old stores operate only on newly created <temporary-root> synthetic data",
+    "Five Run stages reproducibly lose journal in old memory and after successful old write, while read-only old open preserves disk bytes",
+    "Pure compatibility preflight reports unsafe downgrade and never grants production permission, including synthetic no-loss input"
+  ],
+  "dataFinding": {
+    "phases": [
+      "prepared",
+      "reserved",
+      "submitted",
+      "uncertain",
+      "completed"
+    ],
+    "beforeRunCount": 1,
+    "oldMemoryRunCount": 0,
+    "newReopenAfterOldWriteRunCount": 0,
+    "oldReadonlyDiskBytesPreserved": true,
+    "assetsAndCompletedGeneratedProvenancePreserved": true,
+    "safeDowngrade": false
+  },
+  "limitations": [
+    "Same schemaVersion 4 and retained asset/provenance content do not establish Run/claim/receipt compatibility",
+    "Synthetic legacy no-Run asset roundtrip is narrow evidence, not production data migration or rollback acceptance",
+    "No live manager connection/query, Desktop launch/update/restart, in-use profile/ASAR write, credentials, user Session/asset read or model request",
+    "Only pre-upgrade capability is issued; post-upgrade/post-rollback source-fence transitions and later deployment consent are not implemented",
+    "No automatic data loss repair, Run journal migration, production rollback permission, product acceptance or frozen protocol coverage expansion"
+  ],
+  "evidence": [
+    "a-focused.tap",
+    "b-focused.tap",
+    "hash-check.json",
+    "hash-check.log",
+    "readonly-prepare.json",
+    "verify-evidence.mjs",
+    "REPORT.md"
+  ]
+}

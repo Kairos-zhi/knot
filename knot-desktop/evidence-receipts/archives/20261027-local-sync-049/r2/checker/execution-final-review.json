@@ -1,0 +1,48 @@
+{
+  "task": "KNOT-SYNC-049-r2",
+  "kind": "independent-final-checkout-and-execution-review",
+  "reviewedAt": "2026-10-27T14:13:23.594Z",
+  "verdict": "ACCEPT_LOCAL_AND_REMOTE_CHECKOUT_SYNCHRONIZATION_LIMITED",
+  "blockingFindings": [],
+  "commit": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+  "parent": "35f6d4247858d1684f9e437e58d9e7a9c398039c",
+  "validation": {
+    "exactFiveCommitBlobsMatchMakerExpected": true,
+    "oneCommit": true,
+    "protectedTrackedGitBlobs": 679,
+    "trackedPaths": 684,
+    "twoCheckoutHeadsMatchCommit": true,
+    "primaryBranch": "codex/local-sync-049-r2",
+    "primaryUpstream": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+    "managedDetached": true,
+    "bothIndexesAndWorktreesClean": true,
+    "remoteBranchMatchesCommit": true,
+    "product26PublicBytesUnchanged": true,
+    "fixedCompatibilityAliasAndCanonicalModule": true,
+    "rootAliasIgnoredCanonicalSourceNotIgnored": true,
+    "oldRuntimeAndDJunctionReadlinksAndMtimesUnchanged": 4,
+    "actualRuntimeMetadataUnchanged": 66,
+    "restoredPublicCodeReferenceRealpaths": 24,
+    "codeCheckoutMtimesExplicitlyDifferentFromOriginal": true,
+    "preservedIgnoredEvidenceHashes": 910,
+    "legacyTrackedEvidenceArchiveHashes": 695,
+    "oldSourceReviewsAnd048CandidatePinUnchanged": true,
+    "runtimeContentsRead": false,
+    "existingPureKernelProbeReadBackOnly": true,
+    "buildTestsOfficialOrProbeRerun": false,
+    "executionAudit": "execution-audit.json",
+    "executionAuditSha256": "d3082498c040c309ab7249b1c171c1322f20b1ac802572adf4719a840d7eadf3"
+  },
+  "maintainability": {
+    "passed": true,
+    "assessment": "Primary holds the published synchronization branch, managed is a detached same-commit copy; one fixed local source alias preserves existing code references without changing runtime data/links or creating duplicate source/Store authority."
+  },
+  "limitations": [
+    "Local checkout and remote working-branch synchronization only; main is not merged and installed Desktop is not updated.",
+    "r1 post-switch failure and ancestor-link miss remain recorded; this final acceptance applies to r2 repaired 66-runtime/24-code classification, not an unchanged-90 claim.",
+    "24 source-reference checkout mtimes are new; private runtime contents were not read and original runtime/D junctions were not changed.",
+    "Candidate remains source ed549/pin7ac0, not the documentation commit958; no candidate rebuild, model or production action.",
+    "Native/ReactDOM/actual app transport, human and G3/G4/G5 acceptance remain open."
+  ],
+  "status": "frozen_local_sync_completed_limited"
+}

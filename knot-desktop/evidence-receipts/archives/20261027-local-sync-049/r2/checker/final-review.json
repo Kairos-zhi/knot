@@ -1,0 +1,58 @@
+{
+  "task": "KNOT-SYNC-049-r2",
+  "kind": "independent-local-source-path-repair-and-documentation-review",
+  "verdict": "ACCEPT_FIXED_LOCAL_SOURCE_ALIAS_REPAIR_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestPath": "evidence/local/20261027-local-sync-049/r2/maker-freeze.json",
+    "makerManifestSha256": "82fbbc079cbe5f57714c14fdd49998bf4264f135329e05f3d89ee88bb4137cc4",
+    "fiveWorkingHashesAndExpectedGitBlobsMatched": true,
+    "baseCommit": "35f6d4247858d1684f9e437e58d9e7a9c398039c",
+    "branch": "codex/local-sync-049-r2",
+    "protectedTrackedGitContent": 679,
+    "productSourceFilesUnchanged": 26,
+    "fixedAliasReadlinkAndRealpathMatched": true,
+    "aliasAndCanonical26BytesMatchedA05": true,
+    "oneCanonicalPureKernelModule": true,
+    "pureSyntheticSnapshotNormalization": true,
+    "runtimeContentsRead": false,
+    "unchangedActualRuntimeMetadata": 66,
+    "restoredPublicCodeReferenceRealpaths": 24,
+    "codeReferenceOldAndNewMtimesRecorded": true,
+    "originalRuntimeAndDJunctionReadlinksAndMtimesUnchanged": 4,
+    "preservedEvidenceHashes": 910,
+    "archivedTrackedEvidenceHashes": 695,
+    "relativeLinksExisting": 7,
+    "canonicalSourceNotIgnored": true,
+    "primaryTemporaryUntrackedOnlyKnownAlias26Files": true,
+    "managedIndexEmpty": true,
+    "diffCheckPassed": true,
+    "oldPr16AndRemoteRefsUnchanged": true,
+    "oldReviewsAndFailureEvidencePreserved": true,
+    "storeCreated": false,
+    "dshStarted": false,
+    "modelCalls": 0,
+    "buildTestsOfficialOrCandidateRun": false,
+    "audit": "audit.json"
+  },
+  "maintainability": {
+    "passed": true,
+    "assessment": "One fixed local compatibility junction to the existing canonical source, no runtime/D link mutation or duplicate code/Store; prior ancestor-dependency miss and 66-data/24-code distinction explicitly retained."
+  },
+  "executionPreparation": {
+    "reviewedScope": "Exact five-document commit, ordinary push and stacked draft PR against 049 under existing synchronization authorization",
+    "finalTargetCollisionAndIgnoreReadbackRequired": true,
+    "finalTwoTreeAndRemoteReadbackRequired": true,
+    "managedDetachBeforePrimarySwitch": true,
+    "primarySwitchMustUseNoOverwriteIgnore": true,
+    "noForceResetCleanOrRuntimeMutation": true
+  },
+  "limitations": [
+    "r2 commit/publication/final checkout are not yet accepted; current primary still holds 049/35 with only the known local source alias untracked.",
+    "66 actual runtime metadata entries are unchanged; 24 public code references are restored with new checkout mtimes, not an unchanged-90 claim.",
+    "No runtime file content read; public source was read only through canonical/compatibility source paths.",
+    "Creation-time ENOENT is recorded by root; Checker independently verifies the resulting fixed junction and current preservation state.",
+    "No model, production update, software candidate rebuild, main merge, native/human or G3/G4/G5 acceptance."
+  ],
+  "status": "frozen_pending_root_gate_and_final_execution"
+}

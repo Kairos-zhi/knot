@@ -1,0 +1,19 @@
+{
+  "target": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+  "primaryHead": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+  "managedHead": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+  "primaryBranch": "codex/local-sync-049-r2",
+  "managedDetached": true,
+  "upstream": "958d0aab3049cde411f0fc79a85bb50ab5325dc9",
+  "bothClean": true,
+  "trackedPaths": 684,
+  "preservedEvidenceHashes": 910,
+  "archivedEvidenceHashes": 695,
+  "originalJunctionsUnchanged": 4,
+  "unchangedRuntimeMetadata": 66,
+  "publicProductBytesMatched": 26,
+  "runtimeContentsRead": false,
+  "mainMerged": false,
+  "productionChanged": false,
+  "modelCalls": 0
+}

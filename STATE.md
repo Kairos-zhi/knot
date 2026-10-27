@@ -1,8 +1,16 @@
 # Knot 当前执行状态
 
+## 050 · 结论件派生发布
+
+当前工作分支为 `codex/evidence-receipts-050`，基于049-r2同步提交958d0aa。用户授权按已讨论结论推送公开结论包；本卡只整理文档，不改产品、原始回执或测试fixture，不合并main或更新在用软件。
+
+[结论包](knot-desktop/evidence-receipts/README.md)收录214份来源材料（含41历史索引、55人读材料），补齐048源门/候选执行/发布及049-r1失败/r2修复链。原件冻结，副本受逐source SHA及JSON Pointer/文本span白名单约束；7处运行元数据表投影注明原条目数，不称全部只改路径。公开包内部校验不等于未公开原件的独立语义复核。制作、独立Gate和实际发布分别核对，精确提交/草稿PR以本分支记录为准。
+
+当前软件候选仍为ed54934/pin7ac0…，本次文档HEAD不构成新软件候选。旧真实模型许可与分项限定验收按原值保留，不把本轮零调用改写为所有历史均零。任务见[050发布约束](docs/development/receipts-publication.md)。
+
 ## 049 · 当前进度与统一入口
 
-当前开发同步分支为 `codex/local-sync-049-r2`，承接049文档提交 `35f6d4247858d1684f9e437e58d9e7a9c398039c` 和代码提交 `ed54934095a2788405d1c7839067735fe265807f`。从本轮起，常用项目目录为后续开发入口，聊天隔离工作区保留同提交副本；二者读取相同根 STATE.md / QUEUE.md。实际新提交、远端及 PR 标识以 Git 和执行读回为准，旧047状态不再作为当前入口。见[同步记录](docs/progress/20261027-synchronization.md)与[049任务](docs/development/local-sync.md)。
+已完成049同步基线分支为 `codex/local-sync-049-r2`，承接049文档提交 `35f6d4247858d1684f9e437e58d9e7a9c398039c` 和代码提交 `ed54934095a2788405d1c7839067735fe265807f`。常用项目目录为后续开发入口，聊天隔离工作区保留同提交副本；二者读取相同根 STATE.md / QUEUE.md。后续任务完成时独立核最新提交/远端及副本一致性，旧047状态不再作为当前入口。见[同步记录](docs/progress/20261027-synchronization.md)与[049任务](docs/development/local-sync.md)。
 
 048源门、真实HEAD候选及发布独立复核均已通过：`ACCEPT_MAINLINE_MODULE_CANDIDATE_ISOLATION_LIMITED`；[草稿PR15](https://github.com/Kairos-zhi/knot/pull/15)，base main，1commit/300files，head ed54934。已核v3候选源为该提交，26文件pin `7ac0e3ab13b680de16403bcf62ff290959bfdf9fa7024f804e6885f2e7308c18`；官方0.2.1-rc.2临时profile offline验证26复制/runtime8/workstation10/清理订阅0，生产未更新。独立235/11/3分别记录、不相加。
 

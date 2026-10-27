@@ -1,0 +1,21 @@
+{
+  "task": "KONT-ARCH-042",
+  "archive_id": "kont-arch-identities-20261026",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_CORE_RUN_REFERENCE_DOMAINS_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "checkerReceipt": "evidence/local/20261026-arch-identities/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 85,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 15,
+  "priorFilesPreserved": 92,
+  "acceptedScope": "Core opaque business references flow through Run preparation/query/return without hidden 200-character restriction; Run-owned IDs and DSH safe addresses/auth remain bounded, old hashes unchanged",
+  "migrationOrOldReaderCompatibilityAccepted": false,
+  "productOrHostAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "rootCommitOrDeployment": false
+}

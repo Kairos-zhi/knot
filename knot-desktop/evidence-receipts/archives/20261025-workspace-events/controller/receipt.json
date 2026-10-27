@@ -1,0 +1,21 @@
+{
+  "task": "KONT-WORKSTATION-030",
+  "archive_id": "kont-workspace-events-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_WORKSPACE_CHANGE_NOTIFICATION_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Single mounted worksite EventSource using existing SSE; fixed manual-refresh barrier for changes/reset/failure; known snapshot and draft preservation; close/rebind and stale callback lifecycle isolation",
+  "independentBuildExit": 0,
+  "focusedPassed": 56,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "isolatedRealHttpSseTests": 1,
+  "actualDshAppLongStreamVerified": false,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false
+}

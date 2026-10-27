@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261024-desktop-install-gate",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261024-desktop-install-gate",
+      "path": "archives/20261024-desktop-install-gate/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-install-gate/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "d099e5442d9e1f11aca68f58c02b9478e86cf0830fc4780fad440bbe1f97c054",
+      "publishedSha256": "4fa5eafab9757e25b6a8a3ffca93bd7bb931bc036906ebd063cb0ed974e22bed",
+      "sourceBytes": 4241,
+      "publishedBytes": 4289,
+      "originalOutcome": "ACCEPT_ONE_SHOT_INSTALL_GATE_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-install-gate",
+      "path": "archives/20261024-desktop-install-gate/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-install-gate/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "43480770a3c592c8fbcca561d7eb05a26151e39edeac8093a0ef13bd13d898a9",
+      "publishedSha256": "026ed8932ef9478a1d5122b2524980da22375ea2a0f4781aab6e095e31940ccf",
+      "sourceBytes": 1185,
+      "publishedBytes": 1153,
+      "originalOutcome": "ACCEPT_ONE_SHOT_INSTALL_GATE_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-install-gate",
+      "path": "archives/20261024-desktop-install-gate/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-install-gate/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "53c0a6f9f4ec1aed4b757c88a5145637761e8d560849b2a7b95b37f8ec9a0efa",
+      "publishedSha256": "28e16d3eda4d3d64aca3a5941baa1db7f5eb5c230f0809caa312e45e86bbfd1c",
+      "sourceBytes": 3223,
+      "publishedBytes": 3238,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

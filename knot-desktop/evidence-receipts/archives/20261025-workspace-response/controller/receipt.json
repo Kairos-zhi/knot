@@ -1,0 +1,19 @@
+{
+  "task": "KONT-WORKSTATION-029",
+  "archive_id": "kont-workspace-response-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_WORKSPACE_RESPONSE_ADMISSION_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Workspace JSON admission before state replacement or draft cleanup; rendering fields, identity and version floors; captured draft echo under original worksite; original object and unknown fields retained",
+  "independentBuildExit": 0,
+  "focusedPassed": 42,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false
+}

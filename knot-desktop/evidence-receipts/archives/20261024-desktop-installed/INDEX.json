@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261024-desktop-installed",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261024-desktop-installed",
+      "path": "archives/20261024-desktop-installed/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-installed/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "82c7c458590efad0f27694c9a6b18709ef636f03b2a52f5cc2cad336bc443370",
+      "publishedSha256": "832e8077e9b249fdb88bbe7f0c057909705bd74ac4fa3a4f69e628a231d32496",
+      "sourceBytes": 2981,
+      "publishedBytes": 3025,
+      "originalOutcome": "CLOSED_FAILED_INSTALL_PRESERVED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-installed",
+      "path": "archives/20261024-desktop-installed/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-installed/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "e04e2101b0d4a7d38bec1f69169b34dcbdb56e64f3bed524df9aa7529124f187",
+      "publishedSha256": "e04e2101b0d4a7d38bec1f69169b34dcbdb56e64f3bed524df9aa7529124f187",
+      "sourceBytes": 456,
+      "publishedBytes": 456,
+      "originalOutcome": "CLOSED_FAILED_INSTALL_PRESERVED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-installed",
+      "path": "archives/20261024-desktop-installed/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-installed/checker/REPORT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "1a6238be83ef75f225a56d1054456bed2d68dec948862570cf514fd6101111d7",
+      "publishedSha256": "1a6238be83ef75f225a56d1054456bed2d68dec948862570cf514fd6101111d7",
+      "sourceBytes": 2673,
+      "publishedBytes": 2673,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261022-closeout",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261022-closeout",
+      "path": "archives/20261022-closeout/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-closeout/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "030522b2e039ca10d6f99d4afeaff9e5a75f265cb93da147e1f980bf7a8161d7",
+      "publishedSha256": "3965c63de87cfed0f99df55abfe7633f58e9c63a476dde64eabfc54378a21f97",
+      "sourceBytes": 3318,
+      "publishedBytes": 3429,
+      "originalOutcome": "ACCEPT_CLOSEOUT_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261022-closeout",
+      "path": "archives/20261022-closeout/maker/receipt.json",
+      "role": "maker-delivery-receipt",
+      "phase": "maker-delivery",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-closeout/maker/receipt.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "9f67eb3ddd221888c443c2cfa4d8cc26c6f5a68046886a8414a63afbc7cc90d1",
+      "publishedSha256": "cb7149323a351f683a24ff8d3070ae253acdd75383783b4faa1955eb34825185",
+      "sourceBytes": 6545,
+      "publishedBytes": 6546,
+      "originalOutcome": "MAKER_FROZEN_AWAITING_INDEPENDENT_CHECKER",
+      "projection": false
+    },
+    {
+      "unit": "20261022-closeout",
+      "path": "archives/20261022-closeout/maker/receipt.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261022-closeout/maker/receipt.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "a3051b8912c1029465fc4f80d3983f7db9de2c6e93251e7ea3517d42e32dfc9a",
+      "publishedSha256": "a3051b8912c1029465fc4f80d3983f7db9de2c6e93251e7ea3517d42e32dfc9a",
+      "sourceBytes": 4972,
+      "publishedBytes": 4972,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

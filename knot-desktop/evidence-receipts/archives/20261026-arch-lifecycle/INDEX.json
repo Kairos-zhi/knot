@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261026-arch-lifecycle",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261026-arch-lifecycle",
+      "path": "archives/20261026-arch-lifecycle/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-arch-lifecycle/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "9379e09e2f131bf1baadefb4fc836d365d45408a6770b5957cc514727ca005eb",
+      "publishedSha256": "edbd06dde1183ee8bc0aa53d935868d12a84b34427147d8eddb9e6d3ab3b4d51",
+      "sourceBytes": 5076,
+      "publishedBytes": 5080,
+      "originalOutcome": "ACCEPT_READ_CLEANUP_OWNER_BARRIER_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-arch-lifecycle",
+      "path": "archives/20261026-arch-lifecycle/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-arch-lifecycle/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "b78491c1404639e5eec3102dd009ed38a7e7a055800bbe481f1f80344cc787f8",
+      "publishedSha256": "b78491c1404639e5eec3102dd009ed38a7e7a055800bbe481f1f80344cc787f8",
+      "sourceBytes": 886,
+      "publishedBytes": 886,
+      "originalOutcome": "ACCEPTED_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-arch-lifecycle",
+      "path": "archives/20261026-arch-lifecycle/controller/CLOSEOUT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-arch-lifecycle/controller/CLOSEOUT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "cc9e9e96be79882a3312c14d0c0f1add4edc9a2bd3d450220f6ba39e93bc13f1",
+      "publishedSha256": "cc9e9e96be79882a3312c14d0c0f1add4edc9a2bd3d450220f6ba39e93bc13f1",
+      "sourceBytes": 839,
+      "publishedBytes": 839,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

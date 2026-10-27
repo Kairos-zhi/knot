@@ -1,0 +1,92 @@
+{
+  "task": "KONT-DESKTOP-025",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T06:10:03.402Z",
+  "verdict": "ACCEPT_VERSIONED_DESKTOP_INVENTORY_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "69eb8be8068c624057609ae064af759939e22f52858a147e6c2251b5c9ee4243",
+    "frozenEntriesMatched": 11,
+    "productTestHelperEntriesMatched": 5,
+    "reportAndLogEntriesMatched": 6,
+    "mismatch": 0,
+    "independentBuild": {
+      "exitCode": 0,
+      "runtime": "official bundled Node",
+      "command": "node scripts/build.mjs"
+    },
+    "focused": {
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "candidateAndRelatedRecoveryTests": 18,
+      "checkerOwnTests": 3,
+      "log": "focused.tap",
+      "command": "node --test tests/desktop-candidate.test.mjs tests/desktop-candidate-isolation.test.mjs tests/desktop-data-compatibility.test.mjs tests/desktop-recovery.test.mjs tests/desktop-recovery-preflight.test.mjs evidence/local/20261025-desktop-inventory/checker/independent.test.mjs"
+    },
+    "ownChecks": [
+      "Frozen legacy25 and current26 inventories differ only by worksite-preview.mjs",
+      "Self-signed reversed inventory, duplicate entries and unknown v02 rejected",
+      "Recomputed checksum cannot replace original external reviewed digest",
+      "Unlisted empty directory rejected",
+      "Actual root dirty prepare rejected without producing root release candidate",
+      "Real historical 014 manifest at original pin and all25 artifact hashes unchanged before/after"
+    ],
+    "officialIsolation": {
+      "executedIndependently": true,
+      "temporaryProfileInstallCalls": 1,
+      "filesCopiedMatched": 26,
+      "runtimeIndexApplyPassed": true,
+      "newWorksitePreviewImportResolvedByIndex": true,
+      "rendererFactoryAndSlotsPassed": true,
+      "incompatibleVersionRejected": true,
+      "offlineAndIgnoreScripts": true,
+      "enabled": false,
+      "actualDesktopDeployment": false
+    },
+    "historical014Pin": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+    "rootHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+    "gitDiffCheckExitCode": 0
+  },
+  "maintainability": {
+    "passed": true,
+    "clearOwnership": "One mjs verifier owns exact versioned inventories, checksum, directory and file validation; official CJS verifier reuses it then adds official manager/runtime checks",
+    "versionSelection": "Two explicit branches with named frozen legacy25/current26 arrays; new26 derives only by adding one explicit business module",
+    "inputReleaseGate": "Existing git-root, exact HEAD, tracked inputs and product diff guards retained; no allowDirty",
+    "noNewFrameworkRegistryDslDependencyOrParallelPolicy": true,
+    "callerCompatibility": "Existing v1 fixed-pin consumers in deployment/data/recovery/quiescent continue to verify actual014 unchanged"
+  },
+  "documentationReview": {
+    "matchesImplementation": true,
+    "files": [
+      {
+        "path": "docs/api/desktop-candidate-formats.md",
+        "sha256": "c93e81b0f72cc9d39639646372434ce1fe61f8c4f7831c0198ac64865b6f3416"
+      },
+      {
+        "path": "docs/api/worksite-preview.md",
+        "sha256": "9af42d532c7c3182c26467b2a56712ad99864510860313d85ccfe242e8e7e5ef"
+      }
+    ]
+  },
+  "acceptedScope": [
+    "New preparation emits exact v2/26 while verification retains exact historical v1/25",
+    "One shared inventory verifier now precedes official isolated manager verification",
+    "Synthetic fixture candidates reproduce and install in a temporary official profile; existing related recovery behavior passes"
+  ],
+  "limitations": [
+    "No real checkout release candidate was prepared: current root inputs remain dirty and are correctly refused",
+    "Fixture sourceBaseCommit belongs to a disposable isolated git repository; it is not a root release commit",
+    "Synthetic25 shape made by removing the new module proves format selection only; it is not a runnable old package or a trusted historical candidate. Actual014 at original external pin supplies historical compatibility evidence",
+    "Pinless verification proves inventory/content consistency only; external reviewed expectedManifestSha256 remains required for trusted candidate identity at the official boundary",
+    "Official isolated runtime and renderer factory tests do not establish live Desktop active renderer or human experience",
+    "Initial symlink creation EPERM was retained in Maker logs; directory-junction rejection case and final suite passed without additional system permission",
+    "No production profile/data/ledger access, desktop lifecycle/install, system setting, model, real Session/credential access, root commit/push/merge, complete Run or full product acceptance"
+  ],
+  "evidence": [
+    "review-plan.md",
+    "independent.test.mjs",
+    "focused.tap",
+    "REPORT.md"
+  ]
+}

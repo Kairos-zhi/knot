@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "task_id": "KONT-RUN-007",
+  "archive_id": "kont-run-config-20261022",
+  "gate": "ACCEPT_SERIALIZABLE_READ_CONFIG_LIMITED",
+  "focused": 9,
+  "fullSuiteRun": false,
+  "actualDesktopProfileResolution": false,
+  "scope": "Serializable readAudit composition candidate; actual library fixture has ASAR anchor resolution-base adaptation; no model or running Desktop deployment",
+  "files": [
+    {
+      "path": "evidence/local/20261022-run-config/maker/receipt.json",
+      "bytes": 1633,
+      "sha256": "30f8beb909b0ae3fd13e8ae45b7b6810c9fcd35682974d668f9fae9a1362ce92"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/maker/manifest.json",
+      "bytes": 898,
+      "sha256": "9b8e351f6bb6162589fe3b92358a466042bb7818ec3cde7b5b878505f128a4f0"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/maker/REPORT.md",
+      "bytes": 2036,
+      "sha256": "9507c3f64e82a9a2ca48292b581eb8178f1c8e1eca9dc125e522b182cc9f6776"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/maker/build.log",
+      "bytes": 231,
+      "sha256": "3d69bf4406771a804095f1f4bde89017c5687d74e6867e35ae3ea61317d7e3a4"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/maker/focused.tap",
+      "bytes": 2628,
+      "sha256": "66fdf4b79e435994f2eff62e59f5be69799e898c47fc82a6a6e1384ea0d1f1ad"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/checker/final-review.json",
+      "bytes": 1627,
+      "sha256": "3df45e1985e56d189c49f6b84bafbf28dd6a65aaffa40e0e30116626a5551784"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/checker/REPORT.md",
+      "bytes": 1812,
+      "sha256": "204b7f5462f8bab58fab2509953044daa46644506074ce23db3091f56edc533f"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/checker/build.log",
+      "bytes": 231,
+      "sha256": "3919fe26ed1546c00f10b7e562ab073e7a3fbe9ca50018b894304a4cf5abc9ac"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/checker/focused.tap",
+      "bytes": 2627,
+      "sha256": "2682c92172934dd9234c0c6748f5b3c34af2083775d40f6bc91a42366afda3da"
+    },
+    {
+      "path": "evidence/local/20261022-run-config/checker/hash-check.json",
+      "bytes": 160,
+      "sha256": "40be1ef2bac5ac7c7a4b9bc9cc4bfb0b0e4ba9cf07ad3e6e9e387eec42712276"
+    }
+  ]
+}

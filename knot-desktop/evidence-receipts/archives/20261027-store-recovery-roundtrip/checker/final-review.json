@@ -1,0 +1,149 @@
+{
+  "task": "KONT-COMPAT-044",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-26T17:31:49.743Z",
+  "verdict": "ACCEPT_SYNTHETIC_DERIVED_RECOVERY_ROUNDTRIP_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "01ba2d065c4c035583f051c606d7514130de41e5f2f0cec3a1514d206d839041",
+    "combinationManifestSha256": "43546de507584eca98b0a47ea19a7879ca331c4b52f012d8279f88d9f8ae7939",
+    "frozenEntriesMatched": 14,
+    "combinationSourcesMatched": 27,
+    "protectedBaselineFilesMatched": 103,
+    "original105PathsPreserved": true,
+    "historicalLocalEvidenceEntriesMatched": 265,
+    "historicalEntriesMayRepeatFiles": true,
+    "oldTestsUnchanged": true,
+    "addedPathsAllowed": true,
+    "currentChangedPaths": 111,
+    "gitDiffCheckExitCode": 0,
+    "independentBuild": {
+      "runtime": "<hermes-root>/node/node.exe",
+      "command": "node scripts/build.mjs",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "focused": {
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "newCard": 7,
+      "relatedExisting": 26,
+      "checkerOwn": 3,
+      "exitCode": 0,
+      "command": "node --test tests/store-recovery-roundtrip.test.mjs tests/store-snapshot-contract.test.mjs tests/run-reference-domains.test.mjs tests/run-contract.test.mjs tests/desktop-recovery.test.mjs tests/desktop-installed-data-preflight.test.mjs",
+      "log": "focused.tap",
+      "ownCommand": "node --test evidence/local/20261027-store-recovery-roundtrip/checker/own-cases.test.mjs",
+      "ownLog": "own-cases.tap"
+    },
+    "ownCases": [
+      "All actual A13/B14 bytes and static closure independently match current/017 provenance and new pin; A/B index differ",
+      "B actual apply authenticated HTTP long-reference Run preparation/folder write/auth negatives, then current reader reopen and unchanged parent env",
+      "Cloned cleanup descriptor cannot delete separate owned marker; missing preview blocks verification"
+    ],
+    "git": {
+      "head": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+      "branch": "codex/kont-dsh-plugin-bootstrap",
+      "indexEmpty": true,
+      "remotesEmpty": true
+    }
+  },
+  "maintainability": {
+    "passed": true,
+    "assessment": "Fixed derived old carrier/current data combination, complete A closure, captured byte pins, real apply/HTTP and isolated env leases reuse sole Store; no generic plugin executor, new business authority, old product/test/pin mutation or runtime inventory change."
+  },
+  "observedRoundTrip": {
+    "stages": [
+      "a1",
+      "b",
+      "a2",
+      "a3"
+    ],
+    "revision": [
+      8,
+      10,
+      11,
+      11
+    ],
+    "seq": [
+      14,
+      18,
+      19,
+      19
+    ],
+    "a3BytesEqualA2": true,
+    "allStagesClosedAndUnlocked": true,
+    "bRealApplyRouteCount": 4,
+    "bHumanAndAgentWrites": true,
+    "fullBusinessAndRunHashesPreserved": true,
+    "syntheticOnly": true,
+    "productionCandidateAccepted": false,
+    "desktopExperienceAccepted": false
+  },
+  "scope": {
+    "newFiles": [
+      "scripts/prepare-synthetic-store-recovery.mjs",
+      "scripts/store-recovery-roundtrip.mjs",
+      "scripts/store-recovery-roundtrip-worker.mjs",
+      "tests/store-recovery-roundtrip.test.mjs",
+      "docs/tasks/KONT-COMPAT-044.md",
+      "docs/api/store-recovery-pairing.md"
+    ],
+    "oldProductsOrTestsChanged": false,
+    "independentCheckerEditedProduct": false,
+    "gateAuthority": "root"
+  },
+  "limitations": [
+    "Only concrete new synthetic carrier/data writer pairing, not business backup rollback, original 017 compatibility, cross-process disaster recovery or production migration/restore/deployment permission",
+    "No fullrestore Run import into empty owner; synthetic seed internal claim/return is not B execution or external import capability",
+    "B has no runs/preview routes or observer execution stack; old UI closed/window/late-draft behavior is not current Apple workstation acceptance",
+    "No official manager/install/formal root candidate/032 release preparation acceptance; source still distinct from live installed product",
+    "Owned temporary Node/HTTP only; no production profile/user data/private Session/credentials/model/system/Git mutation",
+    "No full suite, native Desktop/ReactDOM/focus/IME/human acceptance, power-loss durability or arbitrary local adversary audit"
+  ],
+  "pin": {
+    "makerManifest": "evidence/local/20261027-store-recovery-roundtrip/maker/manifest.json",
+    "makerManifestSha256": "01ba2d065c4c035583f051c606d7514130de41e5f2f0cec3a1514d206d839041",
+    "combinationManifest": "evidence/local/20261027-store-recovery-roundtrip/maker/combination-manifest.json",
+    "combinationManifestSha256": "43546de507584eca98b0a47ea19a7879ca331c4b52f012d8279f88d9f8ae7939",
+    "checkerArtifacts": [
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/REPORT.md",
+        "sha256": "23152678365ae24969b797269707b4fd11f5beb2b1f9b3afde2567fbbba59932"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/audit.json",
+        "sha256": "0cb46d1a22d30726f0ef391fa6fb13ede55d39e6be6f264dd0f6adcafafa6283"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/build.log",
+        "sha256": "8202d471c324d6c553d65d679000899de1c4287303467a0d285b0d4c761fa62c"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/focused.tap",
+        "sha256": "563e03e154f8e53810245ae9a2ac2d57fb70ebe3f0a4662abe626a44615a9670"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/own-cases.test.mjs",
+        "sha256": "412d174591fd02b9b505671090503cbf351f82b9335d293c38c14e18829ec20d"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/own-cases.tap",
+        "sha256": "67472e1e652f5639ac01ac1f518f0b24f3d86cb89131ee1ade3386f7d47dc029"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/own-results.json",
+        "sha256": "bfd5f67793a0c4b26d4e6e225f131a4aeb0a6fcd08f8694d910f27789e2eb0f4"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/audit.mjs",
+        "sha256": "4096660679993930d83400aceef149b31de5874793c734c42b2ce04c8d555996"
+      },
+      {
+        "path": "evidence/local/20261027-store-recovery-roundtrip/checker/write-final.mjs",
+        "sha256": "fde0b41fa6aeb960752b75164120378cb3de0d76a98ba2ac6e958317e9cc8bb7"
+      }
+    ]
+  },
+  "status": "frozen_pending_root_gate"
+}

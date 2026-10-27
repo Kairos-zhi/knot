@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261026-work-island",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261026-work-island",
+      "path": "archives/20261026-work-island/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-work-island/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "39738f90698bf3646033f8d50eb0d01b5aa9946763581c02d7e2fb05daa7c857",
+      "publishedSha256": "9fdb448b583e0c07e549fc4c5da5b31a12a84b2d5bfb58aaa25428ddbfe79f5a",
+      "sourceBytes": 3765,
+      "publishedBytes": 3769,
+      "originalOutcome": "ACCEPT_WORK_ISLAND_OVERVIEW_RETURN_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-work-island",
+      "path": "archives/20261026-work-island/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-work-island/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "f8655ec13508d8343644099d4b89d7d99347e47221d9505c4d0501f8f1b1dfc3",
+      "publishedSha256": "f8655ec13508d8343644099d4b89d7d99347e47221d9505c4d0501f8f1b1dfc3",
+      "sourceBytes": 1435,
+      "publishedBytes": 1435,
+      "originalOutcome": "ACCEPTED_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-work-island",
+      "path": "archives/20261026-work-island/controller/CLOSEOUT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-work-island/controller/CLOSEOUT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "83a96d141879427e534919653ce07fd6f0bde85f710103507623b02c297db901",
+      "publishedSha256": "83a96d141879427e534919653ce07fd6f0bde85f710103507623b02c297db901",
+      "sourceBytes": 1362,
+      "publishedBytes": 1362,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

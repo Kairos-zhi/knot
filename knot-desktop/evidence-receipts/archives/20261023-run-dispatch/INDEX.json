@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261023-run-dispatch",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261023-run-dispatch",
+      "path": "archives/20261023-run-dispatch/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261023-run-dispatch/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "43eeb522f438dbdd46c968fe885e2100618f3b1aa7f440866094d17b8f7b13bb",
+      "publishedSha256": "3ff85d8882ba16bd9f7cd7e2eb8860570d1f3b5cc7c4a2eb3c1ec30501dfb176",
+      "sourceBytes": 1602,
+      "publishedBytes": 1603,
+      "originalOutcome": "ACCEPT_DURABLE_DISPATCH_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261023-run-dispatch",
+      "path": "archives/20261023-run-dispatch/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261023-run-dispatch/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "93d3b392e5bff536995624ba54e248b9a3ba0f38d4c0cbd05ebc860ca0cbbfc6",
+      "publishedSha256": "ed592852abe74f56a459f0f12f36d20ffc01de717f7e930883647dfdd7ae6ac8",
+      "sourceBytes": 1631,
+      "publishedBytes": 1586,
+      "originalOutcome": "ACCEPT_DURABLE_DISPATCH_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261023-run-dispatch",
+      "path": "archives/20261023-run-dispatch/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261023-run-dispatch/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "b18e762b9b9f00dfd2b4a4282c2f5ca163c1f3b9ac79ecc94d2737311e59ee99",
+      "publishedSha256": "b18e762b9b9f00dfd2b4a4282c2f5ca163c1f3b9ac79ecc94d2737311e59ee99",
+      "sourceBytes": 1820,
+      "publishedBytes": 1820,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

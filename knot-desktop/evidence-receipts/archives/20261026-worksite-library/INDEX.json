@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261026-worksite-library",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261026-worksite-library",
+      "path": "archives/20261026-worksite-library/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-worksite-library/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "279ad551e7be323818aaabcdd2a7d02af5059d4d3ba72c741c6a5e3aba803d67",
+      "publishedSha256": "821fb82c8240d3e17cd061aa7de756b0ca44411176f4e0457148ac07cb2f53da",
+      "sourceBytes": 2961,
+      "publishedBytes": 2965,
+      "originalOutcome": "ACCEPT_WORKSITE_LIBRARY_REUSE_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-worksite-library",
+      "path": "archives/20261026-worksite-library/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-worksite-library/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "6cae95519d58c3a6b7e66f171bd26fd67216f6508976265ef3128b846cff450d",
+      "publishedSha256": "6cae95519d58c3a6b7e66f171bd26fd67216f6508976265ef3128b846cff450d",
+      "sourceBytes": 1320,
+      "publishedBytes": 1320,
+      "originalOutcome": "ACCEPTED_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261026-worksite-library",
+      "path": "archives/20261026-worksite-library/controller/CLOSEOUT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261026-worksite-library/controller/CLOSEOUT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "19acd56699a9a1786801536e500b65ea21af52cac398941732694647aa509488",
+      "publishedSha256": "19acd56699a9a1786801536e500b65ea21af52cac398941732694647aa509488",
+      "sourceBytes": 1174,
+      "publishedBytes": 1174,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

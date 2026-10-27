@@ -1,0 +1,76 @@
+{
+  "candidate": "KONT-KERNEL-001-r2",
+  "manifestSha256": "1113A019F5634A4C7AF64E855F2AA0119959809075C9313474D0BB5136B6643C",
+  "checker": "kont_checker",
+  "result": "ACCEPT_LIMITED_SLICE",
+  "scope": "KONT-KERNEL-001 Headless adapter and three earlier technical fixes only",
+  "frozenSourceAndBuildFiles": 27,
+  "allHashesMatchedBeforeAndAfter": true,
+  "independentRebuild": {
+    "command": "node scripts/build.mjs",
+    "exitCode": 0,
+    "generatedOutputsMatchFrozen": true,
+    "log": "independent-build.log",
+    "warning": "Node stripTypeScriptTypes ExperimentalWarning"
+  },
+  "suite": {
+    "command": "node --test tests/*.test.mjs",
+    "exitCode": 0,
+    "pass": 20,
+    "fail": 0,
+    "skip": 0,
+    "toolChunk": "ddf2b0"
+  },
+  "additionalIndependentChecks": {
+    "command": "node evidence/local/20261021-kernel-adapter/checker/independent-check.mjs",
+    "exitCode": 0,
+    "groups": 8,
+    "scriptSha256": "D3FF99E011F4B57F987E6B726114586A2AA127761E7157652799E6CF4F48879D",
+    "result": "independent-check-result.json",
+    "log": "independent-check.log"
+  },
+  "fixedEarlierDefects": [
+    "Cordis awaited asynchronous effect disposer releases own lock before DSH shutdown",
+    "official web-runtime row and --no-open prevent automatic browser launch",
+    "programmatic draft leave guard clears when text equals saved value"
+  ],
+  "actualRuntime": {
+    "version": "0.1.7-rc.2",
+    "isolation": "test-owned temporary D: runtime/profile; original 3081 untouched",
+    "noBrowser": true,
+    "noModelRequests": true,
+    "oldProtocolCommands": [
+      "knot.create with data/id/source spoof attempt",
+      "rope.connect using sourceNodeID/targetNodeID and fixed:true",
+      "knot.update with complete manual/generated blocks",
+      "rope.disconnect using from/to aliases"
+    ],
+    "SSESeqs": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "source": "agent:independent-checker from host mapping",
+    "beforeStopSeq": 7,
+    "afterRestartSeq": 7,
+    "bothExitCodes": 0,
+    "locksAbsentAfterBothStops": true,
+    "coldEventCursor": "reset + snapshotRequired:true"
+  },
+  "remainingLimits": [
+    "Only supported command subset; knot.delete, chain.*, renderer/tool/generation commands remain unsupported",
+    "No actual provider/model/Run, external Codex/Hermes, MCP/A2A, or product UI acceptance",
+    "No physical keyboard Ctrl+C test: graceful shutdown exercised through fork IPC causing same-process SIGTERM",
+    "Hard kill/power loss stale lock recovery not accepted",
+    "No remote/LAN deployment, fine-grained RBAC, or long-duration load acceptance"
+  ],
+  "engineeringAcceptanceDoesNotAuthorize": [
+    "commit",
+    "push",
+    "merge",
+    "production install",
+    "model billing"
+  ],
+  "writtenAt": "2026-10-21T11:10:59.720Z"
+}

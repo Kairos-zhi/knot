@@ -1,0 +1,132 @@
+{
+  "task": "KONT-WORKSTATION-027",
+  "archive_id": "kont-supply-preview-panel-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_SUPPLY_PREVIEW_PANEL_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Pure reusable supply reader, full block text and history counts, native closed details, render safety and unchanged preview lifecycle",
+  "independentBuildExit": 0,
+  "focusedPassed": 20,
+  "focusedFailed": 0,
+  "actualReactServerRenderExecuted": false,
+  "maintainabilityPassed": true,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false,
+  "files": [
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/archive.mjs",
+      "bytes": 3292,
+      "sha256": "e9c6894d1a80ad022cbe180b8c43eccfa801a256ad5a5276a599c15d91f733b4"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/final-review.json",
+      "bytes": 4593,
+      "sha256": "c0ebeb9f01ab86e7702aba7abcb24af745e6240d22c73f2399b91a1c9bf41e73"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/focused.tap",
+      "bytes": 2292,
+      "sha256": "ec013de781ccd5d51d28d929b5c30e5a1bf429abbf42de9c65f21bf55109b3a1"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/independent.test.mjs",
+      "bytes": 2150,
+      "sha256": "4425f42a904a6ea677dc674209128b39168c8abc49b814b1580fc65ef01bd857"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/REPORT.md",
+      "bytes": 2369,
+      "sha256": "393b3181fe5ee8cc27edca0de84d7f7d46ae149cc4be55bb58a8d4c3b498491e"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/review-plan.md",
+      "bytes": 1461,
+      "sha256": "4770c27cbd3e46b9b08d0bc1a464a4e4796b486058735299dd368af0ce8853f5"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/ssr-availability.json",
+      "bytes": 493,
+      "sha256": "e9d149159d55fee324a96637eb125f9eaf242bd8f775e724d55cbce4d3faef7f"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/checker/ssr.cjs",
+      "bytes": 2464,
+      "sha256": "196df6c058c6cdef65c0058c95f0c5dd1c99c3d6ec3be6f2f77ce11d08d762b5"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/controller/receipt.json",
+      "bytes": 752,
+      "sha256": "a939de17349ff94bbe86865474e49a940d559934bcd5f1f3c2969315bead8d18"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/build.log",
+      "bytes": 231,
+      "sha256": "44eb1129dcc95049a0900c291edfa3edfa4239d7aabbda47152bb90b9eb342ed"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/inventory-readback.log",
+      "bytes": 155,
+      "sha256": "1e98d4d7ae7e536c0073363361108c000bc829aca7acd4869dbc85b6b6c0317e"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/manifest.json",
+      "bytes": 1819,
+      "sha256": "5323b28e0c45359615cd5d2ee0b8490e0429729b1fa35427e5d900d3bdedea98"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/manifest.sha256",
+      "bytes": 64,
+      "sha256": "fd015e4fa15cc9122f1fc44ee9646267ca9c0a86745ab0c747bd2dfef7303599"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/REPORT.md",
+      "bytes": 3583,
+      "sha256": "48406c7ea5c16a0b7f8db3f792d49b00c32e2e07f270e3ed2fc0ea6fb800bcaa"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/tests-initial.log",
+      "bytes": 20618,
+      "sha256": "33ca89e16d4488ecf1f4fa9e705b0a1d19ffcb3b01fa0c3895b6a68ca31058b0"
+    },
+    {
+      "path": "evidence/local/20261025-supply-preview-panel/maker/tests.log",
+      "bytes": 2076,
+      "sha256": "c55bab322517d01f3253093f0d8bb3986099c4a94d1fe261c9b5d4b679832e1d"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "bytes": 17983,
+      "sha256": "68344805673a4f8fdfee56f2ef5f612c02aed3e563b15ea5270d5656574b3884"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "bytes": 32395,
+      "sha256": "b37beb6fff23c374ce8542db04f94f42c244f10e12734ed62f2f37875f698955"
+    },
+    {
+      "path": "tests/supply-preview-panel.test.mjs",
+      "bytes": 7151,
+      "sha256": "9d8981ae87a434fbca1318c0b702f70ccd94a99d9df70f8da969a7d20ce5240d"
+    },
+    {
+      "path": "tests/helpers/workstation-client-fixture.mjs",
+      "bytes": 4443,
+      "sha256": "05fba83f1c6640d1e64a6d555e6090f4d532e3a702ca459747520b60a6735ace"
+    },
+    {
+      "path": "docs/tasks/KONT-WORKSTATION-027.md",
+      "bytes": 4272,
+      "sha256": "364379f155cdda1ef13a8cd54fd7d6486edcc8ec861c4073243548ede8bbf8c0"
+    },
+    {
+      "path": "docs/api/worksite-preview.md",
+      "bytes": 5139,
+      "sha256": "8020b9794479a8612c7d89834bb54a12641f11f98b4ae5603215f2d7b7acae9d"
+    }
+  ]
+}

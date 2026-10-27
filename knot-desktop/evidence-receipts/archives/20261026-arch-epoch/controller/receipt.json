@@ -1,0 +1,21 @@
+{
+  "task": "KONT-ARCH-040",
+  "archive_id": "kont-arch-epoch-20261026",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_RUN_ASSET_EPOCH_JOIN_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "checkerReceipt": "evidence/local/20261026-arch-epoch/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 74,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 17,
+  "priorFilesPreserved": 80,
+  "acceptedScope": "Explicit Run-assets epoch join; independent historical phase with present/missing/unknown output location, latest-reference navigation and non-revivable preview token",
+  "migrationOrOldReaderCompatibilityAccepted": false,
+  "productOrHostAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "rootCommitOrDeployment": false
+}

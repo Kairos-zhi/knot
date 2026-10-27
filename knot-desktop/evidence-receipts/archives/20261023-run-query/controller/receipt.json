@@ -1,0 +1,51 @@
+{
+  "task_id": "KONT-RUN-012",
+  "archive_id": "kont-run-query-20261023",
+  "revision": "r2",
+  "at": "2026-10-23T16:09:12.5541940Z",
+  "state": "ACCEPTED_LIMITED",
+  "verdict": "ACCEPT_RUN_QUERY_VIEW_LIMITED",
+  "base_commit": "fcc3df54ece7d39f7c0999837df0d32d4f891d0b",
+  "commit": "423fe426deb4f6f288a670430ebe332fd4e9b563",
+  "worktree_clean": true,
+  "local_commits": 1,
+  "validation": {
+    "a_focused": 8,
+    "build": "pass",
+    "independent_integration": 2,
+    "frozenManifestEntries": 13,
+    "b_final_focused": 4,
+    "fullSuiteRun": false
+  },
+  "counts": {
+    "units": 18,
+    "accepted_limited": 16,
+    "full_product_acceptances": 0,
+    "closed": 2
+  },
+  "parallel": {
+    "checker": "run_checker",
+    "view": "live_runner_maker",
+    "query": "run_maker"
+  },
+  "resolved_blockers": [
+    "Opaque identity grammar mismatch; r1 rejected and preserved, r2 compatible"
+  ],
+  "evidence_index": "evidence/RUN-012-INDEX.json",
+  "operations": {
+    "merge": false,
+    "push": false,
+    "desktop_deployed": false,
+    "new_model_requests": 0
+  },
+  "limitations": [
+    "Read-only endpoint and pure viewmodel candidate, no rendered UI or human acceptance",
+    "Historical output reference needs current kernel resolution",
+    "Existing single-model grant remains consumed"
+  ],
+  "next": "Connect read-only status to formal workstation presentation without extending old form prototype",
+  "token_usage": {
+    "status": "unavailable",
+    "exact": null
+  }
+}

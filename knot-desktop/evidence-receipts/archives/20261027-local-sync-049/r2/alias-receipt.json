@@ -1,0 +1,118 @@
+{
+  "alias": "<user-home>\\Documents\\ChatGPT\\KONT\\packages",
+  "canonical": "<user-home>\\Documents\\ChatGPT\\KONT\\knot-desktop\\packages",
+  "products": [
+    {
+      "path": "packages/desktop-bundle/cordis.patch.yml",
+      "sha256": "64ece206237ba3048e3ed75f275c1c967d6d300c48dc78f2e13ddb923c91d978"
+    },
+    {
+      "path": "packages/desktop-bundle/package.json",
+      "sha256": "77acb53882a6f240766c077a921b357441fa82fee7abb9859ab3a35dea765930"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "sha256": "e28a11fb02f0d39d86dba8be33733921c9e364633ca7f8734f8495cf6af04164"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/knot-model.js",
+      "sha256": "cc941f6a79c0f06379679faaed3fb4ad3823e0e52dc8e4fc35228e379c3bf8e9"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/snapshot.js",
+      "sha256": "7eec9b84f108e0412e95d82c1cf57b4ee6d8a2da4b28320a75292469bf1bea94"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/workspace-state.js",
+      "sha256": "e52cf42cfcd4a6b2366d734074c31a05f11ff106073ff8ea0e9da415e0c304a4"
+    },
+    {
+      "path": "packages/dsh-plugin/package.json",
+      "sha256": "a4332bf747d1da3b6bc4969044e7afda8bc1e20b3442fa489396aca347ea67fb"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "sha256": "dcf2f95e53592c89dede65967f597a3bc46c53acdf5bb3f2721385a213bddd49"
+    },
+    {
+      "path": "packages/dsh-plugin/src/dsh-run-read.mjs",
+      "sha256": "a8603c3e0c4a154ff6b3160914cb1b78e21a6b967fa6bf5f0da2413a2bfceebe"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "sha256": "f2861045f0360abe552cc2723caa06fd87a25f8bed99d5dd6ca7adbe648fff32"
+    },
+    {
+      "path": "packages/dsh-plugin/src/kernel.mjs",
+      "sha256": "a69609f1c01c369c15dd606b3eb7d23fe0b61aa64aa453b7ff1fdc03c2368a13"
+    },
+    {
+      "path": "packages/dsh-plugin/src/read-audit-config.mjs",
+      "sha256": "fe92e08b4022335e04d348408fc0288a28d9cadb7c6a8c3cdb18ab00c6fab4f6"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-dispatch.mjs",
+      "sha256": "38d86058b432aa602230229545da4a2798437a9acdedb85185e26af515ed54c9"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-execution-guard.mjs",
+      "sha256": "76c00b38213e9a4cab426e3f8b930e801ee8893d7711ac6347eeb3db8ba47b21"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-executor.mjs",
+      "sha256": "dd48ed276aa76238da3b87019036db15574ac0eb2a30e67dd3c10ac0484b8660"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-observer-binding.mjs",
+      "sha256": "f94d86cf8b65e5fe0608924f168ecceed724e810311256734d5f147542d2c88c"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-query.mjs",
+      "sha256": "8abc195d88c20578b8ddc4f4327a64803c27f7223c80c533bf6aa6d59494347e"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-request-gate.mjs",
+      "sha256": "998238d5102fcd325c064de5edfd7d9030d4288a5d7307cb5dd7ccf26ceeea9d"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-status-panel.cjs",
+      "sha256": "ce9f0dd280a82641893c3613baf3cbd5838f8d9234385249327825272e934e7c"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-status-panel.css",
+      "sha256": "ad046224a890523bfbb7ff8cc5e8c7348a75c785d23ab1d85cf990276fcdfa4b"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-status-source.cjs",
+      "sha256": "cbcb27472d6bdbee4c67161471e20f814d4dae28ab6943d8bb5ecc42d24dfafb"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-status-view.mjs",
+      "sha256": "d7fadc0a7cd17f918196214b66a738e30dd29b453639ea329bb8ca6f876073f3"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run.mjs",
+      "sha256": "d325209833742ef0f12f4a848219fcc935fd334fe13c8b76429b11de2a86c36b"
+    },
+    {
+      "path": "packages/dsh-plugin/src/store.mjs",
+      "sha256": "229cba4121f7eff22f7e3f677950e44b5919e1f85e4473d16fbcd520ee24d1ff"
+    },
+    {
+      "path": "packages/dsh-plugin/src/style.css",
+      "sha256": "d0474233bbc6004315e10838cc4a92f698178974174232e442edf679adfd780e"
+    },
+    {
+      "path": "packages/dsh-plugin/src/worksite-preview.mjs",
+      "sha256": "8074f18a8fe81e7a8f61127a8f52f60988c0bf83b159e932323771b7f25f652c"
+    }
+  ],
+  "unchangedRuntimeMetadata": 66,
+  "oldJunctionsUnchanged": 4,
+  "preservedEvidence": 910,
+  "archivedEvidence": 695,
+  "pureKernelImport": true,
+  "storeCreated": false,
+  "dshStarted": false,
+  "modelCalls": 0
+}

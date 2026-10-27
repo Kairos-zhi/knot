@@ -1,0 +1,85 @@
+{
+  "task": "KONT-WORKSTATION-028",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T07:00:56.693Z",
+  "verdict": "ACCEPT_WORKSPACE_RECOVERY_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "ae5ed3cf0fcf5526d181e56f4007c8151e45aefa60e023371dd399cbaa8cb6f4",
+    "frozenEntriesMatched": 8,
+    "sourceAndNewTest": 2,
+    "generatedBundle": 1,
+    "reportAndLogs": 5,
+    "mismatch": 0,
+    "independentBuild": {
+      "runtime": "official bundled Node",
+      "command": "node scripts/build.mjs",
+      "exitCode": 0
+    },
+    "focused": {
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "newRecovery": 8,
+      "relatedExisting": 23,
+      "checkerOwn": 3,
+      "log": "focused.tap",
+      "command": "node --test tests/workspace-recovery-client.test.mjs tests/worksite-preview-client.test.mjs tests/supply-preview-panel.test.mjs tests/runtime-draft.test.mjs tests/run-panel-client.test.mjs tests/client-bundle.test.mjs tests/worksite.test.mjs evidence/local/20261025-workspace-recovery/checker/independent.test.mjs"
+    },
+    "ownCases": [
+      "Unknown nondraft presentation write then delayed GET refresh keeps neutral status and rejects retained write callback",
+      "Non409 HTTP500 with conflict-looking body is not parsed or misclassified as version conflict",
+      "Orphan local draft retains leave warning and is recovered under its original identity if that site reappears"
+    ],
+    "independentlyExecutedMakerCases": [
+      "HTTP409 with STALE_REVISION, other409,401,403,500,network and JSON failure local messages",
+      "No server/fetch/private error text shown and non409 error bodies unread",
+      "Known scene/draft retained, write result honestly unknown, no saved claim during error or pending refresh",
+      "UI and direct callbacks block all writes; draft editing and refresh/return remain available",
+      "Failed refresh retains barrier; successful GET does not replay POST or preview",
+      "Explicit later save uses fresh revision and newest draft",
+      "Unknown scene/material creation not replayed and input fields retained",
+      "Old preview/output hidden; late write failure preserves newer edit"
+    ],
+    "previous026TenAsyncTestsAnd027FivePanelTestsUnchangedAndPassed": true,
+    "old014OriginalPin25Verified": true,
+    "current26InventoryUnchanged": true,
+    "gitDiffCheckExitCode": 0
+  },
+  "maintainability": {
+    "passed": true,
+    "responsibility": "workspaceFailureMessage maps a few known local read/write statuses; api handles transport/body parsing; refresh reads only; mutate owns writes and checks existing error barrier",
+    "ordinaryControlFlow": true,
+    "noNewErrorFrameworkExceptionClassStateMachineParallelStoreDependencyOrProductFile": true,
+    "classification": "Only409 body fixed code is read; arbitrary messages are ignored;401/403 handled by status",
+    "uncertainWrites": "Network/JSON/other write failures say result requires checking, not that no persistence occurred",
+    "draftIdentity": "Map entries remain tied to original worksite; successful save only clears captured matching text; orphan entries are not migrated/deleted"
+  },
+  "documentationReview": {
+    "path": "docs/api/workspace-recovery.md",
+    "matchesBehavior": true,
+    "productionStatusHeadingMayBeUpdatedByRootAfterGate": true,
+    "sha256": "100211d1a28179a661d974b98e8fa668bf5e19df0ec1d675c74a05de816a2dc0",
+    "refinedReadScopeAndBusyNeutralStatusConfirmed": true
+  },
+  "acceptedScope": [
+    "Fixed workspace error messages and explicit refresh recovery barrier for current client instance",
+    "Known snapshot and local draft preservation with honest pending/error save status",
+    "Programmatic actual-built factory, component-hook and related store regression coverage"
+  ],
+  "limitations": [
+    "Refresh only retrieves current state; it does not prove whether an uncertain historical command executed and is not an idempotent receipt",
+    "No automatic retry/replay; user must inspect refreshed state before deciding whether to repeat a creation action",
+    "Draft preservation is only in current provider memory; no cross-application restart recovery or orphan-draft recovery UI",
+    "No browser ReactDOM/visual/human Apple experience or live Desktop deployment acceptance",
+    "No SSR attempt repeated and no new dependency installed",
+    "No production data/profile/ledger, desktop lifecycle/install, system setting, credential/user Session, model, root commit/push/merge, formal root release candidate, full Run or full product acceptance",
+    "No full suite; focused34 are current executed coverage"
+  ],
+  "evidence": [
+    "review-plan.md",
+    "independent.test.mjs",
+    "focused.tap",
+    "REPORT.md"
+  ]
+}

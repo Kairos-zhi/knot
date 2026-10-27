@@ -1,0 +1,62 @@
+{
+  "task": "KONT-RUN-005",
+  "role": "independent Checker",
+  "checker": "run_checker",
+  "at": "2026-10-22T13:44:50.867Z",
+  "verdict": "ACCEPT_DSH_READ_AUDIT_LIMITED",
+  "blockers": [],
+  "candidateManifest": "../maker/manifest.json",
+  "candidateFiles": 5,
+  "candidateHashesMatch": true,
+  "priorRun004FrozenFilesUnchanged": 4,
+  "newInstalledSourceMembersMatch": 10,
+  "officialAsarSha256": "47874618bf5b3011fcaac10cd4c85f69da333e70d4f99b921207c78d0999512a",
+  "independentRegression": {
+    "tests": 51,
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "evidence": "regression.log"
+  },
+  "independentOfficialWorker": {
+    "exitCode": 0,
+    "events": 14,
+    "observations": 3,
+    "handlesClosed": 3,
+    "physicalBytesUnchanged": true,
+    "knotBytesUnchanged": true,
+    "expectedFingerprintMatches": true,
+    "evidence": "official-library-result.json",
+    "fixture": "official-library-generated-synthetic-session"
+  },
+  "independentProbeGroups": 5,
+  "acceptedScope": [
+    "Default-deny service-side single-Run read binding before persistence access",
+    "Current-format point-read, stable observation and handle closure/error sanitization",
+    "Official Session replay plus narrow first-turn single-step text/tool-free request-boundary fingerprint",
+    "Separate read grant and request-fingerprint approval, without execution authority or asset return"
+  ],
+  "limitations": [
+    "Trusted host composition and real user Session binding not connected",
+    "Actual official libraries exercised only synthetic Session; no model Run",
+    "Not full DSH schema, all plugin/stream semantics, or Provider HTTP payload verification",
+    "Logical prefix only; persistence may hide torn physical tail and scan metadata/parse full artifact",
+    "No model/cost/execution authorization, actual cancellation/recovery, desktop deployment or product acceptance"
+  ],
+  "modelRequests": 0,
+  "executionAuthorized": false,
+  "modelRunVerified": false,
+  "actualUserSessionsRead": 0,
+  "productFilesModifiedByChecker": false,
+  "evidence": [
+    "REPORT.md",
+    "regression.log",
+    "hash-check.json",
+    "official-library-result.json",
+    "official-library-stderr.log",
+    "independent-probes.mjs",
+    "independent-probes.log",
+    "independent-result.json"
+  ]
+}

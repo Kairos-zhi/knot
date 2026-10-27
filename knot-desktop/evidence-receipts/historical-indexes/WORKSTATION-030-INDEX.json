@@ -1,0 +1,133 @@
+{
+  "task": "KONT-WORKSTATION-030",
+  "archive_id": "kont-workspace-events-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_WORKSPACE_CHANGE_NOTIFICATION_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Single mounted worksite EventSource using existing SSE; fixed manual-refresh barrier for changes/reset/failure; known snapshot and draft preservation; close/rebind and stale callback lifecycle isolation",
+  "independentBuildExit": 0,
+  "focusedPassed": 56,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "isolatedRealHttpSseTests": 1,
+  "actualDshAppLongStreamVerified": false,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false,
+  "files": [
+    {
+      "path": "evidence/local/20261025-workspace-events/archive.mjs",
+      "bytes": 3332,
+      "sha256": "d8acff7cd10b20716390b203833fbbb967b8f776036d89ab5bc2780f4de0b0e8"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/checker/final-review.json",
+      "bytes": 5590,
+      "sha256": "995f848483633bca6eea47c86dfe255288bf471b475ebd4ee0d69bac6ecc9919"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/checker/focused.tap",
+      "bytes": 6304,
+      "sha256": "af6f7468e88e4ff72d82ca5f95d4679a2370544d86ed3cfbd1e07a06b26c1cab"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/checker/independent.test.mjs",
+      "bytes": 3008,
+      "sha256": "f9f592d53654ef83ed0ea83698e323775e652a45b9885cb01d6bd6d5a58db008"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/checker/REPORT.md",
+      "bytes": 2789,
+      "sha256": "b2ccd65e473be05d57510c8167dbdf327cda38326c8bfb3de307172d107d496e"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/checker/review-plan.md",
+      "bytes": 1781,
+      "sha256": "47f30f1ae4908c0ef1f29bfa5a47d52d396a700f7b6823835eb43aa21b331e64"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/controller/receipt.json",
+      "bytes": 858,
+      "sha256": "3d1c5a2aa80539a52ca329cca44a4e8166a9a449e8a1fc9247e3eb6736c3cfb7"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/build.log",
+      "bytes": 231,
+      "sha256": "461728c2b2b8ea4860d63e463944165ce307fe26ce3bbe5ca3cc8e17623dbebe"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/inventory-readback.log",
+      "bytes": 155,
+      "sha256": "1e98d4d7ae7e536c0073363361108c000bc829aca7acd4869dbc85b6b6c0317e"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/manifest.json",
+      "bytes": 1953,
+      "sha256": "489f090245411ee1d8c26a6606990fc9061ee38ac09afbbe579fc7a38e8223a1"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/manifest.sha256",
+      "bytes": 64,
+      "sha256": "f857ce0161c1226e09f766f32d3ff195abca124ca9ad5b4cc645ffe1127191df"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/REPORT.md",
+      "bytes": 5233,
+      "sha256": "fe251d2ab70b583d88386d44c5b06f060fb57e36b04708f16c43c031d0a5862e"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/tests-initial.log",
+      "bytes": 5862,
+      "sha256": "e989f1fea76b186a640362512422481756d988ff32a54d2b65c8bd631b58ad3a"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-events/maker/tests.log",
+      "bytes": 5985,
+      "sha256": "177057a8467655204ac7fb622cf9ad4e42d2547117a49f4bf8c02d9c23135f6d"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "bytes": 25486,
+      "sha256": "d7e4b8be5a255c47db6b021ced21ccde3c2eec3cf397b447443f5691264cde39"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "bytes": 39898,
+      "sha256": "ae4ef6df124ba66c27eb2187b89dcebb26bbf51fd323477f23f6a1ce1dfe722f"
+    },
+    {
+      "path": "tests/workspace-events-client.test.mjs",
+      "bytes": 13356,
+      "sha256": "1fc2d9f88777c938d1926f7bdb8777bd930f8629ecb1204e194b71e25f0f0e66"
+    },
+    {
+      "path": "tests/helpers/workstation-client-fixture.mjs",
+      "bytes": 5562,
+      "sha256": "d16a920254efde935fe29ae2a05c3415e2110621d839fd86b7f80f521b50c7a7"
+    },
+    {
+      "path": "tests/run-panel-client.test.mjs",
+      "bytes": 5327,
+      "sha256": "f1a2ebd4830f6c3878eb5fa2c7e4c5993a86bddf12451c47357de54e61c45d47"
+    },
+    {
+      "path": "docs/tasks/KONT-WORKSTATION-030.md",
+      "bytes": 4718,
+      "sha256": "d174e62e5e26fafa4f0e964099ecf2cbfcde830eca04c53487794822b760e5ba"
+    },
+    {
+      "path": "docs/api/workspace-events.md",
+      "bytes": 1890,
+      "sha256": "7e12c675ca128170fc45bd14e6e75acc0c7afb2c1977f0236fae6c3d068d7b87"
+    },
+    {
+      "path": "README.md",
+      "bytes": 14075,
+      "sha256": "5f6111393d65c1ac43e75e8d84abc8377fca9db6c7e54bb152c5c205c1a36aae"
+    }
+  ]
+}

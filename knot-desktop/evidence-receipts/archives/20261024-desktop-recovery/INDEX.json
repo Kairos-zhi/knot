@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261024-desktop-recovery",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261024-desktop-recovery",
+      "path": "archives/20261024-desktop-recovery/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-recovery/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "e7d1f3168fc0a67d0e2ae96eae882c16f9839377f4b8ce14b5455fd03db4ac97",
+      "publishedSha256": "ffbe0d904fc926f04fea3f28d2e8f61f5f07ddf6b5b755f527ce4464b3a1ae58",
+      "sourceBytes": 3742,
+      "publishedBytes": 3850,
+      "originalOutcome": "ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-recovery",
+      "path": "archives/20261024-desktop-recovery/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-recovery/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "d14097b13f51b47857340d3aae1e8975d42d5a5b3c6d0a360f73ca947f4b05aa",
+      "publishedSha256": "8ec7e2299f917e8e64f912a8ad4bc0e0002d1ecc2de517f6b7d89960a2aaed02",
+      "sourceBytes": 904,
+      "publishedBytes": 876,
+      "originalOutcome": "ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-recovery",
+      "path": "archives/20261024-desktop-recovery/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-recovery/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "df76efcde90bbb5f19aa765e842b638a92ef49081bc4d76e7a7a9c630195435e",
+      "publishedSha256": "d9420f4d253313f0cd7d58bf7ff2d990691348c595198ae1541622fbbc2d8480",
+      "sourceBytes": 2783,
+      "publishedBytes": 2798,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

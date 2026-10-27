@@ -1,0 +1,116 @@
+{
+  "task": "KONT-WORKSTATION-028",
+  "archive_id": "kont-workspace-recovery-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_WORKSPACE_RECOVERY_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Fixed workspace failure semantics; draft preservation, explicit refresh before further writes, no automatic replay, honest pending status and orphan draft leave warning",
+  "independentBuildExit": 0,
+  "focusedPassed": 34,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false,
+  "files": [
+    {
+      "path": "evidence/local/20261025-workspace-recovery/archive.mjs",
+      "bytes": 3127,
+      "sha256": "6db0a5abe30378e88e3c75e58b06eb18b60298fd2d3f53467fe4005b4b321216"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/checker/final-review.json",
+      "bytes": 4756,
+      "sha256": "f14841fd6c87f8d821857da4b21138c9f811ade58cc86ab981aa825d01974ecb"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/checker/focused.tap",
+      "bytes": 3724,
+      "sha256": "27cddaea5ad8088db4fe4856d3e87b4ef301c41dd923b9672e158c39935b5d69"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/checker/independent.test.mjs",
+      "bytes": 3390,
+      "sha256": "5866b6d06b843f5d9515714cb8e0017b4baabe66166eb60977c999dbfa114eb8"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/checker/REPORT.md",
+      "bytes": 2497,
+      "sha256": "877e4f51459b1ab72f65c24ed73b5185d4030ef6e0e37bdbab1eddbe2103dfbc"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/checker/review-plan.md",
+      "bytes": 1574,
+      "sha256": "449606d5d912254df59ba59437d94ea3653db8bab696e4c3df010008478fa478"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/controller/receipt.json",
+      "bytes": 739,
+      "sha256": "a91d4c5998462455c30336573616bac738a9c951dd46dc1d65d8df01b2d9c23f"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/build.log",
+      "bytes": 231,
+      "sha256": "4d0629e2ecc894ff43f9279dffffb1b4a49a0eebfea719c9a0299444541111cb"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/inventory-readback.log",
+      "bytes": 155,
+      "sha256": "1e98d4d7ae7e536c0073363361108c000bc829aca7acd4869dbc85b6b6c0317e"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/manifest.json",
+      "bytes": 1655,
+      "sha256": "ae5ed3cf0fcf5526d181e56f4007c8151e45aefa60e023371dd399cbaa8cb6f4"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/manifest.sha256",
+      "bytes": 64,
+      "sha256": "e929cf57c267bb86e2ff035a8ab5930e2a20b793ee966f608649676b60bb0083"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/REPORT.md",
+      "bytes": 4313,
+      "sha256": "9c84d796537ab69831b364fac5cfd2c786e60bc4aa4d92facb9bc087fa860f12"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/tests-initial.log",
+      "bytes": 3305,
+      "sha256": "ab0a31f59b039e0b047907d36114ad64952eb1ebca8ebc93d6e6e6eba18c8263"
+    },
+    {
+      "path": "evidence/local/20261025-workspace-recovery/maker/tests.log",
+      "bytes": 3406,
+      "sha256": "2a7e9731fc41729fffed32c986a20a7cef9314ae912413aff7c76e2c7475384e"
+    },
+    {
+      "path": "packages/dsh-plugin/src/client.cjs",
+      "bytes": 19546,
+      "sha256": "4c6ce4037724d84c9e7d6634f9bb2ace687c3e2d768635256b190e4c7626cd10"
+    },
+    {
+      "path": "packages/dsh-plugin/lib/client.js",
+      "bytes": 33958,
+      "sha256": "a2f731e59b8191e33c6269c4a67a236837357966ced306abd4aab9fcb8eae3ae"
+    },
+    {
+      "path": "tests/workspace-recovery-client.test.mjs",
+      "bytes": 11278,
+      "sha256": "f90b084335c32156ed6e963cc0d057c91a78f2ad2f131cec90b257e03712fefe"
+    },
+    {
+      "path": "docs/tasks/KONT-WORKSTATION-028.md",
+      "bytes": 4567,
+      "sha256": "7d34cd238201aea31a6978a70d4043d66cdfde5d3ece8b2f51d7017a3ab54f08"
+    },
+    {
+      "path": "docs/api/workspace-recovery.md",
+      "bytes": 1800,
+      "sha256": "3afd12b1e41b56cb5d3512814a43fa1d83f3b117ddb9c1214420cfbc59fef80b"
+    }
+  ]
+}

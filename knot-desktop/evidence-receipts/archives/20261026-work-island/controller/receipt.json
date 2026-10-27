@@ -1,0 +1,34 @@
+{
+  "task": "KONT-WORKSTATION-035",
+  "archive_id": "kont-work-island-20261026",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_WORK_ISLAND_OVERVIEW_RETURN_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Work-island overview groups actual public Run phases by worksite using the existing single source; return through shared reveal/save commands, unknown-owner and stale-source isolation; built factory and isolated store semantics only",
+  "checkerReceipt": "evidence/local/20261026-work-island/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 75,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 12,
+  "protectedPriorFilesPreserved": 53,
+  "authorizedTestHelperChanges": [
+    {
+      "path": "tests/helpers/workstation-client-fixture.mjs",
+      "beforeSha256": "78e955cca2217b62a7f7d733e2e9d3ad02c6452bfadfae3a5e49e1803d0a6905",
+      "sha256": "e33fc8e78a99a16409ae19cf6bf8e4da7aedee4d77d39a6fbf012632f69de1ef"
+    }
+  ],
+  "roadmapSourceAndSnapshotMatched": 6,
+  "fullG3Accepted": false,
+  "reliableBackgroundExecutionVerified": false,
+  "liveRunningPhaseInferred": false,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushPrOrMerge": false,
+  "prior032PlanReusable": false
+}
