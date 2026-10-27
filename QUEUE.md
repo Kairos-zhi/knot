@@ -1,7 +1,13 @@
 # KONT 执行队列
 
-更新：2026-10-27；045已推送并建审阅PR12，main集成仍单列。046新分支源门独立build/74项限定通过，提交/候选/增量PR以root-candidate-046/controller执行回执为准；未在用部署/生产/新模型。
+更新：2026-10-27；046已精确11路径提交81afa22并推送草稿PR13（base045），真实HEAD新26候选官方隔离及独立发布读回通过。PR12/13均open/draft未merge，main集成仍单列；本轮未更新在用软件或重读当前加载态，候选通过不认定已部署，047无生产/新模型操作。047文档分支写回[本地进度](docs/progress/20261027-local-development.md)，其提交/PR以仓库记录为准。
 状态只允许：MAKER、CHECKER、GATE、ACCEPTED_LIMITED、CLOSED、BLOCKED。具体verdict及验收范围保留在原回执，不改写原历史冻结文件。
+
+046执行完成：commit81afa22a483baf6c2da4f9d45f29d5669acabf10、11路径、远端读回；[草稿PR13](https://github.com/Kairos-zhi/knot/pull/13)以codex/workstation-release-045为base。新26候选pin321d8d309c6086250aafd579dd39478555d55cfa5b6b3037e601e2ca76634aa8，官方隔离与独立Gate=ACCEPT_RUN_RECONCILIATION_COMMITTED_CANDIDATE_ISOLATION_LIMITED；源门74项不与其他卡/隔离检查相加，本次文档未重跑。执行及发布回执见evidence/local/20261027-root-candidate-046/controller/receipt.json、run-reconciliation/checker/{execution-final-review,publication-readback}.json。
+
+后续顺序：047文档独立复核→根提交/推送stacked draft审阅（base046）；main历史集成另处置。再以最新候选完成具体部署/恢复绑定授权→真实Desktop/G3/native/人的体验→稳定双端/G4→三轮/G5。044恢复正例绑定d59，旧017不兼容保持，不把81候选隔离通过称生产迁移或在用更新。以下为各卡历史收口。
+
+未决边界另留：额外runtime-context与原returnRun验证器证据交集、其他失败/取消终态尚未完成；普通超长Worksite默认标题限制保持。不得用本轮接受覆盖或自动派成已批准的新功能卡。
 
 037收口：Maker自测79项→独立Checker build/91项→provider范围措辞docs-only r2（已测代码/原日志未变）→根Gate ACCEPT_WORKSITE_FOLDER_CLIENT_LIMITED→evidence/WORKSTATION-037-INDEX.json。同Store文件夹分组/创建改名/移入移出接通，窄接纳/回显防错清输入；未归组sentinel、同名标题/特殊ID、CAS/晚输入与原HUD/工作岛回归通过。64保护文件保持，原69保留、现73；后端/helper/旧证据未改。真实宿主/人验及G3整体、G4/G5仍未完成，036旧读者兼容边界保留；032旧提交清单须重审，无新提交/部署许可。
 
@@ -66,7 +72,7 @@
 | KONT-COMPAT-043 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-reader-pairing/checker/final-review.json；独立build/31项，离线读/导出预检，不授迁移/恢复/部署许可 |
 | KONT-COMPAT-044 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-recovery-roundtrip/checker/final-review.json；独立build/36项，具体synthetic恢复承载通过，不授生产恢复许可 |
 | KONT-RELEASE-045 | root执行 / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-release-preparation-refresh/checker/execution-final-review.json；d59已推，26正式候选官方隔离限定通过；PR12仅父基线审阅，main集成另议 |
-| KONT-RUN-046 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-run-reconciliation/checker/final-review.json；独立build/74项，双许可对账源门通过；提交/候选/增量PR执行另记，无生产/模型许可 |
+| KONT-RUN-046 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | 源门build/74项；81afa22精确11路径已推PR13，新26候选官方隔离/独立执行发布读回通过；evidence/local/20261027-root-candidate-046/controller/receipt.json，无生产/模型许可 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。
