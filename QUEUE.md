@@ -1,6 +1,6 @@
 # KONT 执行队列
 
-更新：2026-10-27；044派生恢复承载独立build/36项已限定接受；045精确发布准备独立限定接受，Gate等待具体本地执行例外许可。最终112计划与终读以045/controller/final-execution-plan.json、checker/final-readback.json为准；未提交或制正式候选，未在用部署。
+更新：2026-10-27；045已推送并建审阅PR12，main集成仍单列。046新分支源门独立build/74项限定通过，提交/候选/增量PR以root-candidate-046/controller执行回执为准；未在用部署/生产/新模型。
 状态只允许：MAKER、CHECKER、GATE、ACCEPTED_LIMITED、CLOSED、BLOCKED。具体verdict及验收范围保留在原回执，不改写原历史冻结文件。
 
 037收口：Maker自测79项→独立Checker build/91项→provider范围措辞docs-only r2（已测代码/原日志未变）→根Gate ACCEPT_WORKSITE_FOLDER_CLIENT_LIMITED→evidence/WORKSTATION-037-INDEX.json。同Store文件夹分组/创建改名/移入移出接通，窄接纳/回显防错清输入；未归组sentinel、同名标题/特殊ID、CAS/晚输入与原HUD/工作岛回归通过。64保护文件保持，原69保留、现73；后端/helper/旧证据未改。真实宿主/人验及G3整体、G4/G5仍未完成，036旧读者兼容边界保留；032旧提交清单须重审，无新提交/部署许可。
@@ -65,7 +65,8 @@
 | KONT-ARCH-042 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261026-arch-identities/checker/final-review.json；独立build/85项，ARCH-05限定修复，无部署 |
 | KONT-COMPAT-043 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-reader-pairing/checker/final-review.json；独立build/31项，离线读/导出预检，不授迁移/恢复/部署许可 |
 | KONT-COMPAT-044 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-store-recovery-roundtrip/checker/final-review.json；独立build/36项，具体synthetic恢复承载通过，不授生产恢复许可 |
-| KONT-RELEASE-045 | workstation_maker / workstation_checker / 中控Gate | GATE | evidence/local/20261027-release-preparation-refresh/checker/final-review.json；准备独立接受，112最终计划/控制终读见controller与checker/final-readback.json；未授权本地提交/正式候选或PR例外 |
+| KONT-RELEASE-045 | root执行 / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-release-preparation-refresh/checker/execution-final-review.json；d59已推，26正式候选官方隔离限定通过；PR12仅父基线审阅，main集成另议 |
+| KONT-RUN-046 | lifecycle_maker / workstation_checker / 中控Gate | ACCEPTED_LIMITED | evidence/local/20261027-run-reconciliation/checker/final-review.json；独立build/74项，双许可对账源门通过；提交/候选/增量PR执行另记，无生产/模型许可 |
 
 根均为evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read。
 CARD-KONT-20261022-RESUME已完成历史收口；之新授权“换窗口，继续开发”接续 KONT-RUN-004，旧回执STOP不再阻止本卡，不改写历史文件。

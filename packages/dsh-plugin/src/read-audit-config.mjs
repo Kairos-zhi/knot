@@ -41,7 +41,7 @@ export function parseReadAuditConfig(config = {}) {
   const value = jsonCopy(config);
   check(only(value, ['readAudit']));
   const audit = value.readAudit ?? {};
-  check(value.readAudit !== null && only(audit, ['enabled', 'grants']));
+  check(value.readAudit !== null && only(audit, ['enabled', 'grants', 'reconcileGrants']));
   const enabled = audit.enabled ?? false, grants = audit.grants ?? [];
   check(typeof enabled === 'boolean' && audit.enabled !== null && audit.grants !== null && Array.isArray(grants) && grants.length <= 200);
   for (const grant of grants) {
@@ -51,7 +51,14 @@ export function parseReadAuditConfig(config = {}) {
       && digest(grant.inputSha256) && (grant.approvedRequestSha256 === undefined || digest(grant.approvedRequestSha256)));
   }
   check(new Set(grants.map(grant => grant.runId)).size === grants.length);
-  return freeze({ enabled, grants });
+  if (audit.reconcileGrants !== undefined) {
+    check(Array.isArray(audit.reconcileGrants) && audit.reconcileGrants.length <= 200);
+    for (const grant of audit.reconcileGrants) check(only(grant, ['runId', 'requestId', 'sessionId', 'inputSha256'])
+      && identity(grant.runId) && identity(grant.requestId) && typeof grant.sessionId === 'string'
+      && /^[a-zA-Z0-9_-]{1,200}$/.test(grant.sessionId) && digest(grant.inputSha256));
+    check(new Set(audit.reconcileGrants.map(grant => grant.runId)).size === audit.reconcileGrants.length);
+  }
+  return freeze({ enabled, grants, ...(audit.reconcileGrants === undefined ? {} : { reconcileGrants: audit.reconcileGrants }) });
 }
 
 /** Resolve only named host-owned packages; no configuration field names a path,
@@ -79,6 +86,10 @@ export async function resolveReadAudit(ctx, audit) {
         && item.sessionId === binding.sessionId && item.inputSha256 === binding.inputSha256);
       return grant ? { allowed: true, binding, ...(grant.approvedRequestSha256 ? { approvedRequestSha256: grant.approvedRequestSha256 } : {}) }
         : { allowed: false };
+    }, authorizeReconcile(binding) {
+      const grant = (audit.reconcileGrants ?? []).find(item => item.runId === binding.runId && item.requestId === binding.requestId
+        && item.sessionId === binding.sessionId && item.inputSha256 === binding.inputSha256);
+      return grant ? { allowed: true, binding } : { allowed: false };
     } };
   } catch (error) {
     if (error instanceof DshReadError) throw error;

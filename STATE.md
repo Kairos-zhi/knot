@@ -1,9 +1,11 @@
 # KONT 中控指针
 
-更新：2026-10-27；COMPAT-044恢复承载已限定接受，RELEASE-045精确发布准备已独立限定接受，执行停在Gate待具体本地许可。最终112计划与终读分别见045/controller/final-execution-plan.json、045/checker/final-readback.json（045根见队列表）。当前未提交、制正式候选或在用部署。
+更新：2026-10-27；045已推送并建审阅草稿PR12，main集成仍单列。046新分支codex/run-reconciliation-046以d59bcf2为父基线，显式终态对账源门独立限定接受，提交/候选/增量PR状态以046执行回执为准；无在用部署或新模型调用。
 六态：MAKER / CHECKER / GATE / ACCEPTED_LIMITED / CLOSED / BLOCKED；LIMITED不等于完整产品接受。
 
-045准备收口：Gate=ACCEPT_RELEASE_PREPARATION_REFRESH_LIMITED，仅接受只读准备；精确112路径=21 tracked修改+91 untracked，110稳定+2根控制文件最终收口，26产品字节均有最新已审锚。当前HEAD制备门11阻项（10产品diff+preview未tracked），须新真实提交后核门，不放宽。044组合27来源/index30、历史local引用289条、10工具输入保持；旧032的50/48不再用作本轮清单。最终执行申请仅新本地codex/workstation-release-045分支+精确112一次commit+新HEAD26正式本地候选+官方临时profile offline --workstation隔离及独立复核；须明确本地例外，PR待远端另处理。申请不含生产数据/在用软件启停安装/正式恢复组合发布/模型/remote配置或push合并。证据evidence/local/20261027-release-preparation-refresh/{maker,checker,controller}；根HEAD/index/remote保持，未执行申请动作。后续真实Desktop/G3、双端/三轮按具体权限接续，完整产品接受仍0。
+046源门收口：Gate=ACCEPT_EXPLICIT_RUN_RECONCILIATION_LIMITED；独立build/74项（新12、相关58、自有4）与维护性通过，Maker14项冻结、910保护。POST /kont/runs/{id}/reconcile沿原人/Agent认证，独立exact写grant默认拒绝+原exact读grant/approved replay指纹，只有close成功后经同owner Store回流；三claim态、并发/重复单块、取消/队列/提交后不撤回与completed免IO均核。旧observe仍只读，三种request摘要不混同；unsupported context或未完成保留原claim，不扩大Run schema。旧044正例绑定完整d59 A13+三script，原40条assert/pin保持；实际当前漂移拒绝、043七数据源回归通过。证据evidence/RUN-046-INDEX.json及evidence/local/20261027-run-reconciliation/checker/final-review.json；提交/候选/推送执行另见evidence/local/20261027-root-candidate-046/controller。对账不授权模型执行，不读真实Session/生产；没有native/人的体验或G3/G4/G5整体接受。
+
+045执行收口：之明确允许推送并指定Kairos-zhi/knot后，根在codex/workstation-release-045精确112一次commit=d59bcf29de1aeae80528357c0b48e80c62c322f8，全部blob与最终清单一致；build无漂移，真实HEAD制26正式本地候选pin ad5fb65ab02535d7a7fc4e1314a28bfc5281aef05ca946db50c76f55441e5471。官方0.2.1 RunAsNode临时profile offline验证26/runtime8/workstation10及订阅清理0通过，原Checker独立读回Gate=ACCEPT_COMMITTED_ROOT_CANDIDATE_OFFICIAL_ISOLATION_LIMITED。release分支已远端SHA读回；针对main的PR实际422无共同历史，未重写/force/merge，main仍08a2a5340edab920ce942173ba63b2c5bc369eb4。另以已审父45ccd24建立review-only基线，创建[草稿PR #12](https://github.com/Kairos-zhi/knot/pull/12)，精确1commit/112files，仅审阅不解决main集成。证据evidence/local/20261027-root-candidate-045/controller/{receipt.json,PUBLICATION.md}及045/checker/execution-final-review.json。旧准备计划/终读均留样；提交/候选/推送许可按本次已执行范围消耗，不扩张到在用安装/生产读写/模型。真实Desktop/G3、人验/双端三轮、主线集成尚未完成，完整产品接受仍0。
 
 044收口：Gate=ACCEPT_SYNTHETIC_DERIVED_RECOVERY_ROUNDTRIP_LIMITED；独立build/36项（本卡7、相关26、自有3）与维护性通过，Maker14项冻结、103保护。新B14=旧017承载7+当前数据闭包7，A当前入口闭包13；组合pin43546de507584eca98b0a47ea19a7879ca331c4b52f012d8279f88d9f8ae7939。实际A1→B真实apply四路由/human+Agent HTTP写→A2写→A3重开，完整state/journal原hash保持，revision/seq为8/14→10/18→11/19→11/19。仅离线synthetic软件承载回转，不是业务备份回退、原017兼容、旧UI体验或生产恢复接受。证据evidence/COMPAT-044-INDEX.json及evidence/local/20261027-store-recovery-roundtrip/controller/CLOSEOUT.md、receipt.json。原105路径保留、现112，HEAD/index/remote不变；旧产品/26库存/017/018/043/旧tests保持，无模型/生产/正式root候选/安装/系统/Git提交发布。下一步045按实际112重列精确范围，不沿用032旧50。
 
@@ -75,7 +77,8 @@
 | ARCH-042 | ACCEPTED_LIMITED | evidence/local/20261026-arch-identities/checker/final-review.json；独立build/85项，ARCH-05限定修复，无部署 |
 | COMPAT-043 | ACCEPTED_LIMITED | evidence/local/20261027-store-reader-pairing/checker/final-review.json；独立build/31项，离线reader预检工具通过，实际current/017仍不兼容 |
 | COMPAT-044 | ACCEPTED_LIMITED | evidence/local/20261027-store-recovery-roundtrip/checker/final-review.json；独立build/36项，新B14恢复承载真实HTTP写入回转；不授生产恢复/部署许可 |
-| RELEASE-045 | GATE | evidence/local/20261027-release-preparation-refresh/checker/final-review.json；准备独立限定接受，最终112计划/终读见controller与checker/final-readback.json；等待本地执行及PR后补例外许可 |
+| RELEASE-045 | ACCEPTED_LIMITED | evidence/local/20261027-release-preparation-refresh/checker/execution-final-review.json；d59已推、26正式候选官方隔离限定通过，草稿PR12仅父基线审阅；无生产部署 |
+| RUN-046 | ACCEPTED_LIMITED | evidence/local/20261027-run-reconciliation/checker/final-review.json；独立build/74项，显式双许可同owner回流；执行回执见root-candidate-046/controller，不授生产/模型许可 |
 
 证据根均在evidence/local/：K=20261021-kernel-adapter，R=20261021-backend-research，E=20261021-desktop，D=20261022-desktop-compat，N=20261022-run-contract，O=20261022-run-read，P=20261022-run-host，Q=20261022-run-config，S=20261022-run-guard，T=20261023-run-dispatch，U=20261023-run-integrated，V=20261023-run-live。
 - 授权／范围：[收口卡](docs/tasks/CARD-KONT-20261022-RESUME.md)；执行侧：[QUEUE](QUEUE.md)；基准：[开发约束](docs/development-baseline.md)。

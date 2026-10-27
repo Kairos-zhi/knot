@@ -125,9 +125,9 @@ function narrowLog(run, events) {
 
 /** Service factory only. No HTTP route, arbitrary path, session listing, activation,
  * automatic result import, model request, or execution authorization is provided. */
-export function createDshRunObserver({ hostVersion, persistence, Session, readRun, authorizeRead } = {}) {
-  return Object.freeze({ async observe(runId, { signal } = {}) {
-    let handle, result, failure;
+export function createDshRunObserver({ hostVersion, persistence, Session, readRun, authorizeRead, authorizeReconcile, returnRun } = {}) {
+  async function inspect(runId, { signal } = {}, reconcile = false) {
+    let handle, result, failure, originalRun, observedEvents;
     try {
       requireThat(hostVersion === version && typeof Session?.create === 'function', 'DSH_VERSION_UNSUPPORTED');
       requireThat(typeof readRun === 'function' && typeof authorizeRead === 'function' && typeof persistence?.open === 'function'
@@ -141,6 +141,17 @@ export function createDshRunObserver({ hostVersion, persistence, Session, readRu
         && runHash(grant.binding) === runHash(binding), 'DSH_READ_DENIED');
       requireThat(grant.approvedRequestSha256 === undefined || sha(grant.approvedRequestSha256), 'DSH_APPROVAL_INVALID');
       signal?.throwIfAborted();
+      if (reconcile) {
+        requireThat(typeof authorizeReconcile === 'function' && typeof returnRun === 'function', 'DSH_RECONCILE_DENIED');
+        const permission = structuredClone(await authorizeReconcile(binding));
+        requireThat(keys(permission, ['allowed', 'binding']) && permission.allowed === true
+          && runHash(permission.binding) === runHash(binding), 'DSH_RECONCILE_DENIED');
+        signal?.throwIfAborted();
+        // Known completion is an idempotent read, not a new Session attestation.
+        if (run.status === 'completed') return { evidenceRevalidated: false };
+        requireThat(run.status === 'prepared' && ['reserved', 'submitted', 'uncertain'].includes(run.dispatchClaim?.state), 'DSH_RECONCILE_NOT_CLAIMED');
+        originalRun = run;
+      }
       const before = structuredClone(await persistence.stat(binding.sessionId, { signal }));
       requireThat(before?.formatStatus === 'current' && typeof before.revision === 'string' && before.revision.length > 0
         && integer(before.sizeBytes) && before.sizeBytes <= 8 * 1024 * 1024, 'DSH_FORMAT_REFUSED');
@@ -151,6 +162,7 @@ export function createDshRunObserver({ hostVersion, persistence, Session, readRu
         && runHash(handle.header) === runHash(before.header), 'DSH_HANDLE_REFUSED');
       const read = await handle.read(0, 1001, { signal });
       const events = freeze(structuredClone(read.events));
+      observedEvents = events;
       requireThat(Array.isArray(events) && events.length > 0 && events.length <= 1000
         && Buffer.byteLength(JSON.stringify(events)) <= 8 * 1024 * 1024, 'DSH_LOG_LIMIT');
       const after = await persistence.stat(binding.sessionId, { signal });
@@ -182,6 +194,12 @@ export function createDshRunObserver({ hostVersion, persistence, Session, readRu
         messageCount: messages.length, eventCount: events.length, requestBoundarySeq: shape.cut - 1,
         terminalKind: 'completed', provider: context.provider, model: context.model, maxTokens: epoch.config.maxTokens,
         contentIncluded: false });
+      if (reconcile) {
+        requireThat(approved, 'DSH_RECONCILE_REQUEST_APPROVAL_REQUIRED');
+        const constraints = run.dispatchClaim.constraints;
+        requireThat(context.provider === constraints.provider && context.model === constraints.model
+          && epoch.config.maxTokens === constraints.maxTokens, 'DSH_RECONCILE_ROUTE_MISMATCH');
+      }
     } catch (error) {
       failure = signal?.aborted ? new DshReadError('DSH_READ_CANCELLED')
         : error instanceof DshReadError ? error : new DshReadError('DSH_READ_FAILED');
@@ -193,6 +211,22 @@ export function createDshRunObserver({ hostVersion, persistence, Session, readRu
     }
     if (signal?.aborted && !isDshReadCleanupFailure(failure)) failure = new DshReadError('DSH_READ_CANCELLED');
     if (failure) throw failure;
+    if (reconcile) {
+      requireThat(!signal?.aborted, 'DSH_READ_CANCELLED');
+      const latest = validateRun(await readRun(runId));
+      requireThat(!signal?.aborted, 'DSH_READ_CANCELLED');
+      requireThat(latest.runId === originalRun.runId && latest.requestId === originalRun.requestId
+        && latest.plannedSessionId === originalRun.plannedSessionId && latest.inputSha256 === originalRun.inputSha256
+        && latest.dispatchClaim?.claimId === originalRun.dispatchClaim.claimId
+        && latest.dispatchClaim.constraintsSha256 === originalRun.dispatchClaim.constraintsSha256
+        && runHash(latest.dispatchClaim.constraints) === runHash(originalRun.dispatchClaim.constraints), 'DSH_RECONCILE_BINDING_CHANGED');
+      // No phase gate is added to the writer queue. Same-claim phase changes
+      // after admission do not invalidate already observed completed evidence.
+      await returnRun(runId, { sessionId: originalRun.plannedSessionId, events: observedEvents, kind: 'dsh-session-log' }, { signal, expectedRun: originalRun });
+      return { evidenceRevalidated: true };
+    }
     return result;
-  } });
+  }
+  return Object.freeze({ observe: (runId, options) => inspect(runId, options),
+    reconcile: (runId, options) => inspect(runId, options, true) });
 }

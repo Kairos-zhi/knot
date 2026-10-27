@@ -84,6 +84,29 @@ export function createProtocolHandler(store, connection, options = {}) {
         return;
       }
       if (url.pathname === '/kont/runs' || url.pathname.startsWith('/kont/runs/')) {
+        const reconciliation = /^\/kont\/runs\/([^/]+)\/reconcile$/.exec(url.pathname);
+        if (reconciliation) {
+          if (req.method !== 'POST') { res.setHeader('allow', 'POST'); protocolError(405, 'METHOD_NOT_ALLOWED', 'POST required'); return; }
+          let runId;
+          try { runId = decodeURIComponent(reconciliation[1]); }
+          catch { throw new KontError('INVALID_RUN_ID', 'Invalid encoded Run identity'); }
+          const body = await readJson(req);
+          if (!body || Object.getPrototypeOf(body) !== Object.prototype || Object.keys(body).length)
+            throw new KontError('INVALID_RECONCILIATION', 'Empty JSON object required');
+          if (typeof options.reconcileRun !== 'function') { protocolError(403, 'DSH_RECONCILE_DENIED', 'Reconciliation is disabled'); return; }
+          const abort = new AbortController();
+          const disconnected = () => { if (!res.writableEnded) abort.abort(); };
+          req.on('aborted', disconnected); res.on('close', disconnected);
+          if (req.aborted || res.destroyed) abort.abort();
+          try {
+            sendJson(res, 200, await options.reconcileRun(runId, { signal: abort.signal }));
+          } catch (error) {
+            if (!(error instanceof DshReadError)) throw error;
+            const denied = ['DSH_READ_DENIED', 'DSH_RECONCILE_DENIED', 'DSH_VERSION_UNSUPPORTED'].includes(error.code);
+            protocolError(denied ? 403 : 409, error.code, 'Reconciliation refused; inspect the current Run');
+          } finally { req.off('aborted', disconnected); res.off('close', disconnected); }
+          return;
+        }
         if (req.method !== 'GET') { res.setHeader('allow', 'GET'); protocolError(405, 'METHOD_NOT_ALLOWED', 'GET required'); return; }
         const state = store.read();
         if (url.pathname === '/kont/runs') { sendJson(res, 200, listRuns(state)); return; }
@@ -173,14 +196,19 @@ export async function apply(ctx, config = {}) {
   }
   if (agentToken.length < 32 || /\s/.test(agentToken)) throw new Error('KONT agent token is invalid');
   const store = await new KontStore(resolve(dataDirectory, 'worksites.json')).init();
-  const protocol = createProtocolHandler(store, ctx.connection, { agentToken, agentSource: process.env.KONT_AGENT_SOURCE || 'agent:local' });
   let observerOwner, storageDisposal;
+  const protocol = createProtocolHandler(store, ctx.connection, { agentToken, agentSource: process.env.KONT_AGENT_SOURCE || 'agent:local',
+    reconcileRun(runId, options) {
+      if (storageDisposal || observerOwner?.released) throw new DshReadError('DSH_OBSERVER_CLOSED');
+      if (!audit.enabled || !observerOwner) throw new DshReadError('DSH_RECONCILE_DENIED');
+      return observerOwner.reconcile(runId, options);
+    } });
   const bindObserverOwner = (scope, options) => {
     if (storageDisposal) throw new DshReadError('DSH_OBSERVER_CLOSED');
     if (observerOwner && !observerOwner.released) throw new DshReadError('DSH_OBSERVER_OWNER_BUSY');
     const binding = bindRunObserver(scope, store, options);
     let disposal;
-    const owner = { released: false, dispose() {
+    const owner = { released: false, reconcile: binding.reconcile, dispose() {
       if (!disposal) disposal = binding.dispose().then(() => { owner.released = true; });
       return disposal;
     } };

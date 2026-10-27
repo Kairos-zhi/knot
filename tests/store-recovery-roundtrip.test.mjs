@@ -4,22 +4,36 @@ import { mkdtemp, mkdir, readFile, writeFile, rm, readdir } from 'node:fs/promis
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
-import { prepareSyntheticStoreRecovery, verifySyntheticStoreRecovery, disposeSyntheticStoreRecovery } from '../scripts/prepare-synthetic-store-recovery.mjs';
-import { probeStoreRecoveryRoundTrip } from '../scripts/store-recovery-roundtrip.mjs';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { prepareSyntheticStoreRecovery } from '../scripts/prepare-synthetic-store-recovery.mjs';
 
 const current = ['package.json', 'src/index.mjs', 'src/store.mjs', 'src/kernel.mjs', 'src/run.mjs', 'src/worksite-preview.mjs', 'src/run-observer-binding.mjs', 'src/read-audit-config.mjs', 'src/dsh-run-read.mjs', 'src/run-query.mjs', 'lib/snapshot.js', 'lib/workspace-state.js', 'lib/knot-model.js'];
 const old = 'evidence/local/20261024-desktop-recovery/candidate';
 const carrier = ['packages/desktop-bundle/package.json', 'packages/desktop-bundle/cordis.patch.yml', 'packages/dsh-plugin/package.json', 'packages/dsh-plugin/src/index.mjs', 'packages/dsh-plugin/src/client.cjs', 'packages/dsh-plugin/src/style.css', 'packages/dsh-plugin/lib/client.js'];
 const scripts = ['prepare-synthetic-store-recovery.mjs', 'store-recovery-roundtrip.mjs', 'store-recovery-roundtrip-worker.mjs'];
+// Historical 044 regressions bind the complete reviewed d59 implementation.
+// Never mix its fixed preparation pins with the evolving current runtime.
+const fixedCommit = 'd59bcf29de1aeae80528357c0b48e80c62c322f8';
+const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+const fixed = new Map([...current.map(name => `packages/dsh-plugin/${name}`), ...scripts.map(name => `scripts/${name}`)].map(path => {
+  const bytes = execFileSync('git', ['show', `${fixedCommit}:${path}`], { windowsHide: true });
+  return [path, { bytes, sha256: sha(bytes) }];
+}));
 async function isolated(t, transforms = {}) {
   const root = await mkdtemp(join(tmpdir(), 'kont-recovery-source-test-'));
   const owned = join(root, 'owned-tmp'); await mkdir(owned);
   t.after(() => rm(root, { recursive: true, force: true }));
   const put = async (name, bytes) => { const path = join(root, name); await mkdir(dirname(path), { recursive: true }); await writeFile(path, bytes); };
-  for (const name of current) await put(`packages/dsh-plugin/${name}`, await readFile(`packages/dsh-plugin/${name}`));
+  for (const name of current) {
+    const captured = fixed.get(`packages/dsh-plugin/${name}`);
+    assert.equal(sha(captured.bytes), captured.sha256);
+    await put(`packages/dsh-plugin/${name}`, captured.bytes);
+  }
   for (const name of ['manifest.json', ...carrier]) await put(`${old}/${name}`, await readFile(`${old}/${name}`));
   for (const name of scripts) {
-    let source = await readFile(`scripts/${name}`, 'utf8');
+    const captured = fixed.get(`scripts/${name}`); assert.equal(sha(captured.bytes), captured.sha256);
+    let source = captured.bytes.toString('utf8');
     source = source.replace("import { tmpdir } from 'node:os';", `const tmpdir = () => ${JSON.stringify(owned)};`);
     if (transforms[name]) source = transforms[name](source);
     await put(`scripts/${name}`, source);
@@ -29,7 +43,8 @@ async function isolated(t, transforms = {}) {
     roundtrip: (await import(pathToFileURL(join(root, 'scripts/store-recovery-roundtrip.mjs')).href)).probeStoreRecoveryRoundTrip };
 }
 
-test('new derived artifact has exact current A13 / reviewed-carrier plus current-data B14 provenance and an independent pin', async () => {
+test('fixed d59 derived artifact has exact A13 / reviewed-carrier plus data B14 provenance and an independent pin', async t => {
+  const { prepareSyntheticStoreRecovery, verifySyntheticStoreRecovery, disposeSyntheticStoreRecovery } = (await isolated(t)).prepare;
   const artifact = await prepareSyntheticStoreRecovery();
   try {
     const manifest = await verifySyntheticStoreRecovery(artifact);
@@ -67,7 +82,10 @@ test('source/pin drift, artifact byte/inventory/manifest drift and unissued desc
   }
 });
 
-test('actual A HTTP -> real derived B apply/HTTP -> A HTTP -> independent reopen preserves full business and journal', async () => {
+test('fixed d59 actual A HTTP -> real derived B apply/HTTP -> A HTTP -> independent reopen preserves full business and journal', async t => {
+  const probeStoreRecoveryRoundTrip = (await isolated(t)).roundtrip;
+  t.diagnostic(JSON.stringify({ fixedCommit, capturedFiles: fixed.size,
+    capturedSourceSha256: sha(JSON.stringify([...fixed].map(([path, { sha256 }]) => ({ path, sha256 })))) }));
   const environment = { ...process.env }, result = await probeStoreRecoveryRoundTrip();
   assert.equal(result.compatible, true, JSON.stringify(result.failures)); assert.deepEqual(result.failures, []);
   assert.deepEqual(result.stages.map(s => s.phase), ['a1', 'b', 'a2', 'a3']);
@@ -81,12 +99,18 @@ test('actual A HTTP -> real derived B apply/HTTP -> A HTTP -> independent reopen
   assert.deepEqual({ ...process.env }, environment);
 });
 
-test('no caller path/state/environment/capability options and independent parallel probes cannot share a lease', async () => {
+test('no caller path/state/environment/capability options and independent parallel probes cannot share a lease', async t => {
+  const fixture = await isolated(t), probeStoreRecoveryRoundTrip = fixture.roundtrip;
+  const { prepareSyntheticStoreRecovery } = fixture.prepare;
   for (const value of [null, {}, { path: 'production', state: {}, env: {}, allowed: true }]) assert.deepEqual((await probeStoreRecoveryRoundTrip(value)).failures, ['UNKNOWN_OPTIONS']);
   await assert.rejects(prepareSyntheticStoreRecovery({ allowed: true }), { code: 'UNKNOWN_OPTIONS' });
   const results = await Promise.all([probeStoreRecoveryRoundTrip(), probeStoreRecoveryRoundTrip()]);
   assert.ok(results.every(r => r.compatible));
   assert.notEqual(results[0].stages[0].fileSha256, results[1].stages[0].fileSha256);
+});
+
+test('historical 044 preparation rejects the evolving actual current source rather than laundering its fixed pins', async () => {
+  await assert.rejects(prepareSyntheticStoreRecovery(), { code: 'CURRENT_SOURCE_MISMATCH' });
 });
 
 test('B actual mutation failure or dispose failure blocks returning A, preserving fixed failure facts', async t => {
