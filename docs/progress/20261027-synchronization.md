@@ -9,9 +9,9 @@
 | 已核软件候选 | v3、26文件；pin7ac0e3ab13b680de16403bcf62ff290959bfdf9fa7024f804e6885f2e7308c18，源ed54934 |
 | 官方验证 | 0.2.1-rc.2临时profile/offline；26复制/runtime8/workstation10/订阅清理0，临时目录已回收 |
 | 独立复核 | 源门、候选执行门、发布读回通过；235/11/3及内含历史15不相加 |
-| 本轮049 | 只更新六路径说明/根忽略规则与本地入口；不改产品，不重制候选 |
-| 两处本地 | 常用目录持codex/local-sync-049及远端upstream；聊天副本同一同步提交detached；两处须clean |
-| 历史保全 | 910旧忽略证据原地SHA不变；90运行文件只核元数据；695旧跟踪证据另做物理归档并保留a05/旧refs |
+| 本轮049 | r1六路径说明后追加r2五路径/固定本机兼容junction；不改产品，不重制候选 |
+| 两处本地 | 常用目录持codex/local-sync-049-r2及远端upstream；聊天副本同一同步提交detached；两处须clean |
+| 历史保全 | 910证据原地SHA不变，695跟踪证据另归档并保留a05/旧refs；90逻辑路径分66真实运行元数据保持及24公开源码引用恢复，不称90全未变 |
 | main/在用软件 | main仍08a未合并，在用软件未更新；无模型或真实Session读取 |
 
 048执行回执SHA256：`cb63af8f868ed43c243941f67c4c53d83a9dca6e73067cf53f7fc16d9a9ab2b3`；发布读回SHA256：`7f247b3e3f414ea3c65229c715c09def84eb5e597805337987de71cacab89d08`。本机冻结归档键为20261027-mainline-integration，049为20261027-local-sync-049，均位于本地忽略的evidence/local；运行资料不上传。
@@ -19,3 +19,5 @@
 源门为ACCEPT_MAINLINE_DESKTOP_MODULE_INTEGRATION_LIMITED，候选执行门为ACCEPT_MAINLINE_MODULE_CANDIDATE_ISOLATION_LIMITED，均非完整产品接受。旧017不兼容、044固定d59、native/ReactDOM/真实App传输、人过手、G3/G4/G5与原终态/标题缺口保持。
 
 下一步审阅主线接入；正式合并和生产更新按具体授权处理，本轮“同步”不自动包含。实施门见[049任务](../development/local-sync.md)。
+
+r1文档提交35f6d42及[草稿PR16](https://github.com/Kairos-zhi/knot/pull/16)保留。其post核验发现24旧代码引用悬空，尚未完成同步；r2通过固定root/packages→knot-desktop/packages本机junction恢复旧路径，复用唯一源码，原.runtime和D盘链接不动。不读取运行文件内容，不启动或验收旧测试运行环境；24项代码checkout时间变化单独登记。r2执行成功须独立读回，不能从本页推定已完成。

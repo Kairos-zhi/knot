@@ -18,3 +18,5 @@ yarn-error.log*
 # Preserve local evidence and legacy runtime across checkout synchronization.
 /evidence/local/
 /.runtime/
+# Local compatibility junction; authoritative source stays in knot-desktop/packages.
+/packages

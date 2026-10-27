@@ -2,11 +2,13 @@
 
 ## 049 · 当前进度与统一入口
 
-当前开发同步分支为 `codex/local-sync-049`，承接代码提交 `ed54934095a2788405d1c7839067735fe265807f`。从本轮起，常用项目目录为后续开发入口，聊天隔离工作区保留同提交副本；二者读取相同根 STATE.md / QUEUE.md。实际新提交、远端及 PR 标识以 Git 和执行读回为准，旧047状态不再作为当前入口。见[同步记录](docs/progress/20261027-synchronization.md)与[049任务](docs/development/local-sync.md)。
+当前开发同步分支为 `codex/local-sync-049-r2`，承接049文档提交 `35f6d4247858d1684f9e437e58d9e7a9c398039c` 和代码提交 `ed54934095a2788405d1c7839067735fe265807f`。从本轮起，常用项目目录为后续开发入口，聊天隔离工作区保留同提交副本；二者读取相同根 STATE.md / QUEUE.md。实际新提交、远端及 PR 标识以 Git 和执行读回为准，旧047状态不再作为当前入口。见[同步记录](docs/progress/20261027-synchronization.md)与[049任务](docs/development/local-sync.md)。
 
 048源门、真实HEAD候选及发布独立复核均已通过：`ACCEPT_MAINLINE_MODULE_CANDIDATE_ISOLATION_LIMITED`；[草稿PR15](https://github.com/Kairos-zhi/knot/pull/15)，base main，1commit/300files，head ed54934。已核v3候选源为该提交，26文件pin `7ac0e3ab13b680de16403bcf62ff290959bfdf9fa7024f804e6885f2e7308c18`；官方0.2.1-rc.2临时profile offline验证26复制/runtime8/workstation10/清理订阅0，生产未更新。独立235/11/3分别记录、不相加。
 
 049只同步说明、根忽略规则与本地入口，不改产品或重制候选；软件候选仍绑定ed54934，不能把文档同步HEAD当新软件候选。910旧本地忽略证据原地核SHA保留；90旧.runtime文件仅核路径/size/mtime，不读内容或运行。695旧跟踪证据另做物理归档并保留于a05历史/旧refs，不继续占用新代码树原路径。最终切换须检查新提交碰撞，禁止覆盖忽略文件；失败即停，不强制清理。
+
+r1切换后的保全读回发现：90是逻辑路径，其中66真实运行路径元数据保持，24为旧junction指向root/packages下的公开代码引用，随代码迁移而悬空。r2以本机固定root/packages junction指向唯一knot-desktop/packages恢复旧引用；原.runtime及D盘链接/数据不改，不新增副本或Store，不启动旧运行环境。24项代码引用的checkout时间变化明确保留，不称原90项全部元数据未变；软件26字节与ed/a05一致。
 
 main仍08a2a5340edab920ce942173ba63b2c5bc369eb4，PR15未合并。本轮不包含主线合并、生产安装、真实Session读取或模型调用。G3/G4/G5与原未决边界保持。
 
