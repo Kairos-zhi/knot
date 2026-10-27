@@ -1,8 +1,0 @@
-{
-  "task": "KNOT-SYNC-049",
-  "kind": "independent-runtime-reference-metadata-diagnosis",
-  "runtimeContentRead": false,
-  "runtimeBaselineFiles": 90,
-  "metadataMatched": 66,
-  "changedMetadata": []
-}
