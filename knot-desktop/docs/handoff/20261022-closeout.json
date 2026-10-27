@@ -1,0 +1,27 @@
+{
+  "task_id": "CARD-KONT-20261022-RESUME",
+  "gate": "GATE",
+  "verdict": "ACCEPT_CLOSEOUT_LIMITED",
+  "commit_anchor": "Resolve git log -1 after the authorized single local commit; post-commit proof remains in evidence/local/20261022-desktop-compat/controller/commit.json",
+  "evidence": [
+    "evidence/INDEX.json",
+    "evidence/local/20261022-closeout/maker/receipt.json",
+    "evidence/local/20261022-closeout/controller/regression.log",
+    "evidence/local/20261022-closeout/checker/final-review.json",
+    "evidence/local/20261022-desktop-compat/checker/a-final-review.json",
+    "evidence/local/20261022-desktop-compat/checker/final-review.json"
+  ],
+  "counts": { "units": 9, "accepted_limited": 7, "closed": 2, "full_product_acceptances": 0, "tests": 38 },
+  "commands": { "source_named_commands": 16, "supported_names": 5, "shared_direct": 3, "adapted_bridge_to_direct": 2, "unsupported": 11, "additional_worksite_presentation": 6, "ui_aliases": 2 },
+  "open_items": [
+    "Real model and complete Run lifecycle",
+    "Formal Apple workstation and human experience acceptance",
+    "Remaining original commands, fine-grained caller permissions",
+    "Forced termination, power loss and production deployment",
+    "Eight private Feishu original fragments remain local; SHA and disposition recorded in evidence/INDEX.json",
+    "Per-round exact token usage unavailable"
+  ],
+  "next": "STOP after local commit and final receipt; human decides whether to open a new controller",
+  "token_usage": { "value": null, "reason": "No exact per-round usage counter exposed; external historical estimates not adopted" },
+  "at": "2026-10-22"
+}

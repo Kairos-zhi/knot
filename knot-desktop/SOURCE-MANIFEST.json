@@ -1,0 +1,1786 @@
+{
+  "format": "knot-desktop-source-import/v1",
+  "repository": "https://github.com/Kairos-zhi/knot",
+  "sourceCommit": "a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+  "targetBaseCommit": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "fileCount": 222,
+  "excluded": "Original evidence (695 files), root README/STATE/QUEUE and repository-wide attributes/ignore are not imported.",
+  "files": [
+    {
+      "sourcePath": "AGENTS.md",
+      "sourceGitBlob": "cb10c72b963d58ac34c744af542e9333c90b2069",
+      "sourceSha256": "4e9d632857b8c6e6481d717178b15592223292a91ba809b405256a5f24be6930",
+      "path": "knot-desktop/AGENTS.md",
+      "currentSha256": "9f28c52366e343609541f495d7d19b3afa8729a7c757702d29ab35c69906d382",
+      "adapted": true
+    },
+    {
+      "sourcePath": "docs/api/desktop-candidate-formats.md",
+      "sourceGitBlob": "a74210a26162d37df27672d0bb2cc0286e779ba0",
+      "sourceSha256": "3ab98f10ddf533950f2d5950acef744d17393a29a0654794d91549c4e45ae56f",
+      "path": "knot-desktop/docs/api/desktop-candidate-formats.md",
+      "currentSha256": "4f856ccc72487f5946dfe3b9dc0b48735a481ab879303ff9311b3033a9ac6717",
+      "adapted": true
+    },
+    {
+      "sourcePath": "docs/api/installed-workstation-check.md",
+      "sourceGitBlob": "9acb9c5ef0d60f3c21a468700179bd30f4ab8989",
+      "sourceSha256": "4e722ea0dd98c2e8463827ecd0e9ad9bd88cce5bac710b6763d079d170527ca6",
+      "path": "knot-desktop/docs/api/installed-workstation-check.md",
+      "currentSha256": "4e722ea0dd98c2e8463827ecd0e9ad9bd88cce5bac710b6763d079d170527ca6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/presentation-state-contract.md",
+      "sourceGitBlob": "db7880edd64241871d6bed8d3781b18bf0adeebe",
+      "sourceSha256": "a35ffbc7258c41e1e3fe5ef41340c43ca6fe9eb540a715230ced21a405b34690",
+      "path": "knot-desktop/docs/api/presentation-state-contract.md",
+      "currentSha256": "a35ffbc7258c41e1e3fe5ef41340c43ca6fe9eb540a715230ced21a405b34690",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/read-cleanup-contract.md",
+      "sourceGitBlob": "98deb1575db14eb1dc3bb1a398cd71734e038114",
+      "sourceSha256": "d16e0b5c86b49bd15dcfbfd835ea149236fd446f573e06374fd5b6a0c28ee4d3",
+      "path": "knot-desktop/docs/api/read-cleanup-contract.md",
+      "currentSha256": "d16e0b5c86b49bd15dcfbfd835ea149236fd446f573e06374fd5b6a0c28ee4d3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/run-epoch-contract.md",
+      "sourceGitBlob": "dc259e55534a37640f574d94675a768560c41313",
+      "sourceSha256": "25deca0f2a743c0be87553b79a3dad38166c845721942fc47bc8b00cdca8ccfd",
+      "path": "knot-desktop/docs/api/run-epoch-contract.md",
+      "currentSha256": "25deca0f2a743c0be87553b79a3dad38166c845721942fc47bc8b00cdca8ccfd",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/run-reconciliation.md",
+      "sourceGitBlob": "4d0763bf1a6cfb1e7480089ba4ea3ded4cce2998",
+      "sourceSha256": "f529819856977ab60df9155c9cd256e5b6a57e9923a6bdabdc0b935273d5966d",
+      "path": "knot-desktop/docs/api/run-reconciliation.md",
+      "currentSha256": "f529819856977ab60df9155c9cd256e5b6a57e9923a6bdabdc0b935273d5966d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/run-reference-domains.md",
+      "sourceGitBlob": "b0e3dfe6677366f64dcbea0e8187cbf0a648ea09",
+      "sourceSha256": "8169e67ddd15616b7f48374022dd883c241edb6de3bfb8f0793d8cc0c5cf1c61",
+      "path": "knot-desktop/docs/api/run-reference-domains.md",
+      "currentSha256": "8169e67ddd15616b7f48374022dd883c241edb6de3bfb8f0793d8cc0c5cf1c61",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/store-reader-pairing.md",
+      "sourceGitBlob": "45fff9795daa0ec445656f27e96364d1fab8be09",
+      "sourceSha256": "c430464fb8c172ed3d5780eecb42eb785296195c398814179a5f6f73b50d8137",
+      "path": "knot-desktop/docs/api/store-reader-pairing.md",
+      "currentSha256": "c430464fb8c172ed3d5780eecb42eb785296195c398814179a5f6f73b50d8137",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/store-recovery-pairing.md",
+      "sourceGitBlob": "55bd3ad6729bf2a97e0fa0b266dc73ed9aca3ee7",
+      "sourceSha256": "634e11be38956c66f031cc724477d32b76f6fc97d3d91f9e180a52728b2d9058",
+      "path": "knot-desktop/docs/api/store-recovery-pairing.md",
+      "currentSha256": "634e11be38956c66f031cc724477d32b76f6fc97d3d91f9e180a52728b2d9058",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/store-snapshot-contract.md",
+      "sourceGitBlob": "3d41ad012dfa71fa4a5752fc50ad1f983263a2e6",
+      "sourceSha256": "3d1dc43dc846feda19499f38039c10af09accdf6811e5e37a38589add75671f2",
+      "path": "knot-desktop/docs/api/store-snapshot-contract.md",
+      "currentSha256": "3d1dc43dc846feda19499f38039c10af09accdf6811e5e37a38589add75671f2",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/work-island.md",
+      "sourceGitBlob": "8da22ffa158eecb3fb5c98e4da4914b15597a0b7",
+      "sourceSha256": "680ad2e84137f3648cc5cca36663925f42a6b55ad89b41777584fcdfe9361430",
+      "path": "knot-desktop/docs/api/work-island.md",
+      "currentSha256": "680ad2e84137f3648cc5cca36663925f42a6b55ad89b41777584fcdfe9361430",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/worksite-folders-client.md",
+      "sourceGitBlob": "db41ab5e06633edbde66938314585c29cf9fe783",
+      "sourceSha256": "8dd859bac029d0419db06917ded60aa77f39a769735c7def1908ef7c3004d2c9",
+      "path": "knot-desktop/docs/api/worksite-folders-client.md",
+      "currentSha256": "8dd859bac029d0419db06917ded60aa77f39a769735c7def1908ef7c3004d2c9",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/worksite-folders.md",
+      "sourceGitBlob": "1793573290c7df41a96e06109528ecf1342301e8",
+      "sourceSha256": "6c5539dd3db897f3fecd403fdfbbf0ecdafdca5e1153315bb137aa53054d0ffe",
+      "path": "knot-desktop/docs/api/worksite-folders.md",
+      "currentSha256": "6c5539dd3db897f3fecd403fdfbbf0ecdafdca5e1153315bb137aa53054d0ffe",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/worksite-hud.md",
+      "sourceGitBlob": "4522aec49b29587d77f2469b077300117d48139a",
+      "sourceSha256": "e84cd2687c9d022f1c3399cdcf3283eebea5a60d613832e16903d3f9649bbbd0",
+      "path": "knot-desktop/docs/api/worksite-hud.md",
+      "currentSha256": "e84cd2687c9d022f1c3399cdcf3283eebea5a60d613832e16903d3f9649bbbd0",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/worksite-library.md",
+      "sourceGitBlob": "2f4cfb3118d05d8ff6331c53f16afa2cf85d5cba",
+      "sourceSha256": "cb46aa56189657c86868dda2eb4106db60a6f05b68bd98ac7751123fb4ac2c0a",
+      "path": "knot-desktop/docs/api/worksite-library.md",
+      "currentSha256": "cb46aa56189657c86868dda2eb4106db60a6f05b68bd98ac7751123fb4ac2c0a",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/worksite-preview.md",
+      "sourceGitBlob": "963fa04d0549864e46f16fedb6f3a20a1486b311",
+      "sourceSha256": "8020b9794479a8612c7d89834bb54a12641f11f98b4ae5603215f2d7b7acae9d",
+      "path": "knot-desktop/docs/api/worksite-preview.md",
+      "currentSha256": "8020b9794479a8612c7d89834bb54a12641f11f98b4ae5603215f2d7b7acae9d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/workspace-events.md",
+      "sourceGitBlob": "279dfd43b966063c34064ac50c1593e0f199ed25",
+      "sourceSha256": "7e12c675ca128170fc45bd14e6e75acc0c7afb2c1977f0236fae6c3d068d7b87",
+      "path": "knot-desktop/docs/api/workspace-events.md",
+      "currentSha256": "7e12c675ca128170fc45bd14e6e75acc0c7afb2c1977f0236fae6c3d068d7b87",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/workspace-recovery.md",
+      "sourceGitBlob": "0f658169ac8abdd1927fb1e08e2869bacc9188bb",
+      "sourceSha256": "3afd12b1e41b56cb5d3512814a43fa1d83f3b117ddb9c1214420cfbc59fef80b",
+      "path": "knot-desktop/docs/api/workspace-recovery.md",
+      "currentSha256": "3afd12b1e41b56cb5d3512814a43fa1d83f3b117ddb9c1214420cfbc59fef80b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/api/workspace-response.md",
+      "sourceGitBlob": "fec4b3b0ad311cfe3316ade05d1755e68afbb073",
+      "sourceSha256": "fbf645e0414a1df0ef585b04ca9b65ca05e7c4243c5aa67e7ebb5edde5e42067",
+      "path": "knot-desktop/docs/api/workspace-response.md",
+      "currentSha256": "fbf645e0414a1df0ef585b04ca9b65ca05e7c4243c5aa67e7ebb5edde5e42067",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/archive/QUEUE-20261022.md",
+      "sourceGitBlob": "c595d2e2d80a1a328fc201c0e90a26b6d18fcfa4",
+      "sourceSha256": "bb6fc86b76daddceebd909bd4e5c1af9f506f1a94f786509c77d3ca55c6c35df",
+      "path": "knot-desktop/docs/archive/QUEUE-20261022.md",
+      "currentSha256": "bb6fc86b76daddceebd909bd4e5c1af9f506f1a94f786509c77d3ca55c6c35df",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/archive/STATE-20261022.md",
+      "sourceGitBlob": "ee531c64d92736645e9a3ced186ddd5a58510873",
+      "sourceSha256": "7bbf81b8c47387654556f3974a59035cee6c6bd29bc8287d88b4057590c09da5",
+      "path": "knot-desktop/docs/archive/STATE-20261022.md",
+      "currentSha256": "7bbf81b8c47387654556f3974a59035cee6c6bd29bc8287d88b4057590c09da5",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/development-baseline.md",
+      "sourceGitBlob": "a8782fd1da7fe20c41cd20a5c0c99910536ed243",
+      "sourceSha256": "be0d4fd7010b05508ef66a98c02ba8b4fc9a8dac7fb454d5de8b8ad3e72c6837",
+      "path": "knot-desktop/docs/development-baseline.md",
+      "currentSha256": "be0d4fd7010b05508ef66a98c02ba8b4fc9a8dac7fb454d5de8b8ad3e72c6837",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/handoff/20261022-closeout.json",
+      "sourceGitBlob": "43b54c3c6b74ecb5bc92782e12e2c3682e12c471",
+      "sourceSha256": "7dd8c422af16c7a855e8576dfcac36841c2179286b07b713d33b5e38fe3d6606",
+      "path": "knot-desktop/docs/handoff/20261022-closeout.json",
+      "currentSha256": "7dd8c422af16c7a855e8576dfcac36841c2179286b07b713d33b5e38fe3d6606",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/handoff/20261022-run-contract.json",
+      "sourceGitBlob": "961a74f9614543247aa1eb3f89e6ebfef8725a80",
+      "sourceSha256": "d2fa6ad606466c9e59ef9d4d2a2aa3a9d829017192841a056523bd585f72f363",
+      "path": "knot-desktop/docs/handoff/20261022-run-contract.json",
+      "currentSha256": "d2fa6ad606466c9e59ef9d4d2a2aa3a9d829017192841a056523bd585f72f363",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/handoff/20261025-desktop-installed.md",
+      "sourceGitBlob": "67231ca175beb93898beadd7d926b5d0d980c51f",
+      "sourceSha256": "f7f2265a0ba97cda3e9c7b021c067e98ca792490f88109a72f01e2b3125fde9f",
+      "path": "knot-desktop/docs/handoff/20261025-desktop-installed.md",
+      "currentSha256": "f7f2265a0ba97cda3e9c7b021c067e98ca792490f88109a72f01e2b3125fde9f",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/handoff/20261025-desktop-resume.md",
+      "sourceGitBlob": "b73941c1cfb2e52be90feaf7dc9ef958af87490d",
+      "sourceSha256": "d573a714cc51f9ca1493256366f3a131117cfcec301ca0dba5086a8425cf18b3",
+      "path": "knot-desktop/docs/handoff/20261025-desktop-resume.md",
+      "currentSha256": "d573a714cc51f9ca1493256366f3a131117cfcec301ca0dba5086a8425cf18b3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/progress/20261027-local-development.md",
+      "sourceGitBlob": "f7c5cb3814e83c0fea467953898c259644605ae9",
+      "sourceSha256": "7426e3a32446d0c543d775001a27de07f3b1cfc8a465e7da280d42adaf020ea7",
+      "path": "knot-desktop/docs/progress/20261027-local-development.md",
+      "currentSha256": "7426e3a32446d0c543d775001a27de07f3b1cfc8a465e7da280d42adaf020ea7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/20261021-backend-seeker.md",
+      "sourceGitBlob": "134bd038bf391e2f32ae5e64934f2ac19577af23",
+      "sourceSha256": "6e6fc816ecbf9f69bd43e220eb399e2e6b07a581f8c67c493b13a142196edc74",
+      "path": "knot-desktop/docs/research/20261021-backend-seeker.md",
+      "currentSha256": "6e6fc816ecbf9f69bd43e220eb399e2e6b07a581f8c67c493b13a142196edc74",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/20261022-run-contract.md",
+      "sourceGitBlob": "e676d954b08af6334e416f10ec4b260fbc7637c4",
+      "sourceSha256": "dfdcea5a672398e41aa66d358a15ded23e17084d65161f8c1c0eca76621daf04",
+      "path": "knot-desktop/docs/research/20261022-run-contract.md",
+      "currentSha256": "dfdcea5a672398e41aa66d358a15ded23e17084d65161f8c1c0eca76621daf04",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/20261022-run-read.md",
+      "sourceGitBlob": "060d851398a56b6e7239d84cbc62ba8801fe693d",
+      "sourceSha256": "332053dda87fb09e5c4f95027271b080feb2b739fb2340d9bc8e47a310ae8f13",
+      "path": "knot-desktop/docs/research/20261022-run-read.md",
+      "currentSha256": "332053dda87fb09e5c4f95027271b080feb2b739fb2340d9bc8e47a310ae8f13",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-candidate-install-20261024.md",
+      "sourceGitBlob": "4ed89dde0e680fd9eca06636474ddb5314949bf1",
+      "sourceSha256": "783a2bf05da10510660337dac2d9441484258be7a0caeb4c5a874f0f1894a053",
+      "path": "knot-desktop/docs/research/desktop-candidate-install-20261024.md",
+      "currentSha256": "783a2bf05da10510660337dac2d9441484258be7a0caeb4c5a874f0f1894a053",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-install-gate-20261024.md",
+      "sourceGitBlob": "dfddda47cd131c31182d57bd1b8db1ab4ee6fd8b",
+      "sourceSha256": "1e23e9f2e2506904ba7ca6fcd2d79cca5b94e48ed6d0a75aad90fe54f8df3415",
+      "path": "knot-desktop/docs/research/desktop-install-gate-20261024.md",
+      "currentSha256": "1e23e9f2e2506904ba7ca6fcd2d79cca5b94e48ed6d0a75aad90fe54f8df3415",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-paired-preflight-20261024.md",
+      "sourceGitBlob": "2f5f1f46cceca108d105473b3e84e1b168010f27",
+      "sourceSha256": "a84e83e3f707c90b130738ee6735a72bdaa3591f51942169cda3f03754fcc0e6",
+      "path": "knot-desktop/docs/research/desktop-paired-preflight-20261024.md",
+      "currentSha256": "a84e83e3f707c90b130738ee6735a72bdaa3591f51942169cda3f03754fcc0e6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-preflight-20261024.md",
+      "sourceGitBlob": "9095f4b83e497a565398d15f6e22ec6b725f9813",
+      "sourceSha256": "b84dd6cccb26108d90e4d3f5c1098d6deb2da657534d24b47f24205209920062",
+      "path": "knot-desktop/docs/research/desktop-preflight-20261024.md",
+      "currentSha256": "b84dd6cccb26108d90e4d3f5c1098d6deb2da657534d24b47f24205209920062",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-recovery-20261024.md",
+      "sourceGitBlob": "da52c728c318680143760315d3e042f6a2a66ef5",
+      "sourceSha256": "ee6c430d6dff6457c3f7c6e975c2e672b45bd5fae62b7dcc096b983f045b1006",
+      "path": "knot-desktop/docs/research/desktop-recovery-20261024.md",
+      "currentSha256": "ee6c430d6dff6457c3f7c6e975c2e672b45bd5fae62b7dcc096b983f045b1006",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/desktop-rollback-20261024.md",
+      "sourceGitBlob": "5749386e94ce582a7e4d07094833c9e243da1305",
+      "sourceSha256": "4da8c677ab2653bd8e0d74f60cb259da4dbeb35e891123304c6ea89085bae888",
+      "path": "knot-desktop/docs/research/desktop-rollback-20261024.md",
+      "currentSha256": "4da8c677ab2653bd8e0d74f60cb259da4dbeb35e891123304c6ea89085bae888",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/research/run-status-workstation-20261023.md",
+      "sourceGitBlob": "1d63b1159e16b64b3198597624ec8858b4fa8191",
+      "sourceSha256": "ce919b75e396831de7f70a2349df62a0ad4b98e2d4a08e757126376ab0d737fb",
+      "path": "knot-desktop/docs/research/run-status-workstation-20261023.md",
+      "currentSha256": "ce919b75e396831de7f70a2349df62a0ad4b98e2d4a08e757126376ab0d737fb",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/CARD-KONT-20261022-RESUME.md",
+      "sourceGitBlob": "0195903119735ab4e51283ae52eaca25681d3162",
+      "sourceSha256": "bb5009c22bf42f24e2fe9b1169dd2e7cc63792edf4d8b1496fddaad234a562b0",
+      "path": "knot-desktop/docs/tasks/CARD-KONT-20261022-RESUME.md",
+      "currentSha256": "bb5009c22bf42f24e2fe9b1169dd2e7cc63792edf4d8b1496fddaad234a562b0",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-ARCH-038.md",
+      "sourceGitBlob": "5e940c764c1e2264104b5f95a326c874309f9841",
+      "sourceSha256": "fa418a94de05abf29f0505e5edcf6bf696430da68fcf494dc04c6ac1bbf920ff",
+      "path": "knot-desktop/docs/tasks/KONT-ARCH-038.md",
+      "currentSha256": "fa418a94de05abf29f0505e5edcf6bf696430da68fcf494dc04c6ac1bbf920ff",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-ARCH-039.md",
+      "sourceGitBlob": "399ca17164353878f3fea00637e2b4ee4aa88860",
+      "sourceSha256": "5a31cfc203e4b418ab0ca94c25cb8ba95f42a59091a7ef4c36f737ceeaed589d",
+      "path": "knot-desktop/docs/tasks/KONT-ARCH-039.md",
+      "currentSha256": "5a31cfc203e4b418ab0ca94c25cb8ba95f42a59091a7ef4c36f737ceeaed589d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-ARCH-040.md",
+      "sourceGitBlob": "7301ebf643c3ec0eef8c74b43fd96085b1ed6b19",
+      "sourceSha256": "24146b0bcd812616c642b11cdc285738abe8c17197d150ca3974c5b74e44aad4",
+      "path": "knot-desktop/docs/tasks/KONT-ARCH-040.md",
+      "currentSha256": "24146b0bcd812616c642b11cdc285738abe8c17197d150ca3974c5b74e44aad4",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-ARCH-041.md",
+      "sourceGitBlob": "ffe6a10d54701937967c75eb007421ebd6f70d3a",
+      "sourceSha256": "1a9a5ae4ad37f252a357a4ecb4c9febdb6ebbf6920f090e55815716cd30f0542",
+      "path": "knot-desktop/docs/tasks/KONT-ARCH-041.md",
+      "currentSha256": "1a9a5ae4ad37f252a357a4ecb4c9febdb6ebbf6920f090e55815716cd30f0542",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-ARCH-042.md",
+      "sourceGitBlob": "91e939a3e1fed151b627e9313085f98db4fab520",
+      "sourceSha256": "076b49e60b68e9a513ce36cb5d0b83798e404b3225c700e20ff91554a07f26bb",
+      "path": "knot-desktop/docs/tasks/KONT-ARCH-042.md",
+      "currentSha256": "076b49e60b68e9a513ce36cb5d0b83798e404b3225c700e20ff91554a07f26bb",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-COMPAT-043.md",
+      "sourceGitBlob": "ec7102584486cb6df1cdbd3fea58400e0225abd1",
+      "sourceSha256": "6b935a79a64bd2aa7af54155302ba30c77ab96130af77d19fc8569993657e927",
+      "path": "knot-desktop/docs/tasks/KONT-COMPAT-043.md",
+      "currentSha256": "6b935a79a64bd2aa7af54155302ba30c77ab96130af77d19fc8569993657e927",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-COMPAT-044.md",
+      "sourceGitBlob": "e6b8f9eb352d62db7740065b4378691224905b55",
+      "sourceSha256": "1ef8d76088ae3e087629ee389a97f7660cab812620ebd738b147bee8bca1fe64",
+      "path": "knot-desktop/docs/tasks/KONT-COMPAT-044.md",
+      "currentSha256": "1ef8d76088ae3e087629ee389a97f7660cab812620ebd738b147bee8bca1fe64",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-003-COMPAT.md",
+      "sourceGitBlob": "9d7d278b31c2c88027c7059b5d268cdaab6c22c7",
+      "sourceSha256": "d596c50251730c3d3a1e1c8ad3b8b79599bf508eb06330a07df0a3b28768dff6",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-003-COMPAT.md",
+      "currentSha256": "d596c50251730c3d3a1e1c8ad3b8b79599bf508eb06330a07df0a3b28768dff6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-003.md",
+      "sourceGitBlob": "ea53d42532983c28b01da15fdb1ee64a0a46791d",
+      "sourceSha256": "8791d52ddecfffc9cf3bc7f7f1c719c66112766f3eeebde7bc2b3415c6780b4f",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-003.md",
+      "currentSha256": "8791d52ddecfffc9cf3bc7f7f1c719c66112766f3eeebde7bc2b3415c6780b4f",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-014.md",
+      "sourceGitBlob": "67f848c161f01d641108d0fea87ca2d9031fc2c3",
+      "sourceSha256": "098a6437d72eda6dd2667cbaab08ab73fd0acb50d49140686a2aeb6628f05905",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-014.md",
+      "currentSha256": "098a6437d72eda6dd2667cbaab08ab73fd0acb50d49140686a2aeb6628f05905",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-015.md",
+      "sourceGitBlob": "b438c48eb4c8b593eae2f218ec927b27b235441a",
+      "sourceSha256": "a91a766def892e1ab2a95b867656b161ed031d31230889c548f6bda1e38a94a7",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-015.md",
+      "currentSha256": "a91a766def892e1ab2a95b867656b161ed031d31230889c548f6bda1e38a94a7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-016.md",
+      "sourceGitBlob": "3c169c80866772f129bc34836a02552c4ff9529b",
+      "sourceSha256": "9d7ade36adeb3eb32212e7defd2383e1b5e57e3af14e676b214c5534c563e61d",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-016.md",
+      "currentSha256": "9d7ade36adeb3eb32212e7defd2383e1b5e57e3af14e676b214c5534c563e61d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-017.md",
+      "sourceGitBlob": "fccd8310e12961be13bd6e0533b3fc527db55ff1",
+      "sourceSha256": "c22ad386f7687d15f67b6c16630489a61ffa306d0405fe6301457198642abb4f",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-017.md",
+      "currentSha256": "c22ad386f7687d15f67b6c16630489a61ffa306d0405fe6301457198642abb4f",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-018.md",
+      "sourceGitBlob": "f10c2924bd5a09a15f84a3231bdb2e838cc9cfae",
+      "sourceSha256": "4c9024be203d083d152a501c75bab6e5c1f9e6da38ebabc00e8e040c7a8eda32",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-018.md",
+      "currentSha256": "4c9024be203d083d152a501c75bab6e5c1f9e6da38ebabc00e8e040c7a8eda32",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-019.md",
+      "sourceGitBlob": "345062b40a3b75ad5054b93ad809aa02b68b72ce",
+      "sourceSha256": "45f5f2deb4a98df9a3e4ff54af057843975595f0668e897be5874236fee5e5e8",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-019.md",
+      "currentSha256": "45f5f2deb4a98df9a3e4ff54af057843975595f0668e897be5874236fee5e5e8",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-020.md",
+      "sourceGitBlob": "a75cfeb57ee1fe7e36887c1919d79d3102dd4e43",
+      "sourceSha256": "422efc4411b5ccd63748f38bf97f90c44df379475ad461d32465b1adea0fee78",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-020.md",
+      "currentSha256": "422efc4411b5ccd63748f38bf97f90c44df379475ad461d32465b1adea0fee78",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-021.md",
+      "sourceGitBlob": "f20370267f9aa59f4fa0b8f7821970f98644023d",
+      "sourceSha256": "7ebfc5722c277940fb778181233ff03395a5120f585700effe5907aaec17f03c",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-021.md",
+      "currentSha256": "7ebfc5722c277940fb778181233ff03395a5120f585700effe5907aaec17f03c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-022.md",
+      "sourceGitBlob": "21b4e89d6b40664ab0d05202e97a33d6c2d5015d",
+      "sourceSha256": "d11022e9db80bb1758c8887e94cc0e53dfcddbeab7bda89efd38ac3c871a7ac8",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-022.md",
+      "currentSha256": "d11022e9db80bb1758c8887e94cc0e53dfcddbeab7bda89efd38ac3c871a7ac8",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-023.md",
+      "sourceGitBlob": "2fb4f1b64faca833f4b4b66c4990d5cb7e5ebaef",
+      "sourceSha256": "d58da4d9ea44c11f26923723d8a25ea7abfad5e011ac7da8efda7268a16127fc",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-023.md",
+      "currentSha256": "d58da4d9ea44c11f26923723d8a25ea7abfad5e011ac7da8efda7268a16127fc",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-025.md",
+      "sourceGitBlob": "6ff2758ffcb29d3f168b441c973a0214e84ce2e3",
+      "sourceSha256": "412b829a076b98ac9ac98b9c4be9cedfeaef204f0dd8aa5d4b32d50c626ce675",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-025.md",
+      "currentSha256": "412b829a076b98ac9ac98b9c4be9cedfeaef204f0dd8aa5d4b32d50c626ce675",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-DESKTOP-031.md",
+      "sourceGitBlob": "65e1e3f3fc2240444939b043885f0915933f05ec",
+      "sourceSha256": "49a8bcadae90c9caf7e331ef6def969c6cb28abfe405356113f4c5a134587d5e",
+      "path": "knot-desktop/docs/tasks/KONT-DESKTOP-031.md",
+      "currentSha256": "49a8bcadae90c9caf7e331ef6def969c6cb28abfe405356113f4c5a134587d5e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-KERNEL-001.md",
+      "sourceGitBlob": "4b8bc1f7d2a712d62b91e8ab8d9ad37d87fba146",
+      "sourceSha256": "ba6e1a8d5903b2cd68d4311a93ff05a201fbed47b4efd0940049b4f2e0f903ba",
+      "path": "knot-desktop/docs/tasks/KONT-KERNEL-001.md",
+      "currentSha256": "ba6e1a8d5903b2cd68d4311a93ff05a201fbed47b4efd0940049b4f2e0f903ba",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RESEARCH-002.md",
+      "sourceGitBlob": "c1deccdaf570e54f4275a27cc80834371a412e7b",
+      "sourceSha256": "bda27e71e0566ad22465f201d37905b0c6c1eee028bc66df3329328d894166ad",
+      "path": "knot-desktop/docs/tasks/KONT-RESEARCH-002.md",
+      "currentSha256": "bda27e71e0566ad22465f201d37905b0c6c1eee028bc66df3329328d894166ad",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-004.md",
+      "sourceGitBlob": "018bb3122274c988432dcaad5edbd6d0b8ccc2c6",
+      "sourceSha256": "746f98d842675216d761a35d8927b653284a82bde1b785e5a61f8c600e11e4f2",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-004.md",
+      "currentSha256": "746f98d842675216d761a35d8927b653284a82bde1b785e5a61f8c600e11e4f2",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-005.md",
+      "sourceGitBlob": "ce2b659d194327551dd1424b3f350eed69008a06",
+      "sourceSha256": "861c29680eb216e2c440f29ec6a6eae52466b43024afc4e8a3a2195daee8ef33",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-005.md",
+      "currentSha256": "861c29680eb216e2c440f29ec6a6eae52466b43024afc4e8a3a2195daee8ef33",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-006.md",
+      "sourceGitBlob": "3879f97ad56c3079f97f03ef5dec26a6698c7c56",
+      "sourceSha256": "654fba917b6832143aef67e1ed0533eda56bad118bfe861ba2678891a1cc16d6",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-006.md",
+      "currentSha256": "654fba917b6832143aef67e1ed0533eda56bad118bfe861ba2678891a1cc16d6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-007.md",
+      "sourceGitBlob": "f13ee4b98ffb33d480dbf3ee32a004bd520860ae",
+      "sourceSha256": "b669dae3a8d8017d2322a24ee1db493add7458ad82f8e1669a5629b0f550b6d7",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-007.md",
+      "currentSha256": "b669dae3a8d8017d2322a24ee1db493add7458ad82f8e1669a5629b0f550b6d7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-008.md",
+      "sourceGitBlob": "36088e9a243004b0af13c5ea81ec7bf497c30766",
+      "sourceSha256": "f7676608af41f3301af059ef8b98e61e44ba36ce34440ebedfc7adcb2362dbd8",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-008.md",
+      "currentSha256": "f7676608af41f3301af059ef8b98e61e44ba36ce34440ebedfc7adcb2362dbd8",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-009.md",
+      "sourceGitBlob": "17d48fb5b0cb750ed039e5cbf32831e4c8938e7f",
+      "sourceSha256": "ead5bee3f67ac87a9bbc67cbbf040b3443c5397f001307c98181aaea7cd3242c",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-009.md",
+      "currentSha256": "ead5bee3f67ac87a9bbc67cbbf040b3443c5397f001307c98181aaea7cd3242c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-010.md",
+      "sourceGitBlob": "e8ecf7389f6d2c9dcb4207f2f3f108e1fa1c51f4",
+      "sourceSha256": "1b2cf683677e8f187d79fe48143596a2b3a7fccb27f8abd90e50f1c041a0745d",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-010.md",
+      "currentSha256": "1b2cf683677e8f187d79fe48143596a2b3a7fccb27f8abd90e50f1c041a0745d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-011.md",
+      "sourceGitBlob": "5275e9ea3edc1887a810a9cae12ca1a5d78eadb7",
+      "sourceSha256": "d6036c43863f0a45d9a37c1e49e8d0a3cba7e0937b963a14f8348b60efb3a635",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-011.md",
+      "currentSha256": "d6036c43863f0a45d9a37c1e49e8d0a3cba7e0937b963a14f8348b60efb3a635",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-012.md",
+      "sourceGitBlob": "79210c603cdec22ac780530022c0a6a110dd7544",
+      "sourceSha256": "351078777a175c5862b2f3591ad0265c388d837b295fa86127439154247ffc4c",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-012.md",
+      "currentSha256": "351078777a175c5862b2f3591ad0265c388d837b295fa86127439154247ffc4c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-013.md",
+      "sourceGitBlob": "40f7876cac1005646d36d8ffbe0f9e24e86b85c6",
+      "sourceSha256": "61680bf3aaeb8bde37c64d33fa279f9bc6725860aec903a876e05bcf46faeb8c",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-013.md",
+      "currentSha256": "61680bf3aaeb8bde37c64d33fa279f9bc6725860aec903a876e05bcf46faeb8c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-RUN-046.md",
+      "sourceGitBlob": "90751f58d31a9fe14b738d94d4cb6682d5996bd8",
+      "sourceSha256": "0da51947f2accafb451801efce7cda3c07cbb4614263170878b580c857a889b0",
+      "path": "knot-desktop/docs/tasks/KONT-RUN-046.md",
+      "currentSha256": "0da51947f2accafb451801efce7cda3c07cbb4614263170878b580c857a889b0",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-024.md",
+      "sourceGitBlob": "ecd6da45c7dda69b2a336246c1ec271a3ccef730",
+      "sourceSha256": "d11347c4c96d24fb1bd8580fea208f662b9246bfee82add1f012fa30b7a05248",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-024.md",
+      "currentSha256": "d11347c4c96d24fb1bd8580fea208f662b9246bfee82add1f012fa30b7a05248",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-026.md",
+      "sourceGitBlob": "161af01c1831c47bcc392b1a892ce940c8171b4e",
+      "sourceSha256": "243ee6efdb81ef98fc244b4e6c8b643982681c362e2b8c031f52ee1c9ca59a7e",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-026.md",
+      "currentSha256": "243ee6efdb81ef98fc244b4e6c8b643982681c362e2b8c031f52ee1c9ca59a7e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-027.md",
+      "sourceGitBlob": "a48e599b229a126c7e766fe564fa2f10f9a3918d",
+      "sourceSha256": "364379f155cdda1ef13a8cd54fd7d6486edcc8ec861c4073243548ede8bbf8c0",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-027.md",
+      "currentSha256": "364379f155cdda1ef13a8cd54fd7d6486edcc8ec861c4073243548ede8bbf8c0",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-028.md",
+      "sourceGitBlob": "675ac968a79ee48d244613681321e93cc7235fd7",
+      "sourceSha256": "7d34cd238201aea31a6978a70d4043d66cdfde5d3ece8b2f51d7017a3ab54f08",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-028.md",
+      "currentSha256": "7d34cd238201aea31a6978a70d4043d66cdfde5d3ece8b2f51d7017a3ab54f08",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-029.md",
+      "sourceGitBlob": "2702f3a9ff899aef2023c0847bdb0a2932362839",
+      "sourceSha256": "682c1d9aad44ff18bf85a579b2160979e85b96b059e4d8da92f9443cca9349b4",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-029.md",
+      "currentSha256": "682c1d9aad44ff18bf85a579b2160979e85b96b059e4d8da92f9443cca9349b4",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-030.md",
+      "sourceGitBlob": "a7763acba0417d4db4bfabc9fd072a7d7b51d935",
+      "sourceSha256": "d174e62e5e26fafa4f0e964099ecf2cbfcde830eca04c53487794822b760e5ba",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-030.md",
+      "currentSha256": "d174e62e5e26fafa4f0e964099ecf2cbfcde830eca04c53487794822b760e5ba",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-033.md",
+      "sourceGitBlob": "9ca55f6f75772a05bc8dc560a933227d420be9f2",
+      "sourceSha256": "f821bc41a08f309a679c155a304f5c1a93efdeb06f42f14482738e7ea1b789d1",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-033.md",
+      "currentSha256": "f821bc41a08f309a679c155a304f5c1a93efdeb06f42f14482738e7ea1b789d1",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-034.md",
+      "sourceGitBlob": "d5f1cee752b45eda8163077551acd0503ffefbaf",
+      "sourceSha256": "8fd5510b390025c910994d737891ec71bcfe0e06fe46f751523923ce98b8eb03",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-034.md",
+      "currentSha256": "8fd5510b390025c910994d737891ec71bcfe0e06fe46f751523923ce98b8eb03",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-035.md",
+      "sourceGitBlob": "f8aefd80bd2a9dfe6da4bf7a16019825fb8b3fa6",
+      "sourceSha256": "0c75aa984f694fae13cf56b25dd3b637c058f99a826e5dd18071d2d0655c051d",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-035.md",
+      "currentSha256": "0c75aa984f694fae13cf56b25dd3b637c058f99a826e5dd18071d2d0655c051d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-036.md",
+      "sourceGitBlob": "b16bd60b28fe5c9169018ce45a6854f4cc61bcdb",
+      "sourceSha256": "0384a520db0a46a3194eba65c53a10a6503145d423418bd084de585182cb3d03",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-036.md",
+      "currentSha256": "0384a520db0a46a3194eba65c53a10a6503145d423418bd084de585182cb3d03",
+      "adapted": false
+    },
+    {
+      "sourcePath": "docs/tasks/KONT-WORKSTATION-037.md",
+      "sourceGitBlob": "864f7c79f816732b80b66a8f06f35b2e185cf599",
+      "sourceSha256": "0d9a1c05ca32ac330c9b9b5ae93b086b8a51126fb9eb2102bbc0a80738ad080b",
+      "path": "knot-desktop/docs/tasks/KONT-WORKSTATION-037.md",
+      "currentSha256": "0d9a1c05ca32ac330c9b9b5ae93b086b8a51126fb9eb2102bbc0a80738ad080b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "package.json",
+      "sourceGitBlob": "394740a0cd5d2b7a99f9129ccb6c31d0d083347e",
+      "sourceSha256": "b579663006e3113b4e93a6d6eaa89f98ae1489199620169f69cc5e5ba7963d33",
+      "path": "knot-desktop/package.json",
+      "currentSha256": "2530449422f47bd331aba567bf98d9cc0fcb69960d4478ddd91219310252c164",
+      "adapted": true
+    },
+    {
+      "sourcePath": "packages/desktop-bundle/cordis.patch.yml",
+      "sourceGitBlob": "7fde656362a5661953ec69ccc1ed722f14813990",
+      "sourceSha256": "64ece206237ba3048e3ed75f275c1c967d6d300c48dc78f2e13ddb923c91d978",
+      "path": "knot-desktop/packages/desktop-bundle/cordis.patch.yml",
+      "currentSha256": "64ece206237ba3048e3ed75f275c1c967d6d300c48dc78f2e13ddb923c91d978",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/desktop-bundle/package.json",
+      "sourceGitBlob": "5a367fde6e72e2fa0aa398ab914ff74ca10a1b43",
+      "sourceSha256": "77acb53882a6f240766c077a921b357441fa82fee7abb9859ab3a35dea765930",
+      "path": "knot-desktop/packages/desktop-bundle/package.json",
+      "currentSha256": "77acb53882a6f240766c077a921b357441fa82fee7abb9859ab3a35dea765930",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/lib/client.js",
+      "sourceGitBlob": "62a52136d3cdec851c9600fb916008a704a6a581",
+      "sourceSha256": "e28a11fb02f0d39d86dba8be33733921c9e364633ca7f8734f8495cf6af04164",
+      "path": "knot-desktop/packages/dsh-plugin/lib/client.js",
+      "currentSha256": "e28a11fb02f0d39d86dba8be33733921c9e364633ca7f8734f8495cf6af04164",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/lib/knot-model.js",
+      "sourceGitBlob": "e85c561309fc3f985d132383b885bf8730243118",
+      "sourceSha256": "cc941f6a79c0f06379679faaed3fb4ad3823e0e52dc8e4fc35228e379c3bf8e9",
+      "path": "knot-desktop/packages/dsh-plugin/lib/knot-model.js",
+      "currentSha256": "cc941f6a79c0f06379679faaed3fb4ad3823e0e52dc8e4fc35228e379c3bf8e9",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/lib/snapshot.js",
+      "sourceGitBlob": "961c5333bcb5ce906f917ae913a644b5ad8aa889",
+      "sourceSha256": "7eec9b84f108e0412e95d82c1cf57b4ee6d8a2da4b28320a75292469bf1bea94",
+      "path": "knot-desktop/packages/dsh-plugin/lib/snapshot.js",
+      "currentSha256": "7eec9b84f108e0412e95d82c1cf57b4ee6d8a2da4b28320a75292469bf1bea94",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/lib/workspace-state.js",
+      "sourceGitBlob": "b339352766defc5fef75373c603e771146901502",
+      "sourceSha256": "e52cf42cfcd4a6b2366d734074c31a05f11ff106073ff8ea0e9da415e0c304a4",
+      "path": "knot-desktop/packages/dsh-plugin/lib/workspace-state.js",
+      "currentSha256": "e52cf42cfcd4a6b2366d734074c31a05f11ff106073ff8ea0e9da415e0c304a4",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/package.json",
+      "sourceGitBlob": "cf16d1b4b96db11d2f36d464a6fdbe992f280fc4",
+      "sourceSha256": "a4332bf747d1da3b6bc4969044e7afda8bc1e20b3442fa489396aca347ea67fb",
+      "path": "knot-desktop/packages/dsh-plugin/package.json",
+      "currentSha256": "a4332bf747d1da3b6bc4969044e7afda8bc1e20b3442fa489396aca347ea67fb",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/client.cjs",
+      "sourceGitBlob": "7f72833f0189876feb0ea3040982c0ad173bd405",
+      "sourceSha256": "dcf2f95e53592c89dede65967f597a3bc46c53acdf5bb3f2721385a213bddd49",
+      "path": "knot-desktop/packages/dsh-plugin/src/client.cjs",
+      "currentSha256": "dcf2f95e53592c89dede65967f597a3bc46c53acdf5bb3f2721385a213bddd49",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/dsh-run-read.mjs",
+      "sourceGitBlob": "3a37185b321b976fdb9db5418d85775b04d37971",
+      "sourceSha256": "a8603c3e0c4a154ff6b3160914cb1b78e21a6b967fa6bf5f0da2413a2bfceebe",
+      "path": "knot-desktop/packages/dsh-plugin/src/dsh-run-read.mjs",
+      "currentSha256": "a8603c3e0c4a154ff6b3160914cb1b78e21a6b967fa6bf5f0da2413a2bfceebe",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/index.mjs",
+      "sourceGitBlob": "089a167bb2b87694b7977ce71298d1042aecdecd",
+      "sourceSha256": "f2861045f0360abe552cc2723caa06fd87a25f8bed99d5dd6ca7adbe648fff32",
+      "path": "knot-desktop/packages/dsh-plugin/src/index.mjs",
+      "currentSha256": "f2861045f0360abe552cc2723caa06fd87a25f8bed99d5dd6ca7adbe648fff32",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/kernel.mjs",
+      "sourceGitBlob": "8e8e171e2085dd04a154714d628dfbb409675c7c",
+      "sourceSha256": "a69609f1c01c369c15dd606b3eb7d23fe0b61aa64aa453b7ff1fdc03c2368a13",
+      "path": "knot-desktop/packages/dsh-plugin/src/kernel.mjs",
+      "currentSha256": "a69609f1c01c369c15dd606b3eb7d23fe0b61aa64aa453b7ff1fdc03c2368a13",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/read-audit-config.mjs",
+      "sourceGitBlob": "725437febebda4bbc9a7dccfc8d3e15a58460db7",
+      "sourceSha256": "fe92e08b4022335e04d348408fc0288a28d9cadb7c6a8c3cdb18ab00c6fab4f6",
+      "path": "knot-desktop/packages/dsh-plugin/src/read-audit-config.mjs",
+      "currentSha256": "fe92e08b4022335e04d348408fc0288a28d9cadb7c6a8c3cdb18ab00c6fab4f6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-dispatch.mjs",
+      "sourceGitBlob": "68b4f64860350bd66db09a66922a10994c1802d1",
+      "sourceSha256": "38d86058b432aa602230229545da4a2798437a9acdedb85185e26af515ed54c9",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-dispatch.mjs",
+      "currentSha256": "38d86058b432aa602230229545da4a2798437a9acdedb85185e26af515ed54c9",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-execution-guard.mjs",
+      "sourceGitBlob": "0fd1cb97cd20c1d6a880bdf0f65e500e8f4e64e0",
+      "sourceSha256": "76c00b38213e9a4cab426e3f8b930e801ee8893d7711ac6347eeb3db8ba47b21",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-execution-guard.mjs",
+      "currentSha256": "76c00b38213e9a4cab426e3f8b930e801ee8893d7711ac6347eeb3db8ba47b21",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-executor.mjs",
+      "sourceGitBlob": "23ea39afd4ec812a82bee052a12c2eba40d0e15f",
+      "sourceSha256": "dd48ed276aa76238da3b87019036db15574ac0eb2a30e67dd3c10ac0484b8660",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-executor.mjs",
+      "currentSha256": "dd48ed276aa76238da3b87019036db15574ac0eb2a30e67dd3c10ac0484b8660",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-observer-binding.mjs",
+      "sourceGitBlob": "42787c7660f4a7f6956608efe8b4aaf619eccff3",
+      "sourceSha256": "f94d86cf8b65e5fe0608924f168ecceed724e810311256734d5f147542d2c88c",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-observer-binding.mjs",
+      "currentSha256": "f94d86cf8b65e5fe0608924f168ecceed724e810311256734d5f147542d2c88c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-query.mjs",
+      "sourceGitBlob": "0f438f7ba9167b665dcd7bcf371c8a2f2f2f5e59",
+      "sourceSha256": "8abc195d88c20578b8ddc4f4327a64803c27f7223c80c533bf6aa6d59494347e",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-query.mjs",
+      "currentSha256": "8abc195d88c20578b8ddc4f4327a64803c27f7223c80c533bf6aa6d59494347e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-request-gate.mjs",
+      "sourceGitBlob": "e45249a6cfaf8bda924985c6fded972ff699b105",
+      "sourceSha256": "998238d5102fcd325c064de5edfd7d9030d4288a5d7307cb5dd7ccf26ceeea9d",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-request-gate.mjs",
+      "currentSha256": "998238d5102fcd325c064de5edfd7d9030d4288a5d7307cb5dd7ccf26ceeea9d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-status-panel.cjs",
+      "sourceGitBlob": "001c0561bf3970c00afee30a51b9123b399dba05",
+      "sourceSha256": "ce9f0dd280a82641893c3613baf3cbd5838f8d9234385249327825272e934e7c",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-status-panel.cjs",
+      "currentSha256": "ce9f0dd280a82641893c3613baf3cbd5838f8d9234385249327825272e934e7c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-status-panel.css",
+      "sourceGitBlob": "69cf669776e4d9d78052f8a9edfa43cc312c6197",
+      "sourceSha256": "ad046224a890523bfbb7ff8cc5e8c7348a75c785d23ab1d85cf990276fcdfa4b",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-status-panel.css",
+      "currentSha256": "ad046224a890523bfbb7ff8cc5e8c7348a75c785d23ab1d85cf990276fcdfa4b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-status-source.cjs",
+      "sourceGitBlob": "f608efc901e7f8150d8fab74b0f5303e77c6c2c6",
+      "sourceSha256": "cbcb27472d6bdbee4c67161471e20f814d4dae28ab6943d8bb5ecc42d24dfafb",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-status-source.cjs",
+      "currentSha256": "cbcb27472d6bdbee4c67161471e20f814d4dae28ab6943d8bb5ecc42d24dfafb",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run-status-view.mjs",
+      "sourceGitBlob": "d862fa69005d7bb206ec67c4e1549a9ca2551ca8",
+      "sourceSha256": "d7fadc0a7cd17f918196214b66a738e30dd29b453639ea329bb8ca6f876073f3",
+      "path": "knot-desktop/packages/dsh-plugin/src/run-status-view.mjs",
+      "currentSha256": "d7fadc0a7cd17f918196214b66a738e30dd29b453639ea329bb8ca6f876073f3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/run.mjs",
+      "sourceGitBlob": "b1464ea43ea83ac83411eb9ad44f7ecea298af28",
+      "sourceSha256": "d325209833742ef0f12f4a848219fcc935fd334fe13c8b76429b11de2a86c36b",
+      "path": "knot-desktop/packages/dsh-plugin/src/run.mjs",
+      "currentSha256": "d325209833742ef0f12f4a848219fcc935fd334fe13c8b76429b11de2a86c36b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/store.mjs",
+      "sourceGitBlob": "aec44ef2f8e9e98eddb062f1757ca9a043926bbb",
+      "sourceSha256": "229cba4121f7eff22f7e3f677950e44b5919e1f85e4473d16fbcd520ee24d1ff",
+      "path": "knot-desktop/packages/dsh-plugin/src/store.mjs",
+      "currentSha256": "229cba4121f7eff22f7e3f677950e44b5919e1f85e4473d16fbcd520ee24d1ff",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/style.css",
+      "sourceGitBlob": "61cb3b720c17308706fe6d77a9d97ae87af245ce",
+      "sourceSha256": "d0474233bbc6004315e10838cc4a92f698178974174232e442edf679adfd780e",
+      "path": "knot-desktop/packages/dsh-plugin/src/style.css",
+      "currentSha256": "d0474233bbc6004315e10838cc4a92f698178974174232e442edf679adfd780e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "packages/dsh-plugin/src/worksite-preview.mjs",
+      "sourceGitBlob": "1450f8b605e61b2c9ac0d100d1b03274dacb3643",
+      "sourceSha256": "8074f18a8fe81e7a8f61127a8f52f60988c0bf83b159e932323771b7f25f652c",
+      "path": "knot-desktop/packages/dsh-plugin/src/worksite-preview.mjs",
+      "currentSha256": "8074f18a8fe81e7a8f61127a8f52f60988c0bf83b159e932323771b7f25f652c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/build.mjs",
+      "sourceGitBlob": "b6a624b5138deeaf5a503836a658f930f390e276",
+      "sourceSha256": "785b79ef81266a857b98520c073162f73d543022643e6af6d181d6dd7e1d61df",
+      "path": "knot-desktop/scripts/build.mjs",
+      "currentSha256": "7e18c4d8f96b9af258c80196344645edff63195732207ba62be2084af9c4343b",
+      "adapted": true
+    },
+    {
+      "sourcePath": "scripts/desktop-data-compatibility.mjs",
+      "sourceGitBlob": "6996618b590869166b0cd1e7c7f7ea26eb485373",
+      "sourceSha256": "3cbef1932184336d8b218bd0802bff8e8692443801a9ef9d718845e59b12907d",
+      "path": "knot-desktop/scripts/desktop-data-compatibility.mjs",
+      "currentSha256": "3cbef1932184336d8b218bd0802bff8e8692443801a9ef9d718845e59b12907d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-deployment-plan.mjs",
+      "sourceGitBlob": "37fb4cb00a14b96fd44b4070d4d48b4de8e1a521",
+      "sourceSha256": "edf372bf9c2734e08d7b8dd9a9fd85eb6c6ecef9d47a22285a59a5c7fb02dd08",
+      "path": "knot-desktop/scripts/desktop-deployment-plan.mjs",
+      "currentSha256": "edf372bf9c2734e08d7b8dd9a9fd85eb6c6ecef9d47a22285a59a5c7fb02dd08",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-host-archive.mjs",
+      "sourceGitBlob": "011e93e712ee71b3e4a0eb11655f17b9466a95fb",
+      "sourceSha256": "6b7fd6b0599a6fee87d74136365112d579bae8c2ff199f2e4539dc86514f97aa",
+      "path": "knot-desktop/scripts/desktop-host-archive.mjs",
+      "currentSha256": "6b7fd6b0599a6fee87d74136365112d579bae8c2ff199f2e4539dc86514f97aa",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-host-client.mjs",
+      "sourceGitBlob": "657ad2f8344a04f5dec8c81d70718eefcfa64eed",
+      "sourceSha256": "8eb7b5184626e94526a608911afd14ada6edb79a8772676b727640c3cbc0b62c",
+      "path": "knot-desktop/scripts/desktop-host-client.mjs",
+      "currentSha256": "8eb7b5184626e94526a608911afd14ada6edb79a8772676b727640c3cbc0b62c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-host-debug.mjs",
+      "sourceGitBlob": "ae6294b802bf4a1bbf74130fb829c282b09bf156",
+      "sourceSha256": "34f44acabef8e31df6a00aa571b993bf90be8f50c4135709d5bee918f2258e0d",
+      "path": "knot-desktop/scripts/desktop-host-debug.mjs",
+      "currentSha256": "34f44acabef8e31df6a00aa571b993bf90be8f50c4135709d5bee918f2258e0d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-install-execution.mjs",
+      "sourceGitBlob": "38a7bb7d9bc8c89e0c5d5f23a1122997fd11bae2",
+      "sourceSha256": "76b3d5c9c605a89003e41f7117ae191a925113712a8fc6bfbd1b7d8d14a36a2b",
+      "path": "knot-desktop/scripts/desktop-install-execution.mjs",
+      "currentSha256": "76b3d5c9c605a89003e41f7117ae191a925113712a8fc6bfbd1b7d8d14a36a2b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-install-transport-policy.mjs",
+      "sourceGitBlob": "659c4f231ea872d4f5aa39e8e61a6bcfb21b0b5f",
+      "sourceSha256": "a2ed9f4f36f2e1239e6e551c4545d86c8a2550af3b3aff69917e096757be44ce",
+      "path": "knot-desktop/scripts/desktop-install-transport-policy.mjs",
+      "currentSha256": "a2ed9f4f36f2e1239e6e551c4545d86c8a2550af3b3aff69917e096757be44ce",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-installed-data-preflight.mjs",
+      "sourceGitBlob": "f00e5dcf83ebb8f8c648dbdae242195d70656170",
+      "sourceSha256": "c451728dc189ff4a6dbc2974eac910e6e97cbf00c02e568c50faa81c7fcc28b7",
+      "path": "knot-desktop/scripts/desktop-installed-data-preflight.mjs",
+      "currentSha256": "c451728dc189ff4a6dbc2974eac910e6e97cbf00c02e568c50faa81c7fcc28b7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-pnpm-store.mjs",
+      "sourceGitBlob": "873b45a6f66aed7f2652bb85371199f8722fa8af",
+      "sourceSha256": "45b6323ca0d2f7f3af0485a91b1ae04a88a0628a042c170bef121768e0a3cae4",
+      "path": "knot-desktop/scripts/desktop-pnpm-store.mjs",
+      "currentSha256": "45b6323ca0d2f7f3af0485a91b1ae04a88a0628a042c170bef121768e0a3cae4",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-quiescent-install.mjs",
+      "sourceGitBlob": "46ad45640b26268fdfaf4a310c07d54d3fd66097",
+      "sourceSha256": "b05c80cf7cab3bc12b996bd2e2d1f176a3781d284fdf6293fce1335c7a9327c5",
+      "path": "knot-desktop/scripts/desktop-quiescent-install.mjs",
+      "currentSha256": "b05c80cf7cab3bc12b996bd2e2d1f176a3781d284fdf6293fce1335c7a9327c5",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-reconciled-evidence.mjs",
+      "sourceGitBlob": "ab57043c189c3fd482a1781c55975eba94aae7e0",
+      "sourceSha256": "5a5b8575667b936a06d3910c4c90673d91c3b800f22a5df5509b2592f2896cd0",
+      "path": "knot-desktop/scripts/desktop-reconciled-evidence.mjs",
+      "currentSha256": "5a5b8575667b936a06d3910c4c90673d91c3b800f22a5df5509b2592f2896cd0",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-recovery-data.mjs",
+      "sourceGitBlob": "a73d54314bc8f5cf77cc21cafcd8570968946636",
+      "sourceSha256": "a11833eee81fb19febd960c1756d128e83087e067d65416c4d66defb991ee7c4",
+      "path": "knot-desktop/scripts/desktop-recovery-data.mjs",
+      "currentSha256": "a11833eee81fb19febd960c1756d128e83087e067d65416c4d66defb991ee7c4",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/desktop-recovery-preflight.mjs",
+      "sourceGitBlob": "84438702d974c892999465a42d28a2f1ad2e8c65",
+      "sourceSha256": "9533eda6a1becbbf8a0d90eac9423a556db9deb36f784260658d81adeecdcb4b",
+      "path": "knot-desktop/scripts/desktop-recovery-preflight.mjs",
+      "currentSha256": "9533eda6a1becbbf8a0d90eac9423a556db9deb36f784260658d81adeecdcb4b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/dev.mjs",
+      "sourceGitBlob": "6fb80b5f84a3309ddee86c61bc42ca44362e475c",
+      "sourceSha256": "260890489bc888b3358f2ebb156cf738aeffc521bc6e31faa7c1c815c03054c1",
+      "path": "knot-desktop/scripts/dev.mjs",
+      "currentSha256": "260890489bc888b3358f2ebb156cf738aeffc521bc6e31faa7c1c815c03054c1",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/prepare-desktop-candidate.mjs",
+      "sourceGitBlob": "46b2f2afbff0ff38d308db6a199d1b6c1f2d5aa4",
+      "sourceSha256": "d2cb9ab684ba0093adbfb6a753e90c911fc9ac40235560cb3076f29bcb4ec79c",
+      "path": "knot-desktop/scripts/prepare-desktop-candidate.mjs",
+      "currentSha256": "4819af05880aa748f9cbe9ab4fb07925b024eabb68896cdf036c069c5bd34054",
+      "adapted": true
+    },
+    {
+      "sourcePath": "scripts/prepare-desktop-recovery.mjs",
+      "sourceGitBlob": "30c3d314a32440911b55cb5c32894d6216c5a9d9",
+      "sourceSha256": "1ca4441a655fe9f49ccf05201cd5f3c0b81c952d77143215ab042699acbf9a9c",
+      "path": "knot-desktop/scripts/prepare-desktop-recovery.mjs",
+      "currentSha256": "1ca4441a655fe9f49ccf05201cd5f3c0b81c952d77143215ab042699acbf9a9c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/prepare-desktop-rollback.mjs",
+      "sourceGitBlob": "04d88502d9b0f0d0d7351295be0302f310e298c8",
+      "sourceSha256": "4675c6c568735f9f2cafb90ef3aa951f1309031ca90a7cf0696690f50f311399",
+      "path": "knot-desktop/scripts/prepare-desktop-rollback.mjs",
+      "currentSha256": "4675c6c568735f9f2cafb90ef3aa951f1309031ca90a7cf0696690f50f311399",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/prepare-synthetic-store-recovery.mjs",
+      "sourceGitBlob": "cf5f060c5748e25fd8809021075634d5f3808271",
+      "sourceSha256": "3f4b0767b625d5b765f4af64553b70a5c893a302471defdb94b74e8b3f9eb8b5",
+      "path": "knot-desktop/scripts/prepare-synthetic-store-recovery.mjs",
+      "currentSha256": "3f4b0767b625d5b765f4af64553b70a5c893a302471defdb94b74e8b3f9eb8b5",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/run-flash-verification.cjs",
+      "sourceGitBlob": "c35b47b8d7d266564c74f2938896078bf640327f",
+      "sourceSha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485",
+      "path": "knot-desktop/scripts/run-flash-verification.cjs",
+      "currentSha256": "a97ce9e8113cfeef5f24f444203c8b5ee4f92f05deab7a2dc501b31689b14485",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/start-desktop.ps1",
+      "sourceGitBlob": "6b4548228e8265d9950c5bb1dd6154b8d50617f6",
+      "sourceSha256": "745fb6f4029e4b46ab0889e9011011cee25aeacc113c39ef8fbd5b996a0279b2",
+      "path": "knot-desktop/scripts/start-desktop.ps1",
+      "currentSha256": "745fb6f4029e4b46ab0889e9011011cee25aeacc113c39ef8fbd5b996a0279b2",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/store-reader-pairing-worker.mjs",
+      "sourceGitBlob": "eacdb76b03239091f23a33d4765eeb45f2049d6d",
+      "sourceSha256": "f92be135bfae0b29c6d16daec26c44c21eb9e3919c00f1c5e149e667879aa5ce",
+      "path": "knot-desktop/scripts/store-reader-pairing-worker.mjs",
+      "currentSha256": "f92be135bfae0b29c6d16daec26c44c21eb9e3919c00f1c5e149e667879aa5ce",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/store-reader-pairing.mjs",
+      "sourceGitBlob": "f7b3427721f1b7497cf63ee527729843e1f36a98",
+      "sourceSha256": "e9ec8e8bf17b5b65158c2c50c3aaa7fb1ee4f27450f80bb4b268f9cf80e2c5af",
+      "path": "knot-desktop/scripts/store-reader-pairing.mjs",
+      "currentSha256": "e9ec8e8bf17b5b65158c2c50c3aaa7fb1ee4f27450f80bb4b268f9cf80e2c5af",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/store-recovery-roundtrip-worker.mjs",
+      "sourceGitBlob": "44f3cfa01f4cb6af1356249325be86606b0dd170",
+      "sourceSha256": "9f21466faa19476702691e54dc39b5e593341b2083f0bf9a63d48a640e87ebec",
+      "path": "knot-desktop/scripts/store-recovery-roundtrip-worker.mjs",
+      "currentSha256": "9f21466faa19476702691e54dc39b5e593341b2083f0bf9a63d48a640e87ebec",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/store-recovery-roundtrip.mjs",
+      "sourceGitBlob": "ea6af0f664a110145b3636b303178b7ef81e6484",
+      "sourceSha256": "e4c9588d8deb3b92b082f861f410f288c86991fbc2a9c2ae596eaf85bef345db",
+      "path": "knot-desktop/scripts/store-recovery-roundtrip.mjs",
+      "currentSha256": "e4c9588d8deb3b92b082f861f410f288c86991fbc2a9c2ae596eaf85bef345db",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/verify-desktop-candidate.cjs",
+      "sourceGitBlob": "73e1d55bca0b091cdf2b4850897a20e85a21c6ae",
+      "sourceSha256": "1103b063e4f94200f2f1be90c133ad6e75585a324fc7c832d7bd6715667af0e8",
+      "path": "knot-desktop/scripts/verify-desktop-candidate.cjs",
+      "currentSha256": "38a681dcfef417f525096258d03bee37035d660d71927a8560195894ec23e0f0",
+      "adapted": true
+    },
+    {
+      "sourcePath": "scripts/verify-desktop-recovery.cjs",
+      "sourceGitBlob": "7c94938cb47927a5f70d8dbeb1c222a6bb63e123",
+      "sourceSha256": "65836068d4286f71f2036f3af02f5f5a7e761c8a27e4d48faa3467bcd67cd950",
+      "path": "knot-desktop/scripts/verify-desktop-recovery.cjs",
+      "currentSha256": "65836068d4286f71f2036f3af02f5f5a7e761c8a27e4d48faa3467bcd67cd950",
+      "adapted": false
+    },
+    {
+      "sourcePath": "scripts/verify-desktop-rollback.cjs",
+      "sourceGitBlob": "35d8dc8321d3e2e6c855a94e650de15ee57e7ff7",
+      "sourceSha256": "ffb5385e3f05bf44b0a8bb863bea98f1def04893a01a449af22266b2083f7489",
+      "path": "knot-desktop/scripts/verify-desktop-rollback.cjs",
+      "currentSha256": "ffb5385e3f05bf44b0a8bb863bea98f1def04893a01a449af22266b2083f7489",
+      "adapted": false
+    },
+    {
+      "sourcePath": "start-kont-desktop.cmd",
+      "sourceGitBlob": "b13376ebddcbfde5abfa23bb0ef86e8713724109",
+      "sourceSha256": "fd952b6bec1046154e7a425fcae555390641991c75426b9375e1fc5156730a0a",
+      "path": "knot-desktop/start-kont-desktop.cmd",
+      "currentSha256": "fd952b6bec1046154e7a425fcae555390641991c75426b9375e1fc5156730a0a",
+      "adapted": false
+    },
+    {
+      "sourcePath": "start-kont.cmd",
+      "sourceGitBlob": "896956415440936894487954950f7b9c550632d9",
+      "sourceSha256": "97d5480645e4fae6bf2395718aa7d6dc40518a243f802f70607ea566269088fb",
+      "path": "knot-desktop/start-kont.cmd",
+      "currentSha256": "97d5480645e4fae6bf2395718aa7d6dc40518a243f802f70607ea566269088fb",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/arch-presentation-state.test.mjs",
+      "sourceGitBlob": "54f61a561575e7b9c91eb95e6e9df66e9716c08c",
+      "sourceSha256": "d1ab55c24702e6e9775d3ae73acda25bd083efbd7cb51c4c421592f75339fa04",
+      "path": "knot-desktop/tests/arch-presentation-state.test.mjs",
+      "currentSha256": "d1ab55c24702e6e9775d3ae73acda25bd083efbd7cb51c4c421592f75339fa04",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/arch-read-cleanup.test.mjs",
+      "sourceGitBlob": "04577f098cab07c6087830d4c211816cf2c033b7",
+      "sourceSha256": "c3c54440ee74c5e76f8e289b7054407f4393db7e5c8495236d3b4224a7ac98c6",
+      "path": "knot-desktop/tests/arch-read-cleanup.test.mjs",
+      "currentSha256": "c3c54440ee74c5e76f8e289b7054407f4393db7e5c8495236d3b4224a7ac98c6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/arch-run-epoch.test.mjs",
+      "sourceGitBlob": "2abb4871264fb8158ee8344451b594130c9fefae",
+      "sourceSha256": "b8f707e58160dc19abb6171ca11b7b00f629656c494170efd599dae3abded1be",
+      "path": "knot-desktop/tests/arch-run-epoch.test.mjs",
+      "currentSha256": "b8f707e58160dc19abb6171ca11b7b00f629656c494170efd599dae3abded1be",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/client-bundle.test.mjs",
+      "sourceGitBlob": "e5cd64588e849bca0854e2cbff50d4d56428db5e",
+      "sourceSha256": "5e893a60b8c664e493a9942d433cf96860a9af0ed174114fa230c7e6571ba25f",
+      "path": "knot-desktop/tests/client-bundle.test.mjs",
+      "currentSha256": "5e893a60b8c664e493a9942d433cf96860a9af0ed174114fa230c7e6571ba25f",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-candidate-isolation.test.mjs",
+      "sourceGitBlob": "d5831e4a690f28aca093c77cd7f77c8009fbc43f",
+      "sourceSha256": "a4cd51e6457ef66f52d8ea517a4063c25feda231c46d4c45ad33b120be1b3fa7",
+      "path": "knot-desktop/tests/desktop-candidate-isolation.test.mjs",
+      "currentSha256": "a4cd51e6457ef66f52d8ea517a4063c25feda231c46d4c45ad33b120be1b3fa7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-candidate.test.mjs",
+      "sourceGitBlob": "f90995118dfd9a7733c763130c66b550e05f0810",
+      "sourceSha256": "ec3db18569f41a81528c07c700b9a1eb976cfb9cffa2a8242439f840c4a67b2c",
+      "path": "knot-desktop/tests/desktop-candidate.test.mjs",
+      "currentSha256": "d83c4b9616b370e31339b47eb723c8de02bca9469ee329fa838586df5b1a132a",
+      "adapted": true
+    },
+    {
+      "sourcePath": "tests/desktop-compat-renderer-receipt.test.mjs",
+      "sourceGitBlob": "5d0179456b3973c4d8fbe7b53ada9a8186c3f402",
+      "sourceSha256": "68931604c3c53d1617d1a4d8c9dbe4f5290c8d4657141b6ff3e50f07f8a23a09",
+      "path": "knot-desktop/tests/desktop-compat-renderer-receipt.test.mjs",
+      "currentSha256": "68931604c3c53d1617d1a4d8c9dbe4f5290c8d4657141b6ff3e50f07f8a23a09",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-compat-worker.cjs",
+      "sourceGitBlob": "8bfd63af547e079d94ad22c3e59cedae548a92cb",
+      "sourceSha256": "5a9e03ceafb9b90734df9b64d0af22f4db4f317405d50b5a270b742a9005b43d",
+      "path": "knot-desktop/tests/desktop-compat-worker.cjs",
+      "currentSha256": "5a9e03ceafb9b90734df9b64d0af22f4db4f317405d50b5a270b742a9005b43d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-compat.test.mjs",
+      "sourceGitBlob": "ff5bb81bb63283d570f0019aa06d9386d2988d0e",
+      "sourceSha256": "6ec953da756725ea8606743e924657b2997cd64325b268ffb83183f4d9b7fe38",
+      "path": "knot-desktop/tests/desktop-compat.test.mjs",
+      "currentSha256": "6ec953da756725ea8606743e924657b2997cd64325b268ffb83183f4d9b7fe38",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-data-compatibility.test.mjs",
+      "sourceGitBlob": "0670c77cf92ed4776252229c29f2f4104b24c3e5",
+      "sourceSha256": "727508a3e046053a061f40c782ab67083323f2a2be8122efc089ca32fa1c2405",
+      "path": "knot-desktop/tests/desktop-data-compatibility.test.mjs",
+      "currentSha256": "727508a3e046053a061f40c782ab67083323f2a2be8122efc089ca32fa1c2405",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-deployment-plan.test.mjs",
+      "sourceGitBlob": "4b20d9d0a0917f68d66f567eb37ef99be3c7c02b",
+      "sourceSha256": "4697927b34a105882d8c7fc0738d8a0e2fd83f1ed944dfc36b8049724f56dbdc",
+      "path": "knot-desktop/tests/desktop-deployment-plan.test.mjs",
+      "currentSha256": "4697927b34a105882d8c7fc0738d8a0e2fd83f1ed944dfc36b8049724f56dbdc",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-host-archive.test.mjs",
+      "sourceGitBlob": "2aacf349037e43ffbdd4e850894ec3acb306be78",
+      "sourceSha256": "82f46c0e525124ffc8891279e8e22550a2558bedaccc7d7a38d473bcd2d0046f",
+      "path": "knot-desktop/tests/desktop-host-archive.test.mjs",
+      "currentSha256": "82f46c0e525124ffc8891279e8e22550a2558bedaccc7d7a38d473bcd2d0046f",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-host-client.test.mjs",
+      "sourceGitBlob": "c52a64060e15e051c2fa89d4a4ca1521d9cfacc4",
+      "sourceSha256": "c9152b139f6cfcf019488d418ce0f38903ab6dabe957e960bdf81c1d944b503d",
+      "path": "knot-desktop/tests/desktop-host-client.test.mjs",
+      "currentSha256": "c9152b139f6cfcf019488d418ce0f38903ab6dabe957e960bdf81c1d944b503d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-install-execution.test.mjs",
+      "sourceGitBlob": "5d47bb4d1cc58a7a4af8b50841b13cd550e0343b",
+      "sourceSha256": "51ee34ef53b37639929e5b87096caabe8d6c66f3d3ab59e90d2b79066f75089b",
+      "path": "knot-desktop/tests/desktop-install-execution.test.mjs",
+      "currentSha256": "51ee34ef53b37639929e5b87096caabe8d6c66f3d3ab59e90d2b79066f75089b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-installed-data-preflight.test.mjs",
+      "sourceGitBlob": "50f31975e3d716c67894870321d4bfd7ed4c7b9e",
+      "sourceSha256": "11efcf5339f9d82d28d20332331d25a525118f9e09778973e9448471a0cc48fd",
+      "path": "knot-desktop/tests/desktop-installed-data-preflight.test.mjs",
+      "currentSha256": "11efcf5339f9d82d28d20332331d25a525118f9e09778973e9448471a0cc48fd",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-pnpm-store.test.mjs",
+      "sourceGitBlob": "b0bdf4f33a8fae283fcf46fe16bce3ebd6dc7798",
+      "sourceSha256": "7103f383112c8433838c12051109681006805464ea5608ff4e85ff4aa7860d01",
+      "path": "knot-desktop/tests/desktop-pnpm-store.test.mjs",
+      "currentSha256": "7103f383112c8433838c12051109681006805464ea5608ff4e85ff4aa7860d01",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-quiescent-install.test.mjs",
+      "sourceGitBlob": "6953b6062988c703787ec1f9c89568aae10a25fc",
+      "sourceSha256": "bfc5a331604c2587b1525cb59390aab44acbd79b89d99c28934809ef56d0bb4e",
+      "path": "knot-desktop/tests/desktop-quiescent-install.test.mjs",
+      "currentSha256": "bfc5a331604c2587b1525cb59390aab44acbd79b89d99c28934809ef56d0bb4e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-reconciled-attempt.test.mjs",
+      "sourceGitBlob": "77766e76af43fc3a39ab93e036e373ad2bec488a",
+      "sourceSha256": "db4967a6eef02feb51d86b2bd14df27d0b1276dde6fad92a3387e3d9cd1ceb56",
+      "path": "knot-desktop/tests/desktop-reconciled-attempt.test.mjs",
+      "currentSha256": "db4967a6eef02feb51d86b2bd14df27d0b1276dde6fad92a3387e3d9cd1ceb56",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-reconciled-official.test.mjs",
+      "sourceGitBlob": "9a5e38a0ea45355a1415d336cc39fea6e3205812",
+      "sourceSha256": "b8cd71098be64eabd583449f788ebe41acf78c1215bcaa4c6f12968416fd137a",
+      "path": "knot-desktop/tests/desktop-reconciled-official.test.mjs",
+      "currentSha256": "b8cd71098be64eabd583449f788ebe41acf78c1215bcaa4c6f12968416fd137a",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-recovery-isolation.test.mjs",
+      "sourceGitBlob": "fad040500100f44fb377e1bfc9f916624b0ed9be",
+      "sourceSha256": "40932d4f20d42b04ba86b0766e19c408d00e42dd1abf80c01c2dacc10ed6d8dd",
+      "path": "knot-desktop/tests/desktop-recovery-isolation.test.mjs",
+      "currentSha256": "40932d4f20d42b04ba86b0766e19c408d00e42dd1abf80c01c2dacc10ed6d8dd",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-recovery-preflight.test.mjs",
+      "sourceGitBlob": "eaca0c38588fce5b48beaa214059ca9c76f57680",
+      "sourceSha256": "068039a743ce926c5a45a51837249c436525862a4353ec5091fd67feecb2a063",
+      "path": "knot-desktop/tests/desktop-recovery-preflight.test.mjs",
+      "currentSha256": "068039a743ce926c5a45a51837249c436525862a4353ec5091fd67feecb2a063",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-recovery.test.mjs",
+      "sourceGitBlob": "c22a5e369cdcbebb1d3804f3da9eed219e21e36a",
+      "sourceSha256": "3814eea7d89757d9c2a775022accbe5e5b963e627c3d53a251515bc11dd01bf5",
+      "path": "knot-desktop/tests/desktop-recovery.test.mjs",
+      "currentSha256": "3814eea7d89757d9c2a775022accbe5e5b963e627c3d53a251515bc11dd01bf5",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-rollback-isolation.test.mjs",
+      "sourceGitBlob": "bf3cd9908aa1c685ae29f24f1c1a6fe303a7e5ab",
+      "sourceSha256": "0289dda86a5b047a738e7674d21c05e55c46f9b8001383ed2ef23278e2ee1528",
+      "path": "knot-desktop/tests/desktop-rollback-isolation.test.mjs",
+      "currentSha256": "0289dda86a5b047a738e7674d21c05e55c46f9b8001383ed2ef23278e2ee1528",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-rollback.test.mjs",
+      "sourceGitBlob": "5369b0b02953e71930dfd1a28001a8cccecb360b",
+      "sourceSha256": "aa13f87f1647d9254e243c442a2b0a96e49d2611b6be9ec9358007b0422c2bb3",
+      "path": "knot-desktop/tests/desktop-rollback.test.mjs",
+      "currentSha256": "aa13f87f1647d9254e243c442a2b0a96e49d2611b6be9ec9358007b0422c2bb3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-workstation-integration.test.mjs",
+      "sourceGitBlob": "1da3d24f3136ef4ea7ed3bce89b25783085980c4",
+      "sourceSha256": "f7c8affcbc0a9cf12101e35940574aa0344b50a6b3a232ca18b61d29556fa3fc",
+      "path": "knot-desktop/tests/desktop-workstation-integration.test.mjs",
+      "currentSha256": "f7c8affcbc0a9cf12101e35940574aa0344b50a6b3a232ca18b61d29556fa3fc",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/desktop-workstation-worker.mjs",
+      "sourceGitBlob": "50da78a60b7e734e7ccd8608b202bf4065aaf018",
+      "sourceSha256": "36bdcc57fbcedb7a2fecc833543dd18e933af523e4adc2a7c75e84fff775e001",
+      "path": "knot-desktop/tests/desktop-workstation-worker.mjs",
+      "currentSha256": "36bdcc57fbcedb7a2fecc833543dd18e933af523e4adc2a7c75e84fff775e001",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/fixtures/.gitattributes",
+      "sourceGitBlob": "f99c9852d741bca9c9ea50c709185dac42eacc94",
+      "sourceSha256": "b90e99d202b2e0a815348cec6c0568c9ea0dbc10c97a5ebfeee8be2d43e7a27b",
+      "path": "knot-desktop/tests/fixtures/.gitattributes",
+      "currentSha256": "b90e99d202b2e0a815348cec6c0568c9ea0dbc10c97a5ebfeee8be2d43e7a27b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/fixtures/asset-write-server.provenance.json",
+      "sourceGitBlob": "d443f6879a08f5e3842e5a8ac3e77816c779de56",
+      "sourceSha256": "12af83bad8c4d91dbc37adfa1052a97fdecb7608de6e2bf8567b752c586698c6",
+      "path": "knot-desktop/tests/fixtures/asset-write-server.provenance.json",
+      "currentSha256": "12af83bad8c4d91dbc37adfa1052a97fdecb7608de6e2bf8567b752c586698c6",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/fixtures/asset-write-server.upstream.mjs",
+      "sourceGitBlob": "8bfb17da3312663f5c8d40c34970ca2492b882a7",
+      "sourceSha256": "91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246",
+      "path": "knot-desktop/tests/fixtures/asset-write-server.upstream.mjs",
+      "currentSha256": "91b5e9470f87ee8dcb7deef0a5c19e519bb11749f031143006ef5daad215a246",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/folder-protocol.test.mjs",
+      "sourceGitBlob": "c2b0b12fe8400b17a1b347b1248b447cd0f47fb7",
+      "sourceSha256": "acff1e941d698f3b72d58a94482dd1ca0621718b5847d8758df6d2a83c6d9f3c",
+      "path": "knot-desktop/tests/folder-protocol.test.mjs",
+      "currentSha256": "acff1e941d698f3b72d58a94482dd1ca0621718b5847d8758df6d2a83c6d9f3c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/helpers/desktop-candidate-fixture.mjs",
+      "sourceGitBlob": "ec6a0d87169fb811694e9e5071a14a77d0c4c57b",
+      "sourceSha256": "512e96c0d1adfd91a149bd995f8e28f72e4df9901359def9fced721ebe30d558",
+      "path": "knot-desktop/tests/helpers/desktop-candidate-fixture.mjs",
+      "currentSha256": "6c60c8980035872fd78d06b84e6d3f24f1532d2c444c2377e496d71d717d2e3c",
+      "adapted": true
+    },
+    {
+      "sourcePath": "tests/helpers/http-event-source.mjs",
+      "sourceGitBlob": "d0121f118049e5da930ef7a88457c365e343b3d2",
+      "sourceSha256": "4e8bf631caae7c00a48ab67be9873b3e6568600f720b054dddc0510aba843a9d",
+      "path": "knot-desktop/tests/helpers/http-event-source.mjs",
+      "currentSha256": "4e8bf631caae7c00a48ab67be9873b3e6568600f720b054dddc0510aba843a9d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/helpers/protocol-source-fixture.mjs",
+      "sourceGitBlob": "81141309552bf755d9d58d0868f41bb81e49a5a6",
+      "sourceSha256": "b3dc0a4e02b43a5db1c7f8fae9c116e84c0c355164ff501b17c20eae855b4804",
+      "path": "knot-desktop/tests/helpers/protocol-source-fixture.mjs",
+      "currentSha256": "a3cfb9fe9eb600dad03b5ff4be0d83d15a5ed77782a459a08abcca33f150a152",
+      "adapted": true
+    },
+    {
+      "sourcePath": "tests/helpers/run-read-fixture.mjs",
+      "sourceGitBlob": "b2af23547bf549ec7efcb82c578f52613199e5c7",
+      "sourceSha256": "dcfa338c0d9ad596ef1e1a58ff0196e58bf680a0a6ba795aa5954b1cd6201fae",
+      "path": "knot-desktop/tests/helpers/run-read-fixture.mjs",
+      "currentSha256": "dcfa338c0d9ad596ef1e1a58ff0196e58bf680a0a6ba795aa5954b1cd6201fae",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/helpers/workstation-client-fixture.mjs",
+      "sourceGitBlob": "7f525e3edd03f300e28a1d996dad88f9cdb16dbf",
+      "sourceSha256": "e33fc8e78a99a16409ae19cf6bf8e4da7aedee4d77d39a6fbf012632f69de1ef",
+      "path": "knot-desktop/tests/helpers/workstation-client-fixture.mjs",
+      "currentSha256": "e33fc8e78a99a16409ae19cf6bf8e4da7aedee4d77d39a6fbf012632f69de1ef",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/http.test.mjs",
+      "sourceGitBlob": "df0d00ea2570493d7444432119e32094c775aa6e",
+      "sourceSha256": "a8313eb9e9cadb20f7c77f33e7a8636f8e65220999a898736a98dd1038b56699",
+      "path": "knot-desktop/tests/http.test.mjs",
+      "currentSha256": "a8313eb9e9cadb20f7c77f33e7a8636f8e65220999a898736a98dd1038b56699",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/kernel.test.mjs",
+      "sourceGitBlob": "c42df2ca5f26774b471126db9a64370142e77035",
+      "sourceSha256": "2b0222f6a995483f29bebda1113f37f4cbd57637e9931f12387b27f51789fcfc",
+      "path": "knot-desktop/tests/kernel.test.mjs",
+      "currentSha256": "2b0222f6a995483f29bebda1113f37f4cbd57637e9931f12387b27f51789fcfc",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/plugin-lifecycle.test.mjs",
+      "sourceGitBlob": "d104739ca8f332ddfe24a1daf69b7c1e965cd901",
+      "sourceSha256": "8b1a223f7a1ba4c3f48aa47bdf4c7207eec693407c8cae7399edf1791a0e9a82",
+      "path": "knot-desktop/tests/plugin-lifecycle.test.mjs",
+      "currentSha256": "8b1a223f7a1ba4c3f48aa47bdf4c7207eec693407c8cae7399edf1791a0e9a82",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/protocol-equivalence.test.mjs",
+      "sourceGitBlob": "53422a8e65a07f5f5116728b5f47761ed8685876",
+      "sourceSha256": "fe2428ab5f99e3ad65cb4c18cdcd9d255299b71932b3947263f18a51273915e2",
+      "path": "knot-desktop/tests/protocol-equivalence.test.mjs",
+      "currentSha256": "fe2428ab5f99e3ad65cb4c18cdcd9d255299b71932b3947263f18a51273915e2",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/protocol.test.mjs",
+      "sourceGitBlob": "8892ed093147a1e284ac95181a3d1a565604a1bb",
+      "sourceSha256": "803900431ea0423be19d6e231e9121fc61ec994ff0e5bd4fbf9c0a8a70ef6637",
+      "path": "knot-desktop/tests/protocol.test.mjs",
+      "currentSha256": "803900431ea0423be19d6e231e9121fc61ec994ff0e5bd4fbf9c0a8a70ef6637",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/read-audit-config.test.mjs",
+      "sourceGitBlob": "8cafac3d33ec6ca5378146372128a26e4a574159",
+      "sourceSha256": "6b482bf588866336118afc761b6ddabb842d37b3a1ba2caa54501ce3689ed392",
+      "path": "knot-desktop/tests/read-audit-config.test.mjs",
+      "currentSha256": "6b482bf588866336118afc761b6ddabb842d37b3a1ba2caa54501ce3689ed392",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-contract.test.mjs",
+      "sourceGitBlob": "f9d663b1fa7244127e730da336c0fe983e2ee4fe",
+      "sourceSha256": "6425652740ddc8033aaf0802dcffbe58add91389d710e1dbbf6dd7bd03ed34c3",
+      "path": "knot-desktop/tests/run-contract.test.mjs",
+      "currentSha256": "6425652740ddc8033aaf0802dcffbe58add91389d710e1dbbf6dd7bd03ed34c3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-dispatch.test.mjs",
+      "sourceGitBlob": "5b4f2cacc013144dfd4aac415a3c8a40d7f6678d",
+      "sourceSha256": "be4e40461c405be3c78717d8ded72225bcb1c808821e0258c6e4334e74b98547",
+      "path": "knot-desktop/tests/run-dispatch.test.mjs",
+      "currentSha256": "be4e40461c405be3c78717d8ded72225bcb1c808821e0258c6e4334e74b98547",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-execution-guard.test.mjs",
+      "sourceGitBlob": "58eefbcfdc30a62c0e11de372bd1f2078173c0e7",
+      "sourceSha256": "dd53ddcdcd5b64174f6df347f18c53efa8cdf8a536d9468b2a7bc64f4f22b51e",
+      "path": "knot-desktop/tests/run-execution-guard.test.mjs",
+      "currentSha256": "dd53ddcdcd5b64174f6df347f18c53efa8cdf8a536d9468b2a7bc64f4f22b51e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-flash-wire.test.cjs",
+      "sourceGitBlob": "ff00fd1e849ac9c0cab3b8748fbd426022249ce1",
+      "sourceSha256": "fbbad3b8261605e9e45a18df0fc2de6287272d6e1fac0779f54d514e270eabec",
+      "path": "knot-desktop/tests/run-flash-wire.test.cjs",
+      "currentSha256": "fbbad3b8261605e9e45a18df0fc2de6287272d6e1fac0779f54d514e270eabec",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-guard-official-worker.cjs",
+      "sourceGitBlob": "9ec67feca28a257eda3bf3c67f447371631e727a",
+      "sourceSha256": "1a7ebd9116d124638d39025ebf97eca9829a843573f54c5c51ee1badb90018c1",
+      "path": "knot-desktop/tests/run-guard-official-worker.cjs",
+      "currentSha256": "1a7ebd9116d124638d39025ebf97eca9829a843573f54c5c51ee1badb90018c1",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-integrated-official-worker.cjs",
+      "sourceGitBlob": "31bbc68d1508f91c732d0f2f26e8b1e3a1ab6809",
+      "sourceSha256": "53d52c8152d90b1ba777b73d48a6ad6f2adf21358f1a66cbc83ba0107f54be1d",
+      "path": "knot-desktop/tests/run-integrated-official-worker.cjs",
+      "currentSha256": "53d52c8152d90b1ba777b73d48a6ad6f2adf21358f1a66cbc83ba0107f54be1d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-integrated.test.mjs",
+      "sourceGitBlob": "8975a4807f0250d302dad3e2b84ec3bcaf93fb6e",
+      "sourceSha256": "27da3b078c3acf36779383f7649103b30438dc1e0674d0b52da9bdf42756bcfa",
+      "path": "knot-desktop/tests/run-integrated.test.mjs",
+      "currentSha256": "27da3b078c3acf36779383f7649103b30438dc1e0674d0b52da9bdf42756bcfa",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-observer-binding.test.mjs",
+      "sourceGitBlob": "b5bbff5037aa614e0b61ef7e7b1d91a1feee3b95",
+      "sourceSha256": "53de06ca2293ffddb770bc67a86401dcb7b118ca5aab2646505bd87d78993544",
+      "path": "knot-desktop/tests/run-observer-binding.test.mjs",
+      "currentSha256": "53de06ca2293ffddb770bc67a86401dcb7b118ca5aab2646505bd87d78993544",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-panel-client.test.mjs",
+      "sourceGitBlob": "cfffa8e65b74bdf13a5f9df6cbdbb1d7ce5bb29d",
+      "sourceSha256": "f1a2ebd4830f6c3878eb5fa2c7e4c5993a86bddf12451c47357de54e61c45d47",
+      "path": "knot-desktop/tests/run-panel-client.test.mjs",
+      "currentSha256": "f1a2ebd4830f6c3878eb5fa2c7e4c5993a86bddf12451c47357de54e61c45d47",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-query.test.mjs",
+      "sourceGitBlob": "1476a649b94c4150998c514368ef0965d6d60048",
+      "sourceSha256": "d64763035af4b382dc4d978b6471a56f169d6b46d88467bda0ccfe5de4e78197",
+      "path": "knot-desktop/tests/run-query.test.mjs",
+      "currentSha256": "d64763035af4b382dc4d978b6471a56f169d6b46d88467bda0ccfe5de4e78197",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-read-official-worker.cjs",
+      "sourceGitBlob": "f80c8af25678a2183e1dfc59b670030ffb3e06bf",
+      "sourceSha256": "e7ad2e16dd364c7d2ec58fb90fe26a72584ffe2e136c5cef38739d5edcf419e1",
+      "path": "knot-desktop/tests/run-read-official-worker.cjs",
+      "currentSha256": "e7ad2e16dd364c7d2ec58fb90fe26a72584ffe2e136c5cef38739d5edcf419e1",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-read-official.test.mjs",
+      "sourceGitBlob": "368cdf6c7579813dbc2c410f2d2cec1b7420bd1f",
+      "sourceSha256": "54ab4a6fe06c520d5e9f5dbcc671a0fc27a0887070b507ef8ebb0d0fbc856135",
+      "path": "knot-desktop/tests/run-read-official.test.mjs",
+      "currentSha256": "54ab4a6fe06c520d5e9f5dbcc671a0fc27a0887070b507ef8ebb0d0fbc856135",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-read.test.mjs",
+      "sourceGitBlob": "c2b7c7d3840b38178ba2aeaaf9e2e0dcc3a3c982",
+      "sourceSha256": "20aa2277f355a945667e9faebd1471c677e1cc4722123d5ccd2b309bd1ec1c43",
+      "path": "knot-desktop/tests/run-read.test.mjs",
+      "currentSha256": "20aa2277f355a945667e9faebd1471c677e1cc4722123d5ccd2b309bd1ec1c43",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-reconciliation.test.mjs",
+      "sourceGitBlob": "13d3ccad89821583bf51e63b98cb8ecae512bac9",
+      "sourceSha256": "56f762ec3720f71af9d7946996663aa79923a1bf8f57abbe1e235313796eb2a7",
+      "path": "knot-desktop/tests/run-reconciliation.test.mjs",
+      "currentSha256": "56f762ec3720f71af9d7946996663aa79923a1bf8f57abbe1e235313796eb2a7",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-reference-domains.test.mjs",
+      "sourceGitBlob": "3f3fb1701431a46b0212b42955843d8498b00735",
+      "sourceSha256": "ed495144fd7c85b4015aa21ecbbd086d31ee1e7c5c1d28ad3ad7cdafeb235954",
+      "path": "knot-desktop/tests/run-reference-domains.test.mjs",
+      "currentSha256": "ed495144fd7c85b4015aa21ecbbd086d31ee1e7c5c1d28ad3ad7cdafeb235954",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-request-gate.test.mjs",
+      "sourceGitBlob": "6d5f05d3a7b47cd4cb3717ded0332a0bd7636fa4",
+      "sourceSha256": "22deef145015a3a49936c10d85e5fc32eca6c9eea324aab38f6f9bf341492794",
+      "path": "knot-desktop/tests/run-request-gate.test.mjs",
+      "currentSha256": "22deef145015a3a49936c10d85e5fc32eca6c9eea324aab38f6f9bf341492794",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-status-panel.test.mjs",
+      "sourceGitBlob": "c551a228e1e8ea8944cd25e648f66bc87378c1d9",
+      "sourceSha256": "05f0d3c4887f498a23fe1cf6c54d593686217f18c3345e6ba40092c517a25a61",
+      "path": "knot-desktop/tests/run-status-panel.test.mjs",
+      "currentSha256": "05f0d3c4887f498a23fe1cf6c54d593686217f18c3345e6ba40092c517a25a61",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-status-source.test.mjs",
+      "sourceGitBlob": "cd21aa836899afdbef9797722098e55fce236747",
+      "sourceSha256": "0c9fc99fd56469453674f2e4d94ca7be7dfe8e87589544c2f7bc03474be6296b",
+      "path": "knot-desktop/tests/run-status-source.test.mjs",
+      "currentSha256": "0c9fc99fd56469453674f2e4d94ca7be7dfe8e87589544c2f7bc03474be6296b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/run-status-view.test.mjs",
+      "sourceGitBlob": "e1ead01fa88c82597b79a5bdc834b8cecb5a0731",
+      "sourceSha256": "cd6dd4e33554d23ad1115e26699aa0484ed2d0e27cb1c414c194d4668cae14f2",
+      "path": "knot-desktop/tests/run-status-view.test.mjs",
+      "currentSha256": "cd6dd4e33554d23ad1115e26699aa0484ed2d0e27cb1c414c194d4668cae14f2",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/runtime-draft.test.mjs",
+      "sourceGitBlob": "9bc658dbf9dc7317a1433bf40c34c6c2c135b0bd",
+      "sourceSha256": "d103a30aff0680e2d694452532df70265ad041cf3b3c79e0a7c14851d1002783",
+      "path": "knot-desktop/tests/runtime-draft.test.mjs",
+      "currentSha256": "d103a30aff0680e2d694452532df70265ad041cf3b3c79e0a7c14851d1002783",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/runtime-launcher.test.mjs",
+      "sourceGitBlob": "d34413c164cd31776fb60d833084d4d00f36d9ff",
+      "sourceSha256": "11739f4ad37f3ecb028372e26e2f4dfb0b1d0b25e667f5c78e178dc65aa9e393",
+      "path": "knot-desktop/tests/runtime-launcher.test.mjs",
+      "currentSha256": "11739f4ad37f3ecb028372e26e2f4dfb0b1d0b25e667f5c78e178dc65aa9e393",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/store-reader-pairing.test.mjs",
+      "sourceGitBlob": "b301a1a343766f9e57f011ca63c2deb6c8464a32",
+      "sourceSha256": "e257cbe190db0de093327d9f7a9506d84bc6dd98f816435554a6415fd678e795",
+      "path": "knot-desktop/tests/store-reader-pairing.test.mjs",
+      "currentSha256": "7cf0bc3eace6b547e6624c508fd5ba9914a72c182ef045b40c5a3e43f43c2dac",
+      "adapted": true
+    },
+    {
+      "sourcePath": "tests/store-recovery-roundtrip.test.mjs",
+      "sourceGitBlob": "c09b7390d69ef164cc7f1ed1bc0461604d306738",
+      "sourceSha256": "fb9f01c69013e009b1c6e37b010fa28e3a8c9726fbddc7d400931305bdc39e05",
+      "path": "knot-desktop/tests/store-recovery-roundtrip.test.mjs",
+      "currentSha256": "b10ea1a63e3ba210204ca10c5518c0ca2cc830b364079a4f6ae9459e64735348",
+      "adapted": true
+    },
+    {
+      "sourcePath": "tests/store-snapshot-contract.test.mjs",
+      "sourceGitBlob": "aab00ec66b52a47581d2c46ab948195af864b9f9",
+      "sourceSha256": "6a8904dbcdd79ce389282267b566f6491697349df43cf57abafa034cba6abc4c",
+      "path": "knot-desktop/tests/store-snapshot-contract.test.mjs",
+      "currentSha256": "6a8904dbcdd79ce389282267b566f6491697349df43cf57abafa034cba6abc4c",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/supply-preview-panel.test.mjs",
+      "sourceGitBlob": "e5fa23100c9d108a4bc4ca861da275c62f37cbd8",
+      "sourceSha256": "9d8981ae87a434fbca1318c0b702f70ccd94a99d9df70f8da969a7d20ce5240d",
+      "path": "knot-desktop/tests/supply-preview-panel.test.mjs",
+      "currentSha256": "9d8981ae87a434fbca1318c0b702f70ccd94a99d9df70f8da969a7d20ce5240d",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/work-island-client.test.mjs",
+      "sourceGitBlob": "b8fc0c0c327c3df79a718cdb192adb43dd15591b",
+      "sourceSha256": "3fd526401460c87d33cf127dc12a2d075b5412ab672280865c874706774e5c52",
+      "path": "knot-desktop/tests/work-island-client.test.mjs",
+      "currentSha256": "3fd526401460c87d33cf127dc12a2d075b5412ab672280865c874706774e5c52",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-folders-client.test.mjs",
+      "sourceGitBlob": "fbf0864a2fa2d079145a3d26a562117ff4050503",
+      "sourceSha256": "24405a271c582133b2cc48c399522e7cbdfb2f064c66e08628e502baf14a831e",
+      "path": "knot-desktop/tests/worksite-folders-client.test.mjs",
+      "currentSha256": "24405a271c582133b2cc48c399522e7cbdfb2f064c66e08628e502baf14a831e",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-folders.test.mjs",
+      "sourceGitBlob": "e36636f74d12c4365ed5d222cef28351f49df469",
+      "sourceSha256": "30cf088d6d9cb6c78033f83b4dfdd93d0cceb05e68a3ea88f554b732ab11eafe",
+      "path": "knot-desktop/tests/worksite-folders.test.mjs",
+      "currentSha256": "30cf088d6d9cb6c78033f83b4dfdd93d0cceb05e68a3ea88f554b732ab11eafe",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-hud-client.test.mjs",
+      "sourceGitBlob": "1aa1499ca8119a215ef5e90c4d6b41a12b279573",
+      "sourceSha256": "b41c96e459212f361687a4d8e1ba5ac5ef9e42e7f31626e727759568f2834f97",
+      "path": "knot-desktop/tests/worksite-hud-client.test.mjs",
+      "currentSha256": "b41c96e459212f361687a4d8e1ba5ac5ef9e42e7f31626e727759568f2834f97",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-library-client.test.mjs",
+      "sourceGitBlob": "f5647639abf4d8a747271a8865feaf62505341f0",
+      "sourceSha256": "9cc6412c912d9a8c7cec8eb96cc9d06d438840e27fc4b918404812e743057f7b",
+      "path": "knot-desktop/tests/worksite-library-client.test.mjs",
+      "currentSha256": "9cc6412c912d9a8c7cec8eb96cc9d06d438840e27fc4b918404812e743057f7b",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-preview-client.test.mjs",
+      "sourceGitBlob": "8962b3294b1ac4a75bf1b260cf0641126bf69f3c",
+      "sourceSha256": "155ec2ae6bed2f40af2c54d47155bba0079704676fec6917ba720df09fdb4221",
+      "path": "knot-desktop/tests/worksite-preview-client.test.mjs",
+      "currentSha256": "155ec2ae6bed2f40af2c54d47155bba0079704676fec6917ba720df09fdb4221",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite-preview.test.mjs",
+      "sourceGitBlob": "19bfa5baf547d005266e8bb313762325268d5309",
+      "sourceSha256": "8ebd2b011719ac842799e79abc621d0d27f018b40944424a1f4b45e5af04a8f8",
+      "path": "knot-desktop/tests/worksite-preview.test.mjs",
+      "currentSha256": "8ebd2b011719ac842799e79abc621d0d27f018b40944424a1f4b45e5af04a8f8",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/worksite.test.mjs",
+      "sourceGitBlob": "16481ea3eef396bed311c106941be7723e1740d2",
+      "sourceSha256": "bab423c5b410e5e04cb08a3553568dacd752d35cc7cfa53d007fbfbc94fd23dd",
+      "path": "knot-desktop/tests/worksite.test.mjs",
+      "currentSha256": "bab423c5b410e5e04cb08a3553568dacd752d35cc7cfa53d007fbfbc94fd23dd",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/workspace-events-client.test.mjs",
+      "sourceGitBlob": "d3e0391c4f26d354ab7c84a7bf5721733f732560",
+      "sourceSha256": "1fc2d9f88777c938d1926f7bdb8777bd930f8629ecb1204e194b71e25f0f0e66",
+      "path": "knot-desktop/tests/workspace-events-client.test.mjs",
+      "currentSha256": "1fc2d9f88777c938d1926f7bdb8777bd930f8629ecb1204e194b71e25f0f0e66",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/workspace-recovery-client.test.mjs",
+      "sourceGitBlob": "e2936fd92bf1279c4a7a1b9aea579ec3e6fe30ba",
+      "sourceSha256": "f78e87403d12ff65d597c5848371efe25b8a729a8fc333e5b676cdd8957700a8",
+      "path": "knot-desktop/tests/workspace-recovery-client.test.mjs",
+      "currentSha256": "f78e87403d12ff65d597c5848371efe25b8a729a8fc333e5b676cdd8957700a8",
+      "adapted": false
+    },
+    {
+      "sourcePath": "tests/workspace-response-client.test.mjs",
+      "sourceGitBlob": "5a2480c01feeadfefdcc68f28dc0b14985410d10",
+      "sourceSha256": "0e8c10bd77ba287e09fbbaa7bddfde674b2563d6fa8f1fd8fe628d56d0c71eed",
+      "path": "knot-desktop/tests/workspace-response-client.test.mjs",
+      "currentSha256": "0e8c10bd77ba287e09fbbaa7bddfde674b2563d6fa8f1fd8fe628d56d0c71eed",
+      "adapted": false
+    },
+    {
+      "sourcePath": "vendor/knot/src/knot-model.ts",
+      "sourceGitBlob": "111afafbe2bdcd15cb71286d8b047123d7a28aff",
+      "sourceSha256": "7ebdfe583fe308303cfcf7998f5b9788f7427ece26ba0a8fcd31714695a0eaf3",
+      "path": "knot-desktop/vendor/knot/src/knot-model.ts",
+      "currentSha256": "7ebdfe583fe308303cfcf7998f5b9788f7427ece26ba0a8fcd31714695a0eaf3",
+      "adapted": false
+    },
+    {
+      "sourcePath": "vendor/knot/src/services/asset-persistence.ts",
+      "sourceGitBlob": "a8c00b7f108c230fb21489d6a07b212c2ab5f1a2",
+      "sourceSha256": "95ebe71ed73fe07577d241c32c4ede268142ca3ed99f5d93ad3bf5f25a16ad72",
+      "path": "knot-desktop/vendor/knot/src/services/asset-persistence.ts",
+      "currentSha256": "95ebe71ed73fe07577d241c32c4ede268142ca3ed99f5d93ad3bf5f25a16ad72",
+      "adapted": false
+    },
+    {
+      "sourcePath": "vendor/knot/src/services/asset-sync.ts",
+      "sourceGitBlob": "a38f1d5827d73727ec429252e607e2b5dcd9d6c0",
+      "sourceSha256": "8b2622af993a5a0a6528381d855f0ef77ad62045176bbc4e8dcb266391c99773",
+      "path": "knot-desktop/vendor/knot/src/services/asset-sync.ts",
+      "currentSha256": "8b2622af993a5a0a6528381d855f0ef77ad62045176bbc4e8dcb266391c99773",
+      "adapted": false
+    },
+    {
+      "sourcePath": "vendor/knot/src/services/workspace-state.ts",
+      "sourceGitBlob": "fe1e02159f964cb9ffda977a84f631d18e5b432e",
+      "sourceSha256": "efd9f11009698f69f6f3523d0df1065bfdb2d56a809d39e8c03a1a416237f699",
+      "path": "knot-desktop/vendor/knot/src/services/workspace-state.ts",
+      "currentSha256": "efd9f11009698f69f6f3523d0df1065bfdb2d56a809d39e8c03a1a416237f699",
+      "adapted": false
+    }
+  ]
+}

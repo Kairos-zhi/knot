@@ -18,6 +18,10 @@
 
 ## 当前代码怎样组成
 
+2026-10-27 本分支新增 `knot-desktop/`，为同一 Knot 的 DSH 桌面宿主模块。其 Store 在该宿主内承担唯一持久 owner，复用下表同版本四份冻结模型/状态/持久化/投影源；原字节 hash 与换行规范化后的同源检查均保留。来源、布局与核验见 [048 任务](../development/desktop-integration.md)。
+
+原 FlowGram 应用仍保留下表的服务与持久入口。两种承载没有因同仓自动共享一份运行 Store；禁止把它们同时指向同一业务文件写入。后续统一入口应适配既有命令/快照/事件至唯一 owner，不能添加同步器形成双主权威。
+
 | 位置 | 已有作用 |
 |---|---|
 | [模型](../../knot-flowgram-app/src/knot-model.ts) | KnotNode／Block／Edge、Workspace／Worksite／Presentation 及本地命令类型 |
