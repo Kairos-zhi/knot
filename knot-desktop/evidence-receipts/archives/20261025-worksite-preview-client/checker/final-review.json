@@ -1,0 +1,82 @@
+{
+  "task": "KONT-WORKSTATION-026",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T06:36:06.563Z",
+  "verdict": "ACCEPT_SHARED_PREVIEW_CLIENT_CONSUMPTION_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "02a839ca416fb5bf70de9e3f33222ab49921085809cf9e3a4187368d9b729b18",
+    "frozenEntriesMatched": 10,
+    "productSourceTestHelperEntriesMatched": 4,
+    "generatedBundleMatched": 1,
+    "reportAndLogEntriesMatched": 5,
+    "mismatch": 0,
+    "independentBuild": {
+      "runtime": "official bundled Node",
+      "command": "node scripts/build.mjs",
+      "exitCode": 0
+    },
+    "focused": {
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "newMakerClientTests": 10,
+      "existingRelated": 10,
+      "checkerOwn": 3,
+      "log": "focused.tap",
+      "command": "node --test tests/worksite-preview-client.test.mjs tests/run-panel-client.test.mjs tests/runtime-draft.test.mjs tests/client-bundle.test.mjs tests/worksite-preview.test.mjs evidence/local/20261025-worksite-preview-client/checker/independent.test.mjs"
+    },
+    "ownChecks": [
+      "Response JSON delayed while draft changes then returns to same value still cannot revive content/error",
+      "Old rejected network request after replacement success cannot erase new preview or show old error",
+      "Save acknowledges captured text only; later new text survives and a second POST saves it"
+    ],
+    "makerCasesIndependentlyExecuted": [
+      "Encoded identity/same-origin GET/server supply with no local fallback",
+      "Dirty save precedes single GET and failed save issues zero GET",
+      "Save pending then edit/component cleanup/active site change issues zero preview GET",
+      "Ignoring abort and out-of-order success/failure cannot revive stale data",
+      "Older and newer seq both require refresh",
+      "Refresh/write/edit/site/presentation/component/plugin lifecycle invalidation",
+      "Waiting and failed reads hide prior content and use fixed preview errors"
+    ],
+    "rawRuntimeDraftSeamMovedToActualBuiltFactoryWithoutLosingLeaveGuardAssertions": true,
+    "backend024AndPackaging025FrozenEntriesRemainMatched": true,
+    "historical014OriginalPinVerifiedWith25Files": true,
+    "currentInventory26Unchanged": true,
+    "rootHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+    "gitDiffCheckExitCode": 0
+  },
+  "maintainability": {
+    "passed": true,
+    "responsibilities": "Service owns material projection; loadWorksitePreview owns save-before-read and response admission; invalidatePreview owns generation, abort and clearing transient preview state",
+    "controlFlow": "Small named functions and ordinary async control flow; one generation and one controller, no generic framework, DSL, parallel business store or new dependency",
+    "strictAdmission": "Current generation, live provider, nonbusy/nonerror workspace, exact active id/local seq/draft and validated response identity/draft/seq",
+    "cancellation": "Abort is an optimization; generation and state checks after JSON completion prevent ignored-abort success/failure from affecting state",
+    "saveAcknowledgement": "Only delete draft entry if its current text equals the captured saved text; preserve newer edits",
+    "compatibility": "Existing editing selection rules, operation kernel, Run source and slot registration retained; no Run stop action added"
+  },
+  "documentationReview": {
+    "path": "docs/api/worksite-preview.md",
+    "sha256": "a40e62db8f253785f5a2f5dd24c29a890c77f9150a171ecc6ad89089372cfb94",
+    "matchesImplementation": true
+  },
+  "acceptedScope": [
+    "Existing preview action consumes the shared authenticated query instead of recomputing supply locally",
+    "Save/query/lifecycle/seq/draft consistency and transient waiting/error behavior verified through actual built factory and component-hook callbacks",
+    "Source and generated bundle build plus affected service/client regressions"
+  ],
+  "limitations": [
+    "Programmatic hook and component semantics are not ReactDOM, browser layout, accessibility interaction or human Apple experience acceptance",
+    "No new official root release candidate was prepared or live Desktop updated; current26 inventory inclusion does not replace candidate release verification",
+    "No production data/profile/ledger, desktop lifecycle/install, system setting, credential/user Session, model, root commit/push/merge or full Run acceptance",
+    "No full-suite run; related20 plus independent3 are the current executed coverage",
+    "Legacy workspace save errors retain their existing handling; this card fixes preview query error text and does not redesign all workspace error presentation"
+  ],
+  "evidence": [
+    "review-plan.md",
+    "independent.test.mjs",
+    "focused.tap",
+    "REPORT.md"
+  ]
+}

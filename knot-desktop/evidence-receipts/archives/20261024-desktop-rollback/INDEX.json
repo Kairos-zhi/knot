@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261024-desktop-rollback",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261024-desktop-rollback",
+      "path": "archives/20261024-desktop-rollback/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-rollback/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "cc13f7fca466345468f4ffab0b5c5b69acaee63e105dde91fe4f7028da5ae0aa",
+      "publishedSha256": "850c56516e26032018a583a37450ee569fc6210481b4d44e43fd8aaab7742acd",
+      "sourceBytes": 3719,
+      "publishedBytes": 3767,
+      "originalOutcome": "ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-rollback",
+      "path": "archives/20261024-desktop-rollback/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-rollback/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "7ddb61bac59a1d270f18ae0900f8f07fc00a60b9cd7d289b8190ffc835c8c21f",
+      "publishedSha256": "6c4872b0cd8f4908c418de1c8c1f0504a2facb0484c94a5541430459f7c5b8d9",
+      "sourceBytes": 1409,
+      "publishedBytes": 1372,
+      "originalOutcome": "ACCEPT_INSTALLED_CODE_ROLLBACK_CANDIDATE_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-rollback",
+      "path": "archives/20261024-desktop-rollback/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-rollback/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "c58f75ac5f5987d769540b7f6cf72e3e7efffcf27fd91f593168f6abf51112cd",
+      "publishedSha256": "c58f75ac5f5987d769540b7f6cf72e3e7efffcf27fd91f593168f6abf51112cd",
+      "sourceBytes": 2692,
+      "publishedBytes": 2692,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

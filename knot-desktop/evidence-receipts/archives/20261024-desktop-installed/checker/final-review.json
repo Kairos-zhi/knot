@@ -1,0 +1,60 @@
+{
+  "task": "KONT-DESKTOP-020",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25",
+  "verdict": "CLOSED_FAILED_INSTALL_PRESERVED",
+  "upgradeAccepted": false,
+  "productionDeploymentAccepted": false,
+  "execution": {
+    "rootWasUniqueInstaller": true,
+    "checkerApprovalOrExecuteCalls": 0,
+    "descriptorSha256": "928f28736af4fc2f820e9d4eae53341872e6890d401e9932bda32028830d77a9",
+    "acquired": true,
+    "state": "uncertain",
+    "managerApplication": "failed",
+    "managerChanged": false,
+    "packageExitCode": 1,
+    "errorCode": "operation-error",
+    "pnpmErrorClassification": "ERR_PNPM_UNEXPECTED_STORE",
+    "rawLogOrUrlTokenDisclosed": false
+  },
+  "independentEvidence": {
+    "preflightHead": "4b818873893ce5d32b2f3d6cd7a88e657c4178fd",
+    "019FrozenEntriesMatchedBeforeExecution": 12,
+    "originalProfileSha256": "074125faf53fc9832aa075e35617adfa773806a6321dc0267b9e969d0e9d5283",
+    "originalDataSha256": "e0359bb66a44a41c082ab12c845cbea6a70435e5c9d6f7bc641277a16c3c79ac",
+    "profileAndDataUnchangedAfterFailureAndOrdinaryLaunch": true,
+    "nonKontDependencyDeclarationsAndSelectionUnchanged": true,
+    "oldInstalledFilesMatched": 12,
+    "oldInstalledInventoryFiles": 12,
+    "extraOrPartialKnotCodeFiles": 0,
+    "humanClaimState": "reserved",
+    "resultState": "uncertain",
+    "claimResultTransportBytesRetainedAfterLaunch": true,
+    "ordinaryOfficialProcessesObserved": 5,
+    "allProcessesWithoutDebugFlags": true,
+    "dataLockPresentAfterOrdinaryLaunch": true,
+    "checkerLaunchStopInstallRetryOrClaimDeletion": false,
+    "modelCalls": 0
+  },
+  "conclusion": "The unique authorized install failed and was not retried. Independent readback supports unchanged old Knot code, profile manifest, fixed data and retained uncertainty markers. Root then normally opened the unchanged old Desktop; only official process/no-debug/lock evidence is accepted.",
+  "limitations": [
+    "No upgraded 25-file installation, active new plugin, renderer application, UI or human experience acceptance",
+    "Unchanged profile bytes prove unchanged non-Knot dependency declarations and persistent selection, not a full inventory of all non-Knot installed dependency files or package-manager cache",
+    "Old installed code inventory is intact; no claim that every possible installer side effect outside that scope is absent",
+    "Ordinary startup was performed by root; Checker only read process/lock/file evidence and did not connect a debugger or inspect user Session/credentials",
+    "Reserved/uncertain/transport markers remain. No automatic retry or marker removal is authorized by this review; store repair and any later real execution need separate review and fresh fences"
+  ],
+  "evidence": [
+    "preflight-review.json",
+    "preflight.mjs",
+    "preflight.log",
+    "post-failure-review.json",
+    "post-failure.mjs",
+    "post-failure-refused-after-launch.log",
+    "normal-startup-review.json",
+    "normal-startup-readback.mjs",
+    "normal-startup.log",
+    "REPORT.md"
+  ]
+}

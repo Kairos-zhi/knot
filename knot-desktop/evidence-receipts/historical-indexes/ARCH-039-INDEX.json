@@ -1,0 +1,178 @@
+{
+  "task": "KONT-ARCH-039",
+  "archive_id": "kont-arch-lifecycle-20261026",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_READ_CLEANUP_OWNER_BARRIER_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "checkerReceipt": "evidence/local/20261026-arch-lifecycle/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 34,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 16,
+  "priorFilesPreserved": 75,
+  "acceptedScope": "Authentic read-handle cleanup failure survives business cancellation; sticky binding/owner disposal with no unsafe Store close or rebind; normal errors and clean cancellation still drain",
+  "migrationOrOldReaderCompatibilityAccepted": false,
+  "productOrHostAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "rootCommitOrDeployment": false,
+  "files": [
+    {
+      "path": "docs/api/read-cleanup-contract.md",
+      "bytes": 2547,
+      "sha256": "d16e0b5c86b49bd15dcfbfd835ea149236fd446f573e06374fd5b6a0c28ee4d3"
+    },
+    {
+      "path": "docs/tasks/KONT-ARCH-039.md",
+      "bytes": 2425,
+      "sha256": "5a31cfc203e4b418ab0ca94c25cb8ba95f42a59091a7ef4c36f737ceeaed589d"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/archive.mjs",
+      "bytes": 4115,
+      "sha256": "db64e59851aec534dfa843dd712eac877b75f8f38728abce34dddcdc53071763"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/REPORT.md",
+      "bytes": 4648,
+      "sha256": "572948ce820ec04c1c11848e7a4d3c37c736e284718321d3709297c711224b7e"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/audit.json",
+      "bytes": 28321,
+      "sha256": "e2eac2cadc48d530016905ea41401d6c44e17a356aa82b9534296f031ccaa203"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/audit.mjs",
+      "bytes": 2803,
+      "sha256": "a1d9b6e6dad1059ddbc773fc6df3998cb128d33de70dfeca26a47fc836896302"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/build.log",
+      "bytes": 231,
+      "sha256": "58b4671d9d6e5c1195e80cae4bd6594c42998f42f2cc8430611ebbc442c62e6c"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/final-review.json",
+      "bytes": 5076,
+      "sha256": "9379e09e2f131bf1baadefb4fc836d365d45408a6770b5957cc514727ca005eb"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/focused.tap",
+      "bytes": 8223,
+      "sha256": "52e1b553040930d6730d2678f60ecb1772a306b671ebfd645c4930e5ef7a9c7f"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/own-cases.tap",
+      "bytes": 1266,
+      "sha256": "277a897b731b304f2bef4b94e720744a4cc1aa37fea0c2ce254d346560c8a4e0"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/own-cases.test.mjs",
+      "bytes": 8312,
+      "sha256": "3a7ab7cb98b1c397d378dcc3f64a7ee5887b40e8c7ba41666979a55b324fbc3b"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/checker/write-final.mjs",
+      "bytes": 3785,
+      "sha256": "f2c982b219c1b50613393b847ebaf87e6a673e59f3be5965d25de0aadf1f18ac"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/controller/CLOSEOUT.md",
+      "bytes": 839,
+      "sha256": "cc9e9e96be79882a3312c14d0c0f1add4edc9a2bd3d450220f6ba39e93bc13f1"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/controller/baseline.json",
+      "bytes": 11905,
+      "sha256": "7c28b4003bc1fc15c3c1110eafd3c5680b79841648fb051f0b8c90f524ceeaea"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/controller/receipt.json",
+      "bytes": 886,
+      "sha256": "b78491c1404639e5eec3102dd009ed38a7e7a055800bbe481f1f80344cc787f8"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/REPORT.md",
+      "bytes": 2752,
+      "sha256": "aec0d13644ef40235e0e60df4da08fcc052a482be50f66db755559799e75057b"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/TASK.md",
+      "bytes": 11766,
+      "sha256": "1f2ff560b3c5eb8f91632f7639783f162055e6884a67e5086068f1a59393835b"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/baseline-status.txt",
+      "bytes": 2964,
+      "sha256": "9e1f697a8a0c178097d4fdc79ab59d5824c97db2adabc5214dac9f7863d3abd3"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/baseline.json",
+      "bytes": 11905,
+      "sha256": "7c28b4003bc1fc15c3c1110eafd3c5680b79841648fb051f0b8c90f524ceeaea"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/build.log",
+      "bytes": 231,
+      "sha256": "c43bd483e28a76e132dc2e2bbb2e0d773bf23c0038a16c1498569338743a5bbb"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/design-TASK.md",
+      "bytes": 11010,
+      "sha256": "f59e9090f16e27e0cd80215881712d87f281b88b99db02a34fbc9654a8d0ed09"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/design-source-hashes.json",
+      "bytes": 829,
+      "sha256": "2d6f32d477b0b3e904019ae76892bc516ab7829cf5d2f148e59693b6f3cf5ec8"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/focused.tap",
+      "bytes": 8226,
+      "sha256": "6082b47b48ff966cd5bb57c46c103682a93cd42a56179aca9defc65502d9d333"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/manifest.json",
+      "bytes": 3196,
+      "sha256": "e1872c0c6cfb53ef2b542c0694c8923a8715fcf5dc11a97a0549bc3d9073820a"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/manifest.sha256",
+      "bytes": 66,
+      "sha256": "6cf58f8f0e74707e7c26d3f87b0d3b985613fe9f67bfa9fb5e0f2541637645af"
+    },
+    {
+      "path": "evidence/local/20261026-arch-lifecycle/maker/protection-check.json",
+      "bytes": 6849,
+      "sha256": "d766f779c64caca2be4ede5c782cfd7d99d6e318d8742f508b85b21cf63d6261"
+    },
+    {
+      "path": "packages/dsh-plugin/src/dsh-run-read.mjs",
+      "bytes": 14903,
+      "sha256": "f0b538ed713b11d16e31b4e32f163a04d08ed1398b0e1c0d85da0a594ac81923"
+    },
+    {
+      "path": "packages/dsh-plugin/src/index.mjs",
+      "bytes": 12210,
+      "sha256": "2478eff9523bee134f87eab0c101fd7629a5892342f1ab575b9fd5f61e32154b"
+    },
+    {
+      "path": "packages/dsh-plugin/src/run-observer-binding.mjs",
+      "bytes": 2044,
+      "sha256": "05666211a3cae846146e86b5547b98773cb6001286a6fa338adcfe81d828eb9b"
+    },
+    {
+      "path": "tests/arch-read-cleanup.test.mjs",
+      "bytes": 15975,
+      "sha256": "c3c54440ee74c5e76f8e289b7054407f4393db7e5c8495236d3b4224a7ac98c6"
+    }
+  ]
+}

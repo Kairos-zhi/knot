@@ -1,0 +1,46 @@
+{
+  "task_id": "KONT-RUN-008",
+  "archive_id": "kont-run-guard-20261022",
+  "at": "2026-10-22T14:41:03.9743799Z",
+  "state": "ACCEPTED_LIMITED",
+  "verdict": "ACCEPT_EXECUTION_GUARD_LIMITED",
+  "base_commit": "30e28af34520e86324f8a4e9d0969665d24103e6",
+  "commit": "81ce2c41aad5d5bf33b3554335142cc919348022",
+  "worktree_clean": true,
+  "local_commits": 1,
+  "validation": {
+    "failed": 0,
+    "maker_focused": 5,
+    "build": "pass",
+    "fullSuiteRun": false,
+    "independent_focused": 5,
+    "skipped": 0
+  },
+  "evidence_index": "evidence/RUN-008-INDEX.json",
+  "independent_review": "evidence/local/20261022-run-guard/checker/final-review.json",
+  "counts": {
+    "closed": 2,
+    "full_product_acceptances": 0,
+    "units": 14,
+    "accepted_limited": 12
+  },
+  "scope": "Controlled Agent setup single-stream guard candidate, not wired to dispatch",
+  "limitations": [
+    "One stream does not prove one Provider HTTP request or no internal retries",
+    "Full request-context/user identity/money authorization not integrated",
+    "Persistent dispatch deduplication and terminal artifact return not integrated"
+  ],
+  "operations": {
+    "push": false,
+    "running_desktop_deployed": false,
+    "execution_authorized": false,
+    "merge": false,
+    "actual_user_session_reads": 0,
+    "model_requests": 0
+  },
+  "next": "Persistent dispatch deduplication and execution state; exact identity/model/cost and deployment approval before actual call",
+  "token_usage": {
+    "exact": null,
+    "status": "unavailable"
+  }
+}

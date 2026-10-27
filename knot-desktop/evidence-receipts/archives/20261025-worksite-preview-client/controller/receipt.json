@@ -1,0 +1,22 @@
+{
+  "task": "KONT-WORKSTATION-026",
+  "archive_id": "kont-worksite-preview-client-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_SHARED_PREVIEW_CLIENT_CONSUMPTION_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Existing preview action consumes shared GET; client lifecycle, save ordering and stale-response isolation verified through built factory and hook semantics",
+  "independentBuildExit": 0,
+  "focusedPassed": 23,
+  "focusedFailed": 0,
+  "localSupplyFilteringFallbackRemoved": true,
+  "newerEditsPreservedAcrossOldSaveReceipt": true,
+  "backendAndInventoriesUnchanged": true,
+  "currentInventoryFiles": 26,
+  "realDesktopUpdated": false,
+  "reactDomOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false
+}

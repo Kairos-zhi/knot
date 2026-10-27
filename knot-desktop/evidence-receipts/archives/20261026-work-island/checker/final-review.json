@@ -1,0 +1,71 @@
+{
+  "task": "KONT-WORKSTATION-035",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T16:50:06.089Z",
+  "verdict": "ACCEPT_WORK_ISLAND_OVERVIEW_RETURN_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "ad4798d2914508a629b8934b7b3b2716a87a4523823f387b991ec40208a32904",
+    "frozenEntriesMatched": 12,
+    "protectedBaselineFilesMatched": 53,
+    "authorizedTestHelperChange": {
+      "path": "tests/helpers/workstation-client-fixture.mjs",
+      "beforeSha256": "78e955cca2217b62a7f7d733e2e9d3ad02c6452bfadfae3a5e49e1803d0a6905",
+      "afterSha256": "e33fc8e78a99a16409ae19cf6bf8e4da7aedee4d77d39a6fbf012632f69de1ef",
+      "scope": "Optional awaited options.runResponse body only for /kont/runs default branch; existing onRequest and fetch precedence, VM JSON.parse and old default remain unchanged"
+    },
+    "roadmapSourceAndSnapshotHashesMatched": 6,
+    "historicalLocalEvidenceEntriesMatched": 641,
+    "historicalEntriesMayRepeatFiles": true,
+    "original59PathsPreserved": true,
+    "currentChangedPaths": 62,
+    "gitDiffCheckExitCode": 0,
+    "independentBuild": {
+      "runtime": "<hermes-root>/node/node.exe",
+      "command": "node scripts/build.mjs",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "focused": {
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "newCard": 7,
+      "checkerOwn": 3,
+      "relatedExisting": 65,
+      "exitCode": 0,
+      "log": "focused.tap",
+      "command": "node --test tests/work-island-client.test.mjs tests/worksite-hud-client.test.mjs tests/worksite-library-client.test.mjs tests/workspace-events-client.test.mjs tests/workspace-response-client.test.mjs tests/workspace-recovery-client.test.mjs tests/worksite-preview-client.test.mjs tests/supply-preview-panel.test.mjs tests/runtime-draft.test.mjs tests/run-panel-client.test.mjs tests/client-bundle.test.mjs tests/worksite.test.mjs evidence/local/20261026-work-island/checker/independent.test.mjs"
+    },
+    "ownCases": [
+      "Known site unknown-owner and unknown attribution retain disjoint group keys; only known owner navigates and reuses original presentation",
+      "Late query completion from old context cannot override new owner query snapshot",
+      "Real store CAS rejection preserves island return batch, original target and local draft without replay"
+    ]
+  },
+  "maintainability": {
+    "passed": true,
+    "assessment": "Pure WorkIsland consumes existing sole Run source/view labels; return delegates existing reveal/mutate; authorized helper retains original VM JSON bridge; no framework/dependency/new state authority"
+  },
+  "acceptedScope": [
+    "Global Run snapshot overview grouped by actual known worksite identity with four existing phase labels",
+    "Explicit return saves dirty drafts and reuses the same presentation without Run, supply or asset mutations",
+    "Unknown owner, loading/error, stale pointer/seq and late query isolation; empty successful query remains neutral",
+    "Built factory semantics and isolated synthetic Run/shared-store durability regressions"
+  ],
+  "limitations": [
+    "Not realtime subscription, reliable background execution, cancellation/recovery or actual new model Run",
+    "Not ReactDOM/native EventSource/actual dsh-app/production install/human experience or complete W5/G3/G4/G5",
+    "Synthetic DTO/phase fixtures do not establish production execution",
+    "032 old submission allowlist remains stale and requires fresh review",
+    "No production profile/data/credentials/Session, system/lifecycle/install, formal root candidate, branch/stage/commit/PR/push/merge"
+  ],
+  "evidence": [
+    "REPORT.md",
+    "audit-readback.json",
+    "audit.mjs",
+    "build.log",
+    "focused.tap",
+    "independent.test.mjs"
+  ]
+}

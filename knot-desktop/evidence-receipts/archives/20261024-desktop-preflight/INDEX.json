@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261024-desktop-preflight",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261024-desktop-preflight",
+      "path": "archives/20261024-desktop-preflight/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-preflight/checker/final-review.json",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "1c450bdaccee2c563cef1706a1e9581cac275641ab1f8c47331a4ef0594ad964",
+      "publishedSha256": "698c6d2e3822c3409297d27a0b50a7f9b6e3702179f4189a0908f6ef9d1fb1a5",
+      "sourceBytes": 3731,
+      "publishedBytes": 3900,
+      "originalOutcome": "ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGRADE_DETECTION_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-preflight",
+      "path": "archives/20261024-desktop-preflight/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-preflight/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "168d7b8c17a966482c22febc31a050f3a78ce961bad14a9ecb09e92a2ec7f0fb",
+      "publishedSha256": "ec77bc61757818f0b4e773b983ca78fd5bdcdba0cc8b614795910203c54ce9bd",
+      "sourceBytes": 1260,
+      "publishedBytes": 1223,
+      "originalOutcome": "ACCEPT_REVIEWED_PREFLIGHT_AND_UNSAFE_DOWNGRADE_DETECTION_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261024-desktop-preflight",
+      "path": "archives/20261024-desktop-preflight/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261024-desktop-preflight/checker/REPORT.md",
+      "sourceOrigin": "git:a05aab4c2941b7c80a8c4221aa9b90070c534d04",
+      "sourceSha256": "2a2a238fdff3c93ba8af1a9b01f6d96f095afdb1d2d7c753edaf37089ea99380",
+      "publishedSha256": "4652cca03756496f964ba624145a59961da8d715329d3ff80721a4747cbaf932",
+      "sourceBytes": 2530,
+      "publishedBytes": 2545,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

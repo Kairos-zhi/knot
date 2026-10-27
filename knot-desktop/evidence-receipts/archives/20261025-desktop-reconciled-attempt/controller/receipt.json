@@ -1,0 +1,50 @@
+{
+  "task": "KONT-DESKTOP-022",
+  "archive_id": "kont-desktop-reconciled-attempt-20261025",
+  "verdict": "ACCEPT_FIXED_PARENT_SINGLE_SUCCESSOR_CAPABILITY_LIMITED",
+  "validation": {
+    "makerManifestSha256": "5f3a050f262af5c653d4bfe98a39e1e5790b6d9343da4e67fdd6682c6e5d89f9",
+    "makerBManifestSha256": "d308955fb329aff47a389061566b26b0bc8cdb9394f067c6b2730f1f752012cb",
+    "frozenManifestEntriesMatched": 20,
+    "mismatch": 0,
+    "focused": {
+      "command": "node --test tests/desktop-reconciled-attempt.test.mjs tests/desktop-install-execution.test.mjs tests/desktop-reconciled-official.test.mjs",
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "log": "focused.tap"
+    },
+    "ownHelperNegativeGroup": {
+      "passed": 1,
+      "baselinePassed": true,
+      "rejectionCases": 11,
+      "log": "helper-negative.tap"
+    },
+    "ownGeneratedWriterPredicateGroup": {
+      "passed": 1,
+      "classificationCases": 5,
+      "log": "writer-match.tap"
+    },
+    "actualPartialReadonlyFixedHelperPassed": true,
+    "actualOfficialPackageWriterCount": 0,
+    "parentLedgerBytesUnchanged": true,
+    "productionParentSuccessorAbsent": true,
+    "officialSyntheticTemporaryInstallCalls": 1,
+    "officialSyntheticConcurrentRequests": 6,
+    "installedCandidateFilesMatched": 25,
+    "existingRecordedStoreFileLinkDependenciesAndSelectionPreserved": true,
+    "productionFresh018OrFullPrepareExecuted": false,
+    "productionApprovalInstallOrDesktopLifecycleCalls": 0,
+    "modelCalls": 0,
+    "buildOrFullSuiteRun": false
+  },
+  "proposalSha256": "1da1b0dc0adf0a3bac2840113dc9e149e731e9ceac633b26e38757e053ae5df4",
+  "proposalReview": "checker/proposal-review.json",
+  "authorizationRequired": true,
+  "newHumanGrants": 0,
+  "productionFullPrepareExecuted": false,
+  "productionInstallCount": 0,
+  "modelCalls": 0,
+  "productionDeploymentAccepted": false
+}

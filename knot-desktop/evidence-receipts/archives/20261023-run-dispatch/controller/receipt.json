@@ -1,0 +1,46 @@
+{
+  "task_id": "KONT-RUN-009",
+  "archive_id": "kont-run-dispatch-20261023",
+  "at": "2026-10-23T08:34:47.0189814Z",
+  "state": "ACCEPTED_LIMITED",
+  "verdict": "ACCEPT_DURABLE_DISPATCH_LIMITED",
+  "base_commit": "81ce2c41aad5d5bf33b3554335142cc919348022",
+  "commit": "7a7aafde66f33694b41088fdff46ecde5a47bbc6",
+  "worktree_clean": true,
+  "local_commits": 1,
+  "validation": {
+    "build": "pass",
+    "maker_focused": 19,
+    "fullSuiteRun": false,
+    "skipped": 0,
+    "failed": 0,
+    "independent_focused": 19
+  },
+  "evidence_index": "evidence/RUN-009-INDEX.json",
+  "independent_review": "evidence/local/20261023-run-dispatch/checker/final-review.json",
+  "counts": {
+    "units": 15,
+    "closed": 2,
+    "accepted_limited": 13,
+    "full_product_acceptances": 0
+  },
+  "scope": "Internal same-Run persisted reservation and submitted/uncertain state",
+  "limitations": [
+    "No guard/actual-dispatch/terminal-return integration or real execution authorization",
+    "Same Run only; no remote exactly-once or power-loss durability proof",
+    "Timeout does not cancel remote work; reservation is never automatically released"
+  ],
+  "operations": {
+    "execution_authorized": false,
+    "push": false,
+    "model_requests": 0,
+    "actual_user_session_reads": 0,
+    "running_desktop_deployed": false,
+    "merge": false
+  },
+  "next": "Integrate controlled Agent, dispatch and authenticated terminal return in isolated runtime; explicit identity/model/cost and deployment approval before actual call",
+  "token_usage": {
+    "exact": null,
+    "status": "unavailable"
+  }
+}

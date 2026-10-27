@@ -1,0 +1,20 @@
+{
+  "task": "KONT-WORKSTATION-027",
+  "archive_id": "kont-supply-preview-panel-20261025",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_SUPPLY_PREVIEW_PANEL_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "acceptedScope": "Pure reusable supply reader, full block text and history counts, native closed details, render safety and unchanged preview lifecycle",
+  "independentBuildExit": 0,
+  "focusedPassed": 20,
+  "focusedFailed": 0,
+  "actualReactServerRenderExecuted": false,
+  "maintainabilityPassed": true,
+  "realDesktopUpdated": false,
+  "browserLayoutOrHumanExperienceAccepted": false,
+  "productionDataAccess": false,
+  "modelCalls": 0,
+  "systemChanges": 0,
+  "realCheckoutCommitMade": false,
+  "pushOrMerge": false
+}

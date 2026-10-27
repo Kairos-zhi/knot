@@ -1,0 +1,87 @@
+{
+  "task": "KONT-WORKSTATION-027",
+  "role": "independent-checker",
+  "reviewedAt": "2026-10-25T06:45:01.719Z",
+  "verdict": "ACCEPT_SUPPLY_PREVIEW_PANEL_LIMITED",
+  "blockingFindings": [],
+  "validation": {
+    "makerManifestSha256": "5323b28e0c45359615cd5d2ee0b8490e0429729b1fa35427e5d900d3bdedea98",
+    "frozenEntriesMatched": 9,
+    "sourceTestHelperEntriesMatched": 3,
+    "generatedBundleEntriesMatched": 1,
+    "reportAndLogEntriesMatched": 5,
+    "mismatch": 0,
+    "independentBuild": {
+      "runtime": "official bundled Node",
+      "exitCode": 0
+    },
+    "focused": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "newMakerPanelTests": 5,
+      "existingRelated": 13,
+      "checkerOwn": 2,
+      "log": "focused.tap",
+      "command": "node --test tests/supply-preview-panel.test.mjs tests/worksite-preview-client.test.mjs tests/run-panel-client.test.mjs tests/runtime-draft.test.mjs tests/client-bundle.test.mjs evidence/local/20261025-supply-preview-panel/checker/independent.test.mjs"
+    },
+    "ownChecks": [
+      "Invalid later material, unknown source or malformed provenance suppresses all earlier body without input mutation",
+      "Historical identity strings contribute count only; hostile multiline original remains text children"
+    ],
+    "purePanelCases": [
+      "Order, material count, draft/title/summary and complete block content preserved",
+      "Native details default closed and summary semantic tree",
+      "Manual/generated source labels, history counts and no extra supply or fetch",
+      "Loading/error/wrong identity suppress old text; invalid blocks fixed alert",
+      "No HTML/URL/action props generated from content",
+      "Actual built factory export and Workstation composition verified"
+    ],
+    "previous026TenAsyncTestsUnchangedAndPassed": true,
+    "genericPureFunctionExpansionSeamContainsNoPanelNameSpecialCaseOrProductLogicCopy": true,
+    "ssr": {
+      "availabilityProbeExecuted": true,
+      "officialLocalResolution": "MODULE_NOT_FOUND",
+      "actualReactServerRenderExecuted": false,
+      "packagesInstalled": 0,
+      "log": "ssr-availability.json"
+    },
+    "historical014OriginalPinVerified25": true,
+    "currentInventory26Unchanged": true,
+    "gitDiffCheckExitCode": 0
+  },
+  "maintainability": {
+    "passed": true,
+    "responsibility": "SupplyPreviewPanel is a named pure DTO renderer exported in existing client.cjs; provider retains fetch/save/seq/generation/lifecycle ownership",
+    "renderGuards": "Local readable text/source/history-array guard protects rendering, without duplicating complete backend schema or supply authorization",
+    "controlFlow": "Straight early returns and ordinary map rendering; no framework, dependency, product file, inventory expansion, parallel store or hook state",
+    "progressiveDisclosure": "Native details/summary with no open prop; original source is present only as text children, history IDs remain unrendered",
+    "compatibility": "Existing kont-preview styling and026 provider behavior retained; only inline presentation replaced"
+  },
+  "documentationReview": {
+    "path": "docs/api/worksite-preview.md",
+    "sha256": "93d32e1c497b57ed585fb69c14890c1500e698e2243e7f9bbefa0a070b3d73c3",
+    "matchesImplementation": true
+  },
+  "acceptedScope": [
+    "Reusable pure supply reading component with material count and progressively disclosed complete block text/source labels/history counts",
+    "Actual built factory and component/hook semantics, safe text-node construction and no extra business actions",
+    "Current build and related client regression coverage"
+  ],
+  "limitations": [
+    "Real React/ReactDOMServer rendering was not executed because official local dependencies were unavailable at the checked anchor; semantic element tests do not prove browser HTML escaping execution",
+    "Native details default closed was checked through props/semantic tree only, not browser keyboard or layout behavior",
+    "No ReactDOM/browser rendering, visual review, formal Apple workstation or human experience acceptance",
+    "No real root release candidate or live Desktop update; historical25 and current26 checks are boundary evidence only",
+    "No production data/profile/ledger, desktop lifecycle/install, system setting, credential/user Session, model, root commit/push/merge, full Run or full product acceptance",
+    "No full-suite run; current executed focused20 only"
+  ],
+  "evidence": [
+    "review-plan.md",
+    "independent.test.mjs",
+    "focused.tap",
+    "ssr.cjs",
+    "ssr-availability.json",
+    "REPORT.md"
+  ]
+}

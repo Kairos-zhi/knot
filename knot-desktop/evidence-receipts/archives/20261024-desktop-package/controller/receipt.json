@@ -1,0 +1,38 @@
+{
+  "task": "KONT-DESKTOP-014",
+  "archive_id": "kont-desktop-package-20261024",
+  "baseCommit": "3ccb26ffb6b1f80e313f0d657924460a6f38f446",
+  "commit": "338ef08b57b2f29859df77cbf0e85f1f115f39bb",
+  "verdict": "ACCEPT_DESKTOP_CANDIDATE_PACKAGE_LIMITED",
+  "cleanTrackedWorktree": true,
+  "manifestSha256": "a1f00e43e8644e9b34215c159b793b9be07cec7a403900e1a7840b575f1755a8",
+  "validation": {
+    "independentChecker": true,
+    "buildExit": 0,
+    "frozenEntriesMatched": 16,
+    "candidateFilesMatched": 25,
+    "focusedFailed": 0,
+    "focusedPassed": 6
+  },
+  "counts": {
+    "acceptedLimited": 18,
+    "fullProductAcceptance": 0,
+    "total": 20,
+    "closed": 2
+  },
+  "operations": {
+    "inUseDesktopChanged": false,
+    "merge": false,
+    "push": false,
+    "newModelCalls": 0
+  },
+  "limitations": [
+    "Sibling directory candidate must remain complete",
+    "Isolated official manager install only; no active Desktop activation",
+    "No captured and verified old installed-code rollback artifact",
+    "No human UI acceptance or full-suite claim"
+  ],
+  "next": "Prepare separately verified rollback candidate from installed old code before an authorized official Desktop update",
+  "artifactWhitespace": "Frozen generated library bytes preserved; non-artifact staged whitespace check passed",
+  "recordedAt": "2026-10-24T15:30:16.1748163+08:00"
+}

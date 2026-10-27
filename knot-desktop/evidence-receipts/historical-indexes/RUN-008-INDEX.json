@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "task_id": "KONT-RUN-008",
+  "archive_id": "kont-run-guard-20261022",
+  "gate": "ACCEPT_EXECUTION_GUARD_LIMITED",
+  "focused": 5,
+  "fullSuiteRun": false,
+  "executionAuthorized": false,
+  "realModelCalls": 0,
+  "scope": "Unwired controlled-Agent single-stream guard; official runtime with synthetic adapter; no Provider HTTP retry guarantee",
+  "files": [
+    {
+      "path": "evidence/local/20261022-run-guard/maker/receipt.json",
+      "bytes": 2130,
+      "sha256": "7d75370c8a30000af77078f182e77b83d437034e79d429e7398e7707fcdb2af4"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/maker/manifest.json",
+      "bytes": 567,
+      "sha256": "62a166b054c45acfdb6e11e605329bbf837980f4173878f633da3683fd888597"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/maker/REPORT.md",
+      "bytes": 2328,
+      "sha256": "4f6641e98c61ba62949f57d6390b8137152433828f998f2ecef71570554be2cb"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/maker/build.log",
+      "bytes": 231,
+      "sha256": "34e1b9fb981cbe0dc586c3fbed5b8c14a1cc7d9441d51ccca9a776e397e253e5"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/maker/focused.tap",
+      "bytes": 1365,
+      "sha256": "6693faa9f8c66444b598ec0f3a9fbd1d3b975d8f6c8048033415cebaaf661ca1"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/checker/final-review.json",
+      "bytes": 1691,
+      "sha256": "b057dd10d8e5f22df19f8c594036d1cde661d792203c8163c4dc465e7618cfad"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/checker/REPORT.md",
+      "bytes": 1781,
+      "sha256": "e2cdfb7c5db8817e2115678e7facc8a51873ce327bd1370e6e015d6545ec0060"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/checker/build.log",
+      "bytes": 231,
+      "sha256": "24bacab485ad5c3f6965b970ce91e51eae19efd3104c97a2328d33aceb8247f5"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/checker/focused.tap",
+      "bytes": 1364,
+      "sha256": "ca3cd76cc960c6dadac5a5e987791a58be88901f7daeeba85ce3916e9215694e"
+    },
+    {
+      "path": "evidence/local/20261022-run-guard/checker/hash-check.json",
+      "bytes": 126,
+      "sha256": "7a24fae49fb936dcadb54f7cf15965f589cec4c1766cee80f73d7aa0147ba807"
+    }
+  ]
+}

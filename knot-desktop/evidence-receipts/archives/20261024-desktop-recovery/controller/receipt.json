@@ -1,0 +1,30 @@
+{
+  "task": "KONT-DESKTOP-017",
+  "archive_id": "kont-desktop-recovery-20261024",
+  "baseCommit": "d7e5702444e81443c78af353c1e6e49a4ba7d666",
+  "commit": "7da386a9648852756b4ac93d17d00f2ddbb98ef9",
+  "verdict": "ACCEPT_RUN_PRESERVING_DERIVED_RECOVERY_LIMITED",
+  "candidateSha256": "774c5c1d644ea529e660a405247e507ab0fd43e6ea8d621a4e469aa88994b42d",
+  "validation": {
+    "candidateFiles": 13,
+    "stagedHashes": 51,
+    "independentWrittenReviewComplete": true,
+    "bPassed": 4,
+    "frozenMatched": 17,
+    "aPassed": 3,
+    "checkerFinalMessageQuotaError": true
+  },
+  "counts": {
+    "total": 23,
+    "acceptedLimited": 21,
+    "closed": 2
+  },
+  "deploymentReady": false,
+  "modelCalls": 0,
+  "productionDataRead": false,
+  "profileWrites": false,
+  "push": false,
+  "merge": false,
+  "cleanTrackedWorktree": true,
+  "recordedAt": "2026-10-24T20:34:49.1584968+08:00"
+}

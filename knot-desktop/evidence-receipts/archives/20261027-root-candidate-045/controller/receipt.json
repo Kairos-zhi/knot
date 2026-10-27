@@ -1,0 +1,19 @@
+{
+  "task": "KONT-RELEASE-045",
+  "archive_id": "kont-committed-root-candidate-045-20261027",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_COMMITTED_ROOT_CANDIDATE_OFFICIAL_ISOLATION_LIMITED",
+  "commit": "d59bcf29de1aeae80528357c0b48e80c62c322f8",
+  "branch": "codex/workstation-release-045",
+  "candidateManifestSha256": "ad5fb65ab02535d7a7fc4e1314a28bfc5281aef05ca946db50c76f55441e5471",
+  "pushed": true,
+  "remoteRepository": "https://github.com/Kairos-zhi/knot",
+  "draftPrCreated": false,
+  "integrationBlocked": true,
+  "prFailure": "GitHub 422: branch has no history in common with main",
+  "officialIsolatedVerificationPassed": true,
+  "productionDeploymentAccepted": false,
+  "modelCalls": 0,
+  "checkerReview": "evidence/local/20261027-release-preparation-refresh/checker/execution-final-review.json",
+  "checkerReviewSha256": "101c3c816216c40692f77ab47eac6c3840a15efd1e53a4c7a209a63bce01518d"
+}

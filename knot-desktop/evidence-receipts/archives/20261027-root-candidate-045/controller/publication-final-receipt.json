@@ -1,0 +1,21 @@
+{
+  "task": "KONT-RELEASE-045",
+  "kind": "final-review-publication",
+  "status": "ACCEPTED_LIMITED",
+  "sourceCommit": "d59bcf29de1aeae80528357c0b48e80c62c322f8",
+  "sourceBranch": "codex/workstation-release-045",
+  "pushed": true,
+  "reviewPr": "https://github.com/Kairos-zhi/knot/pull/12",
+  "draft": true,
+  "reviewBase": "codex/kont-dsh-baseline-045",
+  "reviewBaseSha": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "changedFiles": 112,
+  "commits": 1,
+  "mainIntegrationResolved": false,
+  "mainUnchanged": "08a2a5340edab920ce942173ba63b2c5bc369eb4",
+  "mergePerformed": false,
+  "productionInstall": false,
+  "modelCalls": 0,
+  "publicationReadback": "evidence/local/20261027-release-preparation-refresh/checker/publication-readback.json",
+  "publicationReadbackSha256": "3b9c78587a22db509fe3929af3c9cca88f8ef2e9a630d3c097421d8a31f77abe"
+}

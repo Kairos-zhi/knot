@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261025-desktop-reconciled-attempt",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261025-desktop-reconciled-attempt",
+      "path": "archives/20261025-desktop-reconciled-attempt/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261025-desktop-reconciled-attempt/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "7dd2f2f77c7b2e1e5aa333c292490f298e99da2911f19c25539084e9101b8352",
+      "publishedSha256": "e7873c09d3bbfb3cc7097b040f0d6c7f9d1a9ab2f1ac937076e996a0f58f5bf3",
+      "sourceBytes": 4895,
+      "publishedBytes": 5105,
+      "originalOutcome": "ACCEPT_FIXED_PARENT_SINGLE_SUCCESSOR_CAPABILITY_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261025-desktop-reconciled-attempt",
+      "path": "archives/20261025-desktop-reconciled-attempt/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261025-desktop-reconciled-attempt/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "7165a4e52ea892fa36de764c36b8eea7fb1867cca5c04c4d59daea6149803b02",
+      "publishedSha256": "7165a4e52ea892fa36de764c36b8eea7fb1867cca5c04c4d59daea6149803b02",
+      "sourceBytes": 1895,
+      "publishedBytes": 1895,
+      "originalOutcome": "ACCEPT_FIXED_PARENT_SINGLE_SUCCESSOR_CAPABILITY_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261025-desktop-reconciled-attempt",
+      "path": "archives/20261025-desktop-reconciled-attempt/checker/REPORT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261025-desktop-reconciled-attempt/checker/REPORT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "d22631cf3406d9baa22cab431b07ac6b41ad6fcd79c34ec0f5df33dc6a7bd526",
+      "publishedSha256": "d22631cf3406d9baa22cab431b07ac6b41ad6fcd79c34ec0f5df33dc6a7bd526",
+      "sourceBytes": 2977,
+      "publishedBytes": 2977,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

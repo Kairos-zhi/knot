@@ -1,0 +1,21 @@
+{
+  "task": "KONT-RUN-046",
+  "archive_id": "kont-explicit-run-reconciliation-20261027",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_EXPLICIT_RUN_RECONCILIATION_LIMITED",
+  "baseHead": "d59bcf29de1aeae80528357c0b48e80c62c322f8",
+  "branch": "codex/run-reconciliation-046",
+  "checkerReceipt": "evidence/local/20261027-run-reconciliation/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 74,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 14,
+  "protectedTrackedFilesMatched": 910,
+  "acceptedScope": "Explicit dual-granted reconciliation of supported completed evidence for already claimed Runs through the same Store; no automatic execution or state-schema expansion",
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "productionInstall": false,
+  "rootCommitOrPushThisCard": false,
+  "fullProductAcceptance": false
+}

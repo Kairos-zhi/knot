@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "task_id": "KONT-RUN-009",
+  "archive_id": "kont-run-dispatch-20261023",
+  "gate": "ACCEPT_DURABLE_DISPATCH_LIMITED",
+  "focused": 19,
+  "fullSuiteRun": false,
+  "executionAuthorized": false,
+  "realModelCalls": 0,
+  "scope": "Internal same-Run persisted reservation before one synthetic callback; no remote exactly-once or power-loss durability proof",
+  "files": [
+    {
+      "path": "evidence/local/20261023-run-dispatch/maker/receipt.json",
+      "bytes": 1357,
+      "sha256": "d1458329b07e22c35db42dd14b36530ee2e506e370b40d5ab5d49cb8065b4ca4"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/maker/manifest.json",
+      "bytes": 1550,
+      "sha256": "e4b3fa2cf8bf2e096cdea8bc02196f95840c145f6de0e32283ad8f7e517c573d"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/maker/REPORT.md",
+      "bytes": 2263,
+      "sha256": "2b645361542d63abfdcaed132f8ffdee00ff1bcccf9be1a0499a4faac1700123"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/maker/build.log",
+      "bytes": 231,
+      "sha256": "0e9ad7af215dad19e95cec09efe5316dae6a6a7fbeac1ec504cd190a3c2d2998"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/maker/focused.tap",
+      "bytes": 5198,
+      "sha256": "2b4e89abc824b2bb8d553ce9bc79d2b3caf6e7446c2d82373667c5e5207c07a4"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/checker/final-review.json",
+      "bytes": 1602,
+      "sha256": "43eeb522f438dbdd46c968fe885e2100618f3b1aa7f440866094d17b8f7b13bb"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/checker/REPORT.md",
+      "bytes": 1820,
+      "sha256": "b18e762b9b9f00dfd2b4a4282c2f5ca163c1f3b9ac79ecc94d2737311e59ee99"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/checker/build.log",
+      "bytes": 231,
+      "sha256": "ac706d7df2e5b460db2b538605650290020d8ed4e0921176e5993155f4a57f41"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/checker/focused.tap",
+      "bytes": 5198,
+      "sha256": "5b64b8ae134b04d848e56d67a913daea54d1a482455f0765f677601ebc133fd8"
+    },
+    {
+      "path": "evidence/local/20261023-run-dispatch/checker/hash-check.json",
+      "bytes": 164,
+      "sha256": "23f8ab351687b8b7f3e197a671bd0aa9d2fe7f9b8a6bc82577ddafc173780429"
+    }
+  ]
+}

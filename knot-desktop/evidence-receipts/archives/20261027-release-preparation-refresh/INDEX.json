@@ -1,0 +1,54 @@
+{
+  "kind": "publication-routing-only",
+  "unit": "20261027-release-preparation-refresh",
+  "newEngineeringAcceptance": false,
+  "scope": "Original dated conclusions apply only to their recorded phases, commits and candidate pins.",
+  "receipts": [
+    {
+      "unit": "20261027-release-preparation-refresh",
+      "path": "archives/20261027-release-preparation-refresh/checker/final-review.json",
+      "role": "independent-checker-final",
+      "phase": "source-or-limited-gate",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261027-release-preparation-refresh/checker/final-review.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "c2838e37709b248856820900df30788e67606805a91baf75386a86eaa1a213cb",
+      "publishedSha256": "c2838e37709b248856820900df30788e67606805a91baf75386a86eaa1a213cb",
+      "sourceBytes": 6233,
+      "publishedBytes": 6233,
+      "originalOutcome": "ACCEPT_RELEASE_PREPARATION_REFRESH_LIMITED",
+      "projection": false
+    },
+    {
+      "unit": "20261027-release-preparation-refresh",
+      "path": "archives/20261027-release-preparation-refresh/controller/receipt.json",
+      "role": "execution-or-controller-receipt",
+      "phase": "controller-closeout",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261027-release-preparation-refresh/controller/receipt.json",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "74cbcb4012a879ad73691ab2ba507f24ab02137bfcfab7534b56757825b50d70",
+      "publishedSha256": "74cbcb4012a879ad73691ab2ba507f24ab02137bfcfab7534b56757825b50d70",
+      "sourceBytes": 808,
+      "publishedBytes": 808,
+      "originalOutcome": "GATE",
+      "projection": false
+    },
+    {
+      "unit": "20261027-release-preparation-refresh",
+      "path": "archives/20261027-release-preparation-refresh/controller/CLOSEOUT.md",
+      "role": "human-readable-closeout",
+      "phase": "human-summary",
+      "currency": "historical",
+      "sourcePath": "evidence/local/20261027-release-preparation-refresh/controller/CLOSEOUT.md",
+      "sourceOrigin": "local-frozen-archive",
+      "sourceSha256": "f4f12986de66beb19c1dcba7c2904b7ae38423d8f504b41b66975d123c416b00",
+      "publishedSha256": "f4f12986de66beb19c1dcba7c2904b7ae38423d8f504b41b66975d123c416b00",
+      "sourceBytes": 1836,
+      "publishedBytes": 1836,
+      "originalOutcome": null,
+      "projection": false
+    }
+  ],
+  "omittedMetadataCollections": []
+}

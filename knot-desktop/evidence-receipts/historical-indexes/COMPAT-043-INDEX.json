@@ -1,0 +1,174 @@
+{
+  "task": "KONT-COMPAT-043",
+  "archive_id": "kont-store-reader-pairing-20261027",
+  "status": "ACCEPTED_LIMITED",
+  "gate": "ACCEPT_OFFLINE_STORE_READER_PAIRING_LIMITED",
+  "baseHead": "45ccd24b9c83e2ed9634028fb43e838c58d76244",
+  "checkerReceipt": "evidence/local/20261027-store-reader-pairing/checker/final-review.json",
+  "independentBuildExit": 0,
+  "focusedPassed": 31,
+  "focusedFailed": 0,
+  "maintainabilityPassed": true,
+  "makerFrozenFilesMatched": 13,
+  "priorFilesPreserved": 97,
+  "acceptedScope": "Offline fixed-reader captured-byte read/export compatibility probe only; full semantic comparison and failure separation; old recovery reader loss/rejection remains blocked",
+  "writerRoundTripAccepted": false,
+  "migrationOrDeploymentAccepted": false,
+  "productOrHostAccepted": false,
+  "modelCalls": 0,
+  "productionDataAccess": false,
+  "systemChanges": 0,
+  "rootCommitOrDeployment": false,
+  "files": [
+    {
+      "path": "docs/api/store-reader-pairing.md",
+      "bytes": 2897,
+      "sha256": "c430464fb8c172ed3d5780eecb42eb785296195c398814179a5f6f73b50d8137"
+    },
+    {
+      "path": "docs/tasks/KONT-COMPAT-043.md",
+      "bytes": 2099,
+      "sha256": "6b935a79a64bd2aa7af54155302ba30c77ab96130af77d19fc8569993657e927"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/REPORT.md",
+      "bytes": 6026,
+      "sha256": "54633886fdabde62a84b5e20e74d9dc37cd9321fe3b1b411290460245eb30090"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/audit.json",
+      "bytes": 47119,
+      "sha256": "4abc4e373ad7bd194b2148847e142852b1545fbaacff377525a319ff905d9c33"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/audit.mjs",
+      "bytes": 4534,
+      "sha256": "4713eec039b4549f227b64bd7cf0066b3673e503c6567c41d44c62e31d2222c7"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/build.log",
+      "bytes": 231,
+      "sha256": "cba9ccc4926acff4916b24c8cf746a72bf331bcbfc5688aadc1e2485134165a3"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/final-review.json",
+      "bytes": 6569,
+      "sha256": "ad998c522b3d738aefacbbf34673c2d775d7be4d40f5221784b867fe02f18fe5"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/focused.tap",
+      "bytes": 7792,
+      "sha256": "cd00f49ebe9b2f9d56406bc9e9f09ce807aee97e98e6efc888e2f5a961b282e5"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/own-cases.tap",
+      "bytes": 1420,
+      "sha256": "1f290fd34167ab46864696d46abf6f48c3cd888154071f296341aeaac20753c4"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/own-cases.test.mjs",
+      "bytes": 5859,
+      "sha256": "36b92f6e555eecdac33f1527f0706f1f2a8af057313062af5199ddbd895db7fa"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/own-results.json",
+      "bytes": 14072,
+      "sha256": "8d17d5a170f9c08873bb07ae91cf2eba1de31e76161b0af73e29921acd3085fe"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/checker/write-final.mjs",
+      "bytes": 4482,
+      "sha256": "3799f593278df562c8a88e768a9cb31eddc041e5c91bf0cbf3e1d39a759b9b89"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/CLOSEOUT.md",
+      "bytes": 2024,
+      "sha256": "32dd6a79df7ef39968669e4349938debf7ec50ce3c7972b6d11f0b9e1ea2a712"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/archive.mjs",
+      "bytes": 3909,
+      "sha256": "9f63dc225c1d8ec86f54c96a270f1bd36122a86abb35a54d3b222ba47cf0a0bd"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/baseline.json",
+      "bytes": 14740,
+      "sha256": "e94092cdf2c2cbb87a78eec7a620f95f8101a226b4fe32f3f8e483c976a26383"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/candidate-readback.json",
+      "bytes": 285,
+      "sha256": "1aaf4ec6008314ae37e532d6bbf6d094b0bd69e04f7a62b0a1dac78e9e7b8138"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/capture-baseline.mjs",
+      "bytes": 956,
+      "sha256": "36b7f56656a19af74d2d6a4344fe705d4e2e18a621ada6ded97edbe4ec83ee1c"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/controller/receipt.json",
+      "bytes": 912,
+      "sha256": "659a8f5f8a6f4190911c9251dbd2eb59e07e22ac288ab1abc059761260b664a7"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/REPORT.md",
+      "bytes": 3925,
+      "sha256": "01d6f5fb5164a58848378b497de9c9edc96cfb4d62457b2bd6de78f3b5f909e0"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/TASK.md",
+      "bytes": 8571,
+      "sha256": "3453777362c457d87619c91071da35fac4faad8ea5f0082e29922fbe5b481a10"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/build.log",
+      "bytes": 231,
+      "sha256": "c041946d834a2c54b5e9ccc7c825dbe40c5215e8f3f18bd46544f01d78222b86"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/focused.tap",
+      "bytes": 7793,
+      "sha256": "508055f5f64f4485c6a8494811289f02d1ced895f9de32af0176c6064e557251"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/isolated-temp.tap",
+      "bytes": 2088,
+      "sha256": "5821e4ba19d6db34593f591361bf9dbbd9beb4595ef79586ead452fbc60f4127"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/manifest.json",
+      "bytes": 2314,
+      "sha256": "387dc3341c2f3ceb39023806ae84e58e983d728840a2f0a9e5797b5c90ea8199"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/protection.json",
+      "bytes": 28008,
+      "sha256": "b9855e109aa05e18bd29ad363ebc07a619a063f383463e201e80f76ced3c88a6"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/sample-probe.mjs",
+      "bytes": 1639,
+      "sha256": "159b36968329524a3308568b1d1ae1f1202eb3c943b5c88fb8588227e5807a32"
+    },
+    {
+      "path": "evidence/local/20261027-store-reader-pairing/maker/sample-results.json",
+      "bytes": 6690,
+      "sha256": "b1340c647d5297c476d6722914986bd349a2a38431b538f8c5ec05e81f58d782"
+    },
+    {
+      "path": "scripts/store-reader-pairing-worker.mjs",
+      "bytes": 1973,
+      "sha256": "f92be135bfae0b29c6d16daec26c44c21eb9e3919c00f1c5e149e667879aa5ce"
+    },
+    {
+      "path": "scripts/store-reader-pairing.mjs",
+      "bytes": 9632,
+      "sha256": "e9ec8e8bf17b5b65158c2c50c3aaa7fb1ee4f27450f80bb4b268f9cf80e2c5af"
+    },
+    {
+      "path": "tests/store-reader-pairing.test.mjs",
+      "bytes": 13915,
+      "sha256": "e257cbe190db0de093327d9f7a9506d84bc6dd98f816435554a6415fd678e795"
+    }
+  ]
+}

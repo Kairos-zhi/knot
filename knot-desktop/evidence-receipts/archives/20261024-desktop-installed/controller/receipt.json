@@ -1,0 +1,14 @@
+{
+  "task": "KONT-DESKTOP-020",
+  "archive_id": "kont-desktop-installed-20261024",
+  "verdict": "CLOSED_FAILED_INSTALL_PRESERVED",
+  "upgradeAccepted": false,
+  "productionAttempts": 1,
+  "productionRetries": 0,
+  "oldInstalledFilesMatched": 12,
+  "ordinaryNoDebugStartup": true,
+  "rendererOrUpgradeActiveProven": false,
+  "retainedClaim": true,
+  "modelCalls": 0,
+  "sourceReview": "evidence/local/20261024-desktop-installed/checker/final-review.json"
+}
