@@ -5,7 +5,7 @@
 ## 阅读与事实源
 
 1. 根 [STATE](../../STATE.md) / [QUEUE](../../QUEUE.md)：当前状态、任务与证据边界。
-2. 当前任务卡：目标、允许文件、授权、验收及未覆盖项；本轮为 [入口同步](ENTRYPOINT-SYNC-001.md)。
+2. 当前任务卡：目标、允许文件、授权、验收及未覆盖项（在 handoff 目录，按卡号检索）。
 3. [SCHEMA](SCHEMA.md)、[IMPORT](IMPORT.md)、[API](API.md) 与对应源码／测试：实现和接口；冲突时核源并记漂移，不静默改业务语义。
 4. [Day 7 实跑记录](W1D7-EVIDENCE.md)、[断言映射](W1D7-CLAIM-MAP.md)及各任务回执：只证明各自基线和范围，不把旧测试数或旧 CI 当成本轮实测。
 
@@ -15,7 +15,7 @@
 
 | 位置 | 职责与边界 |
 |---|---|
-| `mvp/backend/schema_v1.sql`、`init_db.py`、`migrate_*.py` | 当前 schema 1.3、新建及显式升级；初始化会询问后删除已有目标，不能用于已有业务库或替代迁移 |
+| `mvp/backend/schema_v1.sql`、`init_db.py`、`migrate_*.py` | 当前 schema 1.3、新建及显式升级；初始化非交互拒绝已有文件／目录／软链，无覆盖开关，同目录临时建库、自验、硬链接发布后只读读回；stdout单行JSON，created/refused/failed退出0/1/1，失败清理临时残留；不能替代迁移 |
 | `asset_repo.py`、`event_store.py`、`rule_registry.py`、`_db.py` | 资产／事件／规则访问与连接生命周期；session 复用连接，跨操作原子性需同一实例的显式事务 |
 | `import_baseline.py` | 校验来源并逐文件提交资产＋import 事件；整批可部分完成，DB 回滚不自动删除外置对象 |
 | `frontier17.py` | 纯计算内核；冻结参考独立保留，不因文档或接口整理改算法 |
