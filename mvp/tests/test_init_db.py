@@ -27,7 +27,7 @@ def readback(target):
     with closing(sqlite3.connect(target.as_uri() + "?mode=ro&immutable=1", uri=True)) as conn:
         assert conn.execute("PRAGMA integrity_check").fetchall() == [("ok",)]
         assert conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [
-            ("1.0",), ("1.1",), ("1.2",), ("1.3",),
+            ("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",),
         ]
         assert conn.execute(
             "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
@@ -78,7 +78,7 @@ def test_create_readonly_readback_and_closed_stdin(tmp_path, nested):
     assert completed.returncode == 0, completed.stderr
     assert len(completed.stdout.splitlines()) == 1
     assert json.loads(completed.stdout) == dict(
-        db=str(target), status="created", schema_version="1.3", tables=14, reason=None, error=None,
+        db=str(target), status="created", schema_version="1.4", tables=14, reason=None, error=None,
     )
     assert "created" in completed.stderr
     readback(target)

@@ -1,4 +1,4 @@
--- Knot MVP SQLite Schema v1.3
+-- Knot MVP SQLite Schema v1.4
 -- 基础：v0.5 产品方向 + I-01 历史不覆写约束
 -- 日期：2026-10-28
 
@@ -100,7 +100,9 @@ CREATE TABLE IF NOT EXISTS claims_candidates (
     unverified      INTEGER NOT NULL DEFAULT 1, -- 1=未核验, 0=用户已确认
     user_response   TEXT,                       -- 'accept' / 'reject' / 'modify' / NULL
     proposed_at     INTEGER NOT NULL,
-    reviewed_at     INTEGER
+    reviewed_at     INTEGER,
+    source_label    TEXT,                       -- 抽取到的编号，可空
+    source_members  TEXT                        -- JSON array：包内成员路径，可空
 );
 
 CREATE INDEX idx_claims_atom ON claims_candidates(atom);
@@ -199,3 +201,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_eligible_snapshot_event
 
 INSERT OR IGNORE INTO schema_version (version, applied_at, description)
 VALUES ('1.3', strftime('%s', 'now') * 1000, 'One row per event per snapshot instant');
+
+INSERT OR IGNORE INTO schema_version (version, applied_at, description)
+VALUES ('1.4', strftime('%s', 'now') * 1000, 'Claim label and archive-member provenance');

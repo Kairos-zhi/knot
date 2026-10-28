@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a new, validated schema 1.3 database without replacing any target."""
+"""Create a new, validated schema 1.4 database without replacing any target."""
 
 import argparse
 from contextlib import closing
@@ -15,8 +15,13 @@ def _validate(conn: sqlite3.Connection) -> None:
     if conn.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
         raise ValueError("database integrity check failed")
     versions = conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall()
-    if versions != [("1.0",), ("1.1",), ("1.2",), ("1.3",)]:
-        raise ValueError("expected schema versions 1.0 through 1.3")
+    if versions != [("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",)]:
+        raise ValueError("expected schema versions 1.0 through 1.4")
+    columns = {row[1]: row for row in conn.execute("PRAGMA table_info(claims_candidates)")}
+    for name in ("source_label", "source_members"):
+        column = columns.get(name)
+        if column is None or column[2].upper() != "TEXT" or column[3] != 0:
+            raise ValueError(f"expected nullable TEXT column claims_candidates.{name}")
     tables = conn.execute(
         "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
     ).fetchone()[0]
@@ -39,7 +44,7 @@ def init_database(db_path: str) -> dict:
     """Return created/refused/failed; never read stdin or replace an existing entry."""
     # Do not resolve the final component: even a dangling symlink is an existing target.
     target = Path(os.path.abspath(os.path.expanduser(db_path)))
-    result = dict(db=str(target), status="failed", schema_version="1.3",
+    result = dict(db=str(target), status="failed", schema_version="1.4",
                   tables=14, reason=None, error=None)
     temporary = None
     temporary_owned = False
