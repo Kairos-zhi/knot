@@ -1,6 +1,6 @@
 # MVP 后端接口 · Day 2
 
-三个入口共用已初始化的 SQLite v1.1 数据库：
+三个入口共用已初始化的 SQLite 数据库（新库为 v1.2，保留1.0/1.1历史版本记录）：
 
 ```python
 from mvp.backend.asset_repo import AssetRepo
@@ -149,3 +149,41 @@ hash 已存在则跳过，不补写事件。`indexed`/`unindexed` 计数只统�
 输出一行 JSON：`imported`、`skipped`、`indexed`、`unindexed`、`failed`。
 有失败时 CLI 返回非零；逐文件提交的成功结果保留。结束后再次验证 manifest
 及全部源文件 hash/mtime；任何变化都会记录失败，不能声称源完整性通过。
+
+## Frontier17（Day 4）
+
+`frontier17.py` 为原脚本纯函数核心的原样提取；签名、算法与判据冻结。
+输入为有限正 Horn 规则、稳定事件 ID、eligible 集合和确定的接收者策略。
+`incremental_scc` 仍返回 `(support, recomputed_count)`。
+`notification_delta` 是内部比较，不能直接作为对外消息；对外投影使用
+`authorized_outbox`，不包含已撤销键的旧值。这里未实现消息投递或真实 A2A。
+
+独立的 `frontier17_db.py` 提供：
+
+```python
+load_state(conn, snapshot_time, *, event_atom=None, rule_version=1)
+evaluate_from_db(conn, snapshot_time, *, event_atom=None, rule_version=1)
+incremental_from_db(conn, snapshot_time, old_snapshot_time,
+                    *, event_atom=None, rule_version=1)
+```
+
+三个适配函数只执行 SELECT，连接与一致性读事务由调用方管理。
+`load_state` 返回 `(atoms, mapping, eligible, rules)`：atoms 为活跃指定版本
+规则 head/body 的并集并排序；eligible 采用指定 snapshot_time 的精确匹配；
+mapping 始终来自 event_atom_map。可选 event_atom 仅做一致性断言，传值与表
+不一致即 ValueError，不能覆盖库中映射。
+
+schema 虽允许一个事件多原子，当前冻结内核仅接受单值映射；适配层遇到多原子
+显式 ValueError，不合并或取首个。eligible事件缺映射或不在规则原子词表也报错。
+evaluate/incremental适配返回终态support字典；incremental适配先从旧快照全算，
+再用同一份规则/映射增量计算新eligible。它不持久化旧support，不支持规则/映射
+变化下复用已缓存旧状态。
+
+从显式已有v1.1候选库增量升级：
+
+```sh
+python -m mvp.backend.migrate_schema_v1_2 /explicit/candidate.db
+```
+
+只增量创建event_atom_map、索引和首次1.2版本记录，不回填Day 3的资产。
+v1.0须先跑FTS迁移；未知版本/缺库拒绝；迁移不改FULL/WAL。此轮仅临时库测试。
