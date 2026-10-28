@@ -21,8 +21,11 @@ class AssetRepo(SQLiteRepo):
     ) -> str:
         """Append an asset; duplicate hashes raise sqlite3.IntegrityError.
 
-        Empty bytes are valid content, as defined by the schema's NOT NULL
-        check. This method stores supplied hashes without computing them.
+        Import contract: text/* files <= 1 MB must embed content_blob;
+        larger files or binary files use file_path (not full-text indexed).
+        The importer must enforce this contract using file size and type;
+        this storage primitive does not read external files to verify it.
+        Empty bytes are valid content. Hashes are supplied by the caller.
         """
         asset_id = str(uuid.uuid4())
         imported_at = int(time.time() * 1000)
@@ -58,8 +61,6 @@ class AssetRepo(SQLiteRepo):
         sql = "SELECT a.* FROM assets a"
         clauses, params = [], []
         if query is not None and query.strip():
-            # Select only a.*, since the external FTS content column does not
-            # exist on assets. MATCH can still read the trigger-built index.
             sql += " JOIN assets_fts ON a.rowid = assets_fts.rowid"
             clauses.append("assets_fts MATCH ?")
             params.append(query)
@@ -75,3 +76,15 @@ class AssetRepo(SQLiteRepo):
     def count_assets(self) -> int:
         """Return the total number of assets."""
         return self._one("SELECT COUNT(*) AS count FROM assets")["count"]
+
+    def list_unindexed(self) -> list:
+        """List assets with no embedded body, searchable only structurally.
+
+        No filesystem access is performed. Empty embedded bodies are indexed
+        rows with no tokens, not missing bodies. Requires the v1.1 FTS schema
+        or a completed v1.0 -> v1.1 migration for the index to match this list.
+        """
+        return self._all(
+            """SELECT * FROM assets WHERE content_blob IS NULL
+               ORDER BY imported_at DESC, rowid DESC"""
+        )

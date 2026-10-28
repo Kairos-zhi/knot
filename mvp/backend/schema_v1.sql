@@ -1,4 +1,4 @@
--- Knot MVP SQLite Schema v1.0
+-- Knot MVP SQLite Schema v1.1
 -- 基础：v0.5 产品方向 + I-01 历史不覆写约束
 -- 日期：2026-10-28
 
@@ -129,23 +129,24 @@ CREATE INDEX idx_bundles_exported ON continuation_bundles(exported);
 -- FTS5 全文索引（资产内容）
 -- ============================================================
 
+-- BEGIN FTS v1.1
 CREATE VIRTUAL TABLE IF NOT EXISTS assets_fts USING fts5(
     asset_id UNINDEXED,
     content,
-    content=assets,
-    content_rowid=rowid,
     tokenize='unicode61 remove_diacritics 2'
 );
 
 -- FTS5 触发器：保持同步
-CREATE TRIGGER IF NOT EXISTS assets_fts_insert AFTER INSERT ON assets BEGIN
+CREATE TRIGGER IF NOT EXISTS assets_fts_insert AFTER INSERT ON assets
+WHEN new.content_blob IS NOT NULL BEGIN
     INSERT INTO assets_fts(rowid, asset_id, content)
-    VALUES (new.rowid, new.asset_id, COALESCE(new.content_blob, ''));
+    VALUES (new.rowid, new.asset_id, CAST(new.content_blob AS TEXT));
 END;
 
 CREATE TRIGGER IF NOT EXISTS assets_fts_delete AFTER DELETE ON assets BEGIN
     DELETE FROM assets_fts WHERE rowid = old.rowid;
 END;
+-- END FTS v1.1
 
 -- ============================================================
 -- 初始化规则（v1.0 硬编码）
@@ -172,3 +173,6 @@ CREATE TABLE IF NOT EXISTS schema_version (
 
 INSERT OR REPLACE INTO schema_version (version, applied_at, description)
 VALUES ('1.0', strftime('%s', 'now') * 1000, 'Initial MVP schema with I-01/I-02 constraints');
+
+INSERT OR IGNORE INTO schema_version (version, applied_at, description)
+VALUES ('1.1', strftime('%s', 'now') * 1000, 'Self-contained FTS index; explicit unindexed assets');

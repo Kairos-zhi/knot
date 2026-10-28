@@ -1,10 +1,11 @@
 # Knot MVP
 
 **状态**：Week 1 Day 2 功能与性能按 2026-10-28 拍板口径通过；
-FTS 结构修复为 Day 3 导入前置。
+FTS 1.1 修复已获独立本地候选 Gate，Day 3 待中控派发。
 
 接口用法见 [API](docs/API.md)，本轮证据与未决项见
 [Day 2 开发记录](docs/W1D2-development.md)。
+FTS 迁移、AC 与复核见 [FTS 修复记录](docs/FTS-FIX-001.md)。
 
 基于 v0.5 产品方向 + v0.4 第十七轮算法验证的最小可用原型。
 
@@ -23,10 +24,10 @@ python init_db.py ~/.knot/knot.db
 
 ```
 ✅ 数据库初始化成功
-   版本: 1.0
+   版本: 1.1
    时间: 2026-10-28 01:xx:xx
-   说明: Initial MVP schema with I-01/I-02 constraints
-   表数: 8
+   说明: Self-contained FTS index; explicit unindexed assets
+   表数: 13
       - assets
       - claims_candidates
       - continuation_bundles
@@ -35,6 +36,11 @@ python init_db.py ~/.knot/knot.db
       - horn_rules
       - schema_version
       - assets_fts
+      - assets_fts_config
+      - assets_fts_content
+      - assets_fts_data
+      - assets_fts_docsize
+      - assets_fts_idx
 ```
 
 ### 2. 验证 Schema
@@ -74,7 +80,7 @@ mvp/
 
 ---
 
-## 数据模型（v1.0）
+## 数据模型（v1.1）
 
 ### 核心表（7 张）
 

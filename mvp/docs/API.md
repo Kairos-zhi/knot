@@ -1,6 +1,6 @@
 # MVP 后端接口 · Day 2
 
-三个入口共用已初始化的 SQLite v1 数据库：
+三个入口共用已初始化的 SQLite v1.1 数据库：
 
 ```python
 from mvp.backend.asset_repo import AssetRepo
@@ -57,10 +57,31 @@ hash 由调用者计算，接口不读取外部文件或校验文件内容对应
 索引由现有 INSERT trigger 维护，只覆盖 `content_blob`，不读取 `file_path`。
 unicode61 不是中文子串分词器；完整中文词组匹配测试不代表任意中文切词。
 
-schema 的 FTS 外部内容列名 `content` 与 `assets.content_blob` 不一致。
-本接口仅使用 MATCH 索引和 rowid JOIN 返回 `assets.*`，不读取 FTS 内容列，
-不调用 snippet/highlight/rebuild。该 schema 缺口仍保留，后续启用这些能力前
-需另卡处理；本次不改 schema，也不支持资产删除路径。
+v1.1 的 `assets_fts` 是自持内容 FTS5 表，不含 `content=assets` 或
+`content_rowid`。只为 `content_blob IS NOT NULL` 的资产创建索引行，内容显式
+`CAST(... AS TEXT)`；空 blob 有索引行但没有关键词。可全表读取并执行
+`INSERT INTO assets_fts(assets_fts) VALUES('rebuild')`。
+
+`list_unindexed()` 返回所有未内嵌正文的资产字典列表（顺序同资产列表），
+调用方无需另写 SQL 即可显示「未建全文索引，仅结构化可查」。这表示正文缺失，
+不检测索引损坏。空白全文查询/媒体类型筛选仍可列出这些资产。
+
+导入规则由导入脚本执行，存储接口不读取外部文件校验：
+
+- `text/*` 且 ≤1MB：必须内嵌 `content_blob`。
+- 超过 1MB 或二进制：使用 `file_path`，不内嵌正文；正文不进索引。
+
+已有 v1.0 库必须先迁移，不能重新运行会覆盖已有库的初始化脚本：
+
+```sh
+python -m mvp.backend.migrate_fts_v1_1 /explicit/path/to/existing.db
+```
+
+迁移只重建派生 FTS 表与两个 trigger，按现有非 NULL blob 重灌，不修改业务行。
+DDL、重灌与版本记录在同一事务中完成；重复跑不重复灌，保留首次 1.1 版本时间。
+请在导入停止时运行，`BEGIN IMMEDIATE` 与其他写入串行。无默认数据库路径，
+不存在的库不会被创建；不修改 synchronous / WAL。
+本卡仅在临时库验证，未对实际业务库执行迁移。
 
 ## EventStore
 
