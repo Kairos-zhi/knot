@@ -186,6 +186,7 @@ def test_cli_failure_emits_json_and_nonzero(source, db_path):
     result = subprocess.run(
         [sys.executable, "-m", "mvp.backend.import_baseline",
          "--source", str(source), "--db", str(db_path)],
+        cwd=Path(__file__).resolve().parents[2],
         capture_output=True, text=True, check=False,
     )
     assert result.returncode == 1
