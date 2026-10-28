@@ -20,3 +20,8 @@ yarn-error.log*
 /.runtime/
 # Local compatibility junction; authoritative source stays in knot-desktop/packages.
 /packages
+
+# Generated Python and test caches.
+__pycache__/
+*.pyc
+.pytest_cache/
