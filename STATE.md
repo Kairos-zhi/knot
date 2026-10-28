@@ -1,35 +1,28 @@
 # Knot 当前执行状态
 
-## 050 · 结论件派生发布
+更新：2026-10-28。代码核对基线为 `217a0c8da3030e682267963a562e16c9d6c72db4`（PR #27 合并点），开发位于 `mvp/`。开工仍须核当前 Git HEAD、工作区与远端；本文不是实时 Git 查询结果。
 
-当前工作分支为 `codex/evidence-receipts-050`，基于049-r2同步提交958d0aa。用户授权按已讨论结论推送公开结论包；本卡只整理文档，不改产品、原始回执或测试fixture，不合并main或更新在用软件。
+## 当前文档任务
 
-[结论包](knot-desktop/evidence-receipts/README.md)收录214份来源材料（含41历史索引、55人读材料），补齐048源门/候选执行/发布及049-r1失败/r2修复链。原件冻结，副本受逐source SHA及JSON Pointer/文本span白名单约束；7处运行元数据表投影注明原条目数，不称全部只改路径。公开包内部校验不等于未公开原件的独立语义复核。制作、独立Gate和实际发布分别核对，精确提交/草稿PR以本分支记录为准。
+[ENTRYPOINT-SYNC-001](mvp/docs/ENTRYPOINT-SYNC-001.md)：修正入口与状态漂移，分支 `codex/fix-mvp-entrypoints`。文档限定复核通过；用户随后授权固定提交并推送本分支，实际完成状态以 Git 提交与远端读回为准，不能据本文称 main 已更新。产品代码、fixture、数据库与在用软件不变。
 
-当前软件候选仍为ed54934/pin7ac0…，本次文档HEAD不构成新软件候选。旧真实模型许可与分项限定验收按原值保留，不把本轮零调用改写为所有历史均零。任务见[050发布约束](docs/development/receipts-publication.md)。
+当前读取顺序：[开发基准](mvp/docs/development-baseline.md) → 本页／[队列](QUEUE.md) → 当前任务卡 → [SCHEMA](mvp/docs/SCHEMA.md)／[IMPORT](mvp/docs/IMPORT.md)及源码。
 
-## 049 · 当前进度与统一入口
+## 已实现与证据边界
 
-已完成049同步基线分支为 `codex/local-sync-049-r2`，承接049文档提交 `35f6d4247858d1684f9e437e58d9e7a9c398039c` 和代码提交 `ed54934095a2788405d1c7839067735fe265807f`。常用项目目录为后续开发入口，聊天隔离工作区保留同提交副本；二者读取相同根 STATE.md / QUEUE.md。后续任务完成时独立核最新提交/远端及副本一致性，旧047状态不再作为当前入口。见[同步记录](docs/progress/20261027-synchronization.md)与[049任务](docs/development/local-sync.md)。
+- 资产、历史事件、规则访问，共享 SQLite 生命周期，候选导入，Frontier17 适配，carry-forward 与稳定支持族投影均已入库。导入按文件提交资产＋事件，整批可部分成功；外置文件不随 DB 回滚自动撤销。
+- 当前 schema 为 1.3，新增 `(snapshot_time,event_id)` 唯一索引；1.2 旧库读取仍保留 rowid 兜底。实现和迁移边界见 [SCHEMA](mvp/docs/SCHEMA.md)、[断言映射 S38–S40](mvp/docs/W1D7-CLAIM-MAP.md)及对应测试。
+- CI 与冻结 fixture 核验配置已入库。Day 7 的69项测试、22资产／22事件／19内嵌＋3外置、22,391组断言均是[历史实跑证据](mvp/docs/W1D7-EVIDENCE.md)，不写成当前重新运行结果。TD01 交接复核记录81项测试及独立临时库核验，属于该卡历史证据，本轮未重跑。
+- 本轮仅做文档、Git 和冻结文件核对，不据此判定完整后端运行健康、真实业务库已迁移或产品已验收。
 
-048源门、真实HEAD候选及发布独立复核均已通过：`ACCEPT_MAINLINE_MODULE_CANDIDATE_ISOLATION_LIMITED`；[草稿PR15](https://github.com/Kairos-zhi/knot/pull/15)，base main，1commit/300files，head ed54934。已核v3候选源为该提交，26文件pin `7ac0e3ab13b680de16403bcf62ff290959bfdf9fa7024f804e6885f2e7308c18`；官方0.2.1-rc.2临时profile offline验证26复制/runtime8/workstation10/清理订阅0，生产未更新。独立235/11/3分别记录、不相加。
+## 下一阶段与未决
 
-049只同步说明、根忽略规则与本地入口，不改产品或重制候选；软件候选仍绑定ed54934，不能把文档同步HEAD当新软件候选。910旧本地忽略证据原地核SHA保留；90旧.runtime文件仅核路径/size/mtime，不读内容或运行。695旧跟踪证据另做物理归档并保留于a05历史/旧refs，不继续占用新代码树原路径。最终切换须检查新提交碰撞，禁止覆盖忽略文件；失败即停，不强制清理。
+Week 1 已有结账回执，TD01 已合入本基线；下一阶段按四周 MVP Roadmap 和正式任务卡推进。Roadmap 交接原件名为 `20261028_Knot_前后端Roadmap_写死版_v1.0.md`，正文当前不在仓库；涉及周次／范围先回源，不用旧五阶段／G0–G8 顶替。
 
-r1切换后的保全读回发现：90是逻辑路径，其中66真实运行路径元数据保持，24为旧junction指向root/packages下的公开代码引用，随代码迁移而悬空。r2以本机固定root/packages junction指向唯一knot-desktop/packages恢复旧引用；原.runtime及D盘链接/数据不改，不新增副本或Store，不启动旧运行环境。24项代码引用的checkout时间变化明确保留，不称原90项全部元数据未变；软件26字节与ed/a05一致。
+后端工程准则 v0.2 是本地待审草案；本轮未实现初始化保护、一致读入口或迁移重跑结构核验。P0-A 初始化保护已由另一独立 worktree 推进（本次只读定位为 `fix/knot-init-create-only@618c7b2`），不属于本卡，也不据此宣称已合入 main。Week 2 抽取／时间轴、后续续接、前端、桌面与整体接受须按任务分别核定，不因现有表结构视作完成。
 
-main仍08a2a5340edab920ce942173ba63b2c5bc369eb4，PR15未合并。本轮不包含主线合并、生产安装、真实Session读取或模型调用。G3/G4/G5与原未决边界保持。
+## 旧桌面阶段追溯
 
-## 048 · 源门阶段历史记录
+旧048–050记录、候选 `ed54934`／pin及其限定接受是历史来源，不是当前MVP运行状态。原根文件完整保留在 [STATE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/STATE.md)、[QUEUE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/QUEUE.md)，离线可用 `git show 217a0c8:STATE.md`／`QUEUE.md`。
 
-2026-10-27。KONT 是 Knot 的历史误拼，同一个项目；旧技术标识与任务编号继续保留兼容。
-
-当前任务 [048 主线接入](docs/development/desktop-integration.md)：ACCEPTED_LIMITED，独立源门 `ACCEPT_MAINLINE_DESKTOP_MODULE_INTEGRATION_LIMITED`，无阻断。以原 main `08a2a5340edab920ce942173ba63b2c5bc369eb4` 建立普通分支，接入固定 `a05aab4c2941b7c80a8c4221aa9b90070c534d04` 的桌面实现，不拼接独立 Git 历史。独立构建与 40 套离线检查 235 项通过，最终受影响候选专项 11 项及自有 3 项通过；版本和重叠不相加。382 份原 main 路径 Git 内容无差异。
-
-源门在提交前核定；真实新 HEAD 候选、官方隔离与发布读回独立登记。精确提交、推送与主线草稿 PR 的标识以该分支 Git/PR 记录为准，不能据源门声称主线已合并或在用部署。
-
-此前桌面能力：工作现场组织、窗口/卡片/图标、HUD、工作岛、完整 Store 快照、运行读取与显式对账均有分项限定接受。046历史代码候选源为 `81afa22a483baf6c2da4f9d45f29d5669acabf10`；[旧进度报告](knot-desktop/docs/progress/20261027-local-development.md)保留当时范围，不是当前候选指针。旧 [PR12](https://github.com/Kairos-zhi/knot/pull/12)、[PR13](https://github.com/Kairos-zhi/knot/pull/13)、[PR14](https://github.com/Kairos-zhi/knot/pull/14) 是原历史审阅链，不是主线合并记录。
-
-本次接入不更新在用软件，不新增模型调用。原 FlowGram 承载与桌面模块同源核心、各自持久 owner；双端统一运行态、真实 Desktop/G3 与人的体验、稳定外部双端/G4、连续三轮/G5仍未完成。旧 017 恢复不兼容；044 合成恢复正例固定 d59，不外推至新候选。
-
-唯一路线仍为[五阶段与 G0–G8](docs/product/roadmap.md)，W0–W6 为工作分解。历史接受不等于完整产品验收。
+旧桌面实现已从当前主线移出；保留工作区未同步或恢复。历史部署与未决 Gate 不外推为新版已完成或已取消；需要沿用时先明确产品对象、基线及适用性。
