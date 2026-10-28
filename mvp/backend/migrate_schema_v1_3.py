@@ -8,6 +8,16 @@ import sqlite3
 import time
 
 
+class SchemaDriftError(ValueError):
+    """Report version/structure drift without repairing the database."""
+
+    def __init__(self, detail):
+        super().__init__(
+            f"[KNOT-E031] schema drift: {detail}; "
+            "version row 1.3 present, no changes made"
+        )
+
+
 class SnapshotConflictError(ValueError):
     """Report every conflicting group; leave resolution to the caller."""
 
@@ -50,6 +60,29 @@ def migrate_schema(db_path):
             if not versions <= {"1.0", "1.1", "1.2", "1.3"}:
                 raise ValueError("unsupported schema version; expected v1.2 or v1.3")
             if "1.3" in versions:
+                if conn.execute(
+                    "SELECT 1 FROM sqlite_master "
+                    "WHERE type='table' AND name='eligible_snapshots'"
+                ).fetchone() is None:
+                    raise SchemaDriftError("table eligible_snapshots is missing")
+                indexes = {r[1]: r for r in conn.execute(
+                    "PRAGMA index_list(eligible_snapshots)"
+                )}
+                index = indexes.get("uq_eligible_snapshot_event")
+                if index is None:
+                    raise SchemaDriftError("index uq_eligible_snapshot_event is missing")
+                if index[2] != 1:
+                    raise SchemaDriftError("index uq_eligible_snapshot_event must be unique")
+                if index[4] != 0:
+                    raise SchemaDriftError("index uq_eligible_snapshot_event must not be partial")
+                keys = [(r[2], r[4]) for r in conn.execute(
+                    "PRAGMA index_xinfo(uq_eligible_snapshot_event)"
+                ) if r[5]]
+                if keys != [("snapshot_time", "BINARY"), ("event_id", "BINARY")]:
+                    raise SchemaDriftError(
+                        "index uq_eligible_snapshot_event has incompatible key columns "
+                        "or collations; expected (snapshot_time, event_id) with BINARY collation"
+                    )
                 return {"schema_version": "1.3", "duplicates": 0, "created": False}
             if "1.2" not in versions:
                 raise ValueError("schema v1.2 required; migrate older versions first")
