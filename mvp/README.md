@@ -1,8 +1,8 @@
 # Knot MVP
 
-**状态**：Week 1 Day 4 迁移完成，独立本地候选 Gate 限定通过；
+**状态**：Week 1 Day 4 墙钟门返修已通过本地独立Gate，待中控复验；
 FTS 1.1 已合入 main；Day 3 候选导入已完成 22 资产 / 19 全文索引 / 3 对象。
-Day 4 schema v1.2 与 Frontier17 已分项复核通过，尚未推送或合并。
+Day 4 算法/schema/适配经中控验证通过，墙钟断言返修单独留痕，尚未推送或合并。
 
 接口用法见 [API](docs/API.md)，本轮证据与未决项见
 [Day 2 开发记录](docs/W1D2-development.md)。

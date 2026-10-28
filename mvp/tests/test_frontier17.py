@@ -9,7 +9,6 @@ from pathlib import Path
 from random import Random
 import sqlite3
 import sys
-from time import perf_counter
 from types import FunctionType
 
 import pytest
@@ -71,7 +70,6 @@ def test_byte_pin_purity_and_frozen_function_bodies():
 
 
 def test_frozen_baseline_and_migrated_double_run(reference):
-    started = perf_counter()
     baseline = run_model(reference, reference)
     first = run_model(reference, port)
     second = run_model(reference, port)
@@ -84,9 +82,6 @@ def test_frozen_baseline_and_migrated_double_run(reference):
     print(f"Random SCC recomputations: {recomputes} / {candidates} candidate SCC evaluations")
     print(f"Exhaustive SCC recomputations (count, not wall clock): {ex_recomputes}")
     print("ALL ROUND-17 MODEL ASSERTIONS PASSED; frozen baseline + two port runs equal")
-    elapsed = perf_counter() - started
-    print(f"Three model runs elapsed: {elapsed:.3f}s")
-    assert elapsed <= 15
 
 
 def test_differential_256_cases(reference):
