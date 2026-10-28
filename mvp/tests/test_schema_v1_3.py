@@ -8,7 +8,9 @@ import sys
 
 import pytest
 
-from mvp.backend.migrate_schema_v1_3 import SnapshotConflictError, migrate_schema
+from mvp.backend.migrate_schema_v1_3 import (
+    SchemaDriftError, SnapshotConflictError, migrate_schema,
+)
 from mvp.backend.frontier17_db import eligible_at
 
 
@@ -221,3 +223,60 @@ def test_cli_conflict_lists_groups_without_sqlite_traceback(old_db):
     assert result.returncode == 1 and result.stdout == ""
     assert "snapshot_time=10, event_id='ex', n=2" in result.stderr
     assert "Traceback" not in result.stderr and "IntegrityError" not in result.stderr
+
+
+@pytest.mark.parametrize("definition, detail", [
+    (None, "is missing"),
+    ("CREATE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(snapshot_time,event_id)", "must be unique"),
+    ("CREATE UNIQUE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(event_id,snapshot_time)", "incompatible key columns"),
+    ("CREATE UNIQUE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(snapshot_time,event_id) WHERE is_eligible=1", "must not be partial"),
+    ("CREATE UNIQUE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(snapshot_time,event_id COLLATE NOCASE)", "collations"),
+    ("CREATE UNIQUE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(snapshot_time,event_id,reason)", "incompatible key columns"),
+    ("CREATE UNIQUE INDEX uq_eligible_snapshot_event "
+     "ON eligible_snapshots(snapshot_time,lower(event_id))", "incompatible key columns"),
+], ids=["missing", "nonunique", "reversed", "partial", "collation", "extra-key", "expression"])
+def test_v1_3_drift_refused_without_changes(old_db, tmp_path, definition, detail):
+    migrate_schema(old_db)
+    with closing(sqlite3.connect(old_db)) as conn, conn:
+        conn.execute("DROP INDEX uq_eligible_snapshot_event")
+        if definition:
+            conn.execute(definition)
+        before = database_snapshot(conn)
+    with pytest.raises(SchemaDriftError, match=r"\[KNOT-E031\]") as error:
+        migrate_schema(old_db)
+    assert isinstance(error.value, ValueError)
+    assert detail in str(error.value)
+    assert "uq_eligible_snapshot_event" in str(error.value)
+    assert "no changes made" in str(error.value)
+    with closing(sqlite3.connect(old_db)) as conn:
+        assert database_snapshot(conn) == before
+    # Direct script entry also works from an unrelated caller directory.
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "mvp/backend/migrate_schema_v1_3.py"), str(old_db)],
+        cwd=tmp_path, capture_output=True, text=True,
+    )
+    assert result.returncode == 1 and result.stdout == ""
+    assert result.stderr.strip() == str(error.value)
+    assert "Traceback" not in result.stderr
+    with closing(sqlite3.connect(old_db)) as conn:
+        assert database_snapshot(conn) == before
+        if definition is None:
+            assert conn.execute(
+                "SELECT name FROM sqlite_master WHERE name='uq_eligible_snapshot_event'"
+            ).fetchone() is None
+
+
+def test_v1_3_missing_snapshot_table_refused_without_changes(old_db):
+    migrate_schema(old_db)
+    with closing(sqlite3.connect(old_db)) as conn, conn:
+        conn.execute("DROP TABLE eligible_snapshots")
+        before = database_snapshot(conn)
+    with pytest.raises(SchemaDriftError, match="table eligible_snapshots is missing"):
+        migrate_schema(old_db)
+    with closing(sqlite3.connect(old_db)) as conn:
+        assert database_snapshot(conn) == before
