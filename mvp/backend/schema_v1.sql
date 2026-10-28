@@ -1,4 +1,4 @@
--- Knot MVP SQLite Schema v1.1
+-- Knot MVP SQLite Schema v1.2
 -- 基础：v0.5 产品方向 + I-01 历史不覆写约束
 -- 日期：2026-10-28
 
@@ -165,6 +165,18 @@ INSERT OR IGNORE INTO horn_rules (head, body, rule_version, description) VALUES
 -- Schema 版本记录
 -- ============================================================
 
+-- BEGIN EVENT ATOM v1.2
+CREATE TABLE IF NOT EXISTS event_atom_map (
+    event_id    TEXT NOT NULL,
+    atom        TEXT NOT NULL,
+    origin      TEXT,
+    created_at  INTEGER NOT NULL,
+    PRIMARY KEY (event_id, atom),
+    FOREIGN KEY (event_id) REFERENCES history_events(event_id) ON DELETE RESTRICT
+);
+CREATE INDEX IF NOT EXISTS idx_event_atom_atom ON event_atom_map(atom);
+-- END EVENT ATOM v1.2
+
 CREATE TABLE IF NOT EXISTS schema_version (
     version         TEXT PRIMARY KEY,
     applied_at      INTEGER NOT NULL,
@@ -176,3 +188,6 @@ VALUES ('1.0', strftime('%s', 'now') * 1000, 'Initial MVP schema with I-01/I-02 
 
 INSERT OR IGNORE INTO schema_version (version, applied_at, description)
 VALUES ('1.1', strftime('%s', 'now') * 1000, 'Self-contained FTS index; explicit unindexed assets');
+
+INSERT OR IGNORE INTO schema_version (version, applied_at, description)
+VALUES ('1.2', strftime('%s', 'now') * 1000, 'Event to atom mapping, without historical backfill');
