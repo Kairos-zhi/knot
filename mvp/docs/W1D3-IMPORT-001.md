@@ -51,12 +51,12 @@ EventStore、SQLiteRepo 及 API，复用现有插入、时间校验、FTS 和对
 
 ```powershell
 # 源根执行，导入前后各一次（两次均21/21 OK）
-& 'D:/Hermes/git/usr/bin/sha256sum.exe' -c MANIFEST.sha256
+sha256sum -c MANIFEST.sha256
 
 # 仓库根执行；SOURCE 为上述源根，DB 为本地证据目录内 candidate/knot.db
 $env:PYTHONDONTWRITEBYTECODE='1'
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m mvp.backend.import_baseline --source $SOURCE --db $DB
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m pytest mvp/tests/ -v --tb=short -p no:cacheprovider
+python -m mvp.backend.import_baseline --source $SOURCE --db $DB
+python -m pytest mvp/tests/ -v --tb=short -p no:cacheprovider
 ```
 
 首轮与二轮 CLI 输出（均退出0）：
