@@ -63,7 +63,7 @@ def test_fresh_schema_columns_pk_and_foreign_keys(tmp_path):
     with closing(sqlite3.connect(tmp_path / "fresh.db")) as conn, conn:
         conn.executescript(schema.read_text(encoding="utf-8"))
         assert conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [
-            ("1.0",), ("1.1",), ("1.2",),
+            ("1.0",), ("1.1",), ("1.2",), ("1.3",),
         ]
         cols = conn.execute("PRAGMA table_info(event_atom_map)").fetchall()
         assert [(r[1], r[2], r[3], r[5]) for r in cols] == [

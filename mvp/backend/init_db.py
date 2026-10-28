@@ -51,7 +51,7 @@ def init_database(db_path: str) -> bool:
         cursor = conn.cursor()
         cursor.execute(
             "SELECT version, applied_at, description FROM schema_version "
-            "WHERE version='1.2'"
+            "WHERE version='1.3'"
         )
         row = cursor.fetchone()
         

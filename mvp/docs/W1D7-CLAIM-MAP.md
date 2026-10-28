@@ -1,8 +1,8 @@
 # Day 7 断言 → 代码位置映射（完整）
 
 基于本轮候选源码；SCHEMA的S编号、IMPORT的I编号逐项对应下表。
-文件行号以本卡两笔提交完成后的工作树为准。底层业务源码没有修改，只有
-test_import.py的指定subprocess.run调用新增一行cwd，因此表内后续测试行号已按新值核对。
+文件行号按TD01 schema v1.3更新；Day 7实跑数字仍是历史证据，当前新增行为见S38–S40。
+内核与适配读取SQL保持不变，既有测试仅作任务卡允许的两处适配。
 Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码自动保证远端规则。
 
 ## SCHEMA.md
@@ -10,13 +10,13 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | 编号 | 断言 | 文件:行 |
 |---|---|---|
 | S01 | 新建候选库入口、父目录与SQL应用 | [mvp/backend/init_db.py:12-48](../backend/init_db.py#L12-L48)、[92-100](../backend/init_db.py#L92-L100) |
-| S02 | 已有文件确认后删除；新库三版本记录 | [mvp/backend/init_db.py:23-31](../backend/init_db.py#L23-L31)、[mvp/backend/schema_v1.sql:186-193](../backend/schema_v1.sql#L186-L193) |
-| S03 | WAL与逐连接FK启用 | [mvp/backend/schema_v1.sql:5-6](../backend/schema_v1.sql#L5-L6)、[mvp/backend/_db.py:58-62](../backend/_db.py#L58-L62)、[mvp/backend/migrate_fts_v1_1.py:36-40](../backend/migrate_fts_v1_1.py#L36-L40)、[migrate_schema_v1_2.py:29-33](../backend/migrate_schema_v1_2.py#L29-L33) |
+| S02 | 已有文件确认后删除；新库四版本记录 | [mvp/backend/init_db.py:23-31](../backend/init_db.py#L23-L31)、[mvp/backend/schema_v1.sql:186-201](../backend/schema_v1.sql#L186-L201) |
+| S03 | WAL与逐连接FK启用 | [mvp/backend/schema_v1.sql:5-6](../backend/schema_v1.sql#L5-L6)、[mvp/backend/_db.py:58-62](../backend/_db.py#L58-L62)、[mvp/backend/migrate_fts_v1_1.py:36-40](../backend/migrate_fts_v1_1.py#L36-L40)、[migrate_schema_v1_2.py:29-33](../backend/migrate_schema_v1_2.py#L29-L33)、[migrate_schema_v1_3.py:44-48](../backend/migrate_schema_v1_3.py#L44-L48) |
 | S04 | 七业务表＋版本表；FTS另列 | [mvp/backend/schema_v1.sql:13-193](../backend/schema_v1.sql#L13-L193)，八个普通CREATE TABLE与一个CREATE VIRTUAL TABLE；本轮表名实读见EVIDENCE |
 | S05 | assets列、PK、无FK、三显式索引 | [mvp/backend/schema_v1.sql:13-28](../backend/schema_v1.sql#L13-L28) |
 | S06 | history_events列、PK、无FK、四显式索引 | [mvp/backend/schema_v1.sql:35-51](../backend/schema_v1.sql#L35-L51) |
 | S07 | horn_rules列、AUTOINCREMENT、无FK、两索引 | [mvp/backend/schema_v1.sql:58-68](../backend/schema_v1.sql#L58-L68) |
-| S08 | eligible_snapshots列、行PK、FK/RESTRICT、两索引 | [mvp/backend/schema_v1.sql:75-86](../backend/schema_v1.sql#L75-L86) |
+| S08 | eligible_snapshots列、行PK、FK/RESTRICT、两普通索引；唯一索引见S38 | [mvp/backend/schema_v1.sql:75-86](../backend/schema_v1.sql#L75-L86) |
 | S09 | claims_candidates列、PK、无FK、三索引 | [mvp/backend/schema_v1.sql:93-108](../backend/schema_v1.sql#L93-L108) |
 | S10 | continuation_bundles列、PK、无FK、两索引 | [mvp/backend/schema_v1.sql:114-126](../backend/schema_v1.sql#L114-L126) |
 | S11 | event_atom_map四列、复合PK、FK/RESTRICT、atom索引 | [mvp/backend/schema_v1.sql:169-177](../backend/schema_v1.sql#L169-L177) |
@@ -27,7 +27,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | S16 | 唯二显式FK及RESTRICT | [mvp/backend/schema_v1.sql:82](../backend/schema_v1.sql#L82)、[175](../backend/schema_v1.sql#L175)、[mvp/tests/test_schema_v1_2.py:61-84](../tests/test_schema_v1_2.py#L61-L84) |
 | S17 | 各PK及复合PK仅禁止相同(event,atom) | [mvp/backend/schema_v1.sql:13-24](../backend/schema_v1.sql#L13-L24)、[35-46](../backend/schema_v1.sql#L35-L46)、[58-65](../backend/schema_v1.sql#L58-L65)、[75-83](../backend/schema_v1.sql#L75-L83)、[93-104](../backend/schema_v1.sql#L93-L104)、[114-123](../backend/schema_v1.sql#L114-L123)、[169-184](../backend/schema_v1.sql#L169-L184) |
 | S18 | 八表NOT NULL完整列清单 | [mvp/backend/schema_v1.sql:13-24](../backend/schema_v1.sql#L13-L24)、[35-46](../backend/schema_v1.sql#L35-L46)、[58-65](../backend/schema_v1.sql#L58-L65)、[75-83](../backend/schema_v1.sql#L75-L83)、[93-104](../backend/schema_v1.sql#L93-L104)、[114-123](../backend/schema_v1.sql#L114-L123)、[169-184](../backend/schema_v1.sql#L169-L184) |
-| S19 | 仅两个CHECK、单独UNIQUE仅hash；无JSON/枚举/格式额外约束与隐含FK | [mvp/backend/schema_v1.sql:13-193](../backend/schema_v1.sql#L13-L193)，逐一核全部DDL，CHECK仅23/45，显式UNIQUE仅15，FK仅82/175 |
+| S19 | 仅两个CHECK、独立UNIQUE为hash及同刻事件；无JSON/枚举/格式额外约束与隐含FK | [mvp/backend/schema_v1.sql:13-201](../backend/schema_v1.sql#L13-L201)，逐一核全部DDL，CHECK仅23/45，显式UNIQUE为15及196-197，FK仅82/175 |
 | S20 | 两Repo无覆写入口；UUID由API生成，不是SQL格式CHECK | [mvp/backend/asset_repo.py:9-90](../backend/asset_repo.py#L9-L90)、[mvp/backend/event_store.py:16-77](../backend/event_store.py#L16-L77)、[mvp/backend/schema_v1.sql:139-149](../backend/schema_v1.sql#L139-L149) |
 | S21 | 自持FTS列/tokenizer；旧外部内容声明指向不存在的content列 | [mvp/backend/schema_v1.sql:133-137](../backend/schema_v1.sql#L133-L137)、[mvp/tests/fixtures/schema_v1_0.sql:131-138](../tests/fixtures/schema_v1_0.sql#L131-L138)、[13-24](../tests/fixtures/schema_v1_0.sql#L13-L24) |
 | S22 | 非NULL blob INSERT trigger、rowid与CAST | [mvp/backend/schema_v1.sql:140-144](../backend/schema_v1.sql#L140-L144) |
@@ -38,14 +38,17 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | S27 | 1.0初始化而非幂等迁移SQL；历史提交197aa5e | [mvp/backend/init_db.py:23-48](../backend/init_db.py#L23-L48)、[mvp/backend/schema_v1.sql:26-28](../backend/schema_v1.sql#L26-L28)、[186-187](../backend/schema_v1.sql#L186-L187)，git log --follow实读 |
 | S28 | 1.1版本前置、DROP/重建/重灌、历史提交2a8dc18 | [mvp/backend/migrate_fts_v1_1.py:28-63](../backend/migrate_fts_v1_1.py#L28-L63)，版本拒绝44-45，重灌51-54 |
 | S29 | 1.2增量表、版本接受条件与无回填，历史提交43343ff | [mvp/backend/migrate_schema_v1_2.py:26-46](../backend/migrate_schema_v1_2.py#L26-L46)、[mvp/backend/schema_v1.sql:169-177](../backend/schema_v1.sql#L169-L177) |
-| S30 | 两个显式迁移CLI及顺序前置 | [mvp/backend/migrate_fts_v1_1.py:44-45](../backend/migrate_fts_v1_1.py#L44-L45)、[66-70](../backend/migrate_fts_v1_1.py#L66-L70)、[migrate_schema_v1_2.py:35-37](../backend/migrate_schema_v1_2.py#L35-L37)、[49-53](../backend/migrate_schema_v1_2.py#L49-L53) |
-| S31 | 缺库拒绝、单事务回滚、各自支持版本重复运行保持记录 | [mvp/backend/migrate_fts_v1_1.py:35-63](../backend/migrate_fts_v1_1.py#L35-L63)、[migrate_schema_v1_2.py:28-46](../backend/migrate_schema_v1_2.py#L28-L46)、[mvp/tests/test_fts.py:65-110](../tests/test_fts.py#L65-L110)、[test_schema_v1_2.py:38-58](../tests/test_schema_v1_2.py#L38-L58)、[87-116](../tests/test_schema_v1_2.py#L87-L116) |
+| S30 | 旧两个显式迁移CLI及顺序前置；第三步见S39 | [mvp/backend/migrate_fts_v1_1.py:44-45](../backend/migrate_fts_v1_1.py#L44-L45)、[66-70](../backend/migrate_fts_v1_1.py#L66-L70)、[migrate_schema_v1_2.py:35-37](../backend/migrate_schema_v1_2.py#L35-L37)、[49-53](../backend/migrate_schema_v1_2.py#L49-L53) |
+| S31 | 缺库拒绝、单事务回滚、各自支持版本重复运行保持记录 | [mvp/backend/migrate_fts_v1_1.py:35-63](../backend/migrate_fts_v1_1.py#L35-L63)、[migrate_schema_v1_2.py:28-46](../backend/migrate_schema_v1_2.py#L28-L46)、[mvp/tests/test_fts.py:65-110](../tests/test_fts.py#L65-L110)、[test_schema_v1_2.py:38-58](../tests/test_schema_v1_2.py#L38-L58)、[87-116](../tests/test_schema_v1_2.py#L87-L116)、[migrate_schema_v1_3.py:44-79](../backend/migrate_schema_v1_3.py#L44-L79)、[test_schema_v1_3.py:85-104](../tests/test_schema_v1_3.py#L85-L104)、[159-169](../tests/test_schema_v1_3.py#L159-L169) |
 | S32 | 导入不填映射/状态，只有eligible缺映射时抛错 | [mvp/backend/import_baseline.py:137-162](../backend/import_baseline.py#L137-L162)、[mvp/backend/frontier17_db.py:31-36](../backend/frontier17_db.py#L31-L36)、[70-72](../backend/frontier17_db.py#L70-L72) |
 | S33 | DB允许多原子，适配拒绝全部多原子及eligible词表外 | [mvp/backend/schema_v1.sql:169-176](../backend/schema_v1.sql#L169-L176)、[mvp/backend/frontier17_db.py:55-71](../backend/frontier17_db.py#L55-L71)、[31-36](../backend/frontier17_db.py#L31-L36) |
-| S34 | 时间≤T、同刻rowid、撤权延续、空集闭包投影 | [mvp/backend/frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[mvp/backend/frontier17.py:26-55](../backend/frontier17.py#L26-L55)、[mvp/backend/support_view.py:18-36](../backend/support_view.py#L18-L36) |
+| S34 | 时间≤T、旧库同刻rowid兜底、撤权延续、空集闭包投影；1.3边界见S40 | [mvp/backend/frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[mvp/backend/frontier17.py:26-55](../backend/frontier17.py#L26-L55)、[mvp/backend/support_view.py:18-36](../backend/support_view.py#L18-L36) |
 | S35 | 旧schema的固定SHA与迁移参考用途 | [mvp/tests/test_fts.py:17](../tests/test_fts.py#L17)、[65-71](../tests/test_fts.py#L65-L71) |
 | S36 | 原算法固定SHA与三组循环用途 | [mvp/tests/test_frontier17.py:22-51](../tests/test_frontier17.py#L22-L51)、[72-84](../tests/test_frontier17.py#L72-L84) |
 | S37 | 两项-text与CI常量校验 | [.gitattributes:2-3](../../.gitattributes#L2-L3)、[.github/workflows/ci.yml:29-35](../../.github/workflows/ci.yml#L29-L35) |
+| S38 | 1.3版本行及同刻同事件唯一索引；重复拒绝、不同事件允许 | [mvp/backend/schema_v1.sql:195-201](../backend/schema_v1.sql#L195-L201)、[mvp/tests/test_schema_v1_3.py:56-82](../tests/test_schema_v1_3.py#L56-L82)、[mvp/backend/init_db.py:54](../backend/init_db.py#L54) |
+| S39 | 仅1.2升级、1.3幂等；全部冲突先报、事务回滚、无自动去重；不兼容索引拒绝 | [mvp/backend/migrate_schema_v1_3.py:41-79](../backend/migrate_schema_v1_3.py#L41-L79)、[CLI:82-90](../backend/migrate_schema_v1_3.py#L82-L90)、[mvp/tests/test_schema_v1_3.py:85-127](../tests/test_schema_v1_3.py#L85-L127)、[159-185](../tests/test_schema_v1_3.py#L159-L185) |
+| S40 | 未迁移1.2同刻重复合法且后写胜；合规1.3库兜底不可达，读取SQL及≤T不变 | [mvp/backend/frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[mvp/backend/schema_v1.sql:196-197](../backend/schema_v1.sql#L196-L197)、[mvp/tests/test_schema_v1_3.py:188-198](../tests/test_schema_v1_3.py#L188-L198)、[56-82](../tests/test_schema_v1_3.py#L56-L82) |
 
 ## IMPORT.md
 
@@ -82,11 +85,11 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | 编号 | 断言 | 代码位置与可复核记录 |
 |---|---|---|
 | R01 | 文档开工的历史基线1ea1dfa、PR #25已合 | 开工时git rev-parse main、gh pr view 25，原始摘要见[实读证据](W1D7-EVIDENCE.md#github状态实读而非由workflow推断保护已开)，不是当前main指针 |
-| R02 | 当前schema1.2、八普通表/FTS与显式迁移 | S04～S12、S28～S31，对应schema_v1.sql:13-193及两迁移器 |
+| R02 | Day 7历史schema1.2、八普通表/FTS与显式迁移；当前1.3见S38–S40 | S04～S12、S28～S31，对应schema_v1.sql:13-193及两迁移器 |
 | R03 | Repo、carry-forward和稳定支持族已实现 | [mvp/backend/asset_repo.py:9-90](../backend/asset_repo.py#L9-L90)、[event_store.py:16-77](../backend/event_store.py#L16-L77)、[rule_registry.py:8-59](../backend/rule_registry.py#L8-L59)、[frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[support_view.py:7-36](../backend/support_view.py#L7-L36) |
 | R04 | 候选导入22资产/22事件/19+3，不是生产部署 | I21～I24及EVIDENCE的真实来源临时库命令/输出 |
 | R05 | 22391组、SCC数字对账，不是assert语句数 | [mvp/tests/test_frontier17.py:22-23](../tests/test_frontier17.py#L22-L23)、[37-46](../tests/test_frontier17.py#L37-L46)、[72-84](../tests/test_frontier17.py#L72-L84)，EVIDENCE保存本轮原输出 |
-| R06 | 测试69项，三个入口不减用例 | [pytest.ini:1-3](../../pytest.ini#L1-L3)、[mvp/tests/test_import.py:186-194](../tests/test_import.py#L186-L194)，EVIDENCE三命令实际69/69输出；未新增/删减测试 |
+| R06 | Day 7历史测试69项，三个入口不减用例 | [pytest.ini:1-3](../../pytest.ini#L1-L3)、[mvp/tests/test_import.py:186-194](../tests/test_import.py#L186-L194)，EVIDENCE三命令实际69/69输出；未新增/删减测试 |
 | R07 | CI的Python3.12、完整测试和独立字节校验 | [.github/workflows/ci.yml:11-35](../../.github/workflows/ci.yml#L11-L35) |
 | R08 | main CI成功且有效规则要求ci | workflow仅证明job命名；远端run与rules必须读API，命令/实际结果见EVIDENCE，未用配置文件冒充保护已开 |
 | R09 | 两个文档入口可定位，放mvp/docs而非旧docs | README从这里读的新链接及本卡两个文件；位置偏离记录见EVIDENCE首节 |

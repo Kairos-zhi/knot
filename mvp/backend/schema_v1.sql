@@ -1,4 +1,4 @@
--- Knot MVP SQLite Schema v1.2
+-- Knot MVP SQLite Schema v1.3
 -- 基础：v0.5 产品方向 + I-01 历史不覆写约束
 -- 日期：2026-10-28
 
@@ -191,3 +191,11 @@ VALUES ('1.1', strftime('%s', 'now') * 1000, 'Self-contained FTS index; explicit
 
 INSERT OR IGNORE INTO schema_version (version, applied_at, description)
 VALUES ('1.2', strftime('%s', 'now') * 1000, 'Event to atom mapping, without historical backfill');
+
+-- BEGIN UNIQUE v1.3
+CREATE UNIQUE INDEX IF NOT EXISTS uq_eligible_snapshot_event
+    ON eligible_snapshots(snapshot_time, event_id);
+-- END UNIQUE v1.3
+
+INSERT OR IGNORE INTO schema_version (version, applied_at, description)
+VALUES ('1.3', strftime('%s', 'now') * 1000, 'One row per event per snapshot instant');

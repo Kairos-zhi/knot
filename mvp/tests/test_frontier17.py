@@ -121,6 +121,8 @@ def db(tmp_path):
     schema = Path(__file__).parents[1] / "backend/schema_v1.sql"
     with closing(sqlite3.connect(tmp_path / "state.db")) as conn:
         conn.executescript(schema.read_text(encoding="utf-8"))
+        # 模拟未迁移的 v1.2 形态：无唯一索引，同刻重复行仍按 rowid 后写胜。
+        conn.execute("DROP INDEX IF EXISTS uq_eligible_snapshot_event")
         # Version 7 isolates these tests from the existing v1 seed rules.
         conn.executemany(
             "INSERT INTO horn_rules(head,body,rule_version,active) VALUES (?,?,?,?)",
