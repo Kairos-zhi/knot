@@ -107,7 +107,7 @@ with closing(sqlite3.connect(uri, uri=True)) as conn, conn:
 | 1.0 | `197aa5e`初始化schema、规则种子和旧FTS；init_db创建新库 | 初始化SQL不是重复应用的迁移脚本。[S27] |
 | 1.1 | `2a8dc18`的migrate_fts_v1_1：DROP旧派生FTS和两个触发器，重建并重灌非NULL blob | 仅接受含1.0且无其他未知版本的1.0/1.1库；1.2及更新版本库拒绝。[S28] |
 | 1.2 | `43343ff`的migrate_schema_v1_2：增量CREATE映射表/索引及首次版本行 | 版本集合限1.0/1.1/1.2且至少含1.1或1.2，不回填、不改旧业务表。[S29] |
-| 1.3 | `d074757`（TD01）的migrate_schema_v1_3：新增同刻同事件唯一索引及版本行 | 前置含1.2且无未知版本；全部冲突组先报错，拒绝自动去重；已是1.3返回created=false。[S38][S39] |
+| 1.3 | `d074757`（TD01）的migrate_schema_v1_3：新增同刻同事件唯一索引及版本行 | 前置含1.2且无未知版本；全部冲突组先报错，拒绝自动去重；已是1.3须核对承诺结构，通过才返回created=false。[S38][S39] |
 
 在仓库根，对明确已有的候选库按需运行；不要在新版库倒跑旧迁移器：[S30]
 
@@ -124,6 +124,17 @@ python -m mvp.backend.migrate_schema_v1_3 candidate/knot.db
 1.3迁移先按(snapshot_time,event_id)汇总全部重复组，错误列出每组时间、事件和行数。
 有冲突时不建索引、不写版本、不改数据；无冲突时索引与版本行同事务提交。
 同名但定义不兼容的索引也拒绝；冲突须由人决定如何处理。[S39]
+
+1.3幂等重跑也须核结构，不能把版本行或对象同名当作结构证明：
+`eligible_snapshots`须为表；其`uq_eligible_snapshot_event`索引须存在、UNIQUE、非partial，
+有效键列须恰为按序的`(snapshot_time,event_id)`，两列均采用BINARY排序规则。[S39]
+
+发现漂移即抛出继承`ValueError`的`SchemaDriftError`，CLI退出1并向stderr报告具体不符项。
+拒绝不创建、删除或重建索引，不补写或改写版本行，不改业务数据；修复须另行决定。[S39]
+
+错误码格式为`[KNOT-E0xx]`，消息以稳定码开头；首个条目`[KNOT-E031]`表示
+1.3版本行与承诺结构漂移。例如：
+`[KNOT-E031] schema drift: index uq_eligible_snapshot_event is missing; version row 1.3 present, no changes made`。[S39]
 
 ### 1.2不backfill的实际后果
 
