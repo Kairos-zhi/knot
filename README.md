@@ -49,7 +49,9 @@ MVP 开发不依赖这些材料，它们仅供历史追溯和参考。
 | 你想了解什么 | 入口 |
 |---|---|
 | **MVP 快速开始** | [mvp/README.md](mvp/README.md) |
-| **数据模型** | [mvp/backend/schema_v1.sql](mvp/backend/schema_v1.sql) |
+| **数据模型** | [mvp/docs/SCHEMA.md](mvp/docs/SCHEMA.md) |
+| **导入契约** | [mvp/docs/IMPORT.md](mvp/docs/IMPORT.md) |
+| **原始 SQL** | [mvp/backend/schema_v1.sql](mvp/backend/schema_v1.sql) |
 | **治理规则** | [AGENTS.md](AGENTS.md) |
 | **历史决策** | [26 文件候选 @ ed54934](https://github.com/Kairos-zhi/knot/tree/ed54934) |
 
@@ -57,26 +59,24 @@ MVP 开发不依赖这些材料，它们仅供历史追溯和参考。
 
 ## 项目状态
 
-**主线**: `main` @ `f7d641a6` (2026-10-28 01:05)  
-**MVP 初始化**: `197aa5e` (2026-10-28 01:29)  
-**旧代码归档**: 本 commit (2026-10-28)
+**主线核验基线**：`main` @ `1ea1dfa`（2026-10-28，PR #25 合并点）。
+**当前卡**：Week 1 Day 7 文档与测试 cwd 修复，本地候选已获独立限定Gate；未推送、未合并。
+数字命令与输出见[本轮实读证据](mvp/docs/W1D7-EVIDENCE.md)，断言出处见[代码映射](mvp/docs/W1D7-CLAIM-MAP.md)。
 
 **已完成**:
-- ✅ SQLite schema v1.0 (7 核心表 + FTS5)
-- ✅ 数据库初始化脚本
-- ✅ 26 文件候选（`ed54934`，产品化包装）
-- ✅ Frontier17 算法验证（22,391 assertions）
-- ✅ 四 PR 合并记录（#15-18）
+- SQLite v1.2：7张业务表、1张版本表及自持FTS，初始化和显式迁移已实现。
+- AssetRepo/EventStore/RuleRegistry、carry-forward快照查询和稳定支持族视图已实现。
+- v0.4来源包候选导入：22资产、22条import事件、19内嵌/3外置；不代表生产库已导入。
+- Frontier17迁移验证22,391组，SCC统计与冻结参考一致；当前完整测试69项。
+- CI已上线：Python3.12、完整测试及独立字节钉检查；[主线本轮运行成功](https://github.com/Kairos-zhi/knot/actions/runs/40664491008)。有效main规则要求`ci`，本轮只读核定，未修改仓库设置。
 
 **进行中**:
-- 🔄 Week 1 Day 2: AssetRepo / EventStore / RuleRegistry 接口
+- Day 7两份接手文档、逐条断言映射及测试子进程cwd修复的独立验收。
+- Week 1最终结账待本卡复核、授权推送后的CI与合并闸门，不用本地通过替代。
 
 **未开始**:
-- ⏭️ 导入脚本 + v0.4 真实数据
-- ⏭️ 算法迁移
-- ⏭️ CI 上线
-- ⏭️ 前端开发
-- ⏭️ 桌面集成
+- Week 2候选关系抽取、时间轴及续接的正式交付。
+- 前端与桌面集成、真实协作和整体验收。
 
 ---
 
@@ -89,11 +89,8 @@ MVP 开发不依赖这些材料，它们仅供历史追溯和参考。
 - 每次变更必须走独立分支 + PR
 - 凭据泄漏零容忍
 
-**当前窗口**:
-- Maker（安鼎）: Codex CLI + lark-cli
-- Checker + Holder（小禾）: 桌面 default profile
-- Seeker（大荒谬）: aily-cli（调研探索）
-- Human Holder（之）: 最终验收
+**协作分工**：Maker实现与自核，独立Checker复核，之把守最终接受与合并；
+本页不把某个固定账号、模型或窗口视作长期角色绑定。
 
 ---
 
@@ -103,5 +100,5 @@ MIT (待确认)
 
 ---
 
-**最后更新**: 2026-10-28 01:4x  
-**下一里程碑**: Week 1 Day 3 — 22 个文件成功导入
+**最后更新**：2026-10-28（Day 7本地文档候选）
+**下一里程碑**：完成本卡验收与Week 1结账，再按新卡进入Week 2。
