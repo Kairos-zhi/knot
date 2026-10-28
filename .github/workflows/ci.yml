@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Install development dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Run all MVP tests
+        run: python -m pytest mvp/tests/ -q
+      - name: Verify frozen fixture bytes
+        shell: bash
+        run: |
+          sha256sum --check --strict <<'SHA256'
+          5cd92492ff80f7ea7730d6f808d2a242212f025c455b9e29ffd63bc0d0253370  mvp/tests/fixtures/schema_v1_0.sql
+          056528f4e11ce652084ae5694b9eeda23ef44c9bd2d782b352ed49b47e76b1cd  mvp/tests/fixtures/frontier17_reference_20261027.py
+          SHA256
