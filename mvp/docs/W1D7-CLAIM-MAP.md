@@ -1,8 +1,8 @@
 # Day 7 断言 → 代码位置映射（完整）
 
 基于本轮候选源码；SCHEMA的S编号、IMPORT的I编号逐项对应下表。
-文件行号按TD01 schema v1.3更新；Day 7实跑数字仍是历史证据，当前新增行为见S38–S40。
-内核与适配读取SQL保持不变，既有测试仅作任务卡允许的两处适配。
+历史行号保留TD01定位；Day 7实跑数字仍是历史证据，当前新增行为见S38–S42，TD02锚点用文件及函数名。
+内核与适配读取SQL保持不变；TD02既有测试仅作AC-12b允许的三文件四处版本预期适配。
 Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码自动保证远端规则。
 
 ## SCHEMA.md
@@ -10,7 +10,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | 编号 | 断言 | 文件:行 |
 |---|---|---|
 | S01 | 新建候选库入口、父目录与SQL应用 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/main；[初始化测试](../tests/test_init_db.py) |
-| S02 | 非交互拒绝已有文件／目录／软链，无覆盖开关；同目录临时建库、自验、硬链接原子发布、只读读回，失败清理；stdout单行JSON及0/1退出码；新库四版本记录 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/_validate/_readback/main、[初始化测试](../tests/test_init_db.py)、[mvp/backend/schema_v1.sql:186-201](../backend/schema_v1.sql#L186-L201) |
+| S02 | 非交互拒绝已有文件／目录／软链，无覆盖开关；同目录临时建库、自验、硬链接原子发布、只读读回，失败清理；stdout单行JSON及0/1退出码；新库五版本记录 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/_validate/_readback/main、[初始化测试](../tests/test_init_db.py)、[mvp/backend/schema_v1.sql](../backend/schema_v1.sql) 的版本记录段 |
 | S03 | WAL与逐连接FK启用 | [mvp/backend/schema_v1.sql:5-6](../backend/schema_v1.sql#L5-L6)、[mvp/backend/_db.py:58-62](../backend/_db.py#L58-L62)、[mvp/backend/migrate_fts_v1_1.py:36-40](../backend/migrate_fts_v1_1.py#L36-L40)、[migrate_schema_v1_2.py:29-33](../backend/migrate_schema_v1_2.py#L29-L33)、[migrate_schema_v1_3.py:44-48](../backend/migrate_schema_v1_3.py#L44-L48) |
 | S04 | 七业务表＋版本表；FTS另列 | [mvp/backend/schema_v1.sql:13-193](../backend/schema_v1.sql#L13-L193)，八个普通CREATE TABLE与一个CREATE VIRTUAL TABLE；本轮表名实读见EVIDENCE |
 | S05 | assets列、PK、无FK、三显式索引 | [mvp/backend/schema_v1.sql:13-28](../backend/schema_v1.sql#L13-L28) |
@@ -49,6 +49,8 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | S38 | 1.3版本行及同刻同事件唯一索引；重复拒绝、不同事件允许 | [mvp/backend/schema_v1.sql:195-201](../backend/schema_v1.sql#L195-L201)、[mvp/tests/test_schema_v1_3.py:56-82](../tests/test_schema_v1_3.py#L56-L82)、[mvp/backend/init_db.py](../backend/init_db.py) 的 _validate |
 | S39 | 仅1.2首次升级；全部冲突先报、事务回滚、无自动去重；1.3重跑先核表及索引的存在性、唯一性、非partial、键列顺序和BINARY排序规则，通过才幂等返回；漂移以ValueError子类SchemaDriftError及[KNOT-E031]拒绝，CLI退出1，不自动修复，版本行、结构与数据保持不变 | [mvp/backend/migrate_schema_v1_3.py](../backend/migrate_schema_v1_3.py)：`migrate_schema`、`SchemaDriftError`及CLI；[mvp/tests/test_schema_v1_3.py](../tests/test_schema_v1_3.py)：`test_migration_preserves_all_rows_and_is_idempotent`、`test_all_duplicate_groups_reported_and_database_unchanged`、`test_wrong_named_index_is_not_silently_accepted`、`test_v1_3_drift_refused_without_changes`、`test_v1_3_missing_snapshot_table_refused_without_changes` |
 | S40 | 未迁移1.2同刻重复合法且后写胜；合规1.3库兜底不可达，读取SQL及≤T不变 | [mvp/backend/frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[mvp/backend/schema_v1.sql:196-197](../backend/schema_v1.sql#L196-L197)、[mvp/tests/test_schema_v1_3.py:188-198](../tests/test_schema_v1_3.py#L188-L198)、[56-82](../tests/test_schema_v1_3.py#L56-L82) |
+| S41 | 1.4候选表尾追加source_label/source_members，可空TEXT、无默认值；编号与JSON成员数组、两种NULL语义；atom仍为词表原子；五版本行与新库自验 | [schema_v1.sql](../backend/schema_v1.sql) 的 claims_candidates/版本记录段；[init_db.py](../backend/init_db.py) 的 _validate/init_database；[test_schema_v1_4.py](../tests/test_schema_v1_4.py) 的 test_fresh_migrated_equivalence_preservation_and_rerun |
+| S42 | 先判1.4并核两列，后复用1.3前置体检；E031透传、E032漂移拒绝及半成品不采纳；两列与版本行同事务，无业务回填，CLI退出0/1 | [migrate_schema_v1_4.py](../backend/migrate_schema_v1_4.py) 的 migrate_schema/_preflight/_validate/SchemaDriftError及CLI；[test_schema_v1_4.py](../tests/test_schema_v1_4.py) 的 test_refusals_preserve_bytes/test_ddl_and_version_rollback/test_cli_outside_repository |
 
 ## IMPORT.md
 
