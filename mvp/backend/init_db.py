@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Knot MVP Database Initializer
 
-初始化 SQLite 数据库，应用 schema v1.0。
+初始化 SQLite 数据库，应用 schema v1.1。
 """
 
 import sqlite3
@@ -49,7 +49,10 @@ def init_database(db_path: str) -> bool:
         
         # 验证
         cursor = conn.cursor()
-        cursor.execute("SELECT version, applied_at, description FROM schema_version")
+        cursor.execute(
+            "SELECT version, applied_at, description FROM schema_version "
+            "WHERE version='1.1'"
+        )
         row = cursor.fetchone()
         
         if row:
