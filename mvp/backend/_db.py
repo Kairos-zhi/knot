@@ -18,6 +18,24 @@ class SQLiteRepo:
         self.db_path = Path(db_path).expanduser().resolve()
         self._uri = self.db_path.as_uri() + "?mode=rw"
         self._scoped_connection = None
+        self._in_transaction_scope = False
+
+    @contextmanager
+    def transaction(self):
+        """Commit one compound operation within an open session, or roll back.
+
+        All methods on this repository share that transaction. Nested scopes
+        are rejected. This is not a transaction across separate instances.
+        """
+        if self._scoped_connection is None or self._in_transaction_scope:
+            raise RuntimeError("transaction requires a session and cannot nest")
+        with self._connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            self._in_transaction_scope = True
+            try:
+                yield self
+            finally:
+                self._in_transaction_scope = False
 
     @contextmanager
     def session(self):
@@ -45,6 +63,9 @@ class SQLiteRepo:
 
     @contextmanager
     def _transaction(self, conn):
+        if self._in_transaction_scope:
+            yield conn
+            return
         try:
             yield conn
             conn.commit()

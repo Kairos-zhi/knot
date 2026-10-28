@@ -41,8 +41,8 @@
 
 ```powershell
 $env:PYTHONDONTWRITEBYTECODE='1'
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m pytest mvp/tests/ -v --tb=short -p no:cacheprovider
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m mvp.tests.benchmark_backend
+python -m pytest mvp/tests/ -v --tb=short -p no:cacheprovider
+python -m mvp.tests.benchmark_backend
 git diff --check
 ```
 

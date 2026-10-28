@@ -61,13 +61,13 @@ FTS 的外部 `content` 列缺失：当前仅 MATCH+rowid JOIN 读 `assets.*` �
 ## Maker 自核验
 
 已有测试环境：Python 3.11.15、pytest 9.1.1、SQLite 3.53.1；只复用
-`D:/Hermes/hermes-agent/venv/Scripts/python.exe`，未安装或修改 Hermes。
+`python`（仓库 venv 内），未安装或修改 Hermes。
 系统 `python` 为 Windows Store 别名，实际测试没有使用该入口。
 
 ```powershell
 $env:PYTHONDONTWRITEBYTECODE='1'
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m pytest mvp/tests/test_backend.py -v --tb=short -p no:cacheprovider
-& 'D:/Hermes/hermes-agent/venv/Scripts/python.exe' -m mvp.tests.benchmark_backend
+python -m pytest mvp/tests/test_backend.py -v --tb=short -p no:cacheprovider
+python -m mvp.tests.benchmark_backend
 git diff --check
 ```
 

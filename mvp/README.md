@@ -1,11 +1,12 @@
 # Knot MVP
 
 **状态**：Week 1 Day 2 功能与性能按 2026-10-28 拍板口径通过；
-FTS 1.1 修复已获独立本地候选 Gate，Day 3 待中控派发。
+FTS 1.1 已合入 main；Day 3 候选导入已完成 22 资产 / 19 全文索引 / 3 对象。
 
 接口用法见 [API](docs/API.md)，本轮证据与未决项见
 [Day 2 开发记录](docs/W1D2-development.md)。
 FTS 迁移、AC 与复核见 [FTS 修复记录](docs/FTS-FIX-001.md)。
+Day 3 来源完整性、候选库与验收见 [导入记录](docs/W1D3-IMPORT-001.md)。
 
 基于 v0.5 产品方向 + v0.4 第十七轮算法验证的最小可用原型。
 
@@ -63,7 +64,7 @@ mvp/
 │   ├── rule_registry.py   # RuleRegistry 接口
 │   ├── _db.py            # 连接、事务与显式 session 作用域
 │   ├── frontier17.py      # Frontier17 算法（待迁移）
-│   └── import_baseline.py # 导入 v0.4 baseline（待实现）
+│   └── import_baseline.py # 显式候选库导入与幂等重跑
 ├── frontend/              # React 前端
 │   └── src/
 │       ├── App.tsx        # （待实现）
@@ -71,6 +72,7 @@ mvp/
 │       └── components/    # 可复用组件
 ├── tests/                 # 测试
 │   ├── test_backend.py    # 后端接口与数据库约束回归
+│   ├── test_import.py     # 导入、事件成对提交、源完整性
 │   ├── benchmark_backend.py # 临时磁盘库性能测量
 │   └── test_frontier17.py # 算法验证（待迁移）
 └── docs/                  # 文档
@@ -116,7 +118,7 @@ mvp/
 
 - [x] Day 1: SQLite schema + 初始化脚本
 - [x] Day 2: AssetRepo / EventStore / RuleRegistry（连续导入须用 session）
-- [ ] Day 3: 导入 v0.4 baseline（22 个文件）
+- [x] Day 3: 候选导入 22 个文件，独立本地 Gate 通过；未推送或合并
 - [ ] Day 4-5: 算法迁移 + 验证
 - [ ] Day 6-7: CI 上线
 
