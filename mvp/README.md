@@ -1,6 +1,10 @@
 # Knot MVP
 
-**状态**：Week 1 Day 1 进行中
+**状态**：Week 1 Day 2 功能与性能按 2026-10-28 拍板口径通过；
+FTS 结构修复为 Day 3 导入前置。
+
+接口用法见 [API](docs/API.md)，本轮证据与未决项见
+[Day 2 开发记录](docs/W1D2-development.md)。
 
 基于 v0.5 产品方向 + v0.4 第十七轮算法验证的最小可用原型。
 
@@ -48,9 +52,10 @@ mvp/
 ├── backend/               # Python 后端
 │   ├── schema_v1.sql      # SQLite schema
 │   ├── init_db.py         # 数据库初始化脚本
-│   ├── asset_repo.py      # AssetRepo 接口（待实现）
-│   ├── event_store.py     # EventStore 接口（待实现）
-│   ├── rule_registry.py   # RuleRegistry 接口（待实现）
+│   ├── asset_repo.py      # AssetRepo 接口
+│   ├── event_store.py     # EventStore 接口
+│   ├── rule_registry.py   # RuleRegistry 接口
+│   ├── _db.py            # 连接、事务与显式 session 作用域
 │   ├── frontier17.py      # Frontier17 算法（待迁移）
 │   └── import_baseline.py # 导入 v0.4 baseline（待实现）
 ├── frontend/              # React 前端
@@ -59,7 +64,8 @@ mvp/
 │       ├── routes/        # 路由页面
 │       └── components/    # 可复用组件
 ├── tests/                 # 测试
-│   ├── test_schema.py     # Schema 测试（待实现）
+│   ├── test_backend.py    # 后端接口与数据库约束回归
+│   ├── benchmark_backend.py # 临时磁盘库性能测量
 │   └── test_frontier17.py # 算法验证（待迁移）
 └── docs/                  # 文档
     ├── SCHEMA.md          # Schema 设计文档（待编写）
@@ -103,7 +109,7 @@ mvp/
 ### Week 1: S1 导入与指纹 + CI 基建
 
 - [x] Day 1: SQLite schema + 初始化脚本
-- [ ] Day 2: AssetRepo / EventStore / RuleRegistry
+- [x] Day 2: AssetRepo / EventStore / RuleRegistry（连续导入须用 session）
 - [ ] Day 3: 导入 v0.4 baseline（22 个文件）
 - [ ] Day 4-5: 算法迁移 + 验证
 - [ ] Day 6-7: CI 上线
@@ -146,4 +152,4 @@ mvp/
 
 ---
 
-**更新时间**：2026-10-28 01:5x
+**更新时间**：2026-10-28（Day 2 本地交付；未远端发布）
