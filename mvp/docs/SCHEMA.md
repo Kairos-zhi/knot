@@ -1,4 +1,4 @@
-# SQLite 数据模型（v1.2）
+# SQLite 数据模型（v1.3）
 
 本文描述当前实现；逐条出处见[断言与代码映射](W1D7-CLAIM-MAP.md)。
 SQL定义仍以[schema_v1.sql](../backend/schema_v1.sql)为准。
@@ -12,9 +12,9 @@ python -m mvp.backend.init_db candidate/knot.db
 ```
 
 初始化会建立父目录并应用当前schema。已有文件时会询问是否覆盖；确认后会删除旧库，
-所以该命令不能代替迁移。新库包含1.0、1.1、1.2三行版本记录，不代表执行过三次生产迁移。[S02]
+所以该命令不能代替迁移。新库包含1.0、1.1、1.2、1.3四行版本记录，不代表执行过四次生产迁移。[S02]
 
-schema启用WAL；外键开关属于连接，Repo及两个迁移器各自启用
+schema启用WAL；外键开关属于连接，Repo及三个迁移器各自启用
 `PRAGMA foreign_keys=ON`。自己建立SQLite连接写入时也须开启，否则不能依赖FK拦截。[S03]
 
 ## 七张业务表与版本表
@@ -27,7 +27,7 @@ schema启用WAL；外键开关属于连接，Repo及两个迁移器各自启用
 | assets | 原始资产：hash、media_type、blob/path、source_uri、created_at/imported_at、metadata_json | asset_id | 无 | idx_assets_hash(content_hash)、idx_assets_created(created_at)、idx_assets_media(media_type) |
 | history_events | 历史事件：event_type、subject、source、event_time/recorded_at、target_assets、evidence_refs、payload_json | event_id | 无 | idx_events_type(event_type)、idx_events_time(event_time)、idx_events_recorded(recorded_at)、idx_events_subject(subject) |
 | horn_rules | Horn规则：head、body、rule_version、active、description | rule_id，INTEGER AUTOINCREMENT | 无 | idx_rules_head(head)、idx_rules_version(rule_version) |
-| eligible_snapshots | 每个事件的状态行：snapshot_time、event_id、is_eligible、trust_level、reason | snapshot_id（行ID） | event_id→history_events.event_id，ON DELETE RESTRICT | idx_eligible_event(event_id)、idx_eligible_time(snapshot_time) |
+| eligible_snapshots | 每个事件的状态行：snapshot_time、event_id、is_eligible、trust_level、reason | snapshot_id（行ID） | event_id→history_events.event_id，ON DELETE RESTRICT | idx_eligible_event(event_id)、idx_eligible_time(snapshot_time)、uq_eligible_snapshot_event(snapshot_time,event_id) [S38] |
 | claims_candidates | 待核候选：claim_type、atom、support_sources、extraction_method、confidence、unverified、user_response、proposed_at/reviewed_at | claim_id | 无 | idx_claims_atom(atom)、idx_claims_type(claim_type)、idx_claims_unverified(unverified) |
 | continuation_bundles | 续接包：created_at、user_scoped、authorized_assets、support_view_snapshot、open_questions、context_text、exported | bundle_id | 无 | idx_bundles_created(created_at)、idx_bundles_exported(exported) |
 | event_atom_map | 事件主张的原子：event_id、atom、origin、created_at | (event_id, atom) | event_id→history_events.event_id，ON DELETE RESTRICT | idx_event_atom_atom(atom) |
@@ -43,6 +43,7 @@ schema启用WAL；外键开关属于连接，Repo及两个迁移器各自启用
 | assets CHECK(content_blob IS NOT NULL OR file_path IS NOT NULL) | 至少一个存储位置非NULL；`b""`符合条件，空字符串path也不被该CHECK排除，不能把它说成“文件必然存在”。[S14] |
 | history_events CHECK(recorded_at >= event_time) | 数据库拒绝记录时间早于事件时间；EventStore另在写入前拒绝未来事件时间。[S15] |
 | 两个event_id外键 | 状态行及映射不能引用不存在的历史事件；RESTRICT阻止删除仍被引用的事件。须开启FK。[S16] |
+| uq_eligible_snapshot_event UNIQUE(snapshot_time,event_id) | 1.3库同刻同事件第二行在写入期被拒；同刻不同事件仍可写。[S38] |
 | 各主键、event_atom_map复合主键 | 标识行；映射的同一(event_id,atom)不能重复，不同atom可属于同一事件。[S17] |
 
 完整NOT NULL列按表列示：[S18]
@@ -56,7 +57,7 @@ schema启用WAL；外键开关属于连接，Repo及两个迁移器各自启用
 - event_atom_map：四列中的event_id、atom、created_at；origin可空。
 - schema_version：applied_at。
 
-当前仅有上面两个CHECK；除主键外，单独声明的UNIQUE只有content_hash。
+当前仅有上面两个CHECK；除主键外，独立UNIQUE约束为content_hash及(snapshot_time,event_id)。
 JSON形状、confidence范围、0/1标志取值、SHA256格式与UUID格式均未由schema作额外CHECK。
 JSON引用字段也不是外键：subject/target_assets/evidence_refs/support_sources/
 authorized_assets不因写了某个ID就得到引用存在性校验。[S19]
@@ -101,19 +102,25 @@ with closing(sqlite3.connect(uri, uri=True)) as conn, conn:
 | 版本 | 对应实现与变更 | 当前历史边界 |
 |---|---|---|
 | 1.0 | `197aa5e`初始化schema、规则种子和旧FTS；init_db创建新库 | 初始化SQL不是重复应用的迁移脚本。[S27] |
-| 1.1 | `2a8dc18`的migrate_fts_v1_1：DROP旧派生FTS和两个触发器，重建并重灌非NULL blob | 仅接受含1.0且无其他未知版本的1.0/1.1库；1.2库拒绝。[S28] |
+| 1.1 | `2a8dc18`的migrate_fts_v1_1：DROP旧派生FTS和两个触发器，重建并重灌非NULL blob | 仅接受含1.0且无其他未知版本的1.0/1.1库；1.2及更新版本库拒绝。[S28] |
 | 1.2 | `43343ff`的migrate_schema_v1_2：增量CREATE映射表/索引及首次版本行 | 版本集合限1.0/1.1/1.2且至少含1.1或1.2，不回填、不改旧业务表。[S29] |
+| 1.3 | `d074757`（TD01）的migrate_schema_v1_3：新增同刻同事件唯一索引及版本行 | 前置含1.2且无未知版本；全部冲突组先报错，拒绝自动去重；已是1.3返回created=false。[S38][S39] |
 
-在仓库根，对明确已有的候选库按需运行；不要在1.2库上倒跑FTS迁移：[S30]
+在仓库根，对明确已有的候选库按需运行；不要在新版库倒跑旧迁移器：[S30]
 
 ```sh
 python -m mvp.backend.migrate_fts_v1_1 candidate/knot.db
 python -m mvp.backend.migrate_schema_v1_2 candidate/knot.db
+python -m mvp.backend.migrate_schema_v1_3 candidate/knot.db
 ```
 
-这两行表示1.0→1.1→1.2的顺序，已是1.1时只执行第二行，已是1.2时不需升级。
-两器均以mode=rw拒绝缺库、BEGIN IMMEDIATE包住变更，错误整体回滚；重复执行各自
+这三行表示1.0→1.1→1.2→1.3的顺序，已是1.1时从第二行开始，已是1.2时只执行第三行。
+已是1.3时重复第三行幂等；旧迁移器不接受1.3。三器均以mode=rw拒绝缺库、BEGIN IMMEDIATE包住变更，错误整体回滚；重复执行各自
 支持的版本不会重复灌入FTS行或改写已有版本记录时间。[S31]
+
+1.3迁移先按(snapshot_time,event_id)汇总全部重复组，错误列出每组时间、事件和行数。
+有冲突时不建索引、不写版本、不改数据；无冲突时索引与版本行同事务提交。
+同名但定义不兼容的索引也拒绝；冲突须由人决定如何处理。[S39]
 
 ### 1.2不backfill的实际后果
 
@@ -124,8 +131,12 @@ Day 3导入资产及import事件，不生成原子映射或可信状态。**未�
 存储表允许一事件多atom（复合PK）；冻结内核只接受单值映射，适配层会对表中任意
 多原子事件显式报错，即使该事件当前不eligible。eligible原子不在当前规则词表也报错。[S33]
 
-状态采用每事件截至并包含T的最后一行，同刻最大rowid兜底；撤权粘滞，取消撤权须
-显式新写可信行。空快照是否成立取决于空集Horn闭包，不是“没有事件就全假”。[S34]
+状态采用每事件截至并包含T的最后一行；撤权粘滞，取消撤权须显式新写可信行。
+空快照是否成立取决于空集Horn闭包，不是“没有事件就全假”。[S34]
+
+已升级到1.3的合规库：唯一索引保证同刻同事件只有一行，SQL中最大rowid兜底不可达，
+仅作防御保留。未迁移的v1.2库：没有该索引，同刻重复行仍可存在，读侧继续按最大rowid
+后写胜。两种库分别有测试；carry-forward语义及读取SQL不变。[S40]
 
 ## 两枚字节钉与核验
 
@@ -138,5 +149,5 @@ Day 3导入资产及import事件，不生成原子映射或可信状态。**未�
 
 ## 计划与未覆盖
 
-映射填充、候选关系抽取、同刻唯一约束、索引内容损坏恢复、前端展示不属于本轮交付；
+映射填充、候选关系抽取、索引内容损坏恢复、前端展示不属于本轮交付；
 不要把已有表结构当成这些功能已经完成。真实数据库迁移仍须明确目标及独立核验。
