@@ -1,12 +1,14 @@
 # Knot MVP
 
-**状态**：Week 1 Day 2 功能与性能按 2026-10-28 拍板口径通过；
+**状态**：Week 1 Day 4 墙钟门返修已通过本地独立Gate，待中控复验；
 FTS 1.1 已合入 main；Day 3 候选导入已完成 22 资产 / 19 全文索引 / 3 对象。
+Day 4 算法/schema/适配经中控验证通过，墙钟断言返修单独留痕，尚未推送或合并。
 
 接口用法见 [API](docs/API.md)，本轮证据与未决项见
 [Day 2 开发记录](docs/W1D2-development.md)。
 FTS 迁移、AC 与复核见 [FTS 修复记录](docs/FTS-FIX-001.md)。
 Day 3 来源完整性、候选库与验收见 [导入记录](docs/W1D3-IMPORT-001.md)。
+Day 4 模型计数、差分和只读适配见 [Frontier17 记录](docs/W1D4-FRONTIER17-001.md)。
 
 基于 v0.5 产品方向 + v0.4 第十七轮算法验证的最小可用原型。
 
@@ -25,10 +27,10 @@ python init_db.py ~/.knot/knot.db
 
 ```
 ✅ 数据库初始化成功
-   版本: 1.1
+   版本: 1.2
    时间: 2026-10-28 01:xx:xx
-   说明: Self-contained FTS index; explicit unindexed assets
-   表数: 13
+   说明: Event to atom mapping, without historical backfill
+   表数: 14
       - assets
       - claims_candidates
       - continuation_bundles
@@ -36,6 +38,7 @@ python init_db.py ~/.knot/knot.db
       - history_events
       - horn_rules
       - schema_version
+      - event_atom_map
       - assets_fts
       - assets_fts_config
       - assets_fts_content
@@ -63,7 +66,9 @@ mvp/
 │   ├── event_store.py     # EventStore 接口
 │   ├── rule_registry.py   # RuleRegistry 接口
 │   ├── _db.py            # 连接、事务与显式 session 作用域
-│   ├── frontier17.py      # Frontier17 算法（待迁移）
+│   ├── frontier17.py      # 语义冻结的纯函数内核
+│   ├── frontier17_db.py   # SELECT-only 数据适配
+│   ├── migrate_schema_v1_2.py # 只增量创建映射表
 │   └── import_baseline.py # 显式候选库导入与幂等重跑
 ├── frontend/              # React 前端
 │   └── src/
@@ -74,7 +79,7 @@ mvp/
 │   ├── test_backend.py    # 后端接口与数据库约束回归
 │   ├── test_import.py     # 导入、事件成对提交、源完整性
 │   ├── benchmark_backend.py # 临时磁盘库性能测量
-│   └── test_frontier17.py # 算法验证（待迁移）
+│   └── test_frontier17.py # 22,391 组＋差分及数据库适配
 └── docs/                  # 文档
     ├── SCHEMA.md          # Schema 设计文档（待编写）
     └── ROADMAP.md         # 四周 Roadmap（已完成）
@@ -82,9 +87,9 @@ mvp/
 
 ---
 
-## 数据模型（v1.1）
+## 数据模型（v1.2）
 
-### 核心表（7 张）
+### 核心表（8 张）
 
 1. **`assets`**：资产表（I-01 只追加）
 2. **`history_events`**：历史事件表（I-01 只追加）
@@ -93,6 +98,7 @@ mvp/
 5. **`claims_candidates`**：候选关系表（I-02 非事实）
 6. **`continuation_bundles`**：续接包表
 7. **`schema_version`**：Schema 版本记录
+8. **`event_atom_map`**：事件主张的原子映射（不回填旧资产）
 
 ### 索引与约束
 
@@ -118,8 +124,8 @@ mvp/
 
 - [x] Day 1: SQLite schema + 初始化脚本
 - [x] Day 2: AssetRepo / EventStore / RuleRegistry（连续导入须用 session）
-- [x] Day 3: 候选导入 22 个文件，独立本地 Gate 通过；未推送或合并
-- [ ] Day 4-5: 算法迁移 + 验证
+- [x] Day 3: 候选导入 22 个文件，已随 PR #22 合入 main（6f763c0）
+- [ ] Day 4-5: Day 4 Frontier17 迁移已实现，Day 5 未开工
 - [ ] Day 6-7: CI 上线
 
 ---
