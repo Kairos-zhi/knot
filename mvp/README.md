@@ -1,14 +1,15 @@
 # Knot MVP
 
-**状态**：Week 1 Day 4 墙钟门返修已通过本地独立Gate，待中控复验；
+**状态**：Week 1 Day 4 已随 PR #23 合入 main；Day 5 两笔候选已获独立本地Gate。
 FTS 1.1 已合入 main；Day 3 候选导入已完成 22 资产 / 19 全文索引 / 3 对象。
-Day 4 算法/schema/适配经中控验证通过，墙钟断言返修单独留痕，尚未推送或合并。
+Day 5 延续状态与支持族均已实现，不改内核、schema或冻结参考。
 
 接口用法见 [API](docs/API.md)，本轮证据与未决项见
 [Day 2 开发记录](docs/W1D2-development.md)。
 FTS 迁移、AC 与复核见 [FTS 修复记录](docs/FTS-FIX-001.md)。
 Day 3 来源完整性、候选库与验收见 [导入记录](docs/W1D3-IMPORT-001.md)。
 Day 4 模型计数、差分和只读适配见 [Frontier17 记录](docs/W1D4-FRONTIER17-001.md)。
+Day 5 两笔提交与支持族证据见 [支持族记录](docs/W1D5-SUPPORT-001.md)。
 
 基于 v0.5 产品方向 + v0.4 第十七轮算法验证的最小可用原型。
 
@@ -68,6 +69,7 @@ mvp/
 │   ├── _db.py            # 连接、事务与显式 session 作用域
 │   ├── frontier17.py      # 语义冻结的纯函数内核
 │   ├── frontier17_db.py   # SELECT-only 数据适配
+│   ├── support_view.py    # carry-forward支持族的稳定JSON投影
 │   ├── migrate_schema_v1_2.py # 只增量创建映射表
 │   └── import_baseline.py # 显式候选库导入与幂等重跑
 ├── frontend/              # React 前端
@@ -125,7 +127,7 @@ mvp/
 - [x] Day 1: SQLite schema + 初始化脚本
 - [x] Day 2: AssetRepo / EventStore / RuleRegistry（连续导入须用 session）
 - [x] Day 3: 候选导入 22 个文件，已随 PR #22 合入 main（6f763c0）
-- [ ] Day 4-5: Day 4 Frontier17 迁移已实现，Day 5 未开工
+- [x] Day 4-5: Day 4 已合入 main，Day 5 两笔本地Gate通过（未推送/合并）
 - [ ] Day 6-7: CI 上线
 
 ---

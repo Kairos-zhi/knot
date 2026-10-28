@@ -189,3 +189,45 @@ python -m mvp.backend.migrate_schema_v1_2 /explicit/candidate.db
 
 只增量创建event_atom_map、索引和首次1.2版本记录，不回填Day 3的资产。
 v1.0须先跑FTS迁移；未知版本/缺库拒绝；迁移不改FULL/WAL。此轮仅临时库测试。
+
+## 支持族视图（Day 5）
+
+```python
+from mvp.backend.support_view import compute_support
+
+view = compute_support(conn, snapshot_time, rule_version=1)
+```
+
+返回原生dict/list/bool/int/str，可直接json.dumps，无缓存、无写入：
+
+```json
+{
+  "snapshot_time": 20,
+  "rule_version": 1,
+  "atoms": {"p": {"boolean": true, "minimal_roots": [["ev-1"], ["ev-2"]]}},
+  "eligible_count": 2
+}
+```
+
+时间口径包含T（snapshot_time≤T）：每个事件取此前最后状态并carry-forward。
+沉默不改变可信或撤权状态，取消撤权须显式新增is_eligible=1行。同刻多行以最大
+rowid兜底，这是现有schema的读取规则，未来唯一约束另卡，不在本接口偷偷修表。
+snapshot_id只是行标识，不是快照组；从未出现过的事件不在eligible中。
+
+M(p)的元素是来源事件ID集合。minimal_roots内层按ID升序，外层先按长度、再按
+字典序；原子键按名字排序。因此相同数据库视图和参数重复调用，JSON插入顺序稳定。
+boolean严格等于bool(minimal_roots)，只投影指定版本的活跃规则head/body词表。
+既有映射错误继续显式抛ValueError，不按payload_json/metadata_json自由文本判定。
+接口不读取资产或事件正文。连接及跨多次SELECT的一致性读事务仍由调用方管理。
+snapshot_time与rule_version须为Python原生int，bool/浮点等抛TypeError。
+
+空快照的判据是从空集Horn闭包是否可达，不能按body是否为空判断：
+
+- `p ∈ boolean_closure(∅, rules)`：true、`minimal_roots=[[]]`。
+- 从空集闭包不可达：false、`minimal_roots=[]`。
+- 若空根与非空根并存，空根是非空根的真子集，最小化后只保留`[[]]`。
+
+默认种子空快照中，question/evidence/counterexample/decision/open_question/
+support_relation均为true/[[]]；conditional_theorem/premise/proof为false/[]。
+`[[]]`表示无条件成立，`[]`表示无支持；前端不能把无条件成立展示成已有来源证据。
+本卡不改前端、不做时间轴对比或支持族缓存。
