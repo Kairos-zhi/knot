@@ -28,7 +28,10 @@ with repo.session():
 数据库错误保留 `sqlite3` 异常类型，调用者可捕获 `IntegrityError`。
 `session()` 只复用连接，每次操作仍独立提交；作用域退出（包括异常）时关闭。
 已提交的条目不会因后续导入失败回滚。禁止同一实例嵌套 session 或跨线程共用。
-这些接口不提供跨 Repo 的组合事务。
+这些接口不提供跨 Repo 实例的组合事务。`repo.transaction()` 可在已打开的
+session 内把同一实例的一组方法调用成对提交，异常时一起回滚，不允许嵌套。
+Day 3 导入器以一个内部实例组合既有 AssetRepo/EventStore 方法：每文件一对
+资产与 import 事件使用同一事务，不另写一套插入 SQL；此前成功文件保持提交。
 
 按 2026-10-28 拍板，连续导入必须使用 `repo.session()`；性能验收为同一临时库
 1000 次连续插入 P95 <10ms 且 max <20ms。独立开关连接模式不满足该指标，
@@ -119,3 +122,30 @@ python -m pytest mvp/tests/test_backend.py -v --tb=short
 
 连接和 FTS 行为依据：[Python sqlite3](https://docs.python.org/3/library/sqlite3.html)、
 [SQLite FTS5](https://www.sqlite.org/fts5.html)。
+
+## v0.4 baseline 导入
+
+```sh
+python -m mvp.backend.import_baseline --source /baseline --db /candidate/knot.db
+```
+
+必须显式指定已有 v1.1 候选库，不自动创建或迁移。先校验 MANIFEST 完整覆盖
+目录文件及其原始字节 hash，再记录 hash/mtime、检查 schema，最后逐文件导入。
+来源保持只读；不执行其中脚本、不解包 zip、不联网、不调用模型。
+
+类型映射为 md→text/markdown、py→text/x-python、json→application/json、
+sha256→text/plain、zip→application/zip；未支持的扩展名计入 failed。
+其中 JSON 按任务卡视为可内嵌文本。1MB 在此明确为 1,000,000 原始字节：
+可内嵌文本不超过阈值时原字节保存，其他写入库同级
+`objects/<hash前2位>/<完整hash>`，file_path 为该相对路径。
+对象先 fsync，再原子发布，既有同名对象必须 hash 一致，不覆盖损坏对象。
+失败文件可能留下未引用的正确对象，重跑可复用，不删除历史对象。
+
+source_uri 和事件 source 使用 `file://` 加百分号编码的源相对路径，
+metadata_json 的 path 保留原相对文件名；创建时间/事件时间取源 mtime 毫秒。
+每个新资产恰一条 import 事件，引用列表明确为 `[asset_id]` 与 `[]`。
+hash 已存在则跳过，不补写事件。`indexed`/`unindexed` 计数只统计本次新导入。
+
+输出一行 JSON：`imported`、`skipped`、`indexed`、`unindexed`、`failed`。
+有失败时 CLI 返回非零；逐文件提交的成功结果保留。结束后再次验证 manifest
+及全部源文件 hash/mtime；任何变化都会记录失败，不能声称源完整性通过。

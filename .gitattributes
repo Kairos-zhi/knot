@@ -1,0 +1,2 @@
+# Preserve the byte-pinned historical schema fixture across Windows checkouts.
+/mvp/tests/fixtures/schema_v1_0.sql -text
