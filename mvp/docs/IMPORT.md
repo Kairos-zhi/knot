@@ -7,7 +7,10 @@
 ## 从建库到导入
 
 在安装了requirements-dev.txt的Python环境中，以下baseline目录指你准备好的来源根；
-candidate/knot.db须位于来源树外。初始化只用于新库，已有库按SCHEMA文档迁移。[I01]
+candidate/knot.db须位于来源树外。初始化只用于新库：已有文件、目录或软链一律非交互拒绝，
+没有覆盖开关；同目录临时建库并自验后以硬链接发布，失败清理临时残留。
+stdout输出created/refused/failed的单行JSON，退出码分别为0/1/1，人话写stderr。
+已有库按SCHEMA文档迁移，不用初始化命令替换。[I01]
 
 ```sh
 python -m mvp.backend.init_db candidate/knot.db

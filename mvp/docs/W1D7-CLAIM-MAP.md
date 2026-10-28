@@ -9,8 +9,8 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 
 | 编号 | 断言 | 文件:行 |
 |---|---|---|
-| S01 | 新建候选库入口、父目录与SQL应用 | [mvp/backend/init_db.py:12-48](../backend/init_db.py#L12-L48)、[92-100](../backend/init_db.py#L92-L100) |
-| S02 | 已有文件确认后删除；新库四版本记录 | [mvp/backend/init_db.py:23-31](../backend/init_db.py#L23-L31)、[mvp/backend/schema_v1.sql:186-201](../backend/schema_v1.sql#L186-L201) |
+| S01 | 新建候选库入口、父目录与SQL应用 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/main；[初始化测试](../tests/test_init_db.py) |
+| S02 | 非交互拒绝已有文件／目录／软链，无覆盖开关；同目录临时建库、自验、硬链接原子发布、只读读回，失败清理；stdout单行JSON及0/1退出码；新库四版本记录 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/_validate/_readback/main、[初始化测试](../tests/test_init_db.py)、[mvp/backend/schema_v1.sql:186-201](../backend/schema_v1.sql#L186-L201) |
 | S03 | WAL与逐连接FK启用 | [mvp/backend/schema_v1.sql:5-6](../backend/schema_v1.sql#L5-L6)、[mvp/backend/_db.py:58-62](../backend/_db.py#L58-L62)、[mvp/backend/migrate_fts_v1_1.py:36-40](../backend/migrate_fts_v1_1.py#L36-L40)、[migrate_schema_v1_2.py:29-33](../backend/migrate_schema_v1_2.py#L29-L33)、[migrate_schema_v1_3.py:44-48](../backend/migrate_schema_v1_3.py#L44-L48) |
 | S04 | 七业务表＋版本表；FTS另列 | [mvp/backend/schema_v1.sql:13-193](../backend/schema_v1.sql#L13-L193)，八个普通CREATE TABLE与一个CREATE VIRTUAL TABLE；本轮表名实读见EVIDENCE |
 | S05 | assets列、PK、无FK、三显式索引 | [mvp/backend/schema_v1.sql:13-28](../backend/schema_v1.sql#L13-L28) |
@@ -35,7 +35,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | S24 | 空blob与NULL边界、list_unindexed仅按NULL、没有UPDATE trigger | [mvp/tests/test_fts.py:33-56](../tests/test_fts.py#L33-L56)、[mvp/backend/asset_repo.py:80-90](../backend/asset_repo.py#L80-L90)、[mvp/backend/schema_v1.sql:139-149](../backend/schema_v1.sql#L139-L149) |
 | S25 | 已有库mode=rw及FTS rebuild命令 | [mvp/backend/_db.py:17-19](../backend/_db.py#L17-L19)、[mvp/tests/test_fts.py:41-48](../tests/test_fts.py#L41-L48) |
 | S26 | rebuild不从assets补FTS内容、不读file_path | [mvp/backend/schema_v1.sql:133-137](../backend/schema_v1.sql#L133-L137)，自持表；[EVIDENCE的可执行临时库实验](W1D7-EVIDENCE.md#fts-rebuild的能力边界实读)，实读19→18后不回填 |
-| S27 | 1.0初始化而非幂等迁移SQL；历史提交197aa5e | [mvp/backend/init_db.py:23-48](../backend/init_db.py#L23-L48)、[mvp/backend/schema_v1.sql:26-28](../backend/schema_v1.sql#L26-L28)、[186-187](../backend/schema_v1.sql#L186-L187)，git log --follow实读 |
+| S27 | 1.0初始化而非幂等迁移SQL；历史提交197aa5e | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database、[mvp/backend/schema_v1.sql:26-28](../backend/schema_v1.sql#L26-L28)、[186-187](../backend/schema_v1.sql#L186-L187)，git log --follow实读 |
 | S28 | 1.1版本前置、DROP/重建/重灌、历史提交2a8dc18 | [mvp/backend/migrate_fts_v1_1.py:28-63](../backend/migrate_fts_v1_1.py#L28-L63)，版本拒绝44-45，重灌51-54 |
 | S29 | 1.2增量表、版本接受条件与无回填，历史提交43343ff | [mvp/backend/migrate_schema_v1_2.py:26-46](../backend/migrate_schema_v1_2.py#L26-L46)、[mvp/backend/schema_v1.sql:169-177](../backend/schema_v1.sql#L169-L177) |
 | S30 | 旧两个显式迁移CLI及顺序前置；第三步见S39 | [mvp/backend/migrate_fts_v1_1.py:44-45](../backend/migrate_fts_v1_1.py#L44-L45)、[66-70](../backend/migrate_fts_v1_1.py#L66-L70)、[migrate_schema_v1_2.py:35-37](../backend/migrate_schema_v1_2.py#L35-L37)、[49-53](../backend/migrate_schema_v1_2.py#L49-L53) |
@@ -46,7 +46,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | S35 | 旧schema的固定SHA与迁移参考用途 | [mvp/tests/test_fts.py:17](../tests/test_fts.py#L17)、[65-71](../tests/test_fts.py#L65-L71) |
 | S36 | 原算法固定SHA与三组循环用途 | [mvp/tests/test_frontier17.py:22-51](../tests/test_frontier17.py#L22-L51)、[72-84](../tests/test_frontier17.py#L72-L84) |
 | S37 | 两项-text与CI常量校验 | [.gitattributes:2-3](../../.gitattributes#L2-L3)、[.github/workflows/ci.yml:29-35](../../.github/workflows/ci.yml#L29-L35) |
-| S38 | 1.3版本行及同刻同事件唯一索引；重复拒绝、不同事件允许 | [mvp/backend/schema_v1.sql:195-201](../backend/schema_v1.sql#L195-L201)、[mvp/tests/test_schema_v1_3.py:56-82](../tests/test_schema_v1_3.py#L56-L82)、[mvp/backend/init_db.py:54](../backend/init_db.py#L54) |
+| S38 | 1.3版本行及同刻同事件唯一索引；重复拒绝、不同事件允许 | [mvp/backend/schema_v1.sql:195-201](../backend/schema_v1.sql#L195-L201)、[mvp/tests/test_schema_v1_3.py:56-82](../tests/test_schema_v1_3.py#L56-L82)、[mvp/backend/init_db.py](../backend/init_db.py) 的 _validate |
 | S39 | 仅1.2升级、1.3幂等；全部冲突先报、事务回滚、无自动去重；不兼容索引拒绝 | [mvp/backend/migrate_schema_v1_3.py:41-79](../backend/migrate_schema_v1_3.py#L41-L79)、[CLI:82-90](../backend/migrate_schema_v1_3.py#L82-L90)、[mvp/tests/test_schema_v1_3.py:85-127](../tests/test_schema_v1_3.py#L85-L127)、[159-185](../tests/test_schema_v1_3.py#L159-L185) |
 | S40 | 未迁移1.2同刻重复合法且后写胜；合规1.3库兜底不可达，读取SQL及≤T不变 | [mvp/backend/frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[mvp/backend/schema_v1.sql:196-197](../backend/schema_v1.sql#L196-L197)、[mvp/tests/test_schema_v1_3.py:188-198](../tests/test_schema_v1_3.py#L188-L198)、[56-82](../tests/test_schema_v1_3.py#L56-L82) |
 
@@ -54,7 +54,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 
 | 编号 | 断言 | 文件:行 |
 |---|---|---|
-| I01 | CLI从仓库根、新库初始化、源与目标隔离 | [mvp/backend/init_db.py:21-48](../backend/init_db.py#L21-L48)、[mvp/backend/import_baseline.py:110-116](../backend/import_baseline.py#L110-L116)、[178-189](../backend/import_baseline.py#L178-L189) |
+| I01 | CLI从仓库根、新库初始化拒绝已有目标、源与目标隔离 | [mvp/backend/init_db.py](../backend/init_db.py) 的 init_database/main、[mvp/backend/import_baseline.py:110-116](../backend/import_baseline.py#L110-L116)、[178-189](../backend/import_baseline.py#L178-L189) |
 | I02 | 两必传参数；预检后精确查1.1记录，缺则报错、不建库 | [mvp/backend/import_baseline.py:110-123](../backend/import_baseline.py#L110-L123)、[178-189](../backend/import_baseline.py#L178-L189)、[mvp/backend/_db.py:17-19](../backend/_db.py#L17-L19) |
 | I03 | 五种后缀映射、小写化、未知类型失败 | [mvp/backend/import_baseline.py:22-26](../backend/import_baseline.py#L22-L26)、[126-127](../backend/import_baseline.py#L126-L127)、[168-169](../backend/import_baseline.py#L168-L169) |
 | I04 | 非zip且≤1,000,000B，JSON同样可内嵌 | [mvp/backend/import_baseline.py:21-26](../backend/import_baseline.py#L21-L26)、[135](../backend/import_baseline.py#L135)、[mvp/tests/test_import.py:110-122](../tests/test_import.py#L110-L122) |
