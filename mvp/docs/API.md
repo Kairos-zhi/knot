@@ -169,7 +169,9 @@ incremental_from_db(conn, snapshot_time, old_snapshot_time,
 
 三个适配函数只执行 SELECT，连接与一致性读事务由调用方管理。
 `load_state` 返回 `(atoms, mapping, eligible, rules)`：atoms 为活跃指定版本
-规则 head/body 的并集并排序；eligible 采用指定 snapshot_time 的精确匹配；
+规则 head/body 的并集并排序；eligible 通过 `eligible_at(conn, T)` 读取：每个事件
+取 `snapshot_time <= T` 的最后状态并carry-forward。沉默不改变状态，撤权粘滞，
+取消撤权须显式新增is_eligible=1行；同刻多行按最大rowid兜底（未来唯一约束另卡）。
 mapping 始终来自 event_atom_map。可选 event_atom 仅做一致性断言，传值与表
 不一致即 ValueError，不能覆盖库中映射。
 

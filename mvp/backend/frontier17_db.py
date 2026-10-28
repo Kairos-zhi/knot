@@ -10,10 +10,21 @@ import json
 from .frontier17 import Rule, evaluate_scc_full, incremental_scc
 
 
-def _eligible(conn, snapshot_time):
+def eligible_at(conn, snapshot_time):
+    """Carry the last state at or before T forward for each event.
+
+    Equal-time rows currently fall back to largest rowid (last write wins).
+    This is a read fallback, not a substitute for a future uniqueness rule.
+    """
     return frozenset(r[0] for r in conn.execute(
-        """SELECT event_id FROM eligible_snapshots
-           WHERE snapshot_time=? AND is_eligible=1""", (snapshot_time,),
+        """SELECT event_id FROM (
+               SELECT event_id, is_eligible,
+                      ROW_NUMBER() OVER (
+                          PARTITION BY event_id
+                          ORDER BY snapshot_time DESC, rowid DESC
+                      ) AS rn
+               FROM eligible_snapshots WHERE snapshot_time <= ?
+           ) WHERE rn=1 AND is_eligible=1""", (snapshot_time,),
     ))
 
 
@@ -56,7 +67,7 @@ def load_state(conn, snapshot_time, *, event_atom=None, rule_version=1):
     mapping = {event: values[0] for event, values in grouped.items()}
     if event_atom is not None and event_atom != mapping:
         raise ValueError("event_atom must match the authoritative event_atom_map")
-    eligible = _eligible(conn, snapshot_time)
+    eligible = eligible_at(conn, snapshot_time)
     _validate_eligible(eligible, mapping, atoms)
     return atoms, mapping, eligible, rules
 
@@ -79,7 +90,7 @@ def incremental_from_db(
     atoms, mapping, eligible, rules = load_state(
         conn, snapshot_time, event_atom=event_atom, rule_version=rule_version,
     )
-    old_eligible = _eligible(conn, old_snapshot_time)
+    old_eligible = eligible_at(conn, old_snapshot_time)
     _validate_eligible(old_eligible, mapping, atoms)
     old = evaluate_scc_full(atoms, mapping, old_eligible, rules)
     support, _ = incremental_scc(atoms, mapping, old_eligible, eligible, rules, old)

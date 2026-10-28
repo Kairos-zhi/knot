@@ -15,7 +15,7 @@ import pytest
 
 from mvp.backend import frontier17 as port
 from mvp.backend.frontier17_db import (
-    evaluate_from_db, incremental_from_db, load_state,
+    eligible_at, evaluate_from_db, incremental_from_db, load_state,
 )
 
 
@@ -197,3 +197,39 @@ def test_db_missing_mapping_and_unknown_atom_fail_explicitly(db):
     db.execute("INSERT INTO event_atom_map VALUES ('ez','unknown','user',0)")
     with pytest.raises(ValueError, match="outside the rule vocabulary"):
         evaluate_from_db(db, 20, rule_version=7)
+
+
+def test_db_carry_forward_revocation_and_explicit_restore(db):
+    # Missing rows after T do not erase the last state, including revocations.
+    db.execute(
+        """INSERT INTO eligible_snapshots
+           (snapshot_id,snapshot_time,event_id,is_eligible)
+           VALUES ('restore-x',40,'ex',1)"""
+    )
+    for time, expected in (
+        (9, set()), (10, {"ex", "ez"}), (15, {"ex", "ez"}),
+        (20, {"ez"}), (30, {"ez"}), (35, {"ez"}),
+        (40, {"ex", "ez"}), (50, {"ex", "ez"}),
+    ):
+        assert eligible_at(db, time) == expected
+        assert load_state(db, time, rule_version=7)[2] == expected
+        expected_roots = frozenset(frozenset({e}) for e in expected)
+        full = evaluate_from_db(db, time, rule_version=7)
+        assert full["p"] == expected_roots
+        assert incremental_from_db(db, time, 10, rule_version=7) == full
+
+
+def test_db_same_time_last_rowid_wins(db):
+    for suffix, state in (("first", 1), ("last", 0)):
+        db.execute(
+            """INSERT INTO eligible_snapshots
+               (snapshot_id,snapshot_time,event_id,is_eligible) VALUES (?,30,'ex',?)""",
+            (suffix, state),
+        )
+    assert eligible_at(db, 30) == {"ez"}
+    assert eligible_at(db, 31) == {"ez"}
+    db.execute(
+        """INSERT INTO eligible_snapshots
+           (snapshot_id,snapshot_time,event_id,is_eligible) VALUES ('again',30,'ex',1)"""
+    )
+    assert eligible_at(db, 30) == {"ex", "ez"}
