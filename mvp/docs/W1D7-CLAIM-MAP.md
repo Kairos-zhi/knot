@@ -81,7 +81,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 
 | 编号 | 断言 | 代码位置与可复核记录 |
 |---|---|---|
-| R01 | main核验基线1ea1dfa、PR #25已合 | git rev-parse main、gh pr view 25，原始摘要见[实读证据](W1D7-EVIDENCE.md#github状态实读而非由workflow推断保护已开) |
+| R01 | 文档开工的历史基线1ea1dfa、PR #25已合 | 开工时git rev-parse main、gh pr view 25，原始摘要见[实读证据](W1D7-EVIDENCE.md#github状态实读而非由workflow推断保护已开)，不是当前main指针 |
 | R02 | 当前schema1.2、八普通表/FTS与显式迁移 | S04～S12、S28～S31，对应schema_v1.sql:13-193及两迁移器 |
 | R03 | Repo、carry-forward和稳定支持族已实现 | [mvp/backend/asset_repo.py:9-90](../backend/asset_repo.py#L9-L90)、[event_store.py:16-77](../backend/event_store.py#L16-L77)、[rule_registry.py:8-59](../backend/rule_registry.py#L8-L59)、[frontier17_db.py:13-28](../backend/frontier17_db.py#L13-L28)、[support_view.py:7-36](../backend/support_view.py#L7-L36) |
 | R04 | 候选导入22资产/22事件/19+3，不是生产部署 | I21～I24及EVIDENCE的真实来源临时库命令/输出 |
@@ -90,7 +90,7 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | R07 | CI的Python3.12、完整测试和独立字节校验 | [.github/workflows/ci.yml:11-35](../../.github/workflows/ci.yml#L11-L35) |
 | R08 | main CI成功且有效规则要求ci | workflow仅证明job命名；远端run与rules必须读API，命令/实际结果见EVIDENCE，未用配置文件冒充保护已开 |
 | R09 | 两个文档入口可定位，放mvp/docs而非旧docs | README从这里读的新链接及本卡两个文件；位置偏离记录见EVIDENCE首节 |
-| R10 | 当前Day7候选仍待推送CI/最终合并，不替代整体接受 | 本轮只读Git状态及用户任务卡范围；AGENTS.md的Maker/Checker/不自验收约束，不是业务功能断言 |
+| R10 | 实时交付状态查任务卡、独立回执、PR与CI | AGENTS.md的Maker/Checker/不自验收约束及对应交付记录；README不维护本卡推送/合并中的临时状态 |
 
 ## 核对方法
 
