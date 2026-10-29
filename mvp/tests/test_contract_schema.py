@@ -1,4 +1,4 @@
-"""Executable structural examples for the locked C1 v1.2-draft contract.
+"""Executable structural examples for the locked C1 v1.3-draft contract.
 
 jsonschema is a test dependency only. These examples validate definitions,
 not HTTP routing or runtime authorization behavior.
@@ -41,13 +41,16 @@ ASSET = {
 ERROR = {"code": "BAD_AS_OF", "message": "future time", "detail": {"as_of": 3000}}
 
 VALID = {
+    "OkEnvelopeViewed": {
+        "contract_version": 1, "ok": True, "view": "meta", "value": ASSET,
+    },
     "OkEnvelopeTimed": {
         "contract_version": 1, "ok": True, "as_of": 2000,
         "view": "boolean", "value": {"boolean": True},
     },
     "ContractInfo": {
         "contract_version": 1,
-        "schema_sha256": "07ba911f3797cb4d45f615b10a149b034e1821c1b2b28c267f19a185176b6b57",
+        "schema_sha256": "ccc315c64af924ca961d0866f8093484c1e721c14b07811300fdce9fee2244cb",
     },
     "OkEnvelope": {
         "contract_version": 1, "ok": True, "as_of": 2000,
@@ -93,6 +96,7 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "OkEnvelopeViewed": ("view", "unknown"),
     "OkEnvelopeTimed": ("as_of", None),
     "ContractInfo": ("schema_sha256", 1),
     "OkEnvelope": ("contract_version", 2),
@@ -127,14 +131,14 @@ def test_contract_meta_schema():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 18
+    assert len(SCHEMA["$defs"]) == 19
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
 @pytest.mark.parametrize("name", VALID)
 def test_valid_definition_example(name):
     definition_validator(name).validate(VALID[name])
-    if name in ("OkEnvelope", "OkEnvelopeTimed", "ErrorEnvelope"):
+    if name in ("OkEnvelope", "OkEnvelopeTimed", "OkEnvelopeViewed", "ErrorEnvelope"):
         Draft202012Validator(SCHEMA).validate(VALID[name])
 
 
@@ -152,6 +156,20 @@ def test_timed_envelope_requires_as_of():
     del specimen["as_of"]
     with pytest.raises(ValidationError):
         definition_validator("OkEnvelopeTimed").validate(specimen)
+
+
+def test_timed_envelope_requires_view():
+    specimen = deepcopy(VALID["OkEnvelopeTimed"])
+    del specimen["view"]
+    with pytest.raises(ValidationError):
+        definition_validator("OkEnvelopeTimed").validate(specimen)
+
+
+def test_viewed_envelope_requires_view():
+    specimen = deepcopy(VALID["OkEnvelopeViewed"])
+    del specimen["view"]
+    with pytest.raises(ValidationError):
+        definition_validator("OkEnvelopeViewed").validate(specimen)
 
 
 @pytest.mark.parametrize("field", ["candidate_level", "atom_level"])
@@ -195,3 +213,20 @@ def test_endpoint_methods_are_get_or_post():
     assert set(ENDPOINTS["method_whitelist"]) == {"GET", "POST"}
     for route in ENDPOINTS["routes"]:
         assert route["method"] in {"GET", "POST"}, route["path"]
+
+
+def test_endpoint_envelopes_are_plain_timed_or_viewed():
+    for route in ENDPOINTS["routes"]:
+        assert route["envelope"] in {"plain", "timed", "viewed"}, route["path"]
+
+
+def test_endpoint_timed_envelopes_match_exact_routes():
+    assert {route["path"] for route in ENDPOINTS["routes"]
+            if route["envelope"] == "timed"} == {
+        "/snapshot", "/claims", "/claims/{claim_id}",
+    }
+
+
+def test_endpoint_viewed_envelopes_match_exact_routes():
+    assert {route["path"] for route in ENDPOINTS["routes"]
+            if route["envelope"] == "viewed"} == {"/assets/{asset_id}"}

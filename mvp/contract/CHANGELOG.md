@@ -1,19 +1,19 @@
 # HTTP 契约 v1 定稿
 
-本次 C1 以锁定的 v1.2-draft 定稿：[v1/schema.json](v1/schema.json) 是 JSON 形状正本，[v1/endpoints.json](v1/endpoints.json) 是路由与参数正本。`contract_version = 1`，采用 JSON Schema draft 2020-12；保留源文件的 draft 标题。定稿指本卡规范版本锁定，不表示已合并、服务已实现或产品已接受。
+本次 C1 以锁定的 v1.3-draft 定稿：[v1/schema.json](v1/schema.json) 是 JSON 形状正本，[v1/endpoints.json](v1/endpoints.json) 是路由与参数正本。`contract_version = 1`，采用 JSON Schema draft 2020-12；保留源文件的 draft 标题。定稿指本卡规范版本锁定，不表示已合并、服务已实现或产品已接受。
 
 ## 来源与偏离
 
-来源：任务卡 `KNOT-MVP-HTTP-CONTRACT-001`、C1 修正轮及其两份 v1.2-draft 附录。逐字节复制后的 SHA256：
+来源：任务卡 `KNOT-MVP-HTTP-CONTRACT-001`、C1 修正轮 r3 及其两份 v1.3-draft 附录。逐字节复制后的 SHA256：
 
-- schema.json：`07ba911f3797cb4d45f615b10a149b034e1821c1b2b28c267f19a185176b6b57`
-- endpoints.json：`a8a1350ad27b02a1ebb1309be046d66c0ba33206f1717d3f715dd98802f7ea0d`
+- schema.json：`ccc315c64af924ca961d0866f8093484c1e721c14b07811300fdce9fee2244cb`
+- endpoints.json：`d1c38899614c4939cd67c058a17d643f9fd3205cf4f23716bdc24a8afc9f6565`
 
-相对锁定版本零偏离。原版 45ec…、v1.1 的 1d358e… 及旧 workspace 的 f545bb… 均不再作为定稿依据；不修改业务库 schema。
+相对锁定版本零偏离。此前各轮锁定值均已作废，不保留旧 JSON 副本；不修改业务库 schema。
 
 ## 端点表
 
-下表对齐 endpoints.json 的 10 条路由；C2 路由表必须与它 1:1。普通 JSON 成功响应用 OkEnvelope，timed 的三条路由用 OkEnvelopeTimed，失败用 ErrorEnvelope；`value` 按响应定义另行校验，根信封不自动约束端点 payload。SSE 数据为 ChangeEvent。参数默认、状态码、错误码以路由正本为准。
+下表对齐 endpoints.json 的 10 条路由；C2 路由表必须与它 1:1。成功信封逐条按 envelope 指定：plain 用 OkEnvelope，timed 的三条路由用 OkEnvelopeTimed，viewed 的资产端点用 OkEnvelopeViewed；失败用 ErrorEnvelope。`value` 按响应定义另行校验，根信封不自动约束端点 payload。SSE 数据为 ChangeEvent。参数默认、状态码、错误码以路由正本为准。
 
 | 方法 | 端点 | 参数／响应定义 |
 |---|---|---|
@@ -58,20 +58,25 @@ trace 断链、成环、超深度分别返回对应错误，不返回半截路�
 同版本只许新增可选字段；删除、改名、改类型一律 `contract_version + 1`。新增错误码也必须升版。
 前端读取 `/contract` 比较版本及 schema_sha256，不匹配则拒绝渲染，不静默降级。
 数据库 schema_version 与 HTTP contract_version 分开，不互相推断。
+信封类型是契约的一部分，C2 不许自选。
 
 ## v1.1 / v1.2 修订沿革与五条缺口处置
 
-以下为定稿前的修订，不是同一已发布版本的兼容变更；18 个定义及 10 条路由以本次锁定件为准。
+以下为定稿前的修订，不是同一已发布版本的兼容变更；19 个定义及 10 条路由以本次锁定件为准。
 
 | 原缺口 | 已定处置 |
 |---|---|
 | ① AtomSupport 必填 minimal_roots 与 boolean 档冲突；Snapshot.view 不含 content | v1.1：minimal_roots 改可选；Snapshot.view 仍限 boolean/roots，description 明确 content 只属于资产端点。 |
 | ② 资产 meta/content 在信封无对应 | v1.2：信封 view 为四档阶梯 boolean → roots → meta → content；meta 是资产元数据档，不含正文。 |
 | ③ 二进制 content=null + path 与原类型／封闭属性冲突 | v1.1：content 可 null、path 进入 properties；if/then/else 要求 encoding=none 时必须含 path 且 content=null，其他编码 content 为 string。 |
-| ④ as_of/view 可选，无法强制回显 | v1.2：新增 OkEnvelopeTimed，强制整数 as_of；/snapshot、/claims、/claims/{claim_id} 使用。timed 仅按 endpoints.json 的 as_of=true 判定；/health、/jobs/{job_id}、/trace/{claim_id}、/contract 不是 timed，其余路由亦标 false。view 字段仍可选，按实际档位回显的义务由 C2 行为校验。 |
+| ④ as_of/view 可选，无法强制回显 | v1.2：新增 OkEnvelopeTimed，强制整数 as_of；v1.3 再强制 view，并新增 OkEnvelopeViewed 强制资产端点回显 view。信封类型由 endpoints.json 的 envelope 逐条指定。 |
 | ⑤ 只有 payload 形状，无路由与参数 | v1.2：新增 endpoints.json，含方法、路径、参数、响应定义、错误码、状态码与 timed 标记；C2 逐条一致。 |
 
 v1.2 同时将 Claim.candidate_level / atom_level 改为必填，新增 ContractInfo 作为 /contract 响应定义。以上五项处置已确定，不再挂为规范未决。
+
+## v1.3 修订沿革
+
+OkEnvelopeTimed.required 增加 view，三个 timed 端点必须同时回显整数 as_of 与 view。新增 OkEnvelopeViewed，用于 `/assets/{asset_id}`，强制 view 而不强制 as_of。endpoints.json 顶层增加 ok_viewed 映射，10 条路由各自以 envelope 指定 plain / timed / viewed，C2 不得根据 as_of 猜选信封。这些仍属定稿前修订，contract_version 保持 1。
 
 ## 已知边界与后续验证
 

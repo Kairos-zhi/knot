@@ -1,9 +1,10 @@
 {
   "contract_version": 1,
-  "note": "路由与参数的机器可读正本。C2 的路由表必须与本文件一一对应（多一条少一条都算失败，见任务卡 AC-3）。response 指向 schema.json 的 $defs 名；响应一律包 OkEnvelope / OkEnvelopeTimed / ErrorEnvelope。",
+  "note": "路由与参数的机器可读正本。C2 的路由表必须与本文件一一对应（多一条少一条都算失败，见任务卡 AC-3）。response 指向 schema.json 的 $defs 名；响应一律包 OkEnvelope / OkEnvelopeTimed / ErrorEnvelope。 envelope 字段逐条指定该端点必须用哪种成功信封（plain / timed / viewed），C2 不许自选。",
   "envelope": {
     "ok": "OkEnvelope",
     "ok_timed": "OkEnvelopeTimed",
+    "ok_viewed": "OkEnvelopeViewed",
     "error": "ErrorEnvelope"
   },
   "routes": [
@@ -14,7 +15,10 @@
       "response": "ContractInfo",
       "as_of": false,
       "errors": [],
-      "status": [200]
+      "status": [
+        200
+      ],
+      "envelope": "plain"
     },
     {
       "method": "GET",
@@ -23,84 +27,227 @@
       "response": "Health",
       "as_of": false,
       "errors": [],
-      "status": [200]
+      "status": [
+        200
+      ],
+      "envelope": "plain"
     },
     {
       "method": "GET",
       "path": "/snapshot",
       "params": [
-        { "name": "as_of", "type": "integer", "required": false, "default": "now", "description": "Unix ms；缺省取服务端当前时刻。未来时间 → BAD_AS_OF。" },
-        { "name": "view", "type": "string", "enum": ["boolean", "roots"], "required": false, "default": "roots" },
-        { "name": "rule_version", "type": "integer", "required": false, "default": 1 }
+        {
+          "name": "as_of",
+          "type": "integer",
+          "required": false,
+          "default": "now",
+          "description": "Unix ms；缺省取服务端当前时刻。未来时间 → BAD_AS_OF。"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "enum": [
+            "boolean",
+            "roots"
+          ],
+          "required": false,
+          "default": "roots"
+        },
+        {
+          "name": "rule_version",
+          "type": "integer",
+          "required": false,
+          "default": 1
+        }
       ],
       "response": "Snapshot",
       "as_of": true,
-      "errors": ["BAD_AS_OF", "BAD_REQUEST", "SCHEMA_VERSION_UNSUPPORTED"],
-      "status": [200]
+      "errors": [
+        "BAD_AS_OF",
+        "BAD_REQUEST",
+        "SCHEMA_VERSION_UNSUPPORTED"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "timed"
     },
     {
       "method": "GET",
       "path": "/claims",
       "params": [
-        { "name": "as_of", "type": "integer", "required": false, "default": "now" },
-        { "name": "status", "type": "string", "enum": ["unconfirmed", "confirmed", "revoked"], "required": false },
-        { "name": "atom", "type": "string", "required": false },
-        { "name": "limit", "type": "integer", "required": false, "default": 50, "max": 200 },
-        { "name": "cursor", "type": "string", "required": false }
+        {
+          "name": "as_of",
+          "type": "integer",
+          "required": false,
+          "default": "now"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "enum": [
+            "unconfirmed",
+            "confirmed",
+            "revoked"
+          ],
+          "required": false
+        },
+        {
+          "name": "atom",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "limit",
+          "type": "integer",
+          "required": false,
+          "default": 50,
+          "max": 200
+        },
+        {
+          "name": "cursor",
+          "type": "string",
+          "required": false
+        }
       ],
       "response": "ClaimList",
       "as_of": true,
-      "errors": ["BAD_AS_OF", "BAD_REQUEST"],
-      "status": [200]
+      "errors": [
+        "BAD_AS_OF",
+        "BAD_REQUEST"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "timed"
     },
     {
       "method": "GET",
       "path": "/claims/{claim_id}",
       "params": [
-        { "name": "claim_id", "in": "path", "type": "string", "required": true },
-        { "name": "as_of", "type": "integer", "required": false, "default": "now" },
-        { "name": "view", "type": "string", "enum": ["roots", "boolean"], "required": false, "default": "roots" }
+        {
+          "name": "claim_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "as_of",
+          "type": "integer",
+          "required": false,
+          "default": "now"
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "enum": [
+            "roots",
+            "boolean"
+          ],
+          "required": false,
+          "default": "roots"
+        }
       ],
       "response": "Claim",
       "as_of": true,
-      "errors": ["BAD_AS_OF", "BAD_REQUEST", "NOT_FOUND"],
-      "status": [200]
+      "errors": [
+        "BAD_AS_OF",
+        "BAD_REQUEST",
+        "NOT_FOUND"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "timed"
     },
     {
       "method": "GET",
       "path": "/assets/{asset_id}",
       "params": [
-        { "name": "asset_id", "in": "path", "type": "string", "required": true },
-        { "name": "view", "type": "string", "enum": ["meta", "content"], "required": false, "default": "meta", "description": "meta=元数据（信封 view=meta）；content=正文（信封 view=content）。" }
+        {
+          "name": "asset_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "enum": [
+            "meta",
+            "content"
+          ],
+          "required": false,
+          "default": "meta",
+          "description": "meta=元数据（信封 view=meta）；content=正文（信封 view=content）。"
+        }
       ],
       "response": "AssetMeta|AssetContent",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "NOT_FOUND", "FORBIDDEN_VIEW"],
-      "status": [200]
+      "errors": [
+        "BAD_REQUEST",
+        "NOT_FOUND",
+        "FORBIDDEN_VIEW"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "viewed"
     },
     {
       "method": "GET",
       "path": "/trace/{claim_id}",
       "params": [
-        { "name": "claim_id", "in": "path", "type": "string", "required": true },
-        { "name": "max_depth", "type": "integer", "required": false, "default": 5, "min": 1 }
+        {
+          "name": "claim_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "max_depth",
+          "type": "integer",
+          "required": false,
+          "default": 5,
+          "min": 1
+        }
       ],
       "response": "Trace",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "NOT_FOUND", "TRACE_BROKEN", "TRACE_CYCLE", "TRACE_DEPTH_EXCEEDED"],
-      "status": [200]
+      "errors": [
+        "BAD_REQUEST",
+        "NOT_FOUND",
+        "TRACE_BROKEN",
+        "TRACE_CYCLE",
+        "TRACE_DEPTH_EXCEEDED"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "plain"
     },
     {
       "method": "GET",
       "path": "/events",
       "params": [
-        { "name": "since", "type": "integer", "required": false, "default": 0, "min": 0 }
+        {
+          "name": "since",
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "min": 0
+        }
       ],
       "response": "ChangeEvent",
       "as_of": false,
       "stream": "text/event-stream",
-      "errors": ["BAD_REQUEST"],
-      "status": [200]
+      "errors": [
+        "BAD_REQUEST"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "plain"
     },
     {
       "method": "POST",
@@ -109,23 +256,44 @@
       "params": [],
       "response": "CommandResult",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "COMMAND_NOT_ALLOWED", "UNAUTHORIZED"],
-      "status": [200, 202],
-      "description": "200=同步命令已落地（event_id 非空）；202=异步（job_id 非空，轮询 /jobs/{job_id}）。两者恰好一个非空。"
+      "errors": [
+        "BAD_REQUEST",
+        "COMMAND_NOT_ALLOWED",
+        "UNAUTHORIZED"
+      ],
+      "status": [
+        200,
+        202
+      ],
+      "description": "200=同步命令已落地（event_id 非空）；202=异步（job_id 非空，轮询 /jobs/{job_id}）。两者恰好一个非空。",
+      "envelope": "plain"
     },
     {
       "method": "GET",
       "path": "/jobs/{job_id}",
       "params": [
-        { "name": "job_id", "in": "path", "type": "string", "required": true }
+        {
+          "name": "job_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
       ],
       "response": "Job",
       "as_of": false,
-      "errors": ["NOT_FOUND"],
-      "status": [200]
+      "errors": [
+        "NOT_FOUND"
+      ],
+      "status": [
+        200
+      ],
+      "envelope": "plain"
     }
   ],
-  "method_whitelist": ["GET", "POST"],
+  "method_whitelist": [
+    "GET",
+    "POST"
+  ],
   "forbidden_methods": {
     "PUT": "METHOD_NOT_ALLOWED",
     "PATCH": "METHOD_NOT_ALLOWED",
