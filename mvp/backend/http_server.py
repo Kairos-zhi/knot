@@ -319,6 +319,18 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("NOT_FOUND", 404)
             return job
         with read_snapshot(self.server.db) as conn:
+            if kind == "Bundle":
+                row = conn.execute("SELECT * FROM continuation_bundles WHERE bundle_id=?",
+                                   (p["bundle_id"],)).fetchone()
+                if row is None:
+                    raise Fault("NOT_FOUND", 404)
+                return dict(bundle_id=row["bundle_id"], created_at=row["created_at"],
+                            exported=bool(row["exported"]),
+                            authorized_assets=json.loads(row["authorized_assets"]),
+                            open_questions=[q["claim_id"] if isinstance(q, dict) else q
+                                            for q in json.loads(row["open_questions"] or "[]")],
+                            context_text=row["context_text"] if p["view"] == "content" else None,
+                            export_path=relative(row["bundle_id"] + ".md") if row["exported"] else None)
             if kind == "Snapshot":
                 support = compute_support(conn, p["as_of"], rule_version=p["rule_version"])
                 atoms = support["atoms"]
