@@ -1,4 +1,4 @@
-# SQLite 数据模型（v1.3）
+# SQLite 数据模型（v1.4）
 
 本文描述当前实现；逐条出处见[断言与代码映射](W1D7-CLAIM-MAP.md)。
 SQL定义仍以[schema_v1.sql](../backend/schema_v1.sql)为准。
@@ -15,9 +15,9 @@ python -m mvp.backend.init_db candidate/knot.db
 以硬链接原子发布，再只读读回目标。已有文件、目录或软链（含悬空软链）一律拒绝，
 不交互、不打开写、不覆盖；失败清理本次临时文件，不留下半成品。文件系统须支持硬链接。
 stdout为一行JSON，status为created/refused/failed；成功退出0，拒绝或失败退出1，人话写stderr。
-无覆盖开关；该命令不能代替迁移。新库包含1.0、1.1、1.2、1.3四行版本记录，不代表执行过四次生产迁移。[S02]
+无覆盖开关；该命令不能代替迁移。新库包含1.0、1.1、1.2、1.3、1.4五行版本记录，不代表执行过五次生产迁移。[S02][S41]
 
-schema启用WAL；外键开关属于连接，Repo及三个迁移器各自启用
+schema启用WAL；外键开关属于连接，Repo及迁移器各自启用
 `PRAGMA foreign_keys=ON`。自己建立SQLite连接写入时也须开启，否则不能依赖FK拦截。[S03]
 
 ## 七张业务表与版本表
@@ -108,6 +108,7 @@ with closing(sqlite3.connect(uri, uri=True)) as conn, conn:
 | 1.1 | `2a8dc18`的migrate_fts_v1_1：DROP旧派生FTS和两个触发器，重建并重灌非NULL blob | 仅接受含1.0且无其他未知版本的1.0/1.1库；1.2及更新版本库拒绝。[S28] |
 | 1.2 | `43343ff`的migrate_schema_v1_2：增量CREATE映射表/索引及首次版本行 | 版本集合限1.0/1.1/1.2且至少含1.1或1.2，不回填、不改旧业务表。[S29] |
 | 1.3 | `d074757`（TD01）的migrate_schema_v1_3：新增同刻同事件唯一索引及版本行 | 前置含1.2且无未知版本；全部冲突组先报错，拒绝自动去重；已是1.3须核对承诺结构，通过才返回created=false。[S38][S39] |
+| 1.4 | TD02的migrate_schema_v1_4：表尾追加source_label与source_members及版本行 | 需要1.3，由原1.3迁移器升级1.2或体检1.3；前置漂移为[KNOT-E031]。1.4重跑核两列，漂移／半成品以[KNOT-E032]拒绝，不采纳、不修复。[S41][S42] |
 
 在仓库根，对明确已有的候选库按需运行；不要在新版库倒跑旧迁移器：[S30]
 
@@ -115,10 +116,11 @@ with closing(sqlite3.connect(uri, uri=True)) as conn, conn:
 python -m mvp.backend.migrate_fts_v1_1 candidate/knot.db
 python -m mvp.backend.migrate_schema_v1_2 candidate/knot.db
 python -m mvp.backend.migrate_schema_v1_3 candidate/knot.db
+python -m mvp.backend.migrate_schema_v1_4 candidate/knot.db
 ```
 
-这三行表示1.0→1.1→1.2→1.3的顺序，已是1.1时从第二行开始，已是1.2时只执行第三行。
-已是1.3时重复第三行幂等；旧迁移器不接受1.3。三器均以mode=rw拒绝缺库、BEGIN IMMEDIATE包住变更，错误整体回滚；重复执行各自
+这四行表示1.0→1.1→1.2→1.3→1.4的顺序，已是1.1时从第二行开始，已是1.2时可直接执行第四行（内含1.3前置），已是1.3时执行第四行。
+已是1.4时仅重复第四行幂等；不能在新版库倒跑旧迁移器。各器以mode=rw拒绝缺库、BEGIN IMMEDIATE包住各自变更；1.4的1.3前置独立提交，随后两列及1.4版本行在同一事务提交或回滚。重复执行各自
 支持的版本不会重复灌入FTS行或改写已有版本记录时间。[S31]
 
 1.3迁移先按(snapshot_time,event_id)汇总全部重复组，错误列出每组时间、事件和行数。
@@ -135,6 +137,24 @@ python -m mvp.backend.migrate_schema_v1_3 candidate/knot.db
 错误码格式为`[KNOT-E0xx]`，消息以稳定码开头；首个条目`[KNOT-E031]`表示
 1.3版本行与承诺结构漂移。例如：
 `[KNOT-E031] schema drift: index uq_eligible_snapshot_event is missing; version row 1.3 present, no changes made`。[S39]
+
+### 1.4候选编号与包内来源
+
+`claims_candidates`在`reviewed_at`之后追加两列可空TEXT，无默认值、无新增索引或约束。
+`source_label`存抽取编号（如`T17-01`、`D-12`、`Q18-01`），NULL表示来源没有编号。
+`source_members`存包内成员路径的JSON数组，NULL表示来源就是资产本身（例如内嵌md），不是包内成员。
+`atom`仍为NOT NULL的规则词表原子，如`conditional_theorem`，不存编号；两列由后续抽取器写入，本卡不回填。[S41]
+
+迁移器先检查1.4标记，已存在时只核本版本承诺：表存在、两列存在、TEXT亲和且可空，
+通过才返回`created: false`，不改`applied_at`。未到1.4时复用1.3迁移器前置，
+随后重开事务核1.3及两列均不存在，执行两次ALTER、核结构、写1.4版本行。
+版本行在但缺列／类型不符／不可空，以及任一列已在但版本行缺失，均以E032拒绝，
+不补列、不补版本行；未标1.4且缺候选表以ValueError拒绝。[S42]
+
+| 错误码 | 含义 |
+|---|---|
+| `[KNOT-E031]` | 1.3承诺结构漂移，由原1.3迁移器前置体检报告。[S39][S42] |
+| `[KNOT-E032]` | 1.4候选来源列漂移或未标版本的半成品；只报告，不采纳、不修复。[S42] |
 
 ### 1.2不backfill的实际后果
 

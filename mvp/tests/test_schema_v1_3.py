@@ -59,7 +59,7 @@ def test_fresh_v1_3_index_and_write_rejection(tmp_path):
     with closing(sqlite3.connect(tmp_path / "fresh.db")) as conn, conn:
         conn.executescript(SCHEMA.read_text(encoding="utf-8"))
         assert conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [
-            ("1.0",), ("1.1",), ("1.2",), ("1.3",),
+            ("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",),
         ]
         assert conn.execute(
             "SELECT name FROM sqlite_master WHERE name='uq_eligible_snapshot_event'"
