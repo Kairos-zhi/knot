@@ -1,10 +1,11 @@
-"""Read-only JSON CLI for timeline events, asset metadata and candidates."""
+"""Read-only JSON CLI for events, asset metadata, candidates and support views."""
 
 import argparse
 import json
 import sqlite3
 
 from .timeline_query import asset_by_hash, claims_by_atom, events_range, read_snapshot
+from .claim_support import claim_support, claim_support_many
 
 
 class _Parser(argparse.ArgumentParser):
@@ -26,7 +27,12 @@ def main(argv=None):
     claims = commands.add_parser("claims")
     claims.add_argument("--atom", required=True)
     claims.add_argument("--limit", type=int, default=500)
-    for subcommand in (events, asset, claims):
+    support = commands.add_parser("support")
+    support.add_argument("--at", type=int, required=True)
+    selection = support.add_mutually_exclusive_group()
+    selection.add_argument("--atom")
+    selection.add_argument("--claim")
+    for subcommand in (events, asset, claims, support):
         subcommand.add_argument("--db", required=True)
     args = parser.parse_args(argv)
     try:
@@ -38,8 +44,20 @@ def main(argv=None):
                 if result is not None:
                     # This entry exposes metadata; embedded bodies require a separate API.
                     result.pop("content_blob")
-            else:
+            elif args.command == "claims":
                 result = claims_by_atom(conn, args.atom, limit=args.limit)
+            elif args.claim is not None:
+                # claim_support already pairs candidate truth with its native atom_view.
+                result = claim_support(conn, args.claim, at=args.at)
+            else:
+                claim_ids = None
+                if args.atom is not None:
+                    if not args.atom:
+                        raise ValueError("atom must be a non-empty string")
+                    claim_ids = [row[0] for row in conn.execute(
+                        "SELECT claim_id FROM claims_candidates WHERE atom=?", (args.atom,),
+                    )]
+                result = claim_support_many(conn, at=args.at, claim_ids=claim_ids)
         output = json.dumps(result, ensure_ascii=True)
     except (OSError, ValueError, OverflowError, sqlite3.Error) as exc:
         print(json.dumps({"error": str(exc)}, ensure_ascii=True))

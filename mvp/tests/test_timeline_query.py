@@ -10,6 +10,13 @@ import sys
 import pytest
 
 from mvp.backend.init_db import init_database
+from mvp.backend import knot_query as query
+from mvp.backend.asset_repo import AssetRepo
+from mvp.backend.event_store import EventStore
+from mvp.backend.claim_extractor import extract_claims
+from mvp.backend.claim_review import review_claim
+from mvp.backend.claim_support import claim_support, claim_support_many
+from mvp.backend.support_view import compute_support
 from mvp.backend.knot_query import main
 from mvp.backend.timeline_query import (
     asset_by_hash, claims_by_atom, events_range, read_snapshot,
@@ -196,7 +203,7 @@ def test_cli_single_connection_and_json(database, monkeypatch, capsys, args, exp
 
 
 @pytest.mark.parametrize('args,code', [
-    ([], 1), (['unknown'], 2), (['support'], 2),
+    ([], 1), (['unknown'], 2), (['unsupported-command'], 2),
     (['events'], 1), (['events', '--start', 'bad', '--end', '2'], 1),
     (['asset'], 1), (['claims', '--unknown'], 1),
 ])
@@ -259,3 +266,165 @@ def test_cli_directory_and_v13_are_json_errors(database, tmp_path, capsys):
         assert len(lines) == 1
         assert 'error' in json.loads(lines[0])
     assert database.read_bytes() == before
+
+
+class Repo(AssetRepo, EventStore):
+    pass
+
+
+@pytest.fixture
+def support_repo(tmp_path):
+    path = tmp_path / 'support #%.db'
+    assert init_database(path)['status'] == 'created'
+    repo = Repo(path)
+    data = b'D-01 D-02 T17-01 T17-02'
+    asset = repo.add_asset(hashlib.sha256(data).hexdigest(), 'text/markdown', content_blob=data)
+    repo.add_event('import', subject=asset, event_time=0)
+    assert extract_claims(repo, write=True)['inserted'] == 4
+    return repo
+
+
+def claim_id(repo, label):
+    return repo._one('SELECT claim_id FROM claims_candidates WHERE source_label=?', (label,))['claim_id']
+
+
+def run_support(repo, capsys, *options):
+    code = query.main(['support', '--db', str(repo.db_path), *options])
+    captured = capsys.readouterr()
+    assert not captured.err
+    assert len(captured.out.splitlines()) == 1
+    return code, json.loads(captured.out)
+
+
+def test_support_cli_native_single_batch_and_atom_views(support_repo, capsys):
+    repo = support_repo
+    cid = claim_id(repo, 'T17-01')
+    event = review_claim(repo, cid, decision='accept', now=100)['event_id']
+    code, single = run_support(repo, capsys, '--at', '100', '--claim', cid)
+    assert code == 0
+    with read_snapshot(repo.db_path) as conn:
+        assert single == claim_support(conn, cid, at=100)
+        assert single['atom_view'] == compute_support(conn, 100)['atoms'][single['atom']]
+        expected = claim_support_many(conn, at=100)
+    assert single['minimal_roots'] == [[event]]
+    code, batch = run_support(repo, capsys, '--at', '100')
+    assert code == 0 and batch == expected
+    code, filtered = run_support(repo, capsys, '--at', '100', '--atom', 'conditional_theorem')
+    assert code == 0 and len(filtered['claims']) == 2
+    assert filtered['counts'] == dict(confirmed=1, revoked=0, unconfirmed=1)
+    assert all(c['atom'] == 'conditional_theorem' for c in filtered['claims'])
+    code, absent = run_support(repo, capsys, '--at', '100', '--atom', 'unknown')
+    assert code == 0 and absent == dict(at=100, counts=dict(confirmed=0, revoked=0, unconfirmed=0), claims=[])
+
+
+def test_support_cli_unconditional_atom_does_not_confirm_claim(support_repo, capsys):
+    code, result = run_support(support_repo, capsys, '--at', '100', '--atom', 'decision')
+    assert code == 0
+    assert len(result['claims']) == 2
+    for claim in result['claims']:
+        assert claim['status'] == 'unconfirmed'
+        assert (claim['boolean'], claim['minimal_roots']) == (False, [])
+        assert claim['atom_view'] == dict(boolean=True, minimal_roots=[[]])
+
+
+def test_support_cli_one_read_transaction_no_changes(support_repo, capsys, monkeypatch):
+    original = sqlite3.connect
+    traces, connections = [], []
+    before = support_repo.db_path.read_bytes()
+
+    def connect(*args, **kwargs):
+        conn = original(*args, **kwargs)
+        connections.append(conn)
+        conn.set_trace_callback(traces.append)
+        return conn
+
+    monkeypatch.setattr(sqlite3, 'connect', connect)
+    code, result = run_support(support_repo, capsys, '--at', '100', '--atom', 'decision')
+    assert code == 0 and len(result['claims']) == 2
+    assert len(connections) == 1
+    assert traces.count('BEGIN') == traces.count('ROLLBACK') == 1
+    assert all(sql.split()[0] in ('BEGIN', 'SELECT', 'ROLLBACK') for sql in traces)
+    assert support_repo.db_path.read_bytes() == before
+    with pytest.raises(sqlite3.ProgrammingError):
+        connections[0].execute('SELECT 1')
+    print('support CLI: connect=1 BEGIN=1 ROLLBACK=1; no writes; byte-identical DB')
+
+
+def test_support_cli_concurrent_commit_does_not_mix_views(support_repo, capsys, monkeypatch):
+    repo = support_repo
+    cid = claim_id(repo, 'D-01')
+    native = query.claim_support_many
+
+    def concurrent(conn, **kwargs):
+        # read_snapshot's schema SELECT already fixed the snapshot before dispatch.
+        assert conn.in_transaction
+        with sqlite3.connect(repo.db_path, timeout=0) as writer:
+            writer.execute("INSERT INTO history_events(event_id,event_type,subject,event_time,recorded_at) "
+                           "VALUES ('confirm','user_confirm',?,100,100)", (cid,))
+            writer.execute("INSERT INTO event_atom_map(event_id,atom,created_at) VALUES ('confirm','decision',100)")
+            writer.execute("INSERT INTO eligible_snapshots(snapshot_id,snapshot_time,event_id,is_eligible,trust_level) "
+                           "VALUES ('snapshot',100,'confirm',1,'trusted')")
+        return native(conn, **kwargs)
+
+    monkeypatch.setattr(query, 'claim_support_many', concurrent)
+    code, old = run_support(repo, capsys, '--at', '100', '--atom', 'decision')
+    assert code == 0 and old['counts']['confirmed'] == 0
+    monkeypatch.setattr(query, 'claim_support_many', native)
+    code, new = run_support(repo, capsys, '--at', '100', '--atom', 'decision')
+    assert code == 0 and new['counts']['confirmed'] == 1
+    confirmed = next(c for c in new['claims'] if c['claim_id'] == cid)
+    assert confirmed['minimal_roots'] == [['confirm']]
+    print('support CLI barrier: timeout=0 writer COMMIT succeeded; same call confirmed=0; next call confirmed=1')
+
+
+@pytest.mark.parametrize('options', [
+    ['--at', '-1'], ['--at', str(2**63)], ['--at', '100', '--atom', ''],
+    ['--at', '100', '--claim', ''], ['--at', '100', '--claim', 'unknown'],
+])
+def test_support_cli_query_errors(support_repo, capsys, options):
+    code, result = run_support(support_repo, capsys, *options)
+    assert code == 1 and set(result) == {'error'}
+
+
+@pytest.mark.parametrize('options', [
+    [], ['--at', 'bad'], ['--at', '100', '--atom', 'decision', '--claim', 'id'],
+])
+def test_support_cli_parse_errors(support_repo, capsys, options):
+    with pytest.raises(SystemExit) as error:
+        query.main(['support', '--db', str(support_repo.db_path), *options])
+    assert error.value.code == 1
+    output = capsys.readouterr()
+    assert not output.err and len(output.out.splitlines()) == 1
+    assert set(json.loads(output.out)) == {'error'}
+
+
+def test_support_cli_missing_database_never_creates(tmp_path, capsys):
+    path = tmp_path / 'absent.db'
+    assert query.main(['support', '--db', str(path), '--at', '0']) == 1
+    assert set(json.loads(capsys.readouterr().out)) == {'error'}
+    assert not path.exists()
+
+
+def test_support_cli_atom_filter_is_not_truncated_at_500(support_repo, capsys):
+    with sqlite3.connect(support_repo.db_path) as conn:
+        conn.executemany(
+            "INSERT INTO claims_candidates(claim_id,claim_type,atom,extraction_method,proposed_at,source_label) "
+            "VALUES (?,'decision','decision','rule_based',0,?)",
+            [(f'bulk-{i}', f'D-{i+1000}') for i in range(501)],
+        )
+    code, result = run_support(support_repo, capsys, '--at', '100', '--atom', 'decision')
+    assert code == 0 and len(result['claims']) == 503
+    assert result['counts'] == dict(confirmed=0, revoked=0, unconfirmed=503)
+
+
+def test_support_cli_subprocess_json(support_repo):
+    root = Path(__file__).resolve().parents[2]
+    result = subprocess.run(
+        [sys.executable, '-m', 'mvp.backend.knot_query', 'support', '--db', str(support_repo.db_path),
+         '--at', '100', '--atom', 'decision'], cwd=root, capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert not result.stderr and len(result.stdout.splitlines()) == 1
+    value = json.loads(result.stdout)
+    assert value['counts'] == dict(confirmed=0, revoked=0, unconfirmed=2)
+    assert all(c['atom_view']['boolean'] and not c['boolean'] for c in value['claims'])
