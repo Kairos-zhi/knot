@@ -122,6 +122,18 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | C16 | 同刻幂等、相反状态唯一约束拒绝、并发确认只有一事件、非法时间及倒退拒绝，无覆写历史 | [claim_review.py](../backend/claim_review.py)：review_claim/_review/_append_snapshot；[test_claim_review.py](../tests/test_claim_review.py)：test_opposite_decision_same_millisecond_refused_without_rewriting/test_concurrent_same_time_accept_serializes_to_one_fact/test_snapshot_unique_conflict_returns_existing_id_only_for_achieved_state/test_invalid_timestamp_is_zero_write |
 | C17 | 确认事实与临时候选库演练分开；本卡不是自动确认、真实业务确认或产品接受 | [CLAIMS.md](CLAIMS.md)：确认与撤权/验证边界；本卡PR原始读回与独立复核 |
 
+## CLAIMS 候选级支持视图（W2D10）
+
+C16/C17 已用于 TD03，本卡从 C18 续编，保留已有断言编号。
+
+| 编号 | 断言 | 文件＋函数名 |
+|---|---|---|
+| C18 | 候选只按自身确认事件及快照判真；无条件原子真不代表候选真，同原子不串台；atom_view 原样旁证 | [claim_support.py](../backend/claim_support.py)：_views；[test_claim_support.py](../tests/test_claim_support.py)：test_unconditional_trap_and_same_atom_isolation/test_manual_markers_do_not_confirm_and_reject_without_event_is_unconfirmed |
+| C19 | ≤T 末行 carry-forward、撤权粘滞、恢复复用事件；无快照、多确认、无效状态和映射漂移报错 | [claim_support.py](../backend/claim_support.py)：_views；[test_claim_support.py](../tests/test_claim_support.py)：test_carry_forward_restoration_and_missing_historical_snapshot/test_defects_fail_without_changes_and_release_owned_transaction |
+| C20 | 过滤后计数、ID选择及去重、未知ID报错、稳定排序与JSON字节；110分布为合成回归，任务卡真实语料数字另述 | [claim_support.py](../backend/claim_support.py)：_views；[test_claim_support.py](../tests/test_claim_support.py)：test_batch_counts_filters_order_and_byte_stability；[CLAIMS.md](CLAIMS.md)：候选级支持视图 |
+| C21 | 单连接一致读事务，已有事务只参与；表内容和total_changes不变；并发提交本次不混视图、下次可见 | [claim_support.py](../backend/claim_support.py)：claim_support_many；[test_claim_support.py](../tests/test_claim_support.py)：test_read_only_one_transaction_and_atom_output_is_unmodified/test_existing_transaction_participates_without_commit_or_rollback/test_concurrent_commit_between_reads_does_not_mix_database_views |
+| C22 | CLI只读打开已有库、单候选/批量形态、单行JSON、错误退出1无部分结果；时间与过滤参数校验 | [claim_support.py](../backend/claim_support.py)：main/_Parser/claim_support_many；[test_claim_support.py](../tests/test_claim_support.py)：test_cli_single_batch_filter_and_external_cwd/test_cli_errors_single_json_without_partial_result/test_cli_missing_database_does_not_create_file/test_invalid_arguments |
+
 ## 核对方法
 
 代码位置均有文件内真实行；可用编辑器显示行号逐项看，也可运行：
