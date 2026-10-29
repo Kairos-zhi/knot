@@ -3,6 +3,8 @@
 import argparse
 import base64
 from copy import deepcopy
+import ctypes
+from datetime import datetime, timezone
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -67,9 +69,45 @@ class Server(ThreadingHTTPServer):
         try:
             self.lock_fd = self.lock.open("x", encoding="ascii")
         except FileExistsError:
-            raise Fault("SERVER_BUSY", 409) from None
+            def lock_pid():
+                try:
+                    value = json.loads(self.lock.read_text(encoding="ascii"))
+                    pid = value.get("pid") if isinstance(value, dict) else None
+                    return pid if type(pid) is int and 0 < pid <= 0x7fffffff else None
+                except (OSError, ValueError):
+                    return None
+
+            pid = lock_pid()
+            alive = False
+            if pid is not None:
+                if os.name == "nt":
+                    kernel32 = ctypes.windll.kernel32
+                    kernel32.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+                    kernel32.OpenProcess.restype = ctypes.c_void_p
+                    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+                    kernel32.CloseHandle.restype = ctypes.c_int
+                    handle = kernel32.OpenProcess(0x1000, False, pid)
+                    alive = bool(handle)
+                    if handle:
+                        kernel32.CloseHandle(handle)
+                else:
+                    try:
+                        os.kill(pid, 0)
+                        alive = True
+                    except ProcessLookupError:
+                        pass
+                    except PermissionError:
+                        alive = True
+            if alive:
+                raise Fault("SERVER_BUSY", 409, pid=pid, stale_checked=True) from None
+            try:
+                self.lock.unlink(missing_ok=True)
+                self.lock_fd = self.lock.open("x", encoding="ascii")
+            except OSError:
+                raise Fault("SERVER_BUSY", 409, pid=lock_pid(), stale_checked=True) from None
         try:
-            self.lock_fd.write(str(os.getpid()))
+            json.dump(dict(pid=os.getpid(), started_at=datetime.now(timezone.utc).isoformat(),
+                           db=hashlib.sha256(str(self.db).encode()).hexdigest()[:16]), self.lock_fd)
             self.lock_fd.flush()
             self.started = time.monotonic()
             self.changed = threading.Condition(threading.RLock())

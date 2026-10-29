@@ -63,7 +63,13 @@ C2 实现为 stdlib http.server + threading，绑定 127.0.0.1；默认端口 73
 python -m mvp.backend.http_server --db candidate/knot.db
 ```
 
-绑定地址固定为 `127.0.0.1`。端口优先级为显式 `--port`、`KNOT_PORT`、库同级 `.knot/http.port`、默认 `7318`；`--port 0` 用于临时测试，stdout 的 listening 行给出实际端口。状态目录固定在库同级 `.knot/`，不可另指定目录绕过单实例锁；锁内记录 PID，第二个进程返回 SERVER_BUSY。正常退出释放锁；异常退出的遗留锁不会自动抢占，先核实原进程及日志再人工处置。
+绑定地址固定为 `127.0.0.1`。端口优先级为显式 `--port`、`KNOT_PORT`、库同级 `.knot/http.port`、默认 `7318`；`--port 0` 用于临时测试，stdout 的 listening 行给出实际端口。状态目录固定在库同级 `.knot/`，不可另指定目录绕过单实例锁。
+
+## 锁与重启
+
+锁文件位于库同级 `.knot/http.lock`，JSON 记录 `pid`、UTC ISO8601 `started_at` 和库绝对路径 SHA256 的前 16 位 `db`，不记录真实路径。正常退出释放锁；启动遇到遗留锁时检查 PID 存活，进程已死、文件损坏或无有效 PID 时自动删除陈旧锁，仅重试一次。PID 仍存活或重试未取得锁则返回 `SERVER_BUSY`，detail 含 `pid`（无法读取时为 null）及 `stale_checked=true`；存活的服务不会被顶掉。
+
+PID 可能被其他进程复用，存活检查无法完全排除这种情况，会保守报忙；保留的 `started_at` 供人工结合进程信息判断，不自动终止进程。
 
 `.knot/http.seq` 保存序号、重放帧及幂等键；不要单独删除它来“重置”。通知不是业务事实库，业务写入仍只经 claim_review。SQLite 与文件日志不能跨介质原子提交：服务先持久化 pending 意图，业务提交后原子替换通知日志，之后才发布内存帧；中途故障时 health 返回 degraded/read_only，后续命令与重启明确拒绝（incomplete_command_requires_review），保留意图供人工对账，不自动补事件或重放不明写入。
 

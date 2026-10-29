@@ -389,3 +389,59 @@ def test_contract_drift_rejected(live, monkeypatch):
         server.shutdown()
         server.server_close()
         thread.join()
+
+
+@pytest.fixture
+def lock_live(request, monkeypatch):
+    # Windows venv python.exe is a launcher: kill the actual serving process,
+    # not its launcher (which would leave the server and its pipes alive).
+    monkeypatch.setattr(sys, "executable", sys._base_executable)
+    return request.getfixturevalue("live")
+
+
+def test_stale_lock_is_recovered(lock_live):
+    live = lock_live
+    lock = live.db.parent / ".knot" / "http.lock"
+    before = lock.read_text(encoding="ascii")
+    previous_pid = live.process.pid
+    assert json.loads(before)["pid"] == previous_pid
+    live.process.kill()
+    live.process.communicate(timeout=8)
+    assert lock.exists() and lock.read_text(encoding="ascii") == before
+    live.start()
+    after = lock.read_text(encoding="ascii")
+    value = json.loads(after)
+    assert value["pid"] == live.process.pid and value["pid"] != previous_pid
+    assert set(value) == {"pid", "started_at", "db"}
+    assert value["db"] == hashlib.sha256(str(live.db.resolve()).encode()).hexdigest()[:16]
+    assert live.get("/health")[0] == 200
+    print("lock before restart:", before)
+    print("lock after restart:", after)
+
+
+def test_live_lock_still_busy(lock_live):
+    live = lock_live
+    lock = live.db.parent / ".knot" / "http.lock"
+    before = lock.read_bytes()
+    result = subprocess.run([sys.executable, "-m", "mvp.backend.http_server", "--db", str(live.db), "--port", "0"],
+                            cwd=ROOT, capture_output=True, text=True, timeout=5)
+    assert result.returncode == 1
+    failure = json.loads(result.stdout)["error"]
+    assert failure["code"] == "SERVER_BUSY"
+    assert failure["detail"] == dict(pid=live.process.pid, stale_checked=True)
+    assert lock.read_bytes() == before
+    assert live.process.poll() is None and live.get("/health")[0] == 200
+    print("live lock:", result.stdout.strip())
+
+
+@pytest.mark.parametrize("content", ["", "not JSON", "{}"])
+def test_corrupt_lock_is_recovered(lock_live, content):
+    live = lock_live
+    live.stop()
+    lock = live.db.parent / ".knot" / "http.lock"
+    lock.write_text(content, encoding="ascii")
+    live.start()
+    value = json.loads(lock.read_text(encoding="ascii"))
+    assert value["pid"] == live.process.pid
+    assert live.get("/health")[0] == 200
+    print("corrupt lock recovered:", repr(content), json.dumps(value))
