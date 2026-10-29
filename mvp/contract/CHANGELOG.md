@@ -1,5 +1,9 @@
 # HTTP 契约 v1 定稿
 
+## C2 实现边界
+
+本地 HTTP 传输读取路由正本，绑定 loopback，复用既有查询／review／trace 业务模块。bundle.create 与 bundle.export 尚未实现，固定返回 COMMAND_NOT_ALLOWED，detail.reason=not_implemented_day16；/jobs/{job_id} 仅留路由，未知 ID 返回 NOT_FOUND，不伪造 job。202 与 job 生命周期随 Day 16 交付。SSE 文件日志与 SQLite 无跨介质原子提交，pending 意图未完成时明确阻断写入和重启，须人工对账；不自动补写事实。运行方式与 selfcheck 见 HTTP.md。
+
 ## v1.4：命令结果三态与 event_id 可空
 
 CommandResult 增加必填 status：confirmed / revoked / restored / already_accepted / already_rejected。202 要求 job_id 非空、event_id 为 null；200 要求 job_id 为 null。event_id 非空表示涉及历史确认事件（confirmed / restored，以及撤销已有确认）；event_id 为 null 表示仅候选状态变更（revoked）或幂等无变化（already_*），由 status 解释。依 I-02，候选不等于事实：拒绝从未确认的候选只更新 claims_candidates，不写 history_events，不为传输层伪造事实事件。
