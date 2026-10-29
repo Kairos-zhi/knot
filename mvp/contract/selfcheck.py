@@ -5,6 +5,7 @@ from contextlib import closing
 import hashlib
 import json
 from pathlib import Path
+import shutil
 from uuid import uuid4
 import tempfile
 import threading
@@ -77,6 +78,9 @@ def run(argv=None):
             import sqlite3
             with http.read_snapshot(source) as original, closing(sqlite3.connect(db)) as target:
                 original.backup(target)
+            objects = source.parent / "objects"
+            if objects.exists():
+                shutil.copytree(objects, db.parent / "objects")
         else:
             result = init_database(db)
             if result["status"] != "created":
@@ -107,7 +111,7 @@ def run(argv=None):
                     failures += 1
                     print(f"FAIL command {command}: {type(exc).__name__}")
             for route in http.ROUTES:
-                path = route["path"].replace("{claim_id}", claim).replace("{asset_id}", asset).replace("{job_id}", "unknown")
+                path = route["path"].replace("{claim_id}", claim).replace("{asset_id}", asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
                 try:
                     if route.get("stream"):
                         with urlopen(base + path + "?since=0", timeout=3) as stream:
@@ -121,7 +125,7 @@ def run(argv=None):
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
                         status, body = request(base, path, command, token=token)
                         validate(body, route)
-                        expected = 404 if route["response"] == "Job" else 400 if command else 200
+                        expected = 404 if route["response"] in ("Job", "Bundle") else 400 if command else 200
                         assert status == expected
                     print(f"PASS {route['method']} {route['path']}")
                     passes += 1

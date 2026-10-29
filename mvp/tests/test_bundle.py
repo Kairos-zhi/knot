@@ -171,11 +171,11 @@ def test_ac8b_raw_lifecycle_export_and_failure(material, tmp_path, monkeypatch):
         assert export[0] == 202 and export[1]['value']['status'] == 'queued'
         exported = poll(base, export[1]['value']['job_id'])
         result = exported[1]['value']['result']
-        assert result == dict(bundle_id=bid, exported=True, path='exports/' + bid + '.md')
-        target = tmp_path / result['path']
+        assert result == dict(bundle_id=bid, exported=True, path=bid + '.md')
+        target = server.jobs.exports / result['path']
         with read_snapshot(db) as conn:
             row = conn.execute('SELECT context_text,exported FROM continuation_bundles WHERE bundle_id=?', (bid,)).fetchone()
-        assert target.read_text(encoding='utf-8') == row[0] and row[1] == 1
+        assert target.read_bytes().split(b'\n', 1)[1] == row[0].encode('utf-8') and row[1] == 1
         assert not Path(result['path']).is_absolute()
         bad = request(base, '/commands', dict(command='bundle.create', args=dict(asset_ids=['missing'])))
         failed = poll(base, bad[1]['value']['job_id'])

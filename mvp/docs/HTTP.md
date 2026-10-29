@@ -97,4 +97,14 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十个端点（含 SSE 与未知 job），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 16 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十一个端点（含 SSE、未知 job 与未知 bundle 404），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 17 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
+
+## Run A：读续接包、导出基准与启动错误
+
+`/contract` 声明 `exports_root="~/.knot/exports"`。`bundle.export` 的 `Job.result.path` 与 Bundle.export_path 均相对 exports_root，例如 `<bundle-id>.md`；旧 Day 16 工单保存当时结果，不回写历史工单。导出文件首行是 `<!-- knot-bundle bundle_id=<id> db=<库路径SHA256前8位> generated=<UTC ISO8601> -->`，其后正文逐字节保留原生成结果，不在响应中披露库路径。
+
+`GET /bundles/{bundle_id}` 默认 `view=roots`，返回 authorized_assets、open_questions 清单，数组长度即计数，context_text=null。open_questions 按冻结的字符串数组契约返回 claim_id；库存的问题对象保持原样。`view=content` 返回全文，设置 KNOT_TOKEN 时须带 Bearer token，否则 FORBIDDEN_VIEW / 403；不设 token 时沿用本地 v1 开放态。未知 id 返回 NOT_FOUND / 404，非法 view 返回 BAD_REQUEST / 400。两个档位均只读，不导出、不更新 exported；未导出时 export_path=null，导出后为相对 exports_root 路径。
+
+启动失败向 stdout 输出 ErrorEnvelope 并退出 1，不进入 listening。detail.reason：缺库或不可读为 db_unreadable；版本不支持为 unsupported_schema（code=SCHEMA_VERSION_UNSUPPORTED）；端口占用为 port_in_use；http.seq 存在未完成命令为 pending_requires_review；其他异常为 internal。message 给出可操作说明，不包含主机异常文本或绝对路径。pending 日志保留供人工核对，不恢复或重放。既有存活实例仍按 SERVER_BUSY 拒绝。Windows 禁用地址复用以稳定识别已占端口。
+
+本轮原始响应、正文比对和测试证据见 [Run A 回执](XWIN-A-EVIDENCE.md)。

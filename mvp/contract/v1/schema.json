@@ -37,12 +37,28 @@
     "ContractInfo": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["contract_version", "schema_sha256"],
+      "required": ["contract_version", "schema_sha256", "exports_root"],
       "properties": {
         "contract_version": { "type": "integer" },
         "schema_sha256": { "type": "string", "description": "schema.json 的实读 sha256（十六进制小写）" },
-        "endpoints_sha256": { "type": "string", "description": "endpoints.json 的实读 sha256，便于前端整体对齐" }
+        "endpoints_sha256": { "type": "string", "description": "endpoints.json 的实读 sha256，便于前端整体对齐" },
+        "exports_root": { "type": "string", "description": "导出根目录的声明形式（如 ~/.knot/exports）。客户端解析相对 path 时以此为准；不含用户名与绝对路径。" }
       }
+    },
+    "Bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_id", "created_at", "exported", "authorized_assets", "open_questions", "context_text"],
+      "properties": {
+        "bundle_id": { "type": "string" },
+        "created_at": { "type": "integer" },
+        "exported": { "type": "boolean" },
+        "authorized_assets": { "type": "array", "items": { "type": "string" } },
+        "open_questions": { "type": "array", "items": { "type": "string" } },
+        "context_text": { "type": ["string", "null"], "description": "续接包正文。view=content 档返回全文；roots 档返回 null（只给清单与计数）。" },
+        "export_path": { "type": ["string", "null"], "description": "相对 exports_root 的导出路径；未导出为 null。" }
+      },
+      "$comment": "读续接包用。content_text 是否返回由 view 决定——roots 档只给 authorized_assets/open_questions，避免越权读到正文。"
     },
     "ErrorEnvelope": {
       "type": "object",

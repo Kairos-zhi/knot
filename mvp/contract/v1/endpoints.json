@@ -18,7 +18,8 @@
       "status": [
         200
       ],
-      "envelope": "plain"
+      "envelope": "plain",
+      "description": "ContractInfo：contract_version + schema_sha256 + exports_root（相对路径的解析基准）"
     },
     {
       "method": "GET",
@@ -288,6 +289,40 @@
         200
       ],
       "envelope": "plain"
+    },
+    {
+      "method": "GET",
+      "path": "/bundles/{bundle_id}",
+      "params": [
+        {
+          "name": "bundle_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "enum": [
+            "roots",
+            "content"
+          ],
+          "required": false,
+          "default": "roots"
+        }
+      ],
+      "response": "Bundle",
+      "as_of": false,
+      "envelope": "viewed",
+      "errors": [
+        "BAD_REQUEST",
+        "NOT_FOUND",
+        "FORBIDDEN_VIEW"
+      ],
+      "status": [
+        200
+      ],
+      "description": "读续接包。roots 档只给清单与计数（context_text=null）；content 档才回正文，未授权 → FORBIDDEN_VIEW。"
     }
   ],
   "method_whitelist": [

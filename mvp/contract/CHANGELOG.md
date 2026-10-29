@@ -103,3 +103,11 @@ CommandResult.status 增加 queued。202 固定为 status=queued、job_id 非空
 ## Day 16：bundle 落地，not_implemented_day16 移除
 
 新增 continuation_bundle 生成器及后台 bundle job；create/export 返回 202/queued，真实工单状态与幂等结果落入既有 http.seq。支持选中资产作用域、既有 trace 路径、Markdown 导出、未知 job 404 和重启读回。失败边界及验证见 BUNDLE.md 与 W3D16-EVIDENCE.md。除指定 v1.5 源更新外不修改 JSON 契约字节。
+
+## v1.6：续接包读取与导出基准
+
+ContractInfo 新增必填 exports_root；新增 Bundle 定义，context_text 可为 null；新增 GET /bundles/{bundle_id}，view 为 roots（默认）或 content，使用 viewed 信封。roots 只给资产与未决问题清单，可由数组长度计数，正文置 null，避免清单读取越权披露正文；全文须显式选择 content 并通过已有正文鉴权。两份 JSON 从指定源逐字节复制，保持原始编码与换行。
+
+### v1.6 Run A 实现补记
+
+导出文件首行增加 bundle_id、库路径 SHA256 前八位及 UTC 生成时间，正文不变；Job.result.path 相对 exports_root。启动失败保留非零退出，并以 detail.reason 区分 db_unreadable、unsupported_schema、port_in_use 与 pending_requires_review；未完成日志保留供人工核对。selfcheck 覆盖全部 11 条路由，新增未知 bundle 的 404 校验。

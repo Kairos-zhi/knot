@@ -91,9 +91,9 @@ def test_routes_and_error_code_scan(live):
     for route in spec["routes"]:
         if route.get("stream") or route["method"] == "POST":
             continue
-        path = route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown")
+        path = route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
         status, body = live.get(path)
-        assert status == (404 if route["response"] == "Job" else 200)
+        assert status == (404 if route["response"] in ("Job", "Bundle") else 200)
         validate(body, route)
     assert live.get("/not-a-route")[0] == 404
     assert request(live.base, "/commands", method="GET")[0] == 405
@@ -154,7 +154,7 @@ def test_as_of_views_readonly_and_parallel(live):
     for route in http.ROUTES:
         if route["method"] != "GET" or route.get("stream"):
             continue
-        live.get(route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown"))
+        live.get(route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown"))
     assert digest() == before
     with urlopen(live.base + "/events?since=0", timeout=3) as stream:
         assert stream.readline().startswith(b": heartbeat")
@@ -232,7 +232,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "16 PASS / 0 FAIL" in result.stdout
+    assert "17 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 
@@ -321,7 +321,7 @@ def test_journal_failure_blocks_without_phantom_frames(tmp_path, monkeypatch):
         server.server_close()
     with pytest.raises(http.Fault) as failure:
         http.Server(db, port=0)
-    assert failure.value.detail["reason"] == "incomplete_command_requires_review"
+    assert failure.value.detail["reason"] == "pending_requires_review"
     assert not (tmp_path / ".knot/http.lock").exists()
 
 

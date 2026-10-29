@@ -5,6 +5,7 @@ import base64
 from copy import deepcopy
 import ctypes
 from datetime import datetime, timezone
+import errno
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -39,10 +40,10 @@ class Fault(Exception):
         self.code, self.status, self.detail = code, status, detail
 
 
-def error(code, **detail):
+def error(code, *, message=None, **detail):
     assert code in CODES
     return dict(contract_version=VERSION, ok=False,
-                error=dict(code=code, message=code, detail=detail))
+                error=dict(code=code, message=message or code, detail=detail))
 
 
 def relative(value):
@@ -61,6 +62,7 @@ def metadata(row):
 
 class Server(ThreadingHTTPServer):
     daemon_threads = True
+    allow_reuse_address = os.name != "nt"
 
     def __init__(self, db, port=None):
         self.db = Path(db).resolve()
@@ -117,18 +119,30 @@ class Server(ThreadingHTTPServer):
             self.journal = (json.loads(self.journal_path.read_text(encoding="utf-8"))
                             if self.journal_path.exists() else dict(seq=0, frames=[], keys={}))
             if self.journal.get("pending"):
-                raise Fault("INTERNAL", reason="incomplete_command_requires_review")
-            with read_snapshot(self.db):
-                pass  # Refuse unsupported databases; never initialize or migrate here.
+                raise Fault("INTERNAL", reason="pending_requires_review")
+            try:
+                with read_snapshot(self.db):
+                    pass  # Refuse unsupported databases; never initialize or migrate here.
+            except ValueError as exc:
+                if "schema v1.4 required" in str(exc):
+                    raise Fault("SCHEMA_VERSION_UNSUPPORTED", reason="unsupported_schema") from None
+                raise
+            except (OSError, sqlite3.Error):
+                raise Fault("INTERNAL", reason="db_unreadable") from None
             self.jobs = BundleJobs(self)
             port_file = self.state / "http.port"
             if port is None:
                 port = int(os.environ.get("KNOT_PORT", port_file.read_text().strip()
                            if port_file.exists() else "7318"))
-            super().__init__(("127.0.0.1", port), Handler)
+            try:
+                super().__init__(("127.0.0.1", port), Handler)
+            except OSError as exc:
+                if exc.errno == errno.EADDRINUSE or getattr(exc, "winerror", None) == 10048:
+                    raise Fault("INTERNAL", reason="port_in_use") from None
+                raise
         except BaseException:
             self.lock_fd.close()
-            self.lock.unlink()
+            self.lock.unlink(missing_ok=True)
             raise
 
     def server_close(self):
@@ -305,7 +319,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def read(self, kind, p):
         if kind == "ContractInfo":
-            return dict(contract_version=VERSION, **{n + "_sha256": hashlib.sha256(
+            return dict(contract_version=VERSION, exports_root="~/.knot/exports", **{n + "_sha256": hashlib.sha256(
                 raw).hexdigest() for n, raw in CONTRACT_BYTES.items()})
         if kind == "Health":
             pending = bool(self.server.journal.get("pending")) or self.server.jobs.failed
@@ -319,6 +333,18 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("NOT_FOUND", 404)
             return job
         with read_snapshot(self.server.db) as conn:
+            if kind == "Bundle":
+                row = conn.execute("SELECT * FROM continuation_bundles WHERE bundle_id=?",
+                                   (p["bundle_id"],)).fetchone()
+                if row is None:
+                    raise Fault("NOT_FOUND", 404)
+                return dict(bundle_id=row["bundle_id"], created_at=row["created_at"],
+                            exported=bool(row["exported"]),
+                            authorized_assets=json.loads(row["authorized_assets"]),
+                            open_questions=[q["claim_id"] if isinstance(q, dict) else q
+                                            for q in json.loads(row["open_questions"] or "[]")],
+                            context_text=row["context_text"] if p["view"] == "content" else None,
+                            export_path=relative(row["bundle_id"] + ".md") if row["exported"] else None)
             if kind == "Snapshot":
                 support = compute_support(conn, p["as_of"], rule_version=p["rule_version"])
                 atoms = support["atoms"]
@@ -406,15 +432,19 @@ def main():
     args = parser.parse_args()
     try:
         server = Server(args.db, args.port)
-    except Fault as exc:
-        print(json.dumps(error(exc.code, **exc.detail)), flush=True)
-        return 1
-    except ValueError as exc:
-        code = "SCHEMA_VERSION_UNSUPPORTED" if "schema v1.4 required" in str(exc) else "BAD_REQUEST"
-        print(json.dumps(error(code)), flush=True)
-        return 1
-    except Exception:
-        print(json.dumps(error("INTERNAL")), flush=True)
+    except Exception as exc:
+        code = exc.code if isinstance(exc, Fault) else "INTERNAL"
+        detail = dict(exc.detail) if isinstance(exc, Fault) else {}
+        if code == "SERVER_BUSY":
+            print(json.dumps(error(code, message="Another server instance is still using this database.", **detail)), flush=True)
+            return 1
+        reason = detail.setdefault("reason", "internal")
+        messages = dict(db_unreadable="Cannot open or read the database. Check that it exists and is readable.",
+                        unsupported_schema="Database schema is unsupported. Migrate it explicitly before starting.",
+                        port_in_use="The loopback port is already in use. Choose a free port or stop its owner.",
+                        pending_requires_review="An unfinished command needs manual review. Startup stopped; the journal is preserved.",
+                        internal="Server startup failed. Review local state before retrying.")
+        print(json.dumps(error(code, message=messages.get(reason, messages["internal"]), **detail)), flush=True)
         return 1
     print(json.dumps(dict(status="listening", port=server.server_port)), flush=True)
     try:
