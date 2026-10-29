@@ -3,10 +3,13 @@
 import argparse
 import json
 import sqlite3
+import time
 
 from .timeline_query import asset_by_hash, claims_by_atom, events_range, read_snapshot
 from .claim_support import claim_support, claim_support_many
 from .traceback import trace_claim
+from mvp.cli_client import Client, add_options, offline_session, query
+from mvp.transport_views import event_rows, metadata, claim_item, trace_view
 
 
 class _Parser(argparse.ArgumentParser):
@@ -38,20 +41,33 @@ def main(argv=None):
     trace.add_argument("--max-depth", type=int, default=5)
     for subcommand in (events, asset, claims, support, trace):
         subcommand.add_argument("--db", required=True)
+        add_options(subcommand)
     args = parser.parse_args(argv)
     try:
-        with read_snapshot(args.db) as conn:
+        if not args.offline:
+            print(json.dumps(query(Client(args), args), ensure_ascii=True))
+            return 0
+        with offline_session(args.db), read_snapshot(args.db) as conn:
             if args.command == "events":
-                result = events_range(conn, start=args.start, end=args.end, limit=args.limit)
+                result = event_rows(events_range(conn, start=args.start, end=args.end, limit=args.limit))
             elif args.command == "asset":
                 result = asset_by_hash(conn, args.hash)
                 if result is not None:
                     # This entry exposes metadata; embedded bodies require a separate API.
-                    result.pop("content_blob")
+                    result = metadata(result)
+                else:
+                    result = []
             elif args.command == "claims":
-                result = claims_by_atom(conn, args.atom, limit=args.limit)
+                if args.limit < 0:
+                    raise ValueError("limit must be non-negative")
+                rows = claims_by_atom(conn, args.atom, limit=2**63 - 1)
+                rows = sorted(rows, key=lambda r: (r["source_label"] is not None, r["source_label"] or "", r["claim_id"]))[:args.limit]
+                views = {v["claim_id"]: v for v in claim_support_many(conn, at=time.time_ns() // 1_000_000,
+                            claim_ids=[r["claim_id"] for r in rows])["claims"]}
+                result = [claim_item(dict(conn.execute("SELECT * FROM claims_candidates WHERE claim_id=?",
+                            (r["claim_id"],)).fetchone()), views[r["claim_id"]]) for r in rows]
             elif args.command == "trace":
-                result = trace_claim(conn, args.claim, max_depth=args.max_depth)
+                result = trace_view(trace_claim(conn, args.claim, max_depth=args.max_depth))
             elif args.claim is not None:
                 # claim_support already pairs candidate truth with its native atom_view.
                 result = claim_support(conn, args.claim, at=args.at)

@@ -4,6 +4,7 @@ import argparse
 import base64
 from copy import deepcopy
 import ctypes
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import errno
 import hashlib
@@ -17,10 +18,12 @@ import time
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .asset_repo import AssetRepo
+from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
 from .claim_support import claim_support_many
-from .knot_query import read_snapshot
+from .timeline_query import read_snapshot, events_range, asset_by_hash
+from mvp.transport_views import metadata, claim_item, trace_view, event_rows
 from .support_view import compute_support
 from .traceback import trace_claim
 
@@ -55,9 +58,59 @@ def relative(value):
     return value
 
 
-def metadata(row):
-    return {k: row[k] for k in ("asset_id", "content_hash", "media_type")} | {
-        "path": relative(row.get("file_path", row.get("path")))}
+def pid_alive(pid):
+    if type(pid) is not int or not 0 < pid <= 0x7fffffff:
+        return False
+    if os.name == "nt":
+        kernel32 = ctypes.windll.kernel32
+        kernel32.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+        kernel32.OpenProcess.restype = ctypes.c_void_p
+        kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+        kernel32.CloseHandle.restype = ctypes.c_int
+        handle = kernel32.OpenProcess(0x1000, False, pid)
+        if handle:
+            kernel32.CloseHandle(handle)
+        return bool(handle) or kernel32.GetLastError() == 5
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
+class ActorRepo(AssetRepo):
+    """Attach transport identity to new events inside review's own transaction."""
+    def __init__(self, db, actor):
+        super().__init__(db)
+        self.actor = actor
+
+    @contextmanager
+    def transaction(self):
+        with super().transaction():
+            conn = self._scoped_connection
+            before = conn.execute("SELECT COALESCE(MAX(rowid),0) FROM history_events").fetchone()[0]
+            yield self
+            for row in conn.execute("SELECT rowid,payload_json FROM history_events WHERE rowid>?", (before,)).fetchall():
+                payload = json.loads(row["payload_json"] or "{}")
+                payload["actor"] = self.actor
+                conn.execute("UPDATE history_events SET payload_json=? WHERE rowid=?",
+                             (json.dumps(payload, ensure_ascii=True), row["rowid"]))
+
+
+def authenticate(header):
+    raw = os.environ.get("KNOT_TOKENS")
+    tokens = json.loads(raw) if raw is not None else {}
+    if not isinstance(tokens, dict) or any(not isinstance(k, str) or not k or
+            not isinstance(v, str) or not v or any(c in v for c in "\r\n") for k, v in tokens.items()):
+        raise ValueError("invalid token configuration")
+    single = os.environ.get("KNOT_TOKEN")
+    if single:
+        tokens.setdefault(single, "local-user")
+    if not tokens:
+        return "local-user"
+    return tokens.get(header[7:]) if header and header.startswith("Bearer ") else None
 
 
 class Server(ThreadingHTTPServer):
@@ -65,6 +118,11 @@ class Server(ThreadingHTTPServer):
     allow_reuse_address = os.name != "nt"
 
     def __init__(self, db, port=None):
+        state = Path(db).resolve().parent / ".knot"
+        with owner_guard(state):
+            self._initialize(db, port)
+
+    def _initialize(self, db, port):
         self.db = Path(db).resolve()
         self.state = self.db.parent / ".knot"
         self.state.mkdir(parents=True, exist_ok=True)
@@ -81,26 +139,7 @@ class Server(ThreadingHTTPServer):
                     return None
 
             pid = lock_pid()
-            alive = False
-            if pid is not None:
-                if os.name == "nt":
-                    kernel32 = ctypes.windll.kernel32
-                    kernel32.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
-                    kernel32.OpenProcess.restype = ctypes.c_void_p
-                    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
-                    kernel32.CloseHandle.restype = ctypes.c_int
-                    handle = kernel32.OpenProcess(0x1000, False, pid)
-                    alive = bool(handle)
-                    if handle:
-                        kernel32.CloseHandle(handle)
-                else:
-                    try:
-                        os.kill(pid, 0)
-                        alive = True
-                    except ProcessLookupError:
-                        pass
-                    except PermissionError:
-                        alive = True
+            alive = pid_alive(pid)
             if alive:
                 raise Fault("SERVER_BUSY", 409, pid=pid, stale_checked=True) from None
             try:
@@ -136,6 +175,7 @@ class Server(ThreadingHTTPServer):
                            if port_file.exists() else "7318"))
             try:
                 super().__init__(("127.0.0.1", port), Handler)
+                port_file.write_text(str(self.server_port), encoding="ascii")
             except OSError as exc:
                 if exc.errno == errno.EADDRINUSE or getattr(exc, "winerror", None) == 10048:
                     raise Fault("INTERNAL", reason="port_in_use") from None
@@ -173,7 +213,7 @@ class Server(ThreadingHTTPServer):
         if not isinstance(args, dict) or ("idempotency_key" in body and not isinstance(key, str)):
             raise Fault("BAD_REQUEST")
         if name.startswith("bundle."):
-            return self.jobs.submit(body)
+            return self.jobs.submit(body, actor)
         if set(args) != {"claim_id"} or not isinstance(args["claim_id"], str) or not args["claim_id"]:
             raise Fault("BAD_REQUEST")
         with self.changed:
@@ -190,11 +230,11 @@ class Server(ThreadingHTTPServer):
             # first; an interrupted/ambiguous commit fails closed, never silently
             # losing a frame or advertising an unpersisted in-memory event.
             pending = deepcopy(self.journal)
-            pending["pending"] = dict(body=body, actor=actor)
+            pending["pending"] = dict(body=body, actor=actor, since=int(time.time() * 1000))
             self.persist(pending)
             self.journal = pending
             try:
-                result = review_claim(AssetRepo(self.db), args["claim_id"],
+                result = review_claim(ActorRepo(self.db, actor), args["claim_id"],
                                       decision="reject" if name == "claim.revoke" else "accept")
             except ValueError:
                 clean = deepcopy(pending)
@@ -265,6 +305,8 @@ class Handler(BaseHTTPRequestHandler):
             now, values = int(time.time() * 1000), {}
             for name, param in params.items():
                 value = query[name][0] if name in query else param.get("default")
+                if value is None and param.get("required"):
+                    raise Fault("BAD_REQUEST")
                 if name not in query and value == "now":
                     value = now
                 if value is not None:
@@ -279,9 +321,8 @@ class Handler(BaseHTTPRequestHandler):
                     values[name] = value
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
-            token = os.environ.get("KNOT_TOKEN")
-            authenticated = not token or self.headers.get("Authorization") == "Bearer " + token
-            if token and not authenticated and (self.command == "POST" or values.get("view") == "content"):
+            actor = authenticate(self.headers.get("Authorization"))
+            if actor is None and (self.command == "POST" or values.get("view") == "content"):
                 raise Fault("UNAUTHORIZED" if self.command == "POST" else "FORBIDDEN_VIEW", 401 if self.command == "POST" else 403)
             if route.get("stream"):
                 return self.events(values["since"])
@@ -290,7 +331,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not 0 < size <= 1_000_000 or self.headers.get("Transfer-Encoding"):
                     raise Fault("BAD_REQUEST")
                 self.connection.settimeout(2)
-                value = self.server.command(json.loads(self.rfile.read(size)), "local-user")
+                value = self.server.command(json.loads(self.rfile.read(size)), actor)
             else:
                 value = self.read(route["response"], values | path_args)
             body = dict(contract_version=VERSION, ok=True, value=value)
@@ -326,13 +367,26 @@ class Handler(BaseHTTPRequestHandler):
             return dict(status="degraded" if pending else "ok", contract_version=VERSION,
                         schema_version="1.4", read_only=pending,
                         uptime_s=time.monotonic() - self.server.started, seq=self.server.journal["seq"],
-                        db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest())
+                        db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest(),
+                        pending=({"command": self.server.journal["pending"]["body"]["command"],
+                                  "actor": self.server.journal["pending"].get("actor", "local-user"),
+                                  "since": self.server.journal["pending"].get("since")}
+                                 if self.server.journal.get("pending") else None))
         if kind == "Job":
             job = self.server.jobs.get(p['job_id'])
             if job is None:
                 raise Fault("NOT_FOUND", 404)
             return job
         with read_snapshot(self.server.db) as conn:
+            if kind == "Timeline":
+                return dict(start=p["start"], end=p["end"], items=event_rows(events_range(
+                    conn, start=p["start"], end=p["end"], limit=p["limit"])))
+            if kind == "AssetList":
+                content_hash = p["content_hash"]
+                if len(content_hash) != 64 or any(c not in "0123456789abcdefABCDEF" for c in content_hash):
+                    raise Fault("BAD_REQUEST")
+                row = asset_by_hash(conn, content_hash)
+                return dict(items=[] if row is None else [metadata(row)])
             if kind == "Bundle":
                 row = conn.execute("SELECT * FROM continuation_bundles WHERE bundle_id=?",
                                    (p["bundle_id"],)).fetchone()
@@ -366,16 +420,7 @@ class Handler(BaseHTTPRequestHandler):
                     row = rows[v["claim_id"]]
                     if p.get("atom") is not None and row["atom"] != p["atom"]:
                         continue
-                    item = {k: row[k] for k in allowed if k in row}
-                    for k in ("support_sources", "source_members"):
-                        item[k] = json.loads(item[k]) if item.get(k) else []
-                    item["unverified"] = bool(item["unverified"])
-                    item["candidate_level"] = dict(status=v["status"])
-                    item["atom_level"] = v["atom_view"]
-                    if p.get("view") == "boolean":
-                        item["atom_level"] = {"boolean": v["atom_view"]["boolean"]}
-                        item.pop("support_sources", None)
-                        item.pop("source_members", None)
+                    item = claim_item(row, v, boolean=p.get("view") == "boolean")
                     items.append(item)
                 if cid:
                     return items[0]
@@ -388,9 +433,7 @@ class Handler(BaseHTTPRequestHandler):
                 if conn.execute("SELECT 1 FROM claims_candidates WHERE claim_id=?", (p["claim_id"],)).fetchone() is None:
                     raise Fault("NOT_FOUND", 404)
                 result = trace_claim(conn, p["claim_id"], max_depth=p["max_depth"])
-                result = {k: v for k, v in result.items() if k in SCHEMA["$defs"]["Trace"]["properties"]}
-                result["assets"] = [metadata(a) for a in result["assets"]]
-                return result
+                return trace_view(result)
             row = conn.execute("SELECT * FROM assets WHERE asset_id=?", (p["asset_id"],)).fetchone()
             if row is None:
                 raise Fault("NOT_FOUND", 404)

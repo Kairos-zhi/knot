@@ -92,6 +92,10 @@ def test_routes_and_error_code_scan(live):
         if route.get("stream") or route["method"] == "POST":
             continue
         path = route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
+        if route["response"] == "Timeline":
+            path += "?start=0&end=9999999999999"
+        elif route["response"] == "AssetList":
+            path += "?content_hash=" + "0" * 64
         status, body = live.get(path)
         assert status == (404 if route["response"] in ("Job", "Bundle") else 200)
         validate(body, route)
@@ -232,7 +236,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "17 PASS / 0 FAIL" in result.stdout
+    assert "19 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 

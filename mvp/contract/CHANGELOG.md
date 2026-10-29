@@ -111,3 +111,15 @@ ContractInfo 新增必填 exports_root；新增 Bundle 定义，context_text 可
 ### v1.6 Run A 实现补记
 
 导出文件首行增加 bundle_id、库路径 SHA256 前八位及 UTC 生成时间，正文不变；Job.result.path 相对 exports_root。启动失败保留非零退出，并以 detail.reason 区分 db_unreadable、unsupported_schema、port_in_use 与 pending_requires_review；未完成日志保留供人工核对。selfcheck 覆盖全部 11 条路由，新增未知 bundle 的 404 校验。
+
+## v1.7：Health pending
+
+Health 增加必填 pending：null 或 command、actor、since 摘要；仅复制锁定 schema，endpoints 字节不变。
+
+## v1.8：历史时间轴与 hash 元数据查询
+
+新增 EventRow、Timeline、AssetList；新增 GET /timeline 与 GET /assets?content_hash，只读写面分离。/events 保持 since 增量 SSE；两份 JSON 逐字节复制指定源并核 SHA256。
+
+## v1.9：候选自身真值
+
+candidate_level 必填 boolean、minimal_roots，与 atom_level 并列，互不推导；逐字节复制锁定 schema，endpoints 字节不变。

@@ -1,0 +1,43 @@
+with-objects
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "revoked", "job_id": null, "event_id": null}}
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "already_rejected", "job_id": null, "event_id": null}}
+PASS command claim.confirm: {"contract_version": 1, "ok": true, "value": {"command": "claim.confirm", "status": "confirmed", "job_id": null, "event_id": "23a6b4c4-6062-4eac-9ab4-78f4f263918f"}}
+PASS command claim.confirm: {"contract_version": 1, "ok": true, "value": {"command": "claim.confirm", "status": "already_accepted", "job_id": null, "event_id": null}}
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "revoked", "job_id": null, "event_id": "23a6b4c4-6062-4eac-9ab4-78f4f263918f"}}
+PASS command claim.restore: {"contract_version": 1, "ok": true, "value": {"command": "claim.restore", "status": "restored", "job_id": null, "event_id": "23a6b4c4-6062-4eac-9ab4-78f4f263918f"}}
+PASS GET /contract
+PASS GET /health
+PASS GET /snapshot
+PASS GET /claims
+PASS GET /claims/{claim_id}
+PASS GET /assets/{asset_id}
+PASS GET /trace/{claim_id}
+PASS GET /events
+PASS POST /commands
+PASS GET /jobs/{job_id}
+PASS GET /bundles/{bundle_id}
+PASS GET /timeline
+PASS GET /assets
+selfcheck: 19 PASS / 0 FAIL; exit=0
+missing-path
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "revoked", "job_id": null, "event_id": null}}
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "already_rejected", "job_id": null, "event_id": null}}
+PASS command claim.confirm: {"contract_version": 1, "ok": true, "value": {"command": "claim.confirm", "status": "confirmed", "job_id": null, "event_id": "0957b245-c7c5-461c-814d-b0a62454caf8"}}
+PASS command claim.confirm: {"contract_version": 1, "ok": true, "value": {"command": "claim.confirm", "status": "already_accepted", "job_id": null, "event_id": null}}
+PASS command claim.revoke: {"contract_version": 1, "ok": true, "value": {"command": "claim.revoke", "status": "revoked", "job_id": null, "event_id": "0957b245-c7c5-461c-814d-b0a62454caf8"}}
+PASS command claim.restore: {"contract_version": 1, "ok": true, "value": {"command": "claim.restore", "status": "restored", "job_id": null, "event_id": "0957b245-c7c5-461c-814d-b0a62454caf8"}}
+PASS GET /contract
+PASS GET /health
+PASS GET /snapshot
+PASS GET /claims
+PASS GET /claims/{claim_id}
+PASS GET /assets/{asset_id}
+PASS GET /trace/{claim_id}
+PASS GET /events
+PASS POST /commands
+PASS GET /jobs/{job_id}
+PASS GET /bundles/{bundle_id}
+PASS GET /timeline
+PASS GET /assets
+selfcheck: 19 PASS / 0 FAIL; exit=0
+Source DB and external object byte-identical; missing source path remains absent.

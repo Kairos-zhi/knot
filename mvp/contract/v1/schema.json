@@ -60,6 +60,41 @@
       },
       "$comment": "读续接包用。content_text 是否返回由 view 决定——roots 档只给 authorized_assets/open_questions，避免越权读到正文。"
     },
+    "EventRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "event_type", "event_time", "recorded_at"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_type": { "type": "string" },
+        "subject": { "type": ["string", "null"] },
+        "event_time": { "type": "integer" },
+        "recorded_at": { "type": "integer" },
+        "target_assets": { "type": "array", "items": { "type": "string" } },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/$defs/EventRow" } },
+        "start": { "type": ["integer", "null"] },
+        "end": { "type": ["integer", "null"] }
+      },
+      "$comment": "按 event_time 区间读事件（时间轴）。与 /events 的 SSE 增量是两件事：这条是历史区间查询。"
+    },
+    "AssetList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/$defs/AssetMeta" } },
+        "content_hash": { "type": "string", "description": "查询用的 hash 原样回显" }
+      },
+      "$comment": "按 content_hash 查资产（通常 0 或 1 条）。只回元数据，正文需 /assets/{id}?view=content。"
+    },
     "ErrorEnvelope": {
       "type": "object",
       "additionalProperties": false,
@@ -105,7 +140,7 @@
     "Health": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "contract_version", "schema_version", "read_only", "uptime_s"],
+      "required": ["status", "contract_version", "schema_version", "read_only", "uptime_s", "pending"],
       "properties": {
         "status": { "type": "string", "enum": ["ok", "degraded"] },
         "contract_version": { "type": "integer" },
@@ -113,7 +148,18 @@
         "read_only": { "type": "boolean" },
         "uptime_s": { "type": "number" },
         "db_path_sha256": { "type": "string", "description": "库路径的哈希，不回传真实路径" },
-        "seq": { "type": "integer", "description": "事件流当前 seq（用于 SSE 增量起点）" }
+        "seq": { "type": "integer", "description": "事件流当前 seq（用于 SSE 增量起点）" },
+        "pending": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["command", "actor"],
+          "properties": {
+            "command": { "type": "string" },
+            "actor": { "type": "string" },
+            "since": { "type": ["integer", "null"] }
+          },
+          "description": "journal 里未完成的命令；null 表示无。有值时服务拒绝启动与写入，须离线 reconcile。"
+        }
       }
     },
     "AtomSupport": {
@@ -176,12 +222,18 @@
         "candidate_level": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["status"],
+          "required": ["status", "boolean", "minimal_roots"],
           "properties": {
             "status": { "type": "string", "enum": ["unconfirmed", "confirmed", "revoked"] },
-            "confirmed_at": { "type": ["integer", "null"] }
+            "confirmed_at": { "type": ["integer", "null"] },
+            "boolean": { "type": "boolean", "description": "候选自身是否成立（status==confirmed），不许由 atom_level 反推。" },
+            "minimal_roots": {
+              "type": "array",
+              "items": { "type": "array", "items": { "type": "string" } },
+              "description": "候选级极小根：已确认时为 [[确认事件 id]]，否则为 []。"
+            }
           },
-          "description": "候选级真相：只看自己的确认事件 + <=as_of 快照。"
+          "description": "候选级真相：只看自己的确认事件 + <=as_of 快照。与 atom_level 并列，互不推导。"
         },
         "atom_level": {
           "oneOf": [

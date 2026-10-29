@@ -323,6 +323,69 @@
         200
       ],
       "description": "读续接包。roots 档只给清单与计数（context_text=null）；content 档才回正文，未授权 → FORBIDDEN_VIEW。"
+    },
+    {
+      "method": "GET",
+      "path": "/timeline",
+      "params": [
+        {
+          "name": "start",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "end",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "limit",
+          "type": "integer",
+          "required": false,
+          "default": 200,
+          "max": 500
+        }
+      ],
+      "response": "Timeline",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": [
+        "BAD_REQUEST"
+      ],
+      "status": [
+        200
+      ],
+      "description": "按 event_time 区间读事件（历史查询）。start>end 或 limit 越界 → BAD_REQUEST。"
+    },
+    {
+      "method": "GET",
+      "path": "/assets",
+      "params": [
+        {
+          "name": "content_hash",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "view",
+          "type": "string",
+          "enum": [
+            "meta"
+          ],
+          "required": false,
+          "default": "meta"
+        }
+      ],
+      "response": "AssetList",
+      "as_of": false,
+      "envelope": "viewed",
+      "errors": [
+        "BAD_REQUEST"
+      ],
+      "status": [
+        200
+      ],
+      "description": "按 content_hash(64 hex) 查资产元数据；格式不合法 → BAD_REQUEST。"
     }
   ],
   "method_whitelist": [
