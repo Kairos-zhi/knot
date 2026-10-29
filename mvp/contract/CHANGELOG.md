@@ -119,3 +119,7 @@ Health 增加必填 pending：null 或 command、actor、since 摘要；仅复�
 ## v1.8：历史时间轴与 hash 元数据查询
 
 新增 EventRow、Timeline、AssetList；新增 GET /timeline 与 GET /assets?content_hash，只读写面分离。/events 保持 since 增量 SSE；两份 JSON 逐字节复制指定源并核 SHA256。
+
+## v1.9：候选自身真值
+
+candidate_level 必填 boolean、minimal_roots，与 atom_level 并列，互不推导；逐字节复制锁定 schema，endpoints 字节不变。

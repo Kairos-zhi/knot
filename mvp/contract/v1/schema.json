@@ -222,12 +222,18 @@
         "candidate_level": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["status"],
+          "required": ["status", "boolean", "minimal_roots"],
           "properties": {
             "status": { "type": "string", "enum": ["unconfirmed", "confirmed", "revoked"] },
-            "confirmed_at": { "type": ["integer", "null"] }
+            "confirmed_at": { "type": ["integer", "null"] },
+            "boolean": { "type": "boolean", "description": "候选自身是否成立（status==confirmed），不许由 atom_level 反推。" },
+            "minimal_roots": {
+              "type": "array",
+              "items": { "type": "array", "items": { "type": "string" } },
+              "description": "候选级极小根：已确认时为 [[确认事件 id]]，否则为 []。"
+            }
           },
-          "description": "候选级真相：只看自己的确认事件 + <=as_of 快照。"
+          "description": "候选级真相：只看自己的确认事件 + <=as_of 快照。与 atom_level 并列，互不推导。"
         },
         "atom_level": {
           "oneOf": [
