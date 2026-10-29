@@ -274,12 +274,24 @@
     "CommandResult": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["command"],
+      "required": ["command", "status"],
       "properties": {
         "command": { "type": "string" },
-        "event_id": { "type": ["string", "null"], "description": "同步命令产生的事件 id" },
-        "job_id": { "type": ["string", "null"], "description": "异步命令返回的工单 id，配合 GET /jobs/{id}" }
-      }
+        "status": {
+          "type": "string",
+          "enum": ["confirmed", "revoked", "restored", "already_accepted", "already_rejected"],
+          "description": "命令造成的状态结论。必填——它负责解释「为什么没有 event_id」。"
+        },
+        "event_id": {
+          "type": ["string", "null"],
+          "description": "产生了历史事件时非空（初次确认 → confirmed，恢复 → restored）。只改候选状态（未确认候选被拒 → revoked）或幂等无变化时为 null。"
+        },
+        "job_id": {
+          "type": ["string", "null"],
+          "description": "异步命令（202）返回的工单 id，配合 GET /jobs/{job_id}；同步命令为 null。"
+        }
+      },
+      "$comment": "三态规则：202 ⇒ job_id 非空且 event_id 为 null；200 ⇒ job_id 为 null，此时 event_id 可为 null 但必须由 status 解释（revoked/already_* 是候选级状态变更，不产生事件——候选 ≠ 事实，I-02）。"
     },
     "Job": {
       "type": "object",
