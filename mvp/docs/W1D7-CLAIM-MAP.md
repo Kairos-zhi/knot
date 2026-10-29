@@ -110,6 +110,18 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | C07 | 同Repo单事务、幂等只更新来源两列、用户判断不覆盖、不越权写、冲突ID拒绝 | [claim_extractor.py](../backend/claim_extractor.py)：extract_claims/_extract；[test_claims.py](../tests/test_claims.py)：test_growth_updates_only_provenance_and_preserves_user_judgment/test_batch_transaction_rolls_back_earlier_inserts/test_existing_session_reused_and_nested_transaction_rejected/test_uuid_collision_rejected_instead_of_overwriting_user_data |
 | C08 | 原语料110条及52读取/24唯一是独立临时候选库实跑口径，不是硬编码；不填可信状态、不承诺Day10或产品验收 | [CLAIMS.md](CLAIMS.md)：验证边界；对应卡PR实跑读回；[claim_extractor.py](../backend/claim_extractor.py)：_collect/_extract |
 
+## CLAIMS 确认回路（TD03）
+
+| 编号 | 断言 | 文件＋函数名 |
+|---|---|---|
+| C11 | 显式review_claim及CLI、固定返回字段、schema/候选/决策/词表验证、参数与状态错误单行JSON退出1 | [claim_review.py](../backend/claim_review.py)：review_claim/_review/_vocabulary/main/_Parser；[test_claim_review.py](../tests/test_claim_review.py)：test_invalid_decision_is_zero_write/test_unknown_claim_invalid_atom_and_backdating_are_zero_write/test_cli_parameter_errors_one_json_exit_one/test_cli_success_unknown_claim_and_external_cwd |
+| C12 | subject关联、三状态机、重复零写入、唯一确认事件及漂移拒绝 | [claim_review.py](../backend/claim_review.py)：_review/_latest_snapshot；[test_claim_review.py](../tests/test_claim_review.py)：test_same_decision_repeats_are_byte_preserving/test_reject_before_confirmation_has_no_fact_and_repeats_zero_write/test_subject_association_and_no_import_mapping_or_other_claim_writes/test_existing_confirmation_drift_is_refused_not_repaired |
+| C13 | 首次确认事件/映射/快照/claim四步；只映射确认事件，evidence_refs为材料链；reject无事件，恢复复用事件，不越权写 | [claim_review.py](../backend/claim_review.py)：_review/_append_snapshot；[test_claim_review.py](../tests/test_claim_review.py)：test_confirm_revoke_silence_restore_full_timeline/test_subject_association_and_no_import_mapping_or_other_claim_writes |
+| C14 | conditional_theorem确认前后翻转、撤权粘滞、沉默仍假、显式恢复；保持历史T读回 | [test_claim_review.py](../tests/test_claim_review.py)：test_confirm_revoke_silence_restore_full_timeline；[support_view.py](../backend/support_view.py)：compute_support（只读沿用，未修改） |
+| C15 | 单Repo单连接BEGIN IMMEDIATE，由Repo事务上下文唯一提交/回滚；四步失败全部回滚 | [claim_review.py](../backend/claim_review.py)：review_claim；[test_claim_review.py](../tests/test_claim_review.py)：test_one_connection_and_one_owner_with_existing_session/test_injected_failure_rolls_back_every_table_and_file_bytes/test_failed_revoke_and_restore_do_not_change_existing_history |
+| C16 | 同刻幂等、相反状态唯一约束拒绝、并发确认只有一事件、非法时间及倒退拒绝，无覆写历史 | [claim_review.py](../backend/claim_review.py)：review_claim/_review/_append_snapshot；[test_claim_review.py](../tests/test_claim_review.py)：test_opposite_decision_same_millisecond_refused_without_rewriting/test_concurrent_same_time_accept_serializes_to_one_fact/test_snapshot_unique_conflict_returns_existing_id_only_for_achieved_state/test_invalid_timestamp_is_zero_write |
+| C17 | 确认事实与临时候选库演练分开；本卡不是自动确认、真实业务确认或产品接受 | [CLAIMS.md](CLAIMS.md)：确认与撤权/验证边界；本卡PR原始读回与独立复核 |
+
 ## 核对方法
 
 代码位置均有文件内真实行；可用编辑器显示行号逐项看，也可运行：
