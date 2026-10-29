@@ -60,6 +60,41 @@
       },
       "$comment": "读续接包用。content_text 是否返回由 view 决定——roots 档只给 authorized_assets/open_questions，避免越权读到正文。"
     },
+    "EventRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "event_type", "event_time", "recorded_at"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_type": { "type": "string" },
+        "subject": { "type": ["string", "null"] },
+        "event_time": { "type": "integer" },
+        "recorded_at": { "type": "integer" },
+        "target_assets": { "type": "array", "items": { "type": "string" } },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/$defs/EventRow" } },
+        "start": { "type": ["integer", "null"] },
+        "end": { "type": ["integer", "null"] }
+      },
+      "$comment": "按 event_time 区间读事件（时间轴）。与 /events 的 SSE 增量是两件事：这条是历史区间查询。"
+    },
+    "AssetList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/$defs/AssetMeta" } },
+        "content_hash": { "type": "string", "description": "查询用的 hash 原样回显" }
+      },
+      "$comment": "按 content_hash 查资产（通常 0 或 1 条）。只回元数据，正文需 /assets/{id}?view=content。"
+    },
     "ErrorEnvelope": {
       "type": "object",
       "additionalProperties": false,

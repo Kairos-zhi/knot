@@ -115,3 +115,7 @@ ContractInfo 新增必填 exports_root；新增 Bundle 定义，context_text 可
 ## v1.7：Health pending
 
 Health 增加必填 pending：null 或 command、actor、since 摘要；仅复制锁定 schema，endpoints 字节不变。
+
+## v1.8：历史时间轴与 hash 元数据查询
+
+新增 EventRow、Timeline、AssetList；新增 GET /timeline 与 GET /assets?content_hash，只读写面分离。/events 保持 since 增量 SSE；两份 JSON 逐字节复制指定源并核 SHA256。
