@@ -105,7 +105,7 @@
     "Health": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "contract_version", "schema_version", "read_only", "uptime_s"],
+      "required": ["status", "contract_version", "schema_version", "read_only", "uptime_s", "pending"],
       "properties": {
         "status": { "type": "string", "enum": ["ok", "degraded"] },
         "contract_version": { "type": "integer" },
@@ -113,7 +113,18 @@
         "read_only": { "type": "boolean" },
         "uptime_s": { "type": "number" },
         "db_path_sha256": { "type": "string", "description": "库路径的哈希，不回传真实路径" },
-        "seq": { "type": "integer", "description": "事件流当前 seq（用于 SSE 增量起点）" }
+        "seq": { "type": "integer", "description": "事件流当前 seq（用于 SSE 增量起点）" },
+        "pending": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["command", "actor"],
+          "properties": {
+            "command": { "type": "string" },
+            "actor": { "type": "string" },
+            "since": { "type": ["integer", "null"] }
+          },
+          "description": "journal 里未完成的命令；null 表示无。有值时服务拒绝启动与写入，须离线 reconcile。"
+        }
       }
     },
     "AtomSupport": {
