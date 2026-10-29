@@ -17,10 +17,12 @@ import time
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .asset_repo import AssetRepo
+from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
 from .claim_support import claim_support_many
-from .knot_query import read_snapshot
+from .timeline_query import read_snapshot, events_range, asset_by_hash
+from mvp.transport_views import metadata, claim_item, trace_view, event_rows
 from .support_view import compute_support
 from .traceback import trace_claim
 
@@ -55,9 +57,26 @@ def relative(value):
     return value
 
 
-def metadata(row):
-    return {k: row[k] for k in ("asset_id", "content_hash", "media_type")} | {
-        "path": relative(row.get("file_path", row.get("path")))}
+def pid_alive(pid):
+    if type(pid) is not int or not 0 < pid <= 0x7fffffff:
+        return False
+    if os.name == "nt":
+        kernel32 = ctypes.windll.kernel32
+        kernel32.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
+        kernel32.OpenProcess.restype = ctypes.c_void_p
+        kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+        kernel32.CloseHandle.restype = ctypes.c_int
+        handle = kernel32.OpenProcess(0x1000, False, pid)
+        if handle:
+            kernel32.CloseHandle(handle)
+        return bool(handle) or kernel32.GetLastError() == 5
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
 
 
 class Server(ThreadingHTTPServer):
@@ -65,6 +84,11 @@ class Server(ThreadingHTTPServer):
     allow_reuse_address = os.name != "nt"
 
     def __init__(self, db, port=None):
+        state = Path(db).resolve().parent / ".knot"
+        with owner_guard(state):
+            self._initialize(db, port)
+
+    def _initialize(self, db, port):
         self.db = Path(db).resolve()
         self.state = self.db.parent / ".knot"
         self.state.mkdir(parents=True, exist_ok=True)
@@ -81,26 +105,7 @@ class Server(ThreadingHTTPServer):
                     return None
 
             pid = lock_pid()
-            alive = False
-            if pid is not None:
-                if os.name == "nt":
-                    kernel32 = ctypes.windll.kernel32
-                    kernel32.OpenProcess.argtypes = [ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong]
-                    kernel32.OpenProcess.restype = ctypes.c_void_p
-                    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
-                    kernel32.CloseHandle.restype = ctypes.c_int
-                    handle = kernel32.OpenProcess(0x1000, False, pid)
-                    alive = bool(handle)
-                    if handle:
-                        kernel32.CloseHandle(handle)
-                else:
-                    try:
-                        os.kill(pid, 0)
-                        alive = True
-                    except ProcessLookupError:
-                        pass
-                    except PermissionError:
-                        alive = True
+            alive = pid_alive(pid)
             if alive:
                 raise Fault("SERVER_BUSY", 409, pid=pid, stale_checked=True) from None
             try:
@@ -136,6 +141,7 @@ class Server(ThreadingHTTPServer):
                            if port_file.exists() else "7318"))
             try:
                 super().__init__(("127.0.0.1", port), Handler)
+                port_file.write_text(str(self.server_port), encoding="ascii")
             except OSError as exc:
                 if exc.errno == errno.EADDRINUSE or getattr(exc, "winerror", None) == 10048:
                     raise Fault("INTERNAL", reason="port_in_use") from None
@@ -265,6 +271,8 @@ class Handler(BaseHTTPRequestHandler):
             now, values = int(time.time() * 1000), {}
             for name, param in params.items():
                 value = query[name][0] if name in query else param.get("default")
+                if value is None and param.get("required"):
+                    raise Fault("BAD_REQUEST")
                 if name not in query and value == "now":
                     value = now
                 if value is not None:
@@ -333,6 +341,15 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("NOT_FOUND", 404)
             return job
         with read_snapshot(self.server.db) as conn:
+            if kind == "Timeline":
+                return dict(start=p["start"], end=p["end"], items=event_rows(events_range(
+                    conn, start=p["start"], end=p["end"], limit=p["limit"])))
+            if kind == "AssetList":
+                content_hash = p["content_hash"]
+                if len(content_hash) != 64 or any(c not in "0123456789abcdefABCDEF" for c in content_hash):
+                    raise Fault("BAD_REQUEST")
+                row = asset_by_hash(conn, content_hash)
+                return dict(items=[] if row is None else [metadata(row)])
             if kind == "Bundle":
                 row = conn.execute("SELECT * FROM continuation_bundles WHERE bundle_id=?",
                                    (p["bundle_id"],)).fetchone()
@@ -366,16 +383,7 @@ class Handler(BaseHTTPRequestHandler):
                     row = rows[v["claim_id"]]
                     if p.get("atom") is not None and row["atom"] != p["atom"]:
                         continue
-                    item = {k: row[k] for k in allowed if k in row}
-                    for k in ("support_sources", "source_members"):
-                        item[k] = json.loads(item[k]) if item.get(k) else []
-                    item["unverified"] = bool(item["unverified"])
-                    item["candidate_level"] = dict(status=v["status"])
-                    item["atom_level"] = v["atom_view"]
-                    if p.get("view") == "boolean":
-                        item["atom_level"] = {"boolean": v["atom_view"]["boolean"]}
-                        item.pop("support_sources", None)
-                        item.pop("source_members", None)
+                    item = claim_item(row, v, boolean=p.get("view") == "boolean")
                     items.append(item)
                 if cid:
                     return items[0]
@@ -388,9 +396,7 @@ class Handler(BaseHTTPRequestHandler):
                 if conn.execute("SELECT 1 FROM claims_candidates WHERE claim_id=?", (p["claim_id"],)).fetchone() is None:
                     raise Fault("NOT_FOUND", 404)
                 result = trace_claim(conn, p["claim_id"], max_depth=p["max_depth"])
-                result = {k: v for k, v in result.items() if k in SCHEMA["$defs"]["Trace"]["properties"]}
-                result["assets"] = [metadata(a) for a in result["assets"]]
-                return result
+                return trace_view(result)
             row = conn.execute("SELECT * FROM assets WHERE asset_id=?", (p["asset_id"],)).fetchone()
             if row is None:
                 raise Fault("NOT_FOUND", 404)

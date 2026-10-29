@@ -164,10 +164,18 @@ def main():
     choice = parser.add_mutually_exclusive_group(required=True)
     choice.add_argument("--accept", action="store_true")
     choice.add_argument("--reject", action="store_true")
+    from mvp.cli_client import Client, add_options, offline_session
+    from mvp.transport_views import command_result
+    add_options(parser)
     args = parser.parse_args()
     try:
-        result = review_claim(AssetRepo(args.db), args.claim,
-                              decision="accept" if args.accept else "reject")
+        command = "claim.confirm" if args.accept else "claim.revoke"
+        if args.offline:
+            with offline_session(args.db):
+                result = command_result(command, review_claim(AssetRepo(args.db), args.claim,
+                                        decision="accept" if args.accept else "reject"))
+        else:
+            result = Client(args).request("/commands", body=dict(command=command, args=dict(claim_id=args.claim)))
     except (OSError, ValueError, sqlite3.Error) as exc:
         print(json.dumps({"error": str(exc)}, ensure_ascii=True))
         return 1
