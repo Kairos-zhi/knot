@@ -22,7 +22,7 @@
 {"command":"bundle.export","args":{"bundle_id":"<bundle-uuid>"}}
 ```
 
-同样返回 202/queued。完成后 result 为 `{"bundle_id":"<bundle-uuid>","exported":true,"path":"exports/<bundle-uuid>.md"}`。文件写入用户主目录下的 `.knot/exports/`，先临时文件 flush/fsync，再原子替换，随后将库中 exported 置 1。响应 path 相对于该 `.knot/` 目录。导出 ID 限规范 UUID，不能传文件路径。未知 bundle 在 job 中终结为 failed/NOT_FOUND。
+同样返回 202/queued。完成后 result 为 `{"bundle_id":"<bundle-uuid>","exported":true,"path":"<bundle-uuid>.md"}`。文件写入用户主目录下的 `.knot/exports/`，先临时文件 flush/fsync，再原子替换，随后将库中 exported 置 1。响应 path 相对于 `/contract` 声明的 `exports_root="~/.knot/exports"`。文件首行追加 bundle_id、库路径 SHA256 前 8 位与 UTC ISO8601 生成时间注释，其后正文保持原样。读取接口与启动原因见 [HTTP](HTTP.md)。导出 ID 限规范 UUID，不能传文件路径。未知 bundle 在 job 中终结为 failed/NOT_FOUND。
 
 ## 持久化与故障边界
 
