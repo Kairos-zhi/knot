@@ -97,6 +97,19 @@ Git和GitHub动态状态单列为实读证据，不谎称由某行workflow代码
 | R09 | 两个文档入口可定位，放mvp/docs而非旧docs | README从这里读的新链接及本卡两个文件；位置偏离记录见EVIDENCE首节 |
 | R10 | 实时交付状态查任务卡、独立回执、PR与CI | AGENTS.md的Maker/Checker/不自验收约束及对应交付记录；README不维护本卡推送/合并中的临时状态 |
 
+## CLAIMS（W2D8）
+
+| 编号 | 断言 | 文件＋函数名 |
+|---|---|---|
+| C01 | 显式1.4、默认dry-run、一致读、单行JSON与0/1退出码，来源分列统计 | [claim_extractor.py](../backend/claim_extractor.py)：extract_claims/_extract/main/_Parser；[test_claims.py](../tests/test_claims.py)：test_all_kinds_atom_mapping_dry_run_and_idempotency/test_cli_errors_are_single_json_and_exit_one/test_cli_dry_run_write_and_outside_cwd/test_schema_v14_required_without_implicit_migration |
+| C02 | 只扫内嵌md与file_path zip、URI与数据库相对对象路径、UTF-8 strict、读取与去重计数 | [claim_extractor.py](../backend/claim_extractor.py)：_is_zip/_collect；[test_claims.py](../tests/test_claims.py)：test_non_sources_are_never_scanned/test_actual_importer_root_zip_uri_and_relative_hash_path/test_undecodable_assets_and_members_skipped_individually |
+| C03 | D/Q/P/T固定类型与词表原子，T为扩展，编号不写atom | [claim_extractor.py](../backend/claim_extractor.py)：KINDS/LABEL/_scan/_extract；[test_claims.py](../tests/test_claims.py)：test_all_kinds_atom_mapping_dry_run_and_idempotency |
+| C04 | 按出现位置压左边界、同分句8字符否定、仅范围端点；裸号忽略，无编号黑名单 | [claim_extractor.py](../backend/claim_extractor.py)：_scan/NEGATION_WORDS/CLAUSE_SEPARATORS；[test_claims.py](../tests/test_claims.py)：test_occurrence_suppression_does_not_blacklist_or_expand/test_negation_exact_window_and_clause_boundaries/test_range_only_suppresses_own_endpoints |
+| C05 | 内存包读取、顶层0嵌套≤2、4MiB/8MiB/200硬上限与显式计数；不落盘、不执行、不按成员打开本地文件 | [claim_extractor.py](../backend/claim_extractor.py)：_walk_archive及MAX常量；[test_claims.py](../tests/test_claims.py)：test_zip_members_not_opened_as_local_paths_or_executed/test_depth_limit_accepts_two_nested_levels_and_skips_third/test_member_cap_skips_whole_member_and_continues/test_total_cap_skips_remainder_without_partial_text/test_exact_member_and_total_byte_limits_are_inclusive/test_member_count_cap_reports_skipped_remainder/test_corrupt_archive_is_reported_and_other_assets_continue |
+| C06 | 确定uuid5、顶层import事件聚合、成员按内容hash选代表、无概率造值、两种NULL语义 | [claim_extractor.py](../backend/claim_extractor.py)：_collect/_extract；[test_claims.py](../tests/test_claims.py)：test_nested_zip_content_dedup_and_top_asset_provenance/test_all_kinds_atom_mapping_dry_run_and_idempotency |
+| C07 | 同Repo单事务、幂等只更新来源两列、用户判断不覆盖、不越权写、冲突ID拒绝 | [claim_extractor.py](../backend/claim_extractor.py)：extract_claims/_extract；[test_claims.py](../tests/test_claims.py)：test_growth_updates_only_provenance_and_preserves_user_judgment/test_batch_transaction_rolls_back_earlier_inserts/test_existing_session_reused_and_nested_transaction_rejected/test_uuid_collision_rejected_instead_of_overwriting_user_data |
+| C08 | 原语料110条及52读取/24唯一是独立临时候选库实跑口径，不是硬编码；不填可信状态、不承诺Day10或产品验收 | [CLAIMS.md](CLAIMS.md)：验证边界；对应卡PR实跑读回；[claim_extractor.py](../backend/claim_extractor.py)：_collect/_extract |
+
 ## 核对方法
 
 代码位置均有文件内真实行；可用编辑器显示行号逐项看，也可运行：
