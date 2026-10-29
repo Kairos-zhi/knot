@@ -1,5 +1,15 @@
 # HTTP 契约 v1 定稿
 
+## C2 实现边界
+
+本地 HTTP 传输读取路由正本，绑定 loopback，复用既有查询／review／trace 业务模块。bundle.create 与 bundle.export 尚未实现，固定返回 COMMAND_NOT_ALLOWED，detail.reason=not_implemented_day16；/jobs/{job_id} 仅留路由，未知 ID 返回 NOT_FOUND，不伪造 job。202 与 job 生命周期随 Day 16 交付。SSE 文件日志与 SQLite 无跨介质原子提交，pending 意图未完成时明确阻断写入和重启，须人工对账；不自动补写事实。运行方式与 selfcheck 见 HTTP.md。
+
+## v1.4：命令结果三态与 event_id 可空
+
+CommandResult 增加必填 status：confirmed / revoked / restored / already_accepted / already_rejected。202 要求 job_id 非空、event_id 为 null；200 要求 job_id 为 null。event_id 非空表示涉及历史确认事件（confirmed / restored，以及撤销已有确认）；event_id 为 null 表示仅候选状态变更（revoked）或幂等无变化（already_*），由 status 解释。依 I-02，候选不等于事实：拒绝从未确认的候选只更新 claims_candidates，不写 history_events，不为传输层伪造事实事件。
+
+两份 v1.4 源逐字节复制：schema.json SHA256 `4a8175d8272788d1206fcace13b4d9c7c2b6cbd07b953afb5d5fbd579babd59d`；endpoints.json SHA256 `cfb2a314abf3476d64c3e1decaf2b6ef8dc75f8bfb049d5aa93459c2971a11f6`。以下保留 C1 历史定稿记录。
+
 本次 C1 以锁定的 v1.3-draft 定稿：[v1/schema.json](v1/schema.json) 是 JSON 形状正本，[v1/endpoints.json](v1/endpoints.json) 是路由与参数正本。`contract_version = 1`，采用 JSON Schema draft 2020-12；保留源文件的 draft 标题。定稿指本卡规范版本锁定，不表示已合并、服务已实现或产品已接受。
 
 ## 来源与偏离

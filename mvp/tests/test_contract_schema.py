@@ -1,4 +1,4 @@
-"""Executable structural examples for the locked C1 v1.3-draft contract.
+"""Executable structural examples for the locked v1.4-draft contract.
 
 jsonschema is a test dependency only. These examples validate definitions,
 not HTTP routing or runtime authorization behavior.
@@ -50,7 +50,7 @@ VALID = {
     },
     "ContractInfo": {
         "contract_version": 1,
-        "schema_sha256": "ccc315c64af924ca961d0866f8093484c1e721c14b07811300fdce9fee2244cb",
+        "schema_sha256": "4a8175d8272788d1206fcace13b4d9c7c2b6cbd07b953afb5d5fbd579babd59d",
     },
     "OkEnvelope": {
         "contract_version": 1, "ok": True, "as_of": 2000,
@@ -84,7 +84,7 @@ VALID = {
         "command": "claim.confirm", "args": {"claim_id": "claim-1"},
         "idempotency_key": "request-1",
     },
-    "CommandResult": {"command": "claim.confirm", "event_id": "event-1", "job_id": None},
+    "CommandResult": {"command": "claim.confirm", "status": "confirmed", "event_id": "event-1", "job_id": None},
     "Job": {
         "job_id": "job-1", "command": "bundle.create", "status": "done",
         "created_at": 1000, "updated_at": 2000,
@@ -128,6 +128,13 @@ def definition_validator(name):
 
 def test_contract_meta_schema():
     Draft202012Validator.check_schema(SCHEMA)
+
+
+def test_command_result_requires_status():
+    specimen = deepcopy(VALID["CommandResult"])
+    del specimen["status"]
+    with pytest.raises(ValidationError):
+        definition_validator("CommandResult").validate(specimen)
 
 
 def test_every_definition_has_both_examples():
