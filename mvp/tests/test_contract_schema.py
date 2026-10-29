@@ -1,4 +1,4 @@
-"""Executable structural examples for the locked v1.4-draft contract.
+"""Executable structural examples for the locked v1.6-draft contract.
 
 jsonschema is a test dependency only. These examples validate definitions,
 not HTTP routing or runtime authorization behavior.
@@ -50,7 +50,8 @@ VALID = {
     },
     "ContractInfo": {
         "contract_version": 1,
-        "schema_sha256": "4a8175d8272788d1206fcace13b4d9c7c2b6cbd07b953afb5d5fbd579babd59d",
+        "schema_sha256": "4373e79750568d0dfe1f96d4c7fe9f3e41dcd8026dff07b2eb9c4fcda567a84e",
+        "exports_root": "~/.knot/exports",
     },
     "OkEnvelope": {
         "contract_version": 1, "ok": True, "as_of": 2000,
@@ -85,6 +86,9 @@ VALID = {
         "idempotency_key": "request-1",
     },
     "CommandResult": {"command": "claim.confirm", "status": "confirmed", "event_id": "event-1", "job_id": None},
+    "Bundle": {"bundle_id": "bundle-1", "created_at": 1000, "exported": False,
+               "authorized_assets": ["asset-1"], "open_questions": ["claim-1"],
+               "context_text": None, "export_path": None},
     "Job": {
         "job_id": "job-1", "command": "bundle.create", "status": "done",
         "created_at": 1000, "updated_at": 2000,
@@ -114,6 +118,7 @@ INVALID_OVERRIDES = {
     "CommandRequest": ("command", "asset.overwrite"),
     "CommandResult": ("event_id", 1),
     "Job": ("status", "completed"),
+    "Bundle": ("context_text", 1),
     "ChangeEvent": ("seq", 0),
 }
 
@@ -138,7 +143,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 19
+    assert len(SCHEMA["$defs"]) == 20
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -204,7 +209,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 10
+    assert len(ENDPOINTS["routes"]) == 11
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
@@ -236,4 +241,4 @@ def test_endpoint_timed_envelopes_match_exact_routes():
 
 def test_endpoint_viewed_envelopes_match_exact_routes():
     assert {route["path"] for route in ENDPOINTS["routes"]
-            if route["envelope"] == "viewed"} == {"/assets/{asset_id}"}
+            if route["envelope"] == "viewed"} == {"/assets/{asset_id}", "/bundles/{bundle_id}"}

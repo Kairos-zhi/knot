@@ -107,7 +107,7 @@ def run(argv=None):
                     failures += 1
                     print(f"FAIL command {command}: {type(exc).__name__}")
             for route in http.ROUTES:
-                path = route["path"].replace("{claim_id}", claim).replace("{asset_id}", asset).replace("{job_id}", "unknown")
+                path = route["path"].replace("{claim_id}", claim).replace("{asset_id}", asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
                 try:
                     if route.get("stream"):
                         with urlopen(base + path + "?since=0", timeout=3) as stream:
@@ -121,7 +121,7 @@ def run(argv=None):
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
                         status, body = request(base, path, command, token=token)
                         validate(body, route)
-                        expected = 404 if route["response"] == "Job" else 400 if command else 200
+                        expected = 404 if route["response"] in ("Job", "Bundle") else 400 if command else 200
                         assert status == expected
                     print(f"PASS {route['method']} {route['path']}")
                     passes += 1
