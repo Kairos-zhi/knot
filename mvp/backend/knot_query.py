@@ -6,6 +6,7 @@ import sqlite3
 
 from .timeline_query import asset_by_hash, claims_by_atom, events_range, read_snapshot
 from .claim_support import claim_support, claim_support_many
+from .traceback import trace_claim
 
 
 class _Parser(argparse.ArgumentParser):
@@ -32,7 +33,10 @@ def main(argv=None):
     selection = support.add_mutually_exclusive_group()
     selection.add_argument("--atom")
     selection.add_argument("--claim")
-    for subcommand in (events, asset, claims, support):
+    trace = commands.add_parser("trace")
+    trace.add_argument("--claim", required=True)
+    trace.add_argument("--max-depth", type=int, default=5)
+    for subcommand in (events, asset, claims, support, trace):
         subcommand.add_argument("--db", required=True)
     args = parser.parse_args(argv)
     try:
@@ -46,6 +50,8 @@ def main(argv=None):
                     result.pop("content_blob")
             elif args.command == "claims":
                 result = claims_by_atom(conn, args.atom, limit=args.limit)
+            elif args.command == "trace":
+                result = trace_claim(conn, args.claim, max_depth=args.max_depth)
             elif args.claim is not None:
                 # claim_support already pairs candidate truth with its native atom_view.
                 result = claim_support(conn, args.claim, at=args.at)
