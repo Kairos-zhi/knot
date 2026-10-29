@@ -1,4 +1,4 @@
-# 规则候选抽取（W2D8）
+# 规则候选抽取、确认与支持视图
 
 入口为 [claim_extractor.py](../backend/claim_extractor.py) 的 `extract_claims(repo, *, write=False)`。
 需要显式已有的 schema 1.4 数据库；不初始化、不迁移，不调模型或网络。
@@ -183,3 +183,57 @@ claim 更新为 `unverified=1, user_response='reject', reviewed_at=now`。
 support 输出、三表读回、幂等字节、五个 subject 反查、并发同刻确认、冲突拒绝、
 故障回滚及 CLI。真实语料仅在独立候选库演练，不替之确认真实业务候选；
 完整产品接受与 Day 10 后续接口仍分别验收。[C17]
+
+## 候选级支持视图（W2D10）
+
+[claim_support.py](../backend/claim_support.py) 提供
+`claim_support(conn, claim_id, *, at)` 与
+`claim_support_many(conn, *, at, claim_ids=None, status=None)`。
+候选级真相只看 `subject=claim_id` 的 `user_confirm` 事件和截至并包含 T 的最新
+`eligible_snapshots` 行；`user_response`、`unverified` 的手工标记不能代替确认事件。[C18]
+
+| 确认事件与快照 | status | boolean | minimal_roots |
+|---|---|---|---|
+| 没有确认事件 | unconfirmed | false | `[]` |
+| 有且仅一个确认事件，≤T 最新行 is_eligible=1 | confirmed | true | `[[event_id]]` |
+| 有且仅一个确认事件，≤T 最新行 is_eligible=0 | revoked | false | `[]` |
+| 有确认事件，但≤T 没有快照 | 报错，视作数据缺陷 | — | — |
+
+同一候选多确认事件报错；非法快照值、确认映射缺失或不等于候选唯一 atom、词表外
+atom 也报错，不猜测、不修复。已有确认发生在 T 之后且 T 前没有快照时，仍按上表报错。
+撤权采用 carry-forward：撤权时刻及后续无新行的时刻都为 revoked；恢复必须由
+`review_claim(..., decision='accept')` 显式写新快照，根仍是原确认事件。[C19]
+
+每条输出包含 `claim_id/source_label/atom/at/status/boolean/minimal_roots/atom_view`。
+`atom_view` 原样取自既有 `compute_support(conn, at)['atoms'][atom]`，是旁证，
+**不得用它反推候选 boolean**。相同 atom 的候选只有各自确认才能为真。[C18]
+
+任务卡所载 110 条真实语料候选分布为 decision 47／counterexample 28／
+conditional_theorem 22／open_question 13。未确认任何候选时，decision、counterexample、
+open_question 已无条件可达（true／`[[]]`）；conditional_theorem 为 false／`[]`。
+确认 D-01 前后，decision 原子视图都为 true／`[[]]`，但候选真值只有 D-01 翻转；
+不能因此把全部 47 条 decision 都报成已确认。确认 T17-01 后 T17-02 仍未确认，
+即使两者 atom_view 都为 true。本卡回归用合成标签语料复现上述分布；这不构成真实
+业务确认或产品验收。[C18][C20]
+
+批量返回 `{"at": T, "counts": {"confirmed": ..., "revoked": ..., "unconfirmed": ...},
+"claims": [...]}`。`claim_ids=None` 表示全量，空列表返回空集，未知 ID 报错，重复 ID
+去重；`status` 过滤三个状态之一。counts 统计两个过滤条件之后返回的候选。
+claims 按 source_label 升序，同编号以 claim_id 打破平局，NULL 编号排最前；
+同库同 T 结果的 JSON 字节稳定。[C20]
+
+函数复用调用者传入的唯一连接：无事务时拥有一个 `BEGIN` 读事务，并在成功／失败后
+`ROLLBACK` 释放；已有事务时参与，不提交也不回滚调用者事务。所有候选、事件、快照、
+映射和 Horn 输入在同一数据库视图中读取，不写表、不缓存、不新建库或派生表。
+函数不改变连接 row_factory；只读连接约束由调用者配置，CLI 明确用 `mode=ro`。[C21]
+
+```sh
+python -m mvp.backend.claim_support --db candidate/knot.db --at 1000
+python -m mvp.backend.claim_support --db candidate/knot.db --at 1000 --claim <claim_id>
+python -m mvp.backend.claim_support --db candidate/knot.db --at 1000 --only unconfirmed
+```
+
+CLI 单候选输出单个对象，批量输出上述对象；stdout 单行 JSON，成功 0，参数／库错误 1，
+失败只输出 error 对象，没有部分结果。`--only` 仅供批量模式，不能和 `--claim` 同用。
+`at` 必须为非负 SQLite 整数（0～2^63−1），无墙钟依赖；此处业务时间条件并不代替
+数据库一致读事务。程序化验证见 [test_claim_support.py](../tests/test_claim_support.py)。[C22]
