@@ -4,6 +4,7 @@ import argparse
 import base64
 from copy import deepcopy
 import ctypes
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import errno
 import hashlib
@@ -77,6 +78,39 @@ def pid_alive(pid):
         return False
     except PermissionError:
         return True
+
+
+class ActorRepo(AssetRepo):
+    """Attach transport identity to new events inside review's own transaction."""
+    def __init__(self, db, actor):
+        super().__init__(db)
+        self.actor = actor
+
+    @contextmanager
+    def transaction(self):
+        with super().transaction():
+            conn = self._scoped_connection
+            before = conn.execute("SELECT COALESCE(MAX(rowid),0) FROM history_events").fetchone()[0]
+            yield self
+            for row in conn.execute("SELECT rowid,payload_json FROM history_events WHERE rowid>?", (before,)).fetchall():
+                payload = json.loads(row["payload_json"] or "{}")
+                payload["actor"] = self.actor
+                conn.execute("UPDATE history_events SET payload_json=? WHERE rowid=?",
+                             (json.dumps(payload, ensure_ascii=True), row["rowid"]))
+
+
+def authenticate(header):
+    raw = os.environ.get("KNOT_TOKENS")
+    tokens = json.loads(raw) if raw is not None else {}
+    if not isinstance(tokens, dict) or any(not isinstance(k, str) or not k or
+            not isinstance(v, str) or not v or any(c in v for c in "\r\n") for k, v in tokens.items()):
+        raise ValueError("invalid token configuration")
+    single = os.environ.get("KNOT_TOKEN")
+    if single:
+        tokens.setdefault(single, "local-user")
+    if not tokens:
+        return "local-user"
+    return tokens.get(header[7:]) if header and header.startswith("Bearer ") else None
 
 
 class Server(ThreadingHTTPServer):
@@ -179,7 +213,7 @@ class Server(ThreadingHTTPServer):
         if not isinstance(args, dict) or ("idempotency_key" in body and not isinstance(key, str)):
             raise Fault("BAD_REQUEST")
         if name.startswith("bundle."):
-            return self.jobs.submit(body)
+            return self.jobs.submit(body, actor)
         if set(args) != {"claim_id"} or not isinstance(args["claim_id"], str) or not args["claim_id"]:
             raise Fault("BAD_REQUEST")
         with self.changed:
@@ -196,11 +230,11 @@ class Server(ThreadingHTTPServer):
             # first; an interrupted/ambiguous commit fails closed, never silently
             # losing a frame or advertising an unpersisted in-memory event.
             pending = deepcopy(self.journal)
-            pending["pending"] = dict(body=body, actor=actor)
+            pending["pending"] = dict(body=body, actor=actor, since=int(time.time() * 1000))
             self.persist(pending)
             self.journal = pending
             try:
-                result = review_claim(AssetRepo(self.db), args["claim_id"],
+                result = review_claim(ActorRepo(self.db, actor), args["claim_id"],
                                       decision="reject" if name == "claim.revoke" else "accept")
             except ValueError:
                 clean = deepcopy(pending)
@@ -287,9 +321,8 @@ class Handler(BaseHTTPRequestHandler):
                     values[name] = value
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
-            token = os.environ.get("KNOT_TOKEN")
-            authenticated = not token or self.headers.get("Authorization") == "Bearer " + token
-            if token and not authenticated and (self.command == "POST" or values.get("view") == "content"):
+            actor = authenticate(self.headers.get("Authorization"))
+            if actor is None and (self.command == "POST" or values.get("view") == "content"):
                 raise Fault("UNAUTHORIZED" if self.command == "POST" else "FORBIDDEN_VIEW", 401 if self.command == "POST" else 403)
             if route.get("stream"):
                 return self.events(values["since"])
@@ -298,7 +331,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not 0 < size <= 1_000_000 or self.headers.get("Transfer-Encoding"):
                     raise Fault("BAD_REQUEST")
                 self.connection.settimeout(2)
-                value = self.server.command(json.loads(self.rfile.read(size)), "local-user")
+                value = self.server.command(json.loads(self.rfile.read(size)), actor)
             else:
                 value = self.read(route["response"], values | path_args)
             body = dict(contract_version=VERSION, ok=True, value=value)
@@ -334,7 +367,11 @@ class Handler(BaseHTTPRequestHandler):
             return dict(status="degraded" if pending else "ok", contract_version=VERSION,
                         schema_version="1.4", read_only=pending,
                         uptime_s=time.monotonic() - self.server.started, seq=self.server.journal["seq"],
-                        db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest())
+                        db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest(),
+                        pending=({"command": self.server.journal["pending"]["body"]["command"],
+                                  "actor": self.server.journal["pending"].get("actor", "local-user"),
+                                  "since": self.server.journal["pending"].get("since")}
+                                 if self.server.journal.get("pending") else None))
         if kind == "Job":
             job = self.server.jobs.get(p['job_id'])
             if job is None:

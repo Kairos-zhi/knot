@@ -37,7 +37,7 @@ class BundleJobs:
             server.persist(journal)
         server.journal = journal
 
-    def submit(self, body):
+    def submit(self, body, actor="local-user"):
         server = self.server
         name, args, key = body['command'], body['args'], body.get('idempotency_key')
         if name == 'bundle.create':
@@ -72,7 +72,7 @@ class BundleJobs:
                 journal['keys'][key] = dict(body=body, value=value)
             server.persist(journal)
             server.journal = journal
-            thread = threading.Thread(target=self._run, args=(jid, name, deepcopy(args)))
+            thread = threading.Thread(target=self._run, args=(jid, name, deepcopy(args), actor))
             self.threads.append(thread)
             thread.start()
             return value
@@ -100,7 +100,7 @@ class BundleJobs:
             server.journal = journal
             server.changed.notify_all()
 
-    def _execute(self, name, args):
+    def _execute(self, name, args, actor="local-user"):
         uri = self.server.db.as_uri() + '?mode=rw'
         with closing(sqlite3.connect(uri, uri=True)) as conn:
             conn.execute('PRAGMA foreign_keys=ON')
@@ -117,7 +117,7 @@ class BundleJobs:
                 with temporary.open('x', encoding='utf-8', newline='\n') as stream:
                     digest = hashlib.sha256(str(self.server.db).encode()).hexdigest()[:8]
                     generated = datetime.now(timezone.utc).isoformat()
-                    stream.write(f'<!-- knot-bundle bundle_id={bid} db={digest} generated={generated} -->\n')
+                    stream.write(f'<!-- knot-bundle bundle_id={bid} db={digest} generated={generated} actor={actor} -->\n')
                     stream.write(row[0])
                     stream.flush()
                     os.fsync(stream.fileno())
@@ -128,7 +128,7 @@ class BundleJobs:
                 conn.execute('UPDATE continuation_bundles SET exported=1 WHERE bundle_id=?', (bid,))
             return dict(bundle_id=bid, exported=True, path=bid + '.md')
 
-    def _run(self, jid, name, args):
+    def _run(self, jid, name, args, actor="local-user"):
         # A journal failure is not a business failure: do not invent a terminal
         # state after uncertain persistence, nor attempt pending -> failed.
         try:
@@ -140,7 +140,7 @@ class BundleJobs:
             self.failed = True
             return
         try:
-            result = self._execute(name, args)
+            result = self._execute(name, args, actor)
         except Exception as exc:
             code = 'NOT_FOUND' if isinstance(exc, LookupError) else 'BAD_REQUEST' if isinstance(exc, ValueError) else 'INTERNAL'
             # Never persist exception text: OS errors may contain absolute paths.
