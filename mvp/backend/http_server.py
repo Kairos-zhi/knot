@@ -149,6 +149,8 @@ class Server(ThreadingHTTPServer):
         temporary.replace(self.journal_path)
 
     def command(self, body, actor):
+        if self.jobs.failed:
+            raise Fault('INTERNAL', reason='job_journal_requires_review')
         if not isinstance(body, dict) or set(body) - {"command", "args", "idempotency_key"}:
             raise Fault("BAD_REQUEST")
         name, args, key = body.get("command"), body.get("args"), body.get("idempotency_key")
@@ -304,7 +306,7 @@ class Handler(BaseHTTPRequestHandler):
             return dict(contract_version=VERSION, **{n + "_sha256": hashlib.sha256(
                 raw).hexdigest() for n, raw in CONTRACT_BYTES.items()})
         if kind == "Health":
-            pending = bool(self.server.journal.get("pending"))
+            pending = bool(self.server.journal.get("pending")) or self.server.jobs.failed
             return dict(status="degraded" if pending else "ok", contract_version=VERSION,
                         schema_version="1.4", read_only=pending,
                         uptime_s=time.monotonic() - self.server.started, seq=self.server.journal["seq"],

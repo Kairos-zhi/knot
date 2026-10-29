@@ -36,7 +36,7 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
         selected = set(asset_ids)
         assets = []
         for aid in sorted(selected):
-            rows = _rows(conn, 'SELECT asset_id,content_hash FROM assets WHERE asset_id=?', (aid,))
+            rows = _rows(conn, 'SELECT asset_id,content_hash,content_blob FROM assets WHERE asset_id=?', (aid,))
             if not rows:
                 raise ValueError('selected asset does not exist')
             assets.extend(rows)
@@ -70,6 +70,21 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                 continue
             label = row['source_label'] or row['claim_id']
             entry = f"- [{label}] {row['atom']}（{view['status']}；claim {row['claim_id']}）"
+            excerpts = []
+            for asset in assets:
+                if asset['asset_id'] not in {imports[r] for r in json.loads(row['support_sources'])}:
+                    continue
+                blob = asset['content_blob']
+                if blob is not None and row['source_label']:
+                    try:
+                        lines = blob.decode('utf-8').splitlines()
+                    except UnicodeDecodeError:
+                        continue
+                    excerpts.extend(line.strip() for line in lines if row['source_label'] in line)
+            if excerpts:
+                entry += '\n  来源原文：\n' + '\n'.join('  > ' + line for line in dict.fromkeys(excerpts))
+            else:
+                entry += '\n  来源正文未内嵌或无编号对应行；请按来源资产核读。'
             if trace['path']:
                 entry += '\n  为什么：' + ' → '.join(e['event_id'] for e in trace['path'])
             else:

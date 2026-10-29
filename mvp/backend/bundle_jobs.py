@@ -17,6 +17,7 @@ class BundleJobs:
         self.server = server
         self.exports = Path.home() / '.knot' / 'exports'
         self.threads = []
+        self.failed = False
         # Interrupted work is not replayed: SQLite/file/journal have no common
         # commit. Preserve evidence and report uncertainty without duplicate work.
         journal = deepcopy(server.journal)
@@ -52,7 +53,7 @@ class BundleJobs:
             except (ValueError, AttributeError):
                 raise ValueError('bundle_id must be a canonical UUID') from None
         with server.changed:
-            if server.stopping or server.journal.get('pending'):
+            if self.failed or server.stopping or server.journal.get('pending'):
                 raise ValueError('server cannot accept jobs')
             if key is not None and key in server.journal['keys']:
                 original = server.journal['keys'][key]
@@ -119,15 +120,28 @@ class BundleJobs:
             return dict(bundle_id=bid, exported=True, path='exports/' + bid + '.md')
 
     def _run(self, jid, name, args):
+        # A journal failure is not a business failure: do not invent a terminal
+        # state after uncertain persistence, nor attempt pending -> failed.
         try:
-            self._transition(jid, 'running')
+            with self.server.changed:
+                if self.failed:
+                    return
+                self._transition(jid, 'running')
+        except OSError:
+            self.failed = True
+            return
+        try:
             result = self._execute(name, args)
         except Exception as exc:
             code = 'NOT_FOUND' if isinstance(exc, LookupError) else 'BAD_REQUEST' if isinstance(exc, ValueError) else 'INTERNAL'
             # Never persist exception text: OS errors may contain absolute paths.
-            self._transition(jid, 'failed', error=dict(code=code, message=code, detail={}))
+            status, fields = 'failed', dict(error=dict(code=code, message=code, detail={}))
         else:
-            self._transition(jid, 'done', result=result)
+            status, fields = 'done', dict(result=result)
+        try:
+            self._transition(jid, status, **fields)
+        except OSError:
+            self.failed = True
 
     def close(self):
         for thread in self.threads:
