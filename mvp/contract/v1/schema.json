@@ -25,9 +25,14 @@
     },
     "OkEnvelopeTimed": {
       "allOf": [{ "$ref": "#/$defs/OkEnvelope" }],
-      "required": ["as_of"],
+      "required": ["as_of", "view"],
       "properties": { "as_of": { "type": "integer" } },
-      "$comment": "用于支持 as_of 的读端点（/snapshot、/claims、/claims/{claim_id}）：as_of 必须回显服务端实际采用值，缺省即违约。"
+      "$comment": "用于支持 as_of 的读端点（/snapshot、/claims、/claims/{claim_id}）：as_of 与 view 都必须回显服务端实际采用值，缺省即违约。"
+    },
+    "OkEnvelopeViewed": {
+      "allOf": [{ "$ref": "#/$defs/OkEnvelope" }],
+      "required": ["view"],
+      "$comment": "用于有授权档位但不带时间坐标的端点（/assets/{asset_id}）：view 必须回显实际档位（meta|content），as_of 可省。"
     },
     "ContractInfo": {
       "type": "object",

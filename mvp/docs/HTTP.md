@@ -26,7 +26,7 @@ JSON 成功信封为 `{contract_version: 1, ok: true, value: ...}`，失败信�
 `as_of` 是 Unix 毫秒整数，可选，默认服务端 now。支持 as_of 的端点**必须回显服务端实际使用值**：省略时回显采样得到的 now，显式过去值则回显同值；未来时间必须报 `BAD_AS_OF`，不得截断到 now 或悄悄忽略。
 例如查询 T 时，支持族／eligible 状态按截至并包含 T 的快照计算；不是拿当前状态再贴一个历史时间标签。该业务时间参数也不替代 SQLite 的一致读事务。
 
-timed 范围只由 endpoints.json 的 `as_of: true` 标定：`/snapshot`、`/claims`、`/claims/{claim_id}` 三个端点必须使用 OkEnvelopeTimed，回显整数 as_of，缺字段或 null 均违约。`/health`、`/jobs/{job_id}`、`/trace/{claim_id}`、`/contract` 不是 timed；`/assets/{asset_id}`、`/events`、`/commands` 也标为 false。不从“读一律带时间坐标”外推其他端点；普通信封 as_of 可省略，出现时不支持时间坐标的端点使用 null。实际时间采样、历史计算与未来值拒绝仍需 C2 行为测试。
+信封类型由 endpoints.json 的 `envelope` 逐条指定：`/snapshot`、`/claims`、`/claims/{claim_id}` 三个 timed 端点用 OkEnvelopeTimed，整数 as_of 与 view 均必填；`/assets/{asset_id}` 用 OkEnvelopeViewed，view 必填，as_of 可省略；其余用 OkEnvelope（`/events` 的 SSE 数据仍为 ChangeEvent）。不支持时间坐标的端点若回显 as_of 则使用 null。实际时间采样、历史计算与未来值拒绝仍需 C2 行为测试。
 
 ## view：I-05 授权分层
 
@@ -41,7 +41,7 @@ timed 范围只由 endpoints.json 的 `as_of: true` 标定：`/snapshot`、`/cla
 
 服务端执行授权并在信封回显实际 view；UI 隐藏字段不能替代服务端分层。设有 `KNOT_TOKEN` 时 content 档须 token；未设时 loopback 全开，这是任务卡规定的 v1 临时态。token 映射 actor，source 一律服务端判定，请求体不能自报可信身份。
 
-AtomSupport.minimal_roots 已改可选，以支持 boolean 档省略来源；roots 档必须有来源仍由 C2 按实际 view 检查。Snapshot.view 保持 boolean/roots 两档；content 只属于资产端点。二进制资产使用 `content=null`、`encoding=none` 并必须含 path；该条件已由 AssetContent 的 if/then/else 表达。信封 view 仍是可选字段，实际回显和授权内容一致性留待 C2 验证。
+AtomSupport.minimal_roots 已改可选，以支持 boolean 档省略来源；roots 档必须有来源仍由 C2 按实际 view 检查。Snapshot.view 保持 boolean/roots 两档；content 只属于资产端点。二进制资产使用 `content=null`、`encoding=none` 并必须含 path；该条件已由 AssetContent 的 if/then/else 表达。`/snapshot`、`/claims`、`/claims/{claim_id}` 用 OkEnvelopeTimed，`/assets/{asset_id}` 用 OkEnvelopeViewed，两类均强制 view；只有这两类之外使用 OkEnvelope 的端点可省 view。实际档位与授权内容一致性仍需 C2 行为验证。
 
 ## event_time 与 recorded_at：两条时间轴
 
