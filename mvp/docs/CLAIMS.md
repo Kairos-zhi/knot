@@ -105,4 +105,81 @@ T14-01 对应 6 事件／NULL；D-48 无行。二次写入 0 新增、0 更新�
 这些数字是指定语料证据，不是函数对其它输入的硬编码要求。[C08]
 
 程序化回归见 [test_claims.py](../tests/test_claims.py)，真实语料实跑与 CI 另附本卡 PR 证据。
-本卡不提供可信快照生产者、不填 event_atom_map，不触及 Day 10 数据源决策，也不据此宣称产品验收。[C08]
+上述 W2D8 抽取不提供可信快照生产者、不填 event_atom_map，不据此宣称产品验收；
+下述 TD03 增加用户主动触发的确认生产者。[C08][C11]
+
+## 确认与撤权（TD03）
+
+[claim_review.py](../backend/claim_review.py) 的
+`review_claim(repo, claim_id, *, decision, now=None)` 只响应显式 `accept`／`reject`。
+不是自动确认或批量确认；没有后台任务、模型调用或定时器。
+要求已有 schema 1.4；未知候选、非法决策、候选 atom 不在当前活动 version 1 词表（规则头与体的并集）
+均以 ValueError 拒绝，不写任何表。[C11]
+
+```sh
+python -m mvp.backend.claim_review --db candidate/knot.db --claim CLAIM_ID --accept
+python -m mvp.backend.claim_review --db candidate/knot.db --claim CLAIM_ID --reject
+```
+
+CLI stdout 单行 JSON，成功退出 0，参数／库／状态错误退出 1。
+成功返回固定六字段：`claim_id`、`decision`、`status`、`event_id`、`snapshot_id`、`atom`。
+未确认就拒绝没有事件和快照，对应两个 ID 均为 NULL。[C11]
+
+### 状态机与写入
+
+| 当前状态 | accept | reject |
+|---|---|---|
+| 无确认事件 | 首次写三行及 claim 更新，`confirmed` | 只更新 claim，`revoked`；已拒绝则 `already_rejected`、零写入 |
+| 有确认事件且最后快照有效 | `already_accepted`，零写入 | 只追加撤权快照及 claim 更新，`revoked` |
+| 有确认事件且最后快照已撤权 | 只追加恢复快照及 claim 更新，`restored` | `already_rejected`，零写入 |
+
+“零写入”包括不刷新 `reviewed_at`。关联键是
+`history_events.event_type='user_confirm' AND subject=claim_id`，不靠 label 或 atom 猜关联。
+本回路每个候选只创建一个确认事件，恢复不另造事件。
+若已有多个确认事件、映射不是恰好该 atom 一行、或缺少有效快照，拒绝并报告，不自动修复。[C12]
+
+| 首次 accept 的四步 | 内容 |
+|---|---|
+| history_events 新增 | UUID v4；`event_type='user_confirm'`、`subject=claim_id`、`source='user_review'`、`event_time=recorded_at=now`；`evidence_refs` 原样保留 claim.support_sources；payload 含 claim_type/source_label/atom/decision=accept |
+| event_atom_map 新增 | 只映射此确认 event_id → claim.atom 一行，`origin='user_confirm'`、`created_at=now` |
+| eligible_snapshots 新增 | 新 UUID；`snapshot_time=now`、该确认 event_id、`is_eligible=1`、`trust_level='trusted'`、`reason='claim <label> accepted'` |
+| claims_candidates 更新 | `unverified=0`、`user_response='accept'`、`reviewed_at=now`，其余字段不动 |
+
+reject 从不新建 history_events 或映射；此前确认过且有效时，仅追加该事件的
+`is_eligible=0, trust_level='revoked', reason='claim <label> rejected'` 快照。
+claim 更新为 `unverified=1, user_response='reject', reviewed_at=now`。
+未确认过时只更新这三列，没有快照。恢复显式追加 `is_eligible=1, trust_level='trusted'`
+的新快照，并将 claim 改回 accept 的三列；旧事件、映射及快照不覆写、不删除。[C12][C13]
+
+### I-02、carry-forward 与支持族
+
+**映射的是确认事件，不是 import 事件。** 文件存在不能证明定理成立：材料只通过
+`evidence_refs` 提供证据链，不直接作为可信事实进入 Horn 计算。
+确认事件只映射一个原子，与 Frontier17 的一事件一原子约束一致。
+资产、import 事件和其它候选不修改。[C13]
+
+以 T17-01／`conditional_theorem` 为例，确认前为 `false/[]`；确认后
+`compute_support(conn, now)` 为 `true/[[confirm_event_id]]`。
+撤权后为 false，取更晚 T 而不新增行仍为 false；沉默不改变状态。
+再确认必须新增有效快照，才恢复 true；历史 T 的读回仍保持撤权。
+这个翻转示例不泛化到所有原子：已有空支持的无条件可达原子本就可能为 true。[C14]
+
+### 事务、时间与同刻冲突
+
+`review_claim` 复用单个 Repo 实例：必要时开一次 `session()`，
+`with repo.transaction()` 发起 BEGIN IMMEDIATE，包住读取与四步写入；
+**只有该 Repo 的事务上下文提交或回滚**，没有另开 EventStore／AssetRepo 连接。
+已有 session 会复用，已有活动 transaction 则拒绝，避免嵌套事务所有者。
+事件、映射、快照或 claim 更新任一步失败，整批回滚。[C15]
+
+`now` 可注入非负 SQLite 64 位整数毫秒；bool、非整数、负值及溢出值拒绝。
+缺省在取得写锁后读当前毫秒。既有确认事件的时间不能回退到已有事件／快照之前。
+`(snapshot_time,event_id)` 唯一索引保持不变：同毫秒同状态重试直接幂等；
+若插入冲突后发现最新同刻状态已达成，也返回已有 snapshot_id 与 `already_*`。
+同毫秒的相反状态冲突报错，须用更晚 now 重试；不偷偷挪时间、不 INSERT OR REPLACE、
+不删索引或历史行。[C15][C16]
+
+程序化验证见 [test_claim_review.py](../tests/test_claim_review.py)：确认／撤权／沉默／恢复的
+support 输出、三表读回、幂等字节、五个 subject 反查、并发同刻确认、冲突拒绝、
+故障回滚及 CLI。真实语料仅在独立候选库演练，不替之确认真实业务候选；
+完整产品接受与 Day 10 后续接口仍分别验收。[C17]
