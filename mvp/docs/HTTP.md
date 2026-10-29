@@ -86,7 +86,7 @@ curl -H 'Content-Type: application/json' -d '{"command":"claim.confirm","args":{
 
 同步结果必带 status，job_id 为 null；未确认候选被拒返回 revoked/event_id=null（I-02，不写事实事件）；撤销已有确认返回 revoked/原事件 ID；重复操作返回 already_accepted 或 already_rejected/event_id=null。同一幂等键重复相同请求返回原结果，不新增帧；不同请求复用键则 BAD_REQUEST。SSE 类型取实际业务 status，例如 claim.confirm 恢复已撤确认时发 claim.restored。since 为排他的序号下界。
 
-C2 的 bundle.create / bundle.export 固定返回 COMMAND_NOT_ALLOWED，detail.reason 为 not_implemented_day16；`/jobs/{job_id}` 保留路由，未知 ID 返回 NOT_FOUND。C2 不生成假 job，不交付 202 生命周期；该部分随 Day 16 补齐。运行中契约文件与启动字节不符则 CONTRACT_VERSION_UNSUPPORTED，需按审定版本重启。
+Day 16 的 bundle.create / bundle.export 返回 HTTP 202，CommandResult.status=queued、event_id=null、job_id 非空。create 的 args 必须显式给非空 asset_ids，可选 include_open_questions；export 的 args 给规范 UUID bundle_id。`/jobs/{job_id}` 返回持久的 pending → running → done|failed；done.result 包含 bundle_id，导出另含 exported=true 与相对 path。未知 ID 返回 NOT_FOUND。幂等键在重启后仍返回原 job；细节、导出位置和中断对账见 [BUNDLE](BUNDLE.md)。运行中契约文件与启动字节不符则 CONTRACT_VERSION_UNSUPPORTED，需按审定版本重启。
 
 ## 怎么自检
 

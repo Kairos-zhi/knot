@@ -106,11 +106,9 @@ def test_write_whitelist_and_idempotency(live):
         status, body = request(live.base, "/snapshot", method=method)
         assert status == 405 and body["error"]["code"] == "METHOD_NOT_ALLOWED"
         print("AC-5 method", method, json.dumps([status, body]))
-    for name in ("unknown", "bundle.create", "bundle.export"):
+    for name in ("unknown",):
         status, body = request(live.base, "/commands", dict(command=name, args={}))
         assert status == 400 and body["error"]["code"] == "COMMAND_NOT_ALLOWED"
-        if name.startswith("bundle"):
-            assert body["error"]["detail"]["reason"] == "not_implemented_day16"
         print("AC-5 command", name, json.dumps([status, body]))
     events = []
     for index, name in enumerate(("claim.confirm", "claim.revoke", "claim.restore")):
@@ -262,7 +260,7 @@ def test_command_three_states(live):
     command("claim.restore", "already_accepted", False)
     for name in ("bundle.create", "bundle.export"):
         response = request(live.base, "/commands", dict(command=name, args={}))
-        assert response[0] == 400 and response[1]["error"]["detail"]["reason"] == "not_implemented_day16"
+        assert response[0] == 400 and response[1]['error']['code'] == 'BAD_REQUEST'
         print("AC-5b", json.dumps(response))
 
 

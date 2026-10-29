@@ -2,7 +2,7 @@
 
 ## C2 实现边界
 
-本地 HTTP 传输读取路由正本，绑定 loopback，复用既有查询／review／trace 业务模块。bundle.create 与 bundle.export 尚未实现，固定返回 COMMAND_NOT_ALLOWED，detail.reason=not_implemented_day16；/jobs/{job_id} 仅留路由，未知 ID 返回 NOT_FOUND，不伪造 job。202 与 job 生命周期随 Day 16 交付。SSE 文件日志与 SQLite 无跨介质原子提交，pending 意图未完成时明确阻断写入和重启，须人工对账；不自动补写事实。运行方式与 selfcheck 见 HTTP.md。
+本地 HTTP 传输读取路由正本，绑定 loopback，复用既有查询／review／trace 业务模块。C2 最初保留 bundle/job 路由，Day 16 已补齐，见下方记录。SSE 文件日志与 SQLite 无跨介质原子提交，pending 意图未完成时明确阻断写入和重启，须人工对账；不自动补写事实。运行方式与 selfcheck 见 HTTP.md。
 
 ## v1.4：命令结果三态与 event_id 可空
 
@@ -95,3 +95,11 @@ CommandRequest.args 保持开放 object；Job.result 保持开放 object 或 nul
 Schema 只校验结构：AtomSupport 无 view 上下文，boolean 不带来源、roots 必带来源以及信封 view 与实际内容一致，仍需 C2 行为验证。AssetContent.path 允许 null，未强制相对路径格式；ContractInfo 哈希是 string，未强制十六进制格式；CommandResult 的 event_id/job_id 互斥非空也由 C2 按路由语义校验。均保留锁定源，不扩写 schema。
 
 C1 不证明 HTTP 路由、鉴权、时间语义、SSE、作业、只读性、单实例锁或真实 /contract 哈希响应。C2 另卡实施，本卡不写服务端。
+
+## v1.5：异步受理状态 queued
+
+CommandResult.status 增加 queued。202 固定为 status=queued、job_id 非空、event_id=null；受理不等于完成，完成结果看 Job。200 的 job_id=null；event_id 非空时 status 属于 confirmed/restored/revoked，event_id=null 时由 revoked/already_*/queued 解释。不能借用 confirmed（已确认事实）；pending 属于 Job 工单状态而非命令结论；accepted 与 already_accepted 的既有语义撞车。Job.status 仍仅 pending → running → done|failed。两份 JSON 从指定 v1.5 源逐字节复制并核验 SHA256，未格式化。
+
+## Day 16：bundle 落地，not_implemented_day16 移除
+
+新增 continuation_bundle 生成器及后台 bundle job；create/export 返回 202/queued，真实工单状态与幂等结果落入既有 http.seq。支持选中资产作用域、既有 trace 路径、Markdown 导出、未知 job 404 和重启读回。失败边界及验证见 BUNDLE.md 与 W3D16-EVIDENCE.md。除指定 v1.5 源更新外不修改 JSON 契约字节。

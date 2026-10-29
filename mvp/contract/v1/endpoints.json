@@ -265,7 +265,7 @@
         200,
         202
       ],
-      "description": "200=同步：job_id 为 null，event_id 可有可无——有事件则非空（confirmed/restored），只改候选状态则 null（revoked，未确认候选被拒，候选≠事实）；202=异步：job_id 非空。status 必填，负责解释 event_id 为空的理由。",
+      "description": "200=同步：job_id 为 null；event_id 非空=产生历史事件（confirmed/restored/revoked），为空则 status 解释（revoked 候选级 / already_* 幂等）。202=异步已受理：status=queued、job_id 非空、event_id 为 null，真正结果看 GET /jobs/{job_id}。",
       "envelope": "plain"
     },
     {

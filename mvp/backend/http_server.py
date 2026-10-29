@@ -16,6 +16,7 @@ import time
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .asset_repo import AssetRepo
+from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
 from .claim_support import claim_support_many
 from .knot_query import read_snapshot
@@ -119,6 +120,7 @@ class Server(ThreadingHTTPServer):
                 raise Fault("INTERNAL", reason="incomplete_command_requires_review")
             with read_snapshot(self.db):
                 pass  # Refuse unsupported databases; never initialize or migrate here.
+            self.jobs = BundleJobs(self)
             port_file = self.state / "http.port"
             if port is None:
                 port = int(os.environ.get("KNOT_PORT", port_file.read_text().strip()
@@ -133,6 +135,7 @@ class Server(ThreadingHTTPServer):
         with self.changed:
             self.stopping = True
             self.changed.notify_all()
+        self.jobs.close()
         super().server_close()
         self.lock_fd.close()
         self.lock.unlink(missing_ok=True)
@@ -146,6 +149,8 @@ class Server(ThreadingHTTPServer):
         temporary.replace(self.journal_path)
 
     def command(self, body, actor):
+        if self.jobs.failed:
+            raise Fault('INTERNAL', reason='job_journal_requires_review')
         if not isinstance(body, dict) or set(body) - {"command", "args", "idempotency_key"}:
             raise Fault("BAD_REQUEST")
         name, args, key = body.get("command"), body.get("args"), body.get("idempotency_key")
@@ -154,10 +159,12 @@ class Server(ThreadingHTTPServer):
         if not isinstance(args, dict) or ("idempotency_key" in body and not isinstance(key, str)):
             raise Fault("BAD_REQUEST")
         if name.startswith("bundle."):
-            raise Fault("COMMAND_NOT_ALLOWED", reason="not_implemented_day16")
+            return self.jobs.submit(body)
         if set(args) != {"claim_id"} or not isinstance(args["claim_id"], str) or not args["claim_id"]:
             raise Fault("BAD_REQUEST")
         with self.changed:
+            if self.jobs.failed:
+                raise Fault('INTERNAL', reason='job_journal_requires_review')
             if self.journal.get("pending"):
                 raise Fault("INTERNAL", reason="incomplete_command_requires_review")
             if key is not None and key in self.journal["keys"]:
@@ -277,7 +284,7 @@ class Handler(BaseHTTPRequestHandler):
                 body["view"] = values.get("view", "roots")
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
-            self.reply(200, body)
+            self.reply(202 if self.command == 'POST' and value.get('job_id') else 200, body)
         except Fault as exc:
             self.reply(exc.status, error(exc.code, **exc.detail))
         except (ValueError, TypeError, OverflowError) as exc:
@@ -301,13 +308,16 @@ class Handler(BaseHTTPRequestHandler):
             return dict(contract_version=VERSION, **{n + "_sha256": hashlib.sha256(
                 raw).hexdigest() for n, raw in CONTRACT_BYTES.items()})
         if kind == "Health":
-            pending = bool(self.server.journal.get("pending"))
+            pending = bool(self.server.journal.get("pending")) or self.server.jobs.failed
             return dict(status="degraded" if pending else "ok", contract_version=VERSION,
                         schema_version="1.4", read_only=pending,
                         uptime_s=time.monotonic() - self.server.started, seq=self.server.journal["seq"],
                         db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest())
         if kind == "Job":
-            raise Fault("NOT_FOUND", 404)
+            job = self.server.jobs.get(p['job_id'])
+            if job is None:
+                raise Fault("NOT_FOUND", 404)
+            return job
         with read_snapshot(self.server.db) as conn:
             if kind == "Snapshot":
                 support = compute_support(conn, p["as_of"], rule_version=p["rule_version"])

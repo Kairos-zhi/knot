@@ -279,19 +279,19 @@
         "command": { "type": "string" },
         "status": {
           "type": "string",
-          "enum": ["confirmed", "revoked", "restored", "already_accepted", "already_rejected"],
-          "description": "命令造成的状态结论。必填——它负责解释「为什么没有 event_id」。"
+          "enum": ["queued", "confirmed", "revoked", "restored", "already_accepted", "already_rejected"],
+          "description": "命令结论。必填——它负责解释「为什么没有 event_id」。queued=异步已受理（202，真正状态看 Job）；其余为同步终态。"
         },
         "event_id": {
           "type": ["string", "null"],
-          "description": "产生了历史事件时非空（初次确认 → confirmed，恢复 → restored）。只改候选状态（未确认候选被拒 → revoked）或幂等无变化时为 null。"
+          "description": "产生了历史事件时非空（初次确认 → confirmed，恢复 → restored，撤销已有确认 → revoked）。只改候选状态（未确认候选被拒 → revoked）、幂等无变化（already_*）或异步受理（queued）时为 null。"
         },
         "job_id": {
           "type": ["string", "null"],
           "description": "异步命令（202）返回的工单 id，配合 GET /jobs/{job_id}；同步命令为 null。"
         }
       },
-      "$comment": "三态规则：202 ⇒ job_id 非空且 event_id 为 null；200 ⇒ job_id 为 null，此时 event_id 可为 null 但必须由 status 解释（revoked/already_* 是候选级状态变更，不产生事件——候选 ≠ 事实，I-02）。"
+      "$comment": "三态规则：202 ⇒ status=queued、job_id 非空、event_id 为 null（受理≠完成，完成看 Job）；200 ⇒ job_id 为 null，事件若非空则 status ∈ {confirmed, restored, revoked}，为空则由 status 解释（revoked/already_*/queued 不产生事件——候选≠事实，I-02）。"
     },
     "Job": {
       "type": "object",
