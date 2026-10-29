@@ -34,7 +34,7 @@ JSON 成功信封为 `{contract_version: 1, ok: true, value: ...}`，失败信�
 
 | 档位 | 允许返回 |
 |---|---|
-| boolean | 只给真假；不得返回 minimal_roots 或正文 |
+| boolean | atom_level 只给真假；candidate_level 按 v1.9 保留自身 boolean/minimal_roots；不含正文 |
 | roots（默认） | 给真假与来源事件 ID 的 minimal_roots；不得返回正文 |
 | meta（资产端点默认） | 资产元数据（AssetMeta），不含正文；信封 view=meta |
 | content | 经该档授权才返回正文 |
@@ -97,14 +97,48 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十一个端点（含 SSE、未知 job 与未知 bundle 404），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 17 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十三个端点（含 SSE、未知 job 与未知 bundle 404），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 19 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
 
 ## Run A：读续接包、导出基准与启动错误
 
-`/contract` 声明 `exports_root="~/.knot/exports"`。`bundle.export` 的 `Job.result.path` 与 Bundle.export_path 均相对 exports_root，例如 `<bundle-id>.md`；旧 Day 16 工单保存当时结果，不回写历史工单。导出文件首行是 `<!-- knot-bundle bundle_id=<id> db=<库路径SHA256前8位> generated=<UTC ISO8601> -->`，其后正文逐字节保留原生成结果，不在响应中披露库路径。
+`/contract` 声明 `exports_root="~/.knot/exports"`。`bundle.export` 的 `Job.result.path` 与 Bundle.export_path 均相对 exports_root，例如 `<bundle-id>.md`；旧 Day 16 工单保存当时结果，不回写历史工单。导出文件首行是 `<!-- knot-bundle bundle_id=<id> db=<库路径SHA256前8位> generated=<UTC ISO8601> actor=<actor> -->`，其后正文逐字节保留原生成结果，不在响应中披露库路径。
 
 `GET /bundles/{bundle_id}` 默认 `view=roots`，返回 authorized_assets、open_questions 清单，数组长度即计数，context_text=null。open_questions 按冻结的字符串数组契约返回 claim_id；库存的问题对象保持原样。`view=content` 返回全文，设置 KNOT_TOKEN 时须带 Bearer token，否则 FORBIDDEN_VIEW / 403；不设 token 时沿用本地 v1 开放态。未知 id 返回 NOT_FOUND / 404，非法 view 返回 BAD_REQUEST / 400。两个档位均只读，不导出、不更新 exported；未导出时 export_path=null，导出后为相对 exports_root 路径。
 
 启动失败向 stdout 输出 ErrorEnvelope 并退出 1，不进入 listening。detail.reason：缺库或不可读为 db_unreadable；版本不支持为 unsupported_schema（code=SCHEMA_VERSION_UNSUPPORTED）；端口占用为 port_in_use；http.seq 存在未完成命令为 pending_requires_review；其他异常为 internal。message 给出可操作说明，不包含主机异常文本或绝对路径。pending 日志保留供人工核对，不恢复或重放。既有存活实例仍按 SERVER_BUSY 拒绝。Windows 禁用地址复用以稳定识别已占端口。
 
 本轮原始响应、正文比对和测试证据见 [Run A 回执](XWIN-A-EVIDENCE.md)。
+
+## Run B1：CLI 连服务与显式离线
+
+`knot_query` 的 events、asset、claims、support（claim/atom）、trace，以及 `claim_review` 的 accept/reject 默认走 HTTP。省略 `--server` 时读取库同级 `.knot/http.port`；服务成功绑定后写入实际端口。没有端口文件提示“先起服务或加 --offline”。显式 `--server` 仅接受 loopback HTTP origin。
+
+```sh
+python -m mvp.backend.knot_query support --db candidate/knot.db --claim <id> --at <Unix毫秒>
+python -m mvp.backend.knot_query events --db candidate/knot.db --start 0 --end <Unix毫秒> --server http://127.0.0.1:7318
+python -m mvp.backend.claim_review --db candidate/knot.db --claim <id> --accept
+python -m mvp.backend.knot_query claims --db candidate/knot.db --atom decision --offline
+```
+
+`--offline` 在持有 `.knot/http.guard` 的 OS 排他锁期间检查 http.lock 的 PID 活性，并在整个读／写期间保留 guard，阻止服务同时启动；存活 owner 拒绝，陈旧 owner 允许。OS 锁随进程退出释放，guard 文件本身可保留。服务启动与 reconcile 使用同一 guard。
+
+events 映射 `/timeline`（半开区间 [start,end)，limit 最大 500），asset 映射 `/assets?content_hash=`（64 位 hex，未命中输出 []），claims 映射 `/claims?atom=`（按服务端顺序分页，最多输出 --limit 条）；support 分别映射 `/claims/{id}?as_of=` 与 `/claims?atom=&as_of=`（读完所有页）；trace 原样读取 `/trace/{id}?max_depth=`。`/events` 仍是 SSE。两种来源均输出一行 JSON；CLI 不重算 boolean/minimal_roots，候选真值与原子视图并列且互不推导。
+
+## Token 与 actor
+
+服务端 `KNOT_TOKENS` 接受 JSON token→actor 映射，例如 `{"<token-a>":"hermes","<token-b>":"codex"}`。`KNOT_TOKEN` 仍映射 local-user；两者 token 重合时以 KNOT_TOKENS 为准。CLI 用自身 KNOT_TOKEN 作为 Bearer token。未配置 token 时沿用 loopback 开放态，actor=local-user。写命令无有效 token 返回 UNAUTHORIZED，content 档返回 FORBIDDEN_VIEW；不接受请求体自报 actor。
+
+新确认事件的 payload.actor 在 review 自己的事务内、提交前注入；已有确认事件的撤销／恢复不改写历史 actor。pending 同时保存 actor 与 since；bundle.export 的 actor 透传到导出首行，正文与 job 状态机、持久结构和失败语义保持原状。
+
+## Pending 离线对账
+
+`/health.pending` 为 null 或 `{command,actor,since}`，since 为意图写入时的 Unix 毫秒；旧意图没有时间时为 null。pending 未完成时保持既有失败封闭规则，拒绝写入及重启。
+
+```sh
+python -m mvp.backend.reconcile --db candidate/knot.db --list
+python -m mvp.backend.reconcile --db candidate/knot.db --clear --reason "已核对数据库与意图，人工决定丢弃意图"
+```
+
+两种操作只许离线。list 给出 pending 身份／时间／命令及 body 的 hash、参数键摘要，不输出凭据值。clear 必须有非空 reason：先向 `~/.knot/reconcile.log` 追加完整原 pending、body 摘要、理由、UTC 时间与本机操作者，flush/fsync 成功后才原子替换 http.seq 清除 pending；审计失败不清空。不补事件、不回放命令、不清 jobs/frames/keys。
+
+逐条输出、两种 selfcheck 与独立复核见 [Run B1 回执](XWIN-B1-EVIDENCE.md)。
