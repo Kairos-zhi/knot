@@ -687,7 +687,7 @@ selfcheck: 19 PASS / 0 FAIL; exit=0
   },
   "reason": "confirmed database checked; discard intent",
   "time": "2026-10-29T17:04:27.853643+00:00",
-  "operator": "x2270"
+  "operator": "<operator>"
 }
 ```
 

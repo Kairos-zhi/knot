@@ -2,7 +2,6 @@
 
 import argparse
 from datetime import datetime, timezone
-import getpass
 import hashlib
 import json
 import os
@@ -12,7 +11,7 @@ from mvp.cli_client import require_offline
 from .http_lock import owner_guard
 
 
-def reconcile(db, *, clear=False, reason=None):
+def reconcile(db, *, clear=False, reason=None, operator=None):
     if clear and (not reason or not reason.strip()):
         raise ValueError("--clear requires --reason")
     state = Path(db).expanduser().resolve().parent / ".knot"
@@ -21,10 +20,11 @@ def reconcile(db, *, clear=False, reason=None):
         return dict(pending=None, body_summary=None, cleared=False)
     with owner_guard(state):
         require_offline(db)
-        return _locked_reconcile(state, clear, reason)
+        return _locked_reconcile(state, clear, reason,
+                                 operator if operator is not None else os.environ.get("KNOT_OPERATOR", "local-operator"))
 
 
-def _locked_reconcile(state, clear, reason):
+def _locked_reconcile(state, clear, reason, operator):
     lock = state / "http.lock"
     # Same exclusive lock as the server; no startup can race audit/clear.
     lock.unlink(missing_ok=True)  # Only a stale lock may remain after the guard.
@@ -47,7 +47,7 @@ def _locked_reconcile(state, clear, reason):
                 log = Path.home() / ".knot" / "reconcile.log"
                 log.parent.mkdir(parents=True, exist_ok=True)
                 record = dict(pending=pending, body_summary=summary, reason=reason,
-                              time=datetime.now(timezone.utc).isoformat(), operator=getpass.getuser())
+                              time=datetime.now(timezone.utc).isoformat(), operator=operator)
                 with log.open("a", encoding="utf-8", newline="\n") as stream:
                     stream.write(json.dumps(record, ensure_ascii=True) + "\n")
                     stream.flush()
@@ -76,11 +76,15 @@ def main(argv=None):
     choice.add_argument("--list", action="store_true")
     choice.add_argument("--clear", action="store_true")
     parser.add_argument("--reason")
+    parser.add_argument("--operator")
     args = parser.parse_args(argv)
     try:
-        result = reconcile(args.db, clear=args.clear, reason=args.reason)
-    except (OSError, ValueError) as exc:
-        print(json.dumps(dict(error=str(exc)), ensure_ascii=True))
+        result = reconcile(args.db, clear=args.clear, reason=args.reason, operator=args.operator)
+    except (OSError, ValueError):
+        # Filesystem and journal errors can contain private paths or journal text.
+        missing_reason = args.clear and (not args.reason or not args.reason.strip())
+        message = "--clear requires --reason" if missing_reason else "reconcile failed"
+        print(json.dumps(dict(error=message), ensure_ascii=True))
         return 1
     print(json.dumps(result, ensure_ascii=True))
     return 0
