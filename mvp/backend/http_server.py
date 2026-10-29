@@ -163,6 +163,8 @@ class Server(ThreadingHTTPServer):
         if set(args) != {"claim_id"} or not isinstance(args["claim_id"], str) or not args["claim_id"]:
             raise Fault("BAD_REQUEST")
         with self.changed:
+            if self.jobs.failed:
+                raise Fault('INTERNAL', reason='job_journal_requires_review')
             if self.journal.get("pending"):
                 raise Fault("INTERNAL", reason="incomplete_command_requires_review")
             if key is not None and key in self.journal["keys"]:

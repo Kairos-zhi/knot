@@ -90,7 +90,11 @@ class BundleJobs:
                 journal['seq'] += 1
                 journal['frames'].append(dict(seq=journal['seq'], type='bundle.created',
                     ts=job['updated_at'], payload=dict(bundle_id=job['result']['bundle_id'])))
-            server.persist(journal)
+            try:
+                server.persist(journal)
+            except OSError:
+                self.failed = True
+                raise
             server.journal = journal
             server.changed.notify_all()
 

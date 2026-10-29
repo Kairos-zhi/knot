@@ -1,6 +1,7 @@
 """Selected-asset continuation material, using existing confirmation and trace semantics."""
 
 import json
+import re
 import time
 from uuid import uuid4
 
@@ -80,7 +81,8 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                         lines = blob.decode('utf-8').splitlines()
                     except UnicodeDecodeError:
                         continue
-                    excerpts.extend(line.strip() for line in lines if row['source_label'] in line)
+                    pattern = r'(?<![A-Za-z0-9])' + re.escape(row['source_label']) + r'(?![A-Za-z0-9])'
+                    excerpts.extend(line.strip() for line in lines if re.search(pattern, line))
             if excerpts:
                 entry += '\n  来源原文：\n' + '\n'.join('  > ' + line for line in dict.fromkeys(excerpts))
             else:
