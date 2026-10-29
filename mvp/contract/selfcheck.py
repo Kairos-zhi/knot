@@ -112,6 +112,10 @@ def run(argv=None):
                     print(f"FAIL command {command}: {type(exc).__name__}")
             for route in http.ROUTES:
                 path = route["path"].replace("{claim_id}", claim).replace("{asset_id}", asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
+                if route["response"] == "Timeline":
+                    path += "?start=0&end=9999999999999"
+                elif route["response"] == "AssetList":
+                    path += "?content_hash=" + "0" * 64
                 try:
                     if route.get("stream"):
                         with urlopen(base + path + "?since=0", timeout=3) as stream:

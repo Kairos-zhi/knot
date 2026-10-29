@@ -34,7 +34,7 @@ def test_selfcheck_missing_source_and_export_directory(tmp_path):
                             capture_output=True, text=True, timeout=20, env=env)
     assert result.returncode == 0, result.stdout + result.stderr
     assert 'PASS GET /bundles/{bundle_id}' in result.stdout
-    assert '17 PASS / 0 FAIL' in result.stdout
+    assert '19 PASS / 0 FAIL' in result.stdout
     assert not source.parent.exists()
     assert not (home / '.knot' / 'exports').exists()
 
@@ -60,7 +60,7 @@ def test_selfcheck_existing_source_with_external_objects(tmp_path):
                             cwd=Path(__file__).resolve().parents[2],
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert '17 PASS / 0 FAIL' in result.stdout
+    assert '19 PASS / 0 FAIL' in result.stdout
     assert (source.read_bytes(), obj.read_bytes()) == before
 
 
@@ -145,7 +145,7 @@ def test_export_header_body_and_relative_path(bundle_server, tmp_path):
     exported = server.jobs.exports / done['result']['path']
     head, body = exported.read_bytes().split(b'\n', 1)
     digest = hashlib.sha256(str(server.db).encode()).hexdigest()[:8]
-    match = re.fullmatch(r'<!-- knot-bundle bundle_id=' + bid + r' db=' + digest + r' generated=(\S+) -->', head.decode())
+    match = re.fullmatch(r'<!-- knot-bundle bundle_id=' + bid + r' db=' + digest + r' generated=(\S+) actor=local-user -->', head.decode())
     assert match and datetime.fromisoformat(match[1]).tzinfo is not None
     assert body == baseline.read_bytes()
     readback = request(base, '/bundles/' + bid)[1]['value']

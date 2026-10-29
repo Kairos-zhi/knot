@@ -1,4 +1,4 @@
-"""Executable structural examples for the locked v1.6-draft contract.
+"""Executable structural examples for the locked v1.9 contract.
 
 jsonschema is a test dependency only. These examples validate definitions,
 not HTTP routing or runtime authorization behavior.
@@ -25,7 +25,7 @@ CLAIM = {
     "unverified": False, "source_label": "T-01", "source_members": ["note.md"],
     "support_sources": ["asset-1"], "user_response": "confirm",
     "proposed_at": 1000, "reviewed_at": 2000,
-    "candidate_level": {"status": "confirmed", "confirmed_at": 2000},
+    "candidate_level": {"status": "confirmed", "confirmed_at": 2000, "boolean": True, "minimal_roots": [["event-1"]]},
     "atom_level": SUPPORT,
 }
 PATH_ITEM = {
@@ -41,6 +41,9 @@ ASSET = {
 ERROR = {"code": "BAD_AS_OF", "message": "future time", "detail": {"as_of": 3000}}
 
 VALID = {
+    "EventRow": {"event_id": "e", "event_type": "import", "event_time": 1, "recorded_at": 2},
+    "Timeline": {"items": []},
+    "AssetList": {"items": [ASSET]},
     "OkEnvelopeViewed": {
         "contract_version": 1, "ok": True, "view": "meta", "value": ASSET,
     },
@@ -61,7 +64,7 @@ VALID = {
     "Error": ERROR,
     "Health": {
         "status": "ok", "contract_version": 1, "schema_version": "1.4",
-        "read_only": False, "uptime_s": 1.5, "db_path_sha256": "b" * 64, "seq": 1,
+        "read_only": False, "uptime_s": 1.5, "db_path_sha256": "b" * 64, "seq": 1, "pending": None,
     },
     "AtomSupport": SUPPORT,
     "Snapshot": {
@@ -100,6 +103,9 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "EventRow": ("recorded_at", "2"),
+    "Timeline": ("items", {}),
+    "AssetList": ("items", [{}]),
     "OkEnvelopeViewed": ("view", "unknown"),
     "OkEnvelopeTimed": ("as_of", None),
     "ContractInfo": ("schema_sha256", 1),
@@ -143,7 +149,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 20
+    assert len(SCHEMA["$defs"]) == 23
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -209,7 +215,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 11
+    assert len(ENDPOINTS["routes"]) == 13
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
@@ -241,4 +247,4 @@ def test_endpoint_timed_envelopes_match_exact_routes():
 
 def test_endpoint_viewed_envelopes_match_exact_routes():
     assert {route["path"] for route in ENDPOINTS["routes"]
-            if route["envelope"] == "viewed"} == {"/assets/{asset_id}", "/bundles/{bundle_id}"}
+            if route["envelope"] == "viewed"} == {"/assets/{asset_id}", "/bundles/{bundle_id}", "/assets"}

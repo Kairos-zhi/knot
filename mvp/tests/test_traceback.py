@@ -121,7 +121,7 @@ def test_missing_reference_names_id_and_returns_no_partial_cli(candidate, capsys
         read(candidate)
     print(str(error.value))
     capsys.readouterr()
-    assert main(['trace', '--db', str(repo.db_path), '--claim', cid]) == 1
+    assert main(['trace', '--offline', '--db', str(repo.db_path), '--claim', cid]) == 1
     lines = capsys.readouterr().out.splitlines()
     assert len(lines) == 1 and set(json.loads(lines[0])) == {'error'}
     assert 'missing-event' in json.loads(lines[0])['error']
@@ -240,7 +240,7 @@ def test_cli_one_connection_one_transaction_and_byte_preservation(candidate, mon
         return conn
 
     monkeypatch.setattr(sqlite3, 'connect', connect)
-    assert main(['trace', '--db', str(repo.db_path), '--claim', cid]) == 0
+    assert main(['trace', '--offline', '--db', str(repo.db_path), '--claim', cid]) == 0
     lines = capsys.readouterr().out.splitlines()
     assert len(lines) == 1 and len(json.loads(lines[0])['path']) == 5
     assert len(opened) == statements.count('BEGIN') == statements.count('ROLLBACK') == 1
@@ -255,7 +255,7 @@ def test_cli_one_connection_one_transaction_and_byte_preservation(candidate, mon
                                     ['--claim', '', '--max-depth', '5']])
 def test_cli_unknown_or_invalid_claim(candidate, capsys, options):
     repo, _ = candidate
-    assert main(['trace', '--db', str(repo.db_path), *options]) == 1
+    assert main(['trace', '--offline', '--db', str(repo.db_path), *options]) == 1
     output = capsys.readouterr()
     assert not output.err and len(output.out.splitlines()) == 1
     assert set(json.loads(output.out)) == {'error'}
@@ -264,7 +264,7 @@ def test_cli_unknown_or_invalid_claim(candidate, capsys, options):
 @pytest.mark.parametrize('depth', ['0', '-1', 'bad'])
 def test_cli_invalid_depth(candidate, capsys, depth):
     repo, cid = candidate
-    args = ['trace', '--db', str(repo.db_path), '--claim', cid, '--max-depth', depth]
+    args = ['trace', '--offline', '--db', str(repo.db_path), '--claim', cid, '--max-depth', depth]
     if depth == 'bad':
         with pytest.raises(SystemExit) as error:
             main(args)
@@ -281,13 +281,13 @@ def test_cli_subprocess_json_and_missing_database(candidate, tmp_path):
     script = ('import sys; sys.path.insert(0,sys.argv.pop(1)); '
               'from mvp.backend.knot_query import main; raise SystemExit(main())')
     prefix = [sys.executable, '-c', script, str(root), 'trace']
-    result = subprocess.run([*prefix, '--db', str(repo.db_path), '--claim', cid],
+    result = subprocess.run([*prefix, '--offline', '--db', str(repo.db_path), '--claim', cid],
                             cwd=tmp_path, capture_output=True, text=True)
     assert result.returncode == 0 and not result.stderr
     assert len(result.stdout.splitlines()) == 1
     assert json.loads(result.stdout)['status'] == 'unconfirmed'
     missing = tmp_path / 'missing.db'
-    result = subprocess.run([*prefix, '--db', str(missing), '--claim', cid],
+    result = subprocess.run([*prefix, '--offline', '--db', str(missing), '--claim', cid],
                             cwd=tmp_path, capture_output=True, text=True)
     assert result.returncode == 1 and set(json.loads(result.stdout)) == {'error'}
     assert not missing.exists()

@@ -337,7 +337,7 @@ def test_existing_confirmation_drift_is_refused_not_repaired(repo, drift):
 @pytest.mark.parametrize("flags", [[], ["--accept", "--reject"], ["--modify"]])
 def test_cli_parameter_errors_one_json_exit_one(repo, flags):
     before = repo.db_path.read_bytes()
-    result = subprocess.run([sys.executable, "-m", "mvp.backend.claim_review", "--db", str(repo.db_path),
+    result = subprocess.run([sys.executable, "-m", "mvp.backend.claim_review", "--offline", "--db", str(repo.db_path),
                              "--claim", claim(repo)["claim_id"], *flags], cwd=ROOT,
                             capture_output=True, text=True)
     assert result.returncode == 1 and len(result.stdout.splitlines()) == 1
@@ -347,7 +347,7 @@ def test_cli_parameter_errors_one_json_exit_one(repo, flags):
 
 def test_cli_success_unknown_claim_and_external_cwd(repo, tmp_path):
     program = "import sys;sys.path.insert(0,sys.argv.pop(1));from mvp.backend.claim_review import main;sys.exit(main())"
-    base = [sys.executable, "-c", program, str(ROOT), "--db", str(repo.db_path)]
+    base = [sys.executable, "-c", program, str(ROOT), "--offline", "--db", str(repo.db_path)]
     result = subprocess.run(base + ["--claim", claim(repo)["claim_id"], "--accept"], cwd=tmp_path,
                             capture_output=True, text=True)
     assert result.returncode == 0 and len(result.stdout.splitlines()) == 1

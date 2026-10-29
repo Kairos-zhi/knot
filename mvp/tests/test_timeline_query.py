@@ -187,7 +187,7 @@ def test_cli_single_connection_and_json(database, monkeypatch, capsys, args, exp
         return conn
 
     monkeypatch.setattr(sqlite3, 'connect', connect)
-    assert main([*args, '--db', str(database)]) == 0
+    assert main([*args, '--offline', '--db', str(database)]) == 0
     lines = capsys.readouterr().out.splitlines()
     assert len(lines) == 1
     result = json.loads(lines[0])
@@ -224,7 +224,7 @@ def test_cli_parse_errors_one_json(args, code, capsys):
     ['claims', '--atom', ''], ['asset', '--hash', ''],
 ])
 def test_cli_query_errors(database, args, capsys):
-    assert main([*args, '--db', str(database)]) == 1
+    assert main([*args, '--offline', '--db', str(database)]) == 1
     lines = capsys.readouterr().out.splitlines()
     assert len(lines) == 1
     assert 'error' in json.loads(lines[0])
@@ -238,7 +238,7 @@ def test_cli_blob_metadata_and_external_working_directory(database, tmp_path):
     # Module launch uses an explicit import root; the database path is absolute.
     script = ('import sys; sys.path.insert(0, sys.argv.pop(1)); '
               'from mvp.backend.knot_query import main; raise SystemExit(main())')
-    result = subprocess.run([sys.executable, '-c', script, str(root), 'asset', '--db',
+    result = subprocess.run([sys.executable, '-c', script, str(root), 'asset', '--offline', '--db',
                              str(database), '--hash', 'blobhash'], cwd=tmp_path,
                             capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stderr
@@ -249,7 +249,7 @@ def test_cli_blob_metadata_and_external_working_directory(database, tmp_path):
 
 def test_cli_missing_database_does_not_create(tmp_path, capsys):
     missing = tmp_path / 'never.db'
-    assert main(['asset', '--db', str(missing), '--hash', 'hash']) == 1
+    assert main(['asset', '--offline', '--db', str(missing), '--hash', 'hash']) == 1
     assert 'error' in json.loads(capsys.readouterr().out)
     assert not missing.exists()
 
@@ -261,7 +261,7 @@ def test_cli_directory_and_v13_are_json_errors(database, tmp_path, capsys):
         conn.execute('ALTER TABLE claims_candidates DROP COLUMN source_members')
     before = database.read_bytes()
     for path in (tmp_path, database):
-        assert main(['claims', '--db', str(path), '--atom', 'decision']) == 1
+        assert main(['claims', '--offline', '--db', str(path), '--atom', 'decision']) == 1
         lines = capsys.readouterr().out.splitlines()
         assert len(lines) == 1
         assert 'error' in json.loads(lines[0])
@@ -289,7 +289,7 @@ def claim_id(repo, label):
 
 
 def run_support(repo, capsys, *options):
-    code = query.main(['support', '--db', str(repo.db_path), *options])
+    code = query.main(['support', '--offline', '--db', str(repo.db_path), *options])
     captured = capsys.readouterr()
     assert not captured.err
     assert len(captured.out.splitlines()) == 1
@@ -391,7 +391,7 @@ def test_support_cli_query_errors(support_repo, capsys, options):
 ])
 def test_support_cli_parse_errors(support_repo, capsys, options):
     with pytest.raises(SystemExit) as error:
-        query.main(['support', '--db', str(support_repo.db_path), *options])
+        query.main(['support', '--offline', '--db', str(support_repo.db_path), *options])
     assert error.value.code == 1
     output = capsys.readouterr()
     assert not output.err and len(output.out.splitlines()) == 1
@@ -400,7 +400,7 @@ def test_support_cli_parse_errors(support_repo, capsys, options):
 
 def test_support_cli_missing_database_never_creates(tmp_path, capsys):
     path = tmp_path / 'absent.db'
-    assert query.main(['support', '--db', str(path), '--at', '0']) == 1
+    assert query.main(['support', '--offline', '--db', str(path), '--at', '0']) == 1
     assert set(json.loads(capsys.readouterr().out)) == {'error'}
     assert not path.exists()
 
@@ -420,7 +420,7 @@ def test_support_cli_atom_filter_is_not_truncated_at_500(support_repo, capsys):
 def test_support_cli_subprocess_json(support_repo):
     root = Path(__file__).resolve().parents[2]
     result = subprocess.run(
-        [sys.executable, '-m', 'mvp.backend.knot_query', 'support', '--db', str(support_repo.db_path),
+        [sys.executable, '-m', 'mvp.backend.knot_query', 'support', '--offline', '--db', str(support_repo.db_path),
          '--at', '100', '--atom', 'decision'], cwd=root, capture_output=True, text=True, check=False,
     )
     assert result.returncode == 0, result.stderr
