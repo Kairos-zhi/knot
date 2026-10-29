@@ -2,6 +2,8 @@
 
 from contextlib import closing
 from copy import deepcopy
+from datetime import datetime, timezone
+import hashlib
 import os
 from pathlib import Path
 import sqlite3
@@ -113,6 +115,9 @@ class BundleJobs:
             temporary = self.exports / (bid + '.' + uuid4().hex + '.tmp')
             try:
                 with temporary.open('x', encoding='utf-8', newline='\n') as stream:
+                    digest = hashlib.sha256(str(self.server.db).encode()).hexdigest()[:8]
+                    generated = datetime.now(timezone.utc).isoformat()
+                    stream.write(f'<!-- knot-bundle bundle_id={bid} db={digest} generated={generated} -->\n')
                     stream.write(row[0])
                     stream.flush()
                     os.fsync(stream.fileno())
@@ -121,7 +126,7 @@ class BundleJobs:
                 temporary.unlink(missing_ok=True)
             with conn:
                 conn.execute('UPDATE continuation_bundles SET exported=1 WHERE bundle_id=?', (bid,))
-            return dict(bundle_id=bid, exported=True, path='exports/' + bid + '.md')
+            return dict(bundle_id=bid, exported=True, path=bid + '.md')
 
     def _run(self, jid, name, args):
         # A journal failure is not a business failure: do not invent a terminal
