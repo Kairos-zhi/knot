@@ -5,6 +5,7 @@ from contextlib import closing
 import hashlib
 import json
 from pathlib import Path
+import shutil
 from uuid import uuid4
 import tempfile
 import threading
@@ -77,6 +78,9 @@ def run(argv=None):
             import sqlite3
             with http.read_snapshot(source) as original, closing(sqlite3.connect(db)) as target:
                 original.backup(target)
+            objects = source.parent / "objects"
+            if objects.exists():
+                shutil.copytree(objects, db.parent / "objects")
         else:
             result = init_database(db)
             if result["status"] != "created":

@@ -3,6 +3,7 @@
 from contextlib import closing
 from datetime import datetime
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -12,13 +13,14 @@ import sqlite3
 import subprocess
 import sys
 import threading
+import zipfile
 
 import pytest
 from jsonschema import ValidationError
 
 from mvp.backend import http_server as http
 from mvp.backend.init_db import init_database
-from mvp.contract.selfcheck import request, seed, validate
+from mvp.contract.selfcheck import Repo, request, seed, validate
 from mvp.tests.test_bundle import generate, material, poll
 from mvp.tests.test_contract_schema import definition_validator
 
@@ -35,6 +37,31 @@ def test_selfcheck_missing_source_and_export_directory(tmp_path):
     assert '17 PASS / 0 FAIL' in result.stdout
     assert not source.parent.exists()
     assert not (home / '.knot' / 'exports').exists()
+
+
+def test_selfcheck_existing_source_with_external_objects(tmp_path):
+    source = tmp_path / 'source.db'
+    assert init_database(source)['status'] == 'created'
+    archive = io.BytesIO()
+    with zipfile.ZipFile(archive, 'w') as zipped:
+        zipped.writestr('source.md', 'T17-01 external selfcheck regression source')
+    data = archive.getvalue()
+    digest = hashlib.sha256(data).hexdigest()
+    relative = Path('objects') / digest[:2] / digest
+    obj = source.parent / relative
+    obj.parent.mkdir(parents=True)
+    obj.write_bytes(data)
+    repo = Repo(source)
+    asset = repo.add_asset(digest, 'application/zip', file_path=relative.as_posix(),
+                           source_uri='file://source.zip')
+    repo.add_event('import', subject=asset, event_time=0)
+    before = source.read_bytes(), obj.read_bytes()
+    result = subprocess.run([sys.executable, '-m', 'mvp.contract.selfcheck', '--db', str(source)],
+                            cwd=Path(__file__).resolve().parents[2],
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert '17 PASS / 0 FAIL' in result.stdout
+    assert (source.read_bytes(), obj.read_bytes()) == before
 
 
 @pytest.fixture
