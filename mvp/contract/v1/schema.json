@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knot.local/contract/v1",
+  "title": "Knot HTTP Contract v1 (draft for review)",
+  "$comment": "规范接口草案。contract_version 是整数；同版本内只许新增可选字段，删除/改名/改类型一律 +1。前端不认的版本必须拒渲染，不静默降级。",
+  "$defs": {
+    "OkEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "ok", "value"],
+      "properties": {
+        "contract_version": { "type": "integer", "const": 1 },
+        "ok": { "type": "boolean", "const": true },
+        "as_of": {
+          "type": ["integer", "null"],
+          "description": "本次读的时间坐标（Unix ms）。支持 as_of 的端点必须回显服务端实际使用值；不支持的端点为 null。"
+        },
+        "view": {
+          "type": "string",
+          "enum": ["boolean", "roots", "meta", "content"],
+          "description": "授权档位回显（I-05 阶梯）：boolean=只给真假；roots=再给来源事件 id；meta=资产元数据不含正文；content=正文。档位必须与实际返回内容一致。"
+        },
+        "value": {}
+      }
+    },
+    "OkEnvelopeTimed": {
+      "allOf": [{ "$ref": "#/$defs/OkEnvelope" }],
+      "required": ["as_of"],
+      "properties": { "as_of": { "type": "integer" } },
+      "$comment": "用于支持 as_of 的读端点（/snapshot、/claims、/claims/{claim_id}）：as_of 必须回显服务端实际采用值，缺省即违约。"
+    },
+    "ContractInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "schema_sha256"],
+      "properties": {
+        "contract_version": { "type": "integer" },
+        "schema_sha256": { "type": "string", "description": "schema.json 的实读 sha256（十六进制小写）" },
+        "endpoints_sha256": { "type": "string", "description": "endpoints.json 的实读 sha256，便于前端整体对齐" }
+      }
+    },
+    "ErrorEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "ok", "error"],
+      "properties": {
+        "contract_version": { "type": "integer", "const": 1 },
+        "ok": { "type": "boolean", "const": false },
+        "error": { "$ref": "#/$defs/Error" }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "BAD_REQUEST",
+            "NOT_FOUND",
+            "UNAUTHORIZED",
+            "FORBIDDEN_VIEW",
+            "METHOD_NOT_ALLOWED",
+            "COMMAND_NOT_ALLOWED",
+            "CONTRACT_VERSION_UNSUPPORTED",
+            "SCHEMA_VERSION_UNSUPPORTED",
+            "TRACE_BROKEN",
+            "TRACE_CYCLE",
+            "TRACE_DEPTH_EXCEEDED",
+            "BAD_AS_OF",
+            "SERVER_BUSY",
+            "INTERNAL"
+          ],
+          "description": "封闭集。新增错误码 = 契约升版。"
+        },
+        "message": { "type": "string" },
+        "detail": {
+          "type": "object",
+          "description": "点名细节：缺失的 id、环上的 id、超限值等。测试只断言存在性，不断言具体键集合。"
+        }
+      }
+    },
+    "Health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "contract_version", "schema_version", "read_only", "uptime_s"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ok", "degraded"] },
+        "contract_version": { "type": "integer" },
+        "schema_version": { "type": "string", "description": "库的 schema 版本，如 1.4" },
+        "read_only": { "type": "boolean" },
+        "uptime_s": { "type": "number" },
+        "db_path_sha256": { "type": "string", "description": "库路径的哈希，不回传真实路径" },
+        "seq": { "type": "integer", "description": "事件流当前 seq（用于 SSE 增量起点）" }
+      }
+    },
+    "AtomSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boolean"],
+      "properties": {
+        "boolean": { "type": "boolean" },
+        "minimal_roots": {
+          "type": "array",
+          "items": { "type": "array", "items": { "type": "string" } },
+          "description": "来源事件 id 的极小支持族。空根 [[]] 表示无条件成立，[] 表示无支持。view=roots 时必出现；view=boolean 时整个字段必须缺席（不夹带来源，I-05）。"
+        }
+      },
+      "$comment": "boolean 档只回真值、roots 档才回来源。测试须分别断言：boolean 档 minimal_roots 缺席、roots 档在场。"
+    },
+    "Snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["as_of", "rule_version", "view", "atoms", "counts"],
+      "properties": {
+        "as_of": { "type": "integer" },
+        "rule_version": { "type": "integer" },
+        "view": {
+          "type": "string",
+          "enum": ["boolean", "roots"],
+          "description": "快照只有 boolean/roots 两档；content 档只对 /assets/{id} 有意义。信封上的 view 必须与此一致。"
+        },
+        "atoms": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/AtomSupport" }
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["assets", "events", "claims"],
+          "properties": {
+            "assets": { "type": "integer" },
+            "events": { "type": "integer" },
+            "claims": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "Claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "claim_type", "atom", "unverified", "candidate_level", "atom_level"],
+      "properties": {
+        "claim_id": { "type": "string" },
+        "source_label": { "type": ["string", "null"] },
+        "claim_type": { "type": "string" },
+        "atom": { "type": "string" },
+        "support_sources": { "type": "array", "items": { "type": "string" } },
+        "source_members": { "type": "array", "items": { "type": "string" } },
+        "unverified": { "type": "boolean" },
+        "user_response": { "type": ["string", "null"] },
+        "proposed_at": { "type": "integer" },
+        "reviewed_at": { "type": ["integer", "null"] },
+        "candidate_level": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string", "enum": ["unconfirmed", "confirmed", "revoked"] },
+            "confirmed_at": { "type": ["integer", "null"] }
+          },
+          "description": "候选级真相：只看自己的确认事件 + <=as_of 快照。"
+        },
+        "atom_level": {
+          "oneOf": [
+            { "$ref": "#/$defs/AtomSupport" },
+            { "type": "null" }
+          ],
+          "description": "原子级视图。与 candidate_level 并排暴露，禁止互推。"
+        }
+      }
+    },
+    "ClaimList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["as_of", "items"],
+      "properties": {
+        "as_of": { "type": "integer" },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/Claim" } },
+        "next_cursor": { "type": ["string", "null"] }
+      }
+    },
+    "TracePathItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "event_type", "event_time", "recorded_at", "depth"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_type": { "type": "string" },
+        "subject": { "type": ["string", "null"] },
+        "event_time": { "type": "integer" },
+        "recorded_at": { "type": "integer" },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "depth": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "AssetMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "content_hash", "media_type"],
+      "properties": {
+        "asset_id": { "type": "string" },
+        "content_hash": { "type": "string" },
+        "media_type": { "type": "string" },
+        "source_uri": { "type": ["string", "null"] },
+        "path": { "type": ["string", "null"] },
+        "size": { "type": ["integer", "null"] }
+      }
+    },
+    "AssetContent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "media_type", "content", "encoding"],
+      "properties": {
+        "asset_id": { "type": "string" },
+        "media_type": { "type": "string" },
+        "content": {
+          "type": ["string", "null"],
+          "description": "仅 view=content 档返回。文本资产为字符串；二进制资产为 null，且必须同时给 path 与 encoding=none。"
+        },
+        "path": {
+          "type": ["string", "null"],
+          "description": "仅在 content=null（二进制）时出现；对象存储相对路径，不是本机绝对路径。"
+        },
+        "encoding": {
+          "type": "string",
+          "enum": ["utf-8", "base64", "none"],
+          "description": "utf-8=文本正文；base64=内嵌二进制；none=正文不在响应里，看 path。"
+        }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["encoding"], "properties": { "encoding": { "const": "none" } } },
+          "then": { "required": ["path"], "properties": { "content": { "type": "null" } } },
+          "else": { "properties": { "content": { "type": "string" } } }
+        }
+      ]
+    },
+    "Trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "status", "path", "assets", "depth"],
+      "properties": {
+        "claim_id": { "type": "string" },
+        "source_label": { "type": ["string", "null"] },
+        "atom": { "type": "string" },
+        "status": { "type": "string", "enum": ["confirmed", "revoked", "unconfirmed"] },
+        "path": { "type": "array", "items": { "$ref": "#/$defs/TracePathItem" } },
+        "assets": { "type": "array", "items": { "$ref": "#/$defs/AssetMeta" } },
+        "candidate_sources": { "type": "array", "items": { "type": "string" } },
+        "depth": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "CommandRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "args"],
+      "properties": {
+        "command": {
+          "type": "string",
+          "enum": ["claim.confirm", "claim.revoke", "claim.restore", "bundle.create", "bundle.export"],
+          "description": "写面白名单。不在此表一律 COMMAND_NOT_ALLOWED，无通用写入口。"
+        },
+        "args": { "type": "object" },
+        "idempotency_key": { "type": "string", "description": "可选。同键重复提交返回首次结果。" }
+      }
+    },
+    "CommandResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command"],
+      "properties": {
+        "command": { "type": "string" },
+        "event_id": { "type": ["string", "null"], "description": "同步命令产生的事件 id" },
+        "job_id": { "type": ["string", "null"], "description": "异步命令返回的工单 id，配合 GET /jobs/{id}" }
+      }
+    },
+    "Job": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_id", "command", "status"],
+      "properties": {
+        "job_id": { "type": "string" },
+        "command": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "running", "done", "failed"] },
+        "created_at": { "type": "integer" },
+        "updated_at": { "type": "integer" },
+        "result": { "type": ["object", "null"] },
+        "error": { "oneOf": [{ "$ref": "#/$defs/Error" }, { "type": "null" }] }
+      }
+    },
+    "ChangeEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "ts"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["claim.confirmed", "claim.revoked", "claim.restored", "support.changed", "asset.imported", "bundle.created"]
+        },
+        "ts": { "type": "integer" },
+        "payload": { "type": "object" }
+      },
+      "description": "SSE 帧形状（GET /events）。seq 单调递增且落盘，重启不归零；?since= 重放不重复。"
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/OkEnvelope" },
+    { "$ref": "#/$defs/ErrorEnvelope" }
+  ]
+}
