@@ -36,9 +36,11 @@
     },
     "ContractInfo": {
       "type": "object",
+      "description": "声明身份模式；single-user 保留本机全权，configured 按资产 reader 授权。",
       "additionalProperties": false,
       "required": ["contract_version", "schema_sha256", "exports_root"],
       "properties": {
+        "identity_mode": { "type": "string", "enum": ["single-user", "configured"], "description": "未配置 token 时为 single-user；配置 token 时为 configured。" },
         "contract_version": { "type": "integer" },
         "schema_sha256": { "type": "string", "description": "schema.json 的实读 sha256（十六进制小写）" },
         "endpoints_sha256": { "type": "string", "description": "endpoints.json 的实读 sha256，便于前端整体对齐" },
@@ -53,7 +55,7 @@
         "bundle_id": { "type": "string" },
         "created_at": { "type": "integer" },
         "exported": { "type": "boolean" },
-        "authorized_assets": { "type": "array", "items": { "type": "string" } },
+        "authorized_assets": { "type": "array", "items": { "type": "string" }, "description": "生成时 selected 与 readable 的交集；不可读资产不入包，仅在正文说明排除计数。" },
         "open_questions": { "type": "array", "items": { "type": "string" } },
         "context_text": { "type": ["string", "null"], "description": "续接包正文。view=content 档返回全文；roots 档返回 null（只给清单与计数）。" },
         "export_path": { "type": ["string", "null"], "description": "相对 exports_root 的导出路径；未导出为 null。" }

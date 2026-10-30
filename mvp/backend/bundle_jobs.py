@@ -4,6 +4,7 @@ from contextlib import closing
 from copy import deepcopy
 from datetime import datetime, timezone
 import hashlib
+import json
 import os
 from pathlib import Path
 import sqlite3
@@ -12,6 +13,7 @@ import time
 from uuid import UUID, uuid4
 
 from .continuation_bundle import generate_bundle
+from .asset_access import readable
 
 
 class BundleJobs:
@@ -23,6 +25,8 @@ class BundleJobs:
         with closing(sqlite3.connect(server.db.as_uri() + '?mode=ro', uri=True)) as conn:
             self.schema_version = ('1.5' if conn.execute(
                 "SELECT 1 FROM schema_version WHERE version='1.5'").fetchone() else '1.4')
+            if conn.execute("SELECT 1 FROM schema_version WHERE version='1.6'").fetchone():
+                self.schema_version = '1.6'
             column = next((row for row in conn.execute('PRAGMA table_info(continuation_bundles)')
                            if row[1] == 'job_id'), None)
             self.provenance_ready = column is not None and column[2].upper() == 'TEXT' and column[3:] == (0, None, 0)
@@ -112,13 +116,15 @@ class BundleJobs:
                 # bundle may exist without its producing job, even after kill -9.
                 with conn:
                     conn.execute('BEGIN IMMEDIATE')
-                    bid = generate_bundle(conn, **args)['bundle_id']
+                    bid = generate_bundle(conn, **args, actor=actor)['bundle_id']
                     conn.execute('UPDATE continuation_bundles SET job_id=? WHERE bundle_id=?', (jid, bid))
                 return dict(bundle_id=bid)
             bid = args['bundle_id']
-            row = conn.execute('SELECT context_text FROM continuation_bundles WHERE bundle_id=?', (bid,)).fetchone()
+            row = conn.execute('SELECT context_text,authorized_assets FROM continuation_bundles WHERE bundle_id=?', (bid,)).fetchone()
             if row is None:
                 raise LookupError('bundle does not exist')
+            if any(not readable(conn, aid, actor) for aid in json.loads(row[1])):
+                raise ValueError('bundle contains unreadable assets')
             self.exports.mkdir(parents=True, exist_ok=True)
             target = self.exports / (bid + '.md')
             temporary = self.exports / (bid + '.' + uuid4().hex + '.tmp')

@@ -6,6 +6,7 @@ import time
 from uuid import uuid4
 
 from .claim_support import claim_support_many
+from .asset_access import readable
 from .traceback import trace_claim
 
 
@@ -23,11 +24,11 @@ def _source_name(asset):
 
 
 def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool = True,
-                    now: int | None = None) -> dict:
+                    now: int | None = None, actor: str = 'local-user') -> dict:
     """Persist one scoped bundle atomically; join a caller transaction via savepoint.
 
-    Local v1 visibility permits every asset, but selection is explicit. Candidates
-    with any source outside selection are omitted, never silently expanded.
+    Selection intersects asset read grants in configured mode. Candidates with
+    any source outside that intersection are omitted, never silently expanded.
     """
     if (not isinstance(asset_ids, list) or not asset_ids or
             any(not isinstance(a, str) or not a for a in asset_ids)):
@@ -42,13 +43,17 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
         conn.execute('BEGIN IMMEDIATE')
     conn.execute('SAVEPOINT continuation_bundle')
     try:
-        selected = set(asset_ids)
+        requested = set(asset_ids)
+        selected = set()
         assets = []
-        for aid in sorted(selected):
+        for aid in sorted(requested):
+            if not readable(conn, aid, actor):
+                continue
             rows = _rows(conn, 'SELECT asset_id,content_hash,content_blob,metadata_json,file_path '
                                'FROM assets WHERE asset_id=?', (aid,))
             if not rows:
                 raise ValueError('selected asset does not exist')
+            selected.add(aid)
             assets.extend(rows)
         imports = dict(conn.execute("SELECT event_id,subject FROM history_events WHERE event_type='import'"))
         candidates = []
@@ -59,8 +64,21 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                 raise ValueError('invalid candidate support_sources')
             if refs and all(imports.get(ref) in selected for ref in refs):
                 candidates.append(row)
-        views = claim_support_many(conn, at=now, claim_ids=[c['claim_id'] for c in candidates])['claims']
+        # Only the bundle projection tolerates a confirmed event whose eligible
+        # row is missing. Claim/trace endpoints retain their strict semantics.
+        missing = {}
+        for candidate in candidates:
+            confirmations = conn.execute("SELECT event_id FROM history_events "
+                "WHERE event_type='user_confirm' AND subject=?", (candidate['claim_id'],)).fetchall()
+            if len(confirmations) == 1 and conn.execute(
+                    'SELECT 1 FROM eligible_snapshots WHERE event_id=? AND snapshot_time<=?',
+                    (confirmations[0][0], now)).fetchone() is None:
+                missing[candidate['claim_id']] = dict(atom=candidate['atom'], status='confirmed',
+                    boolean=False, minimal_roots=[], atom_view={'boolean': False})
+        views = claim_support_many(conn, at=now,
+            claim_ids=[c['claim_id'] for c in candidates if c['claim_id'] not in missing])['claims']
         views = {v['claim_id']: v for v in views}
+        views.update(missing)
         sections = {name: [] for name in ('已确认决策', '条件性定理', '反例', '未决问题')}
         kinds = dict(decision='已确认决策', relation='条件性定理', counterexample='反例', question='未决问题')
         snapshot, questions = {}, []
@@ -68,18 +86,23 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
             view = views[row['claim_id']]
             if view['status'] == 'revoked' or row['claim_type'] not in kinds:
                 continue
+            invalid = row['claim_id'] in missing or not view['atom_view']['boolean']
             if row['claim_type'] == 'question':
                 if not include_open_questions:
                     continue
             elif view['status'] != 'confirmed':
                 continue  # Candidate extraction alone is never a confirmed fact.
-            trace = trace_claim(conn, row['claim_id'])
+            trace = (dict(status=view['status'], path=[], assets=[],
+                          candidate_sources=json.loads(row['support_sources'])) if invalid
+                     else trace_claim(conn, row['claim_id']))
             if trace['status'] != view['status']:
                 raise ValueError('trace status differs from bundle snapshot')
             if any(a['asset_id'] not in selected for a in trace['assets']):
                 continue
             label = row['source_label'] or row['claim_id']
             entry = f"- [{label}] {row['atom']}（{view['status']}；claim {row['claim_id']}）"
+            if invalid:
+                entry += ' 证据无效'
             excerpts = []
             for asset in assets:
                 if asset['asset_id'] not in {imports[r] for r in json.loads(row['support_sources'])}:
@@ -100,14 +123,18 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                 entry += '\n  来源正文未内嵌或无编号对应行；请按来源资产核读。'
             if trace['path']:
                 entry += '\n  为什么：' + ' → '.join(e['event_id'] for e in trace['path'])
+            elif invalid:
+                entry += '\n  证据无效；候选来源事件：' + ', '.join(trace['candidate_sources'])
             else:
                 entry += '\n  尚未确认；候选来源事件：' + ', '.join(trace['candidate_sources'])
-            sections[kinds[row['claim_type']]].append(entry)
+            section = '未决问题' if invalid else kinds[row['claim_type']]
+            sections[section].append(entry)
             snapshot[row['claim_id']] = {k: view[k] for k in ('atom', 'status', 'boolean', 'minimal_roots')}
-            if row['claim_type'] == 'question':
+            if section == '未决问题':
                 questions.append(dict(claim_id=row['claim_id'], source_label=row['source_label'], status=view['status']))
         bundle_id = str(uuid4())
         parts = [f'# 续接包 {bundle_id}', '仅含显式选择的资产；候选标签与确认状态来自库，待用户审查。']
+        parts.append(f'{len(requested)} 个选中资产中 {len(requested) - len(selected)} 个因权限未纳入')
         for heading, entries in sections.items():
             parts.extend(['## ' + heading, '\n'.join(entries) or '（当前选择内无条目）'])
         parts.extend(['## 来源清单', '\n'.join(
