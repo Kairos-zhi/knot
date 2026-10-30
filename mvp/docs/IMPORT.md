@@ -120,6 +120,14 @@ SELECT COUNT(*) FROM assets WHERE content_blob IS NULL;
 本包预期依次22、22、19、3。用AssetRepo.list_unindexed()读原metadata_json.path，
 可看到三个历史zip的原相对文件名。[I24]
 
+## S3 导入者读权限（1.6）
+
+显式迁移至 1.6 后，新资产与导入事件在同一文件事务内写入 `asset_readers`。
+本地 CLI 用 `--actor <actor>` 指定导入者（与 `KNOT_TOKENS` 映射出的 actor 一致），
+省略时仍为 `local-user`。这是本机受信任的导入入口，不是新的远程登录入口。
+重复 hash 保留原资产和权限，不因重复导入自动给其他 actor 授权。
+配置模式导入要求先显式迁移至 1.6；未配置 token 的旧库导入行为不变。
+
 ## 计划与未覆盖
 
 导入器不负责所有文件类型识别、zip展开、原子主张提取、可信状态判定、对象垃圾回收，

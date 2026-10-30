@@ -15,6 +15,7 @@ from tempfile import NamedTemporaryFile
 from urllib.parse import quote
 
 from .asset_repo import AssetRepo
+from .asset_access import identity_mode
 from .event_store import EventStore
 
 
@@ -105,8 +106,10 @@ def _store_object(root, content_hash, data):
     return "objects/" + content_hash[:2] + "/" + content_hash
 
 
-def import_baseline(source, db_path):
+def import_baseline(source, db_path, *, actor='local-user'):
     """Verify, snapshot, check schema, then import one atomic pair per file."""
+    if not isinstance(actor, str) or not actor or any(c in actor for c in '\r\n'):
+        raise ValueError('actor must be a non-empty identity')
     source = Path(source).expanduser().resolve(strict=True)
     before = verify_manifest(source)
     db = Path(db_path).expanduser().resolve()
@@ -118,6 +121,9 @@ def import_baseline(source, db_path):
               "unindexed": 0, "failed": []}
     repo = _ImportRepo(db)
     with repo.session():
+        grants = repo._one("SELECT 1 FROM schema_version WHERE version='1.6'") is not None
+        if not grants and identity_mode() == 'configured':
+            raise ValueError('schema v1.6 required for configured imports; migrate explicitly')
         version = repo._one("SELECT version FROM schema_version WHERE version='1.1'")
         if version is None:
             raise ValueError("schema 1.1 required; migrate explicitly before importing")
@@ -151,6 +157,9 @@ def import_baseline(source, db_path):
                                 "origin": "v0.4", "path": row["path"],
                             }),
                         )
+                        if grants:
+                            with repo._connection() as conn:
+                                conn.execute('INSERT INTO asset_readers VALUES (?,?)', (asset_id, actor))
                         repo.add_event(
                             "import", subject=asset_id, source=uri,
                             event_time=event_time,
@@ -179,9 +188,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", required=True)
     parser.add_argument("--db", required=True)
+    parser.add_argument('--actor', default='local-user', help='importing actor for asset read grants')
     args = parser.parse_args()
     try:
-        summary = import_baseline(args.source, args.db)
+        summary = import_baseline(args.source, args.db, actor=args.actor)
     except (OSError, ValueError, sqlite3.Error) as exc:
         summary = {"imported": 0, "skipped": 0, "indexed": 0, "unindexed": 0,
                    "failed": [{"path": ".", "error": str(exc)}]}

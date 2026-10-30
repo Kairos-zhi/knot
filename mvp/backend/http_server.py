@@ -18,6 +18,7 @@ import time
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .asset_repo import AssetRepo
+from .asset_access import token_config, identity_mode, readable
 from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
@@ -100,15 +101,8 @@ class ActorRepo(AssetRepo):
 
 
 def authenticate(header):
-    raw = os.environ.get("KNOT_TOKENS")
-    tokens = json.loads(raw) if raw is not None else {}
-    if not isinstance(tokens, dict) or any(not isinstance(k, str) or not k or
-            not isinstance(v, str) or not v or any(c in v for c in "\r\n") for k, v in tokens.items()):
-        raise ValueError("invalid token configuration")
-    single = os.environ.get("KNOT_TOKEN")
-    if single:
-        tokens.setdefault(single, "local-user")
-    if not tokens:
+    tokens, configured = token_config()
+    if not configured:
         return "local-user"
     return tokens.get(header[7:]) if header and header.startswith("Bearer ") else None
 
@@ -337,7 +331,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.connection.settimeout(2)
                 value = self.server.command(json.loads(self.rfile.read(size)), actor)
             else:
-                value = self.read(route["response"], values | path_args)
+                value = self.read(route["response"], values | path_args, actor)
             body = dict(contract_version=VERSION, ok=True, value=value)
             if route["envelope"] in ("timed", "viewed"):
                 body["view"] = values.get("view", "roots")
@@ -362,9 +356,9 @@ class Handler(BaseHTTPRequestHandler):
 
     do_GET = do_POST = do_PUT = do_PATCH = do_DELETE = do_HEAD = do_OPTIONS = dispatch
 
-    def read(self, kind, p):
+    def read(self, kind, p, actor=None):
         if kind == "ContractInfo":
-            return dict(contract_version=VERSION, exports_root="~/.knot/exports", **{n + "_sha256": hashlib.sha256(
+            return dict(contract_version=VERSION, identity_mode=identity_mode(), exports_root="~/.knot/exports", **{n + "_sha256": hashlib.sha256(
                 raw).hexdigest() for n, raw in CONTRACT_BYTES.items()})
         if kind == "Health":
             pending = bool(self.server.journal.get("pending")) or self.server.jobs.failed
@@ -396,6 +390,9 @@ class Handler(BaseHTTPRequestHandler):
                                    (p["bundle_id"],)).fetchone()
                 if row is None:
                     raise Fault("NOT_FOUND", 404)
+                if p['view'] == 'content' and any(not readable(conn, aid, actor)
+                        for aid in json.loads(row['authorized_assets'])):
+                    raise Fault('FORBIDDEN_VIEW', 403)
                 return dict(bundle_id=row["bundle_id"], created_at=row["created_at"],
                             exported=bool(row["exported"]),
                             authorized_assets=json.loads(row["authorized_assets"]),
@@ -444,6 +441,8 @@ class Handler(BaseHTTPRequestHandler):
             row = dict(row)
             if p["view"] == "meta":
                 return metadata(row)
+            if not readable(conn, row['asset_id'], actor):
+                raise Fault('FORBIDDEN_VIEW', 403)
             blob = row["content_blob"]
             result = dict(asset_id=row["asset_id"], media_type=row["media_type"])
             if blob is None:

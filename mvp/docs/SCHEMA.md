@@ -181,6 +181,21 @@ Day 3导入资产及import事件，不生成原子映射或可信状态。**未�
 
 .gitattributes对二者设置-text防止checkout换行转换，CI以写死常量独立校验。[S37]
 
+## S3 显式资产读权限迁移（1.6）
+
+在已有 1.5 候选库运行 `python -m mvp.backend.migrate_schema_v1_6 candidate/knot.db`。
+本迁移只新增 `asset_readers(asset_id TEXT NOT NULL, actor TEXT NOT NULL, PRIMARY KEY(asset_id,actor))`
+及 1.6 版本行；迁移时已有资产登记 `local-user` reader，不推测其他 actor。
+新表、历史 reader 和版本行同事务提交，失败回滚。重跑只核结构并返回 `created:false`，
+不补授权、不改版本时间；缺表、结构漂移或未标版本的同名对象均拒绝，不自动修复。
+初始化仍创建 1.4；需要本功能时按顺序显式运行 1.5、1.6 迁移，不由服务启动升级。
+
+未配置 `KNOT_TOKENS`/`KNOT_TOKEN` 时为 `single-user`，不受 reader 表限制。
+配置模式 token 仅解析 actor，正文读权限由 reader 表判定；无 reader 返回 403 `FORBIDDEN_VIEW`，
+meta 仍可读。续接包取 selected 与 readable 的交集，正文说明排除计数；
+无 eligible 的确认事件或 atom boolean=false 的条目降至未决问题并标注“证据无效”。
+该容错仅用于包投影，claim/trace 原有严格校验不变。
+
 ## 计划与未覆盖
 
 映射填充、候选关系抽取、索引内容损坏恢复、前端展示不属于本轮交付；
