@@ -127,6 +127,9 @@ CREATE TABLE IF NOT EXISTS continuation_bundles (
 CREATE INDEX idx_bundles_created ON continuation_bundles(created_at);
 CREATE INDEX idx_bundles_exported ON continuation_bundles(exported);
 
+-- Additive job provenance; existing v1.4 databases use the explicit v1.5 migrator.
+ALTER TABLE continuation_bundles ADD COLUMN job_id TEXT;
+
 -- ============================================================
 -- FTS5 全文索引（资产内容）
 -- ============================================================

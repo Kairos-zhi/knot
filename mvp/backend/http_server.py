@@ -157,8 +157,6 @@ class Server(ThreadingHTTPServer):
             self.journal_path = self.state / "http.seq"
             self.journal = (json.loads(self.journal_path.read_text(encoding="utf-8"))
                             if self.journal_path.exists() else dict(seq=0, frames=[], keys={}))
-            if self.journal.get("pending"):
-                raise Fault("INTERNAL", reason="pending_requires_review")
             try:
                 with read_snapshot(self.db):
                     pass  # Refuse unsupported databases; never initialize or migrate here.
@@ -203,6 +201,9 @@ class Server(ThreadingHTTPServer):
         temporary.replace(self.journal_path)
 
     def command(self, body, actor):
+        with self.changed:
+            if self.journal.get("pending"):
+                raise Fault("SERVER_BUSY", 409, reason="incomplete_command_requires_review")
         if self.jobs.failed:
             raise Fault('INTERNAL', reason='job_journal_requires_review')
         if not isinstance(body, dict) or set(body) - {"command", "args", "idempotency_key"}:
@@ -213,6 +214,9 @@ class Server(ThreadingHTTPServer):
         if not isinstance(args, dict) or ("idempotency_key" in body and not isinstance(key, str)):
             raise Fault("BAD_REQUEST")
         if name.startswith("bundle."):
+            if name == 'bundle.create' and not self.jobs.provenance_ready:
+                raise Fault('SCHEMA_VERSION_UNSUPPORTED', 409, reason='job_provenance_migration_required',
+                            migration='mvp.backend.migrate_schema_v1_5')
             return self.jobs.submit(body, actor)
         if set(args) != {"claim_id"} or not isinstance(args["claim_id"], str) or not args["claim_id"]:
             raise Fault("BAD_REQUEST")
@@ -220,7 +224,7 @@ class Server(ThreadingHTTPServer):
             if self.jobs.failed:
                 raise Fault('INTERNAL', reason='job_journal_requires_review')
             if self.journal.get("pending"):
-                raise Fault("INTERNAL", reason="incomplete_command_requires_review")
+                raise Fault("SERVER_BUSY", 409, reason="incomplete_command_requires_review")
             if key is not None and key in self.journal["keys"]:
                 original = self.journal["keys"][key]
                 if original["body"] != body:
@@ -365,7 +369,7 @@ class Handler(BaseHTTPRequestHandler):
         if kind == "Health":
             pending = bool(self.server.journal.get("pending")) or self.server.jobs.failed
             return dict(status="degraded" if pending else "ok", contract_version=VERSION,
-                        schema_version="1.4", read_only=pending,
+                        schema_version=self.server.jobs.schema_version, read_only=pending,
                         uptime_s=time.monotonic() - self.server.started, seq=self.server.journal["seq"],
                         db_path_sha256=hashlib.sha256(str(self.server.db).encode()).hexdigest(),
                         pending=({"command": self.server.journal["pending"]["body"]["command"],

@@ -123,3 +123,7 @@ Health 增加必填 pending：null 或 command、actor、since 摘要；仅复�
 ## v1.9：候选自身真值
 
 candidate_level 必填 boolean、minimal_roots，与 atom_level 并列，互不推导；逐字节复制锁定 schema，endpoints 字节不变。
+
+## B2a-1 S2：pending 恢复底线（2026-10-30）
+
+仅修订 Health.pending 的 description：未完成命令保留现场，允许 degraded 只读启动，拒绝写入，仍须离线 reconcile；契约结构、错误码与路由不变。本条取代上方历史记录中的“阻断重启”。

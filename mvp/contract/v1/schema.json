@@ -158,7 +158,7 @@
             "actor": { "type": "string" },
             "since": { "type": ["integer", "null"] }
           },
-          "description": "journal 里未完成的命令；null 表示无。有值时服务拒绝启动与写入，须离线 reconcile。"
+          "description": "journal 里未完成的命令；null 表示无。有值时服务以 degraded 只读启动并拒绝写入，须离线 reconcile。"
         }
       }
     },

@@ -189,9 +189,13 @@ def test_pending_reconcile_audit_and_restart(material, monkeypatch, tmp_path):
         server.journal["pending"] = dict(body=dict(command="claim.confirm", args=dict(claim_id=material[2])), actor="codex", since=123)
         server.persist(server.journal)
     before = (db.parent / ".knot/http.seq").read_bytes()
-    with pytest.raises(http.Fault) as failure:
-        http.Server(db, port=0)
-    assert failure.value.detail["reason"] == "pending_requires_review"
+    with serving(db) as (_, base):
+        health = request(base, '/health')[1]['value']
+        assert health['status'] == 'degraded' and health['read_only'] is True
+        assert health['pending']['actor'] == 'codex'
+        refused = request(base, '/commands', dict(command='claim.confirm', args={}))
+        assert refused[0] == 409 and refused[1]['error']['code'] == 'SERVER_BUSY'
+    assert (db.parent / '.knot/http.seq').read_bytes() == before
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path / "home"))
     listed = reconcile(db)
     assert listed["pending"]["actor"] == "codex"
