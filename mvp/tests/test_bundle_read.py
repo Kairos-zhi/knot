@@ -158,7 +158,7 @@ def test_export_header_body_and_relative_path(bundle_server, tmp_path):
     print('BODY_COMPARE', json.dumps(dict(equal=True, sha256=hashlib.sha256(body).hexdigest(), bytes=len(body))))
 
 
-@pytest.mark.parametrize('reason', ['db_unreadable', 'unsupported_schema', 'port_in_use', 'pending_requires_review', 'internal'])
+@pytest.mark.parametrize('reason', ['db_unreadable', 'unsupported_schema', 'port_in_use', 'internal'])
 def test_startup_reasons(tmp_path, reason):
     db = tmp_path / 'candidate.db'
     if reason != 'db_unreadable':

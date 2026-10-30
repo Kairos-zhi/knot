@@ -20,6 +20,12 @@ class BundleJobs:
         self.exports = Path.home() / '.knot' / 'exports'
         self.threads = []
         self.failed = False
+        with closing(sqlite3.connect(server.db.as_uri() + '?mode=ro', uri=True)) as conn:
+            self.schema_version = ('1.5' if conn.execute(
+                "SELECT 1 FROM schema_version WHERE version='1.5'").fetchone() else '1.4')
+            column = next((row for row in conn.execute('PRAGMA table_info(continuation_bundles)')
+                           if row[1] == 'job_id'), None)
+            self.provenance_ready = column is not None and column[2].upper() == 'TEXT' and column[3:] == (0, None, 0)
         # Interrupted work is not replayed: SQLite/file/journal have no common
         # commit. Preserve evidence and report uncertainty without duplicate work.
         journal = deepcopy(server.journal)
@@ -27,9 +33,6 @@ class BundleJobs:
         changed = False
         for job in jobs.values():
             if job['status'] in ('pending', 'running'):
-                if job['status'] == 'pending':
-                    job['status'] = 'running'
-                    server.persist(journal)
                 job.update(status='failed', updated_at=int(time.time() * 1000),
                            error=dict(code='INTERNAL', message='interrupted_job_requires_review', detail={}))
                 changed = True
@@ -100,12 +103,18 @@ class BundleJobs:
             server.journal = journal
             server.changed.notify_all()
 
-    def _execute(self, name, args, actor="local-user"):
+    def _execute(self, name, args, actor="local-user", jid=None):
         uri = self.server.db.as_uri() + '?mode=rw'
         with closing(sqlite3.connect(uri, uri=True)) as conn:
             conn.execute('PRAGMA foreign_keys=ON')
             if name == 'bundle.create':
-                return dict(bundle_id=generate_bundle(conn, **args)['bundle_id'])
+                # Join the generator's savepoint to our transaction: no committed
+                # bundle may exist without its producing job, even after kill -9.
+                with conn:
+                    conn.execute('BEGIN IMMEDIATE')
+                    bid = generate_bundle(conn, **args)['bundle_id']
+                    conn.execute('UPDATE continuation_bundles SET job_id=? WHERE bundle_id=?', (jid, bid))
+                return dict(bundle_id=bid)
             bid = args['bundle_id']
             row = conn.execute('SELECT context_text FROM continuation_bundles WHERE bundle_id=?', (bid,)).fetchone()
             if row is None:
@@ -140,7 +149,7 @@ class BundleJobs:
             self.failed = True
             return
         try:
-            result = self._execute(name, args, actor)
+            result = self._execute(name, args, actor, jid)
         except Exception as exc:
             code = 'NOT_FOUND' if isinstance(exc, LookupError) else 'BAD_REQUEST' if isinstance(exc, ValueError) else 'INTERNAL'
             # Never persist exception text: OS errors may contain absolute paths.

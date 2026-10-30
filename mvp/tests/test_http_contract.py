@@ -320,12 +320,17 @@ def test_journal_failure_blocks_without_phantom_frames(tmp_path, monkeypatch):
         assert server.journal["seq"] == 0 and server.journal["frames"] == []
         with pytest.raises(http.Fault) as failure:
             server.command(dict(command="claim.revoke", args=dict(claim_id=claim)), "local-user")
-        assert failure.value.code == "INTERNAL"
+        assert failure.value.code == "SERVER_BUSY" and failure.value.status == 409
     finally:
         server.server_close()
-    with pytest.raises(http.Fault) as failure:
-        http.Server(db, port=0)
-    assert failure.value.detail["reason"] == "pending_requires_review"
+    restarted = http.Server(db, port=0)
+    try:
+        assert restarted.journal['pending']['body']['command'] == 'claim.confirm'
+        with pytest.raises(http.Fault) as failure:
+            restarted.command(dict(command='bundle.create', args={}), 'local-user')
+        assert failure.value.code == 'SERVER_BUSY' and failure.value.status == 409
+    finally:
+        restarted.server_close()
     assert not (tmp_path / ".knot/http.lock").exists()
 
 
