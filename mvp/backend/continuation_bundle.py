@@ -14,6 +14,14 @@ def _rows(conn, sql, params=()):
     return [dict(zip((c[0] for c in cursor.description), row)) for row in cursor]
 
 
+def _source_name(asset):
+    try:
+        metadata = json.loads(asset['metadata_json'] or '{}')
+    except (TypeError, ValueError):
+        metadata = None
+    return (metadata.get('path') if isinstance(metadata, dict) else None) or asset['file_path']
+
+
 def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool = True,
                     now: int | None = None) -> dict:
     """Persist one scoped bundle atomically; join a caller transaction via savepoint.
@@ -37,7 +45,8 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
         selected = set(asset_ids)
         assets = []
         for aid in sorted(selected):
-            rows = _rows(conn, 'SELECT asset_id,content_hash,content_blob FROM assets WHERE asset_id=?', (aid,))
+            rows = _rows(conn, 'SELECT asset_id,content_hash,content_blob,metadata_json,file_path '
+                               'FROM assets WHERE asset_id=?', (aid,))
             if not rows:
                 raise ValueError('selected asset does not exist')
             assets.extend(rows)
@@ -82,9 +91,11 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                     except UnicodeDecodeError:
                         continue
                     pattern = r'(?<![A-Za-z0-9])' + re.escape(row['source_label']) + r'(?![A-Za-z0-9])'
-                    excerpts.extend(line.strip() for line in lines if re.search(pattern, line))
+                    excerpts.extend(
+                        f"{asset['asset_id']}:{number} {json.dumps(line[:40], ensure_ascii=False)}"
+                        for number, line in enumerate(lines, 1) if re.search(pattern, line))
             if excerpts:
-                entry += '\n  来源原文：\n' + '\n'.join('  > ' + line for line in dict.fromkeys(excerpts))
+                entry += '\n来源：\n' + '\n'.join('  > ' + line for line in dict.fromkeys(excerpts))
             else:
                 entry += '\n  来源正文未内嵌或无编号对应行；请按来源资产核读。'
             if trace['path']:
@@ -100,7 +111,9 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
         for heading, entries in sections.items():
             parts.extend(['## ' + heading, '\n'.join(entries) or '（当前选择内无条目）'])
         parts.extend(['## 来源清单', '\n'.join(
-            f"- asset {a['asset_id'][:8]} (SHA: {a['content_hash'][:12]})" for a in assets)])
+            f"- asset {a['asset_id']} 文件名："
+            f"{json.dumps(_source_name(a), ensure_ascii=False)} "
+            f"sha256: {a['content_hash']}" for a in assets)])
         result = dict(bundle_id=bundle_id, created_at=now, user_scoped=True,
                       authorized_assets=sorted(selected), support_view_snapshot=snapshot,
                       open_questions=questions, context_text='\n\n'.join(parts) + '\n', exported=False)
