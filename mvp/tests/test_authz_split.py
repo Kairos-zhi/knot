@@ -88,6 +88,69 @@ def test_ac2_configured_two_actors(scoped, monkeypatch):
         live.stop()
 
 
+@pytest.mark.parametrize('configured', [True, False])
+def test_ac6_export_idempotency_bound_to_actor(scoped, monkeypatch, configured):
+    db, assets, _ = scoped
+    if configured:
+        monkeypatch.setenv('KNOT_TOKENS', json.dumps({'token-a': 'A', 'token-b': 'B'}))
+    token = 'token-a' if configured else None
+    live = Live(db)
+    try:
+        bundle = create_bundle(live, assets[:2], token)[1]['value']
+        body = dict(command='bundle.export', args=dict(bundle_id=bundle['bundle_id']),
+                    idempotency_key='AC-6-K')
+        accepted = request(live.base, '/commands', body, token=token)
+        print('AC-6', configured, 'A export RAW', json.dumps(accepted))
+        assert accepted[0] == 202, accepted
+        done = poll(live.base, accepted[1]['value']['job_id'])
+        print('AC-6', configured, 'export done RAW', json.dumps(done))
+        assert done[1]['value']['status'] == 'done', done
+        if configured:
+            denied = request(live.base, '/commands', body, token='token-b')
+            print('AC-6 B replay RAW', json.dumps(denied))
+            assert denied[0] == 400 and denied[1]['error']['code'] == 'BAD_REQUEST'
+            assert 'value' not in denied[1]
+        replay = request(live.base, '/commands', body, token=token)
+        print('AC-6', configured, 'same actor replay RAW', json.dumps(replay))
+        assert replay == accepted
+        # Restart proves the actor binding and original value survive persistence.
+        live.stop()
+        live.start()
+        replay = request(live.base, '/commands', body, token=token)
+        print('AC-6', configured, 'restart replay RAW', json.dumps(replay))
+        assert replay == accepted
+        if configured:
+            denied = request(live.base, '/commands', body, token='token-b')
+            print('AC-6 B restart replay RAW', json.dumps(denied))
+            assert denied[0] == 400 and denied[1]['error']['code'] == 'BAD_REQUEST'
+    finally:
+        live.stop()
+
+
+@pytest.mark.parametrize('stored_actor', [None, 'A'])
+def test_bundle_idempotency_conflict_reason(scoped, monkeypatch, stored_actor):
+    from mvp.backend.http_server import Server
+    monkeypatch.setenv('KNOT_TOKENS', json.dumps({'token-a': 'A', 'token-b': 'B'}))
+    db, _, _ = scoped
+    server = Server(db, port=0)
+    try:
+        body = dict(command='bundle.export',
+                    args=dict(bundle_id='00000000-0000-0000-0000-000000000001'),
+                    idempotency_key='legacy-or-other-actor')
+        original = dict(body=body, value=dict(job_id='must-not-leak'))
+        if stored_actor is not None:
+            original['actor'] = stored_actor
+        server.journal['keys'][body['idempotency_key']] = original
+        before = json.dumps(server.journal, sort_keys=True)
+        for actor in (('A', 'B', None) if stored_actor is None else ('B',)):
+            with pytest.raises(ValueError, match='^idempotency_key_conflict$'):
+                server.jobs.submit(body, actor=actor)
+            assert json.dumps(server.journal, sort_keys=True) == before
+        assert not server.jobs.threads
+    finally:
+        server.server_close()
+
+
 def test_ac3_selected_intersect_readable(scoped, monkeypatch):
     db, assets, _ = scoped
     monkeypatch.setenv('KNOT_TOKENS', json.dumps({'token-a': 'A', 'token-b': 'B'}))

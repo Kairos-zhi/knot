@@ -66,7 +66,8 @@ class BundleJobs:
                 raise ValueError('server cannot accept jobs')
             if key is not None and key in server.journal['keys']:
                 original = server.journal['keys'][key]
-                if original['body'] != body:
+                if ('actor' not in original or original['actor'] != actor or
+                        original['body'] != body):
                     raise ValueError('idempotency_key_conflict')
                 return original['value']
             jid, now = str(uuid4()), int(time.time() * 1000)
@@ -76,7 +77,7 @@ class BundleJobs:
             journal = deepcopy(server.journal)
             journal['jobs'][jid] = job
             if key is not None:
-                journal['keys'][key] = dict(body=body, value=value)
+                journal['keys'][key] = dict(body=body, value=value, actor=actor)
             server.persist(journal)
             server.journal = journal
             thread = threading.Thread(target=self._run, args=(jid, name, deepcopy(args), actor))
