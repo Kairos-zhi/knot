@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-26T11:45:00+08:00",
+  "note": "契约样例（fixture）。B 片在接口不可用时用它渲染，页面须标「示意数据」。",
+  "sources": [
+    {
+      "id": "desktop",
+      "label": "桌面 · 你在这里说的话",
+      "count": 13,
+      "dry": false
+    },
+    {
+      "id": "weixin",
+      "label": "微信 · 网关收进来的",
+      "count": 9,
+      "dry": false
+    },
+    {
+      "id": "feishu",
+      "label": "飞书 · 今天没进来",
+      "count": 0,
+      "dry": true
+    },
+    {
+      "id": "subagent",
+      "label": "子代理 · Codex 今天 7 个会话",
+      "count": 7,
+      "dry": false
+    },
+    {
+      "id": "cron",
+      "label": "定时件 · 25 个在跑（6 个每分钟）",
+      "count": 25,
+      "dry": false
+    }
+  ],
+  "stations": [
+    {
+      "id": "tidy",
+      "label": "整理",
+      "lines": [
+        "读 16 份 · 4 个技能",
+        "会话 136 次调用"
+      ]
+    },
+    {
+      "id": "make",
+      "label": "生产",
+      "lines": [
+        "10 个文件 · 118 KB",
+        "8 版可视化稿"
+      ]
+    },
+    {
+      "id": "check",
+      "label": "核验",
+      "lines": [
+        "截图核对 12 次",
+        "你的反馈 4 轮"
+      ]
+    }
+  ],
+  "gate": {
+    "closed": true,
+    "reason": "未进仓库 · 0 提交"
+  },
+  "outlet": {
+    "count": 0,
+    "note": "0 行代码"
+  },
+  "feedback": {
+    "count": 8
+  },
+  "pending": [
+    {
+      "label": "方案 v0.2",
+      "note": "等你拍板 · 未出库"
+    }
+  ],
+  "updated_at": "2026-10-26T11:45:00+08:00"
+}
