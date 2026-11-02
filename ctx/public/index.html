@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>流水线</title>
+<style>
+  :root{ --ink:#1a1a1c; --mid:#55555c; --soft:#8b8b93; --hair:#e6e6e9; --accent:#c2703c; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:transparent;color:var(--ink);
+    font:13px/1.7 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;position:relative}
+  .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .hd b{font-size:13px;font-weight:600;letter-spacing:.02em}
+  .hd .t{font-size:11px;color:var(--soft);font-variant-numeric:tabular-nums}
+  .hd .sep{flex:1}
+  .hd .st{font-size:11px;color:var(--soft)}
+  .hd .st i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+  .hd .st.off i{background:#c9c9ce}
+  svg{display:block;width:100%;height:auto;margin-top:4px;overflow:visible}
+  .wall{fill:none;stroke:#d0d0d6;stroke-width:18;stroke-linecap:round;stroke-linejoin:round}
+  .bore{fill:none;stroke:#fff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round}
+  .dry{fill:none;stroke:#d6d6db;stroke-width:6;stroke-linecap:round;stroke-dasharray:2 9}
+  .flow{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:2 24;opacity:.22;
+    animation:flow 26s linear infinite}
+  .flow.slow{animation-duration:52s}
+  @keyframes flow{to{stroke-dashoffset:-260}}
+  .meter{fill:#fff;stroke:#dcdce0;stroke-width:1}
+  .meter-n{font-size:12px;fill:var(--ink);font-variant-numeric:tabular-nums}
+  .stn{fill:#fff;stroke:#dcdce0;stroke-width:1}
+  .stn-n{font-size:11.5px;fill:var(--ink)}
+  .stn-s{font-size:9.5px;fill:var(--soft);font-variant-numeric:tabular-nums}
+  .adp{fill:#fff;stroke:#dcdce0;stroke-width:1}
+  .adp-t{font-size:8.5px;fill:var(--soft)}
+  .lab{font-size:10.5px;fill:var(--mid)}
+  .lab-s{font-size:10px;fill:var(--soft)}
+  .note{font-size:10px;fill:var(--soft)}
+  .valve{fill:none;stroke:var(--accent);stroke-width:2.4}
+  .num{transition:opacity .2s ease}
+  .badge{position:absolute;right:12px;bottom:10px;font-size:10px;color:var(--soft)}
+  @media (prefers-reduced-motion: reduce){ .flow{animation:none} .num{transition:none} }
+  .lg{margin-top:2px;font-size:10.5px;color:var(--soft);line-height:1.9}
+  .lg b{font-weight:500;color:var(--mid)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <b>流水线</b>
+    <span class="t" id="range">—</span>
+    <span class="sep"></span>
+    <span class="st" id="state"><i></i>连接中…</span>
+  </div>
+
+  <svg id="s" viewBox="0 0 980 500" role="img"
+       aria-label="五个来源各自经归一器汇入一条总管，经整理、生产、核验，末端闸门与出库"></svg>
+
+  <div class="lg">
+    <b>怎么算「同一个东西」：</b>每个源先归一成同构事件——来源 + 原生 id + 发生时间；同一 id 只收一次。汇流不靠猜，靠这几个键对齐。
+  </div>
+  <div class="badge" id="badge"></div>
+</div>
+
+<script>
+/* ============================================================
+   第一屏 · 数据接线（holder 搭的空壳，B 片可直接改写渲染层）
+   契约：GET /api/pipeline ；GET /events (SSE)
+   无接口时退回 contract/fixture.json（内联），页面标「示意数据」
+   ============================================================ */
+const FIXTURE = {
+  sources:[
+    {id:'desktop', label:'桌面 · 你在这里说的话', count:13, dry:false},
+    {id:'weixin',  label:'微信 · 网关收进来的',   count:9,  dry:false},
+    {id:'feishu',  label:'飞书 · 今天没进来',     count:0,  dry:true },
+    {id:'subagent',label:'子代理 · Codex 今天的会话', count:7, dry:false},
+    {id:'cron',    label:'定时件 · 在跑的定时任务',  count:25, dry:false}
+  ],
+  stations:[
+    {id:'tidy', label:'整理', lines:['读 16 份 · 4 个技能','会话 136 次调用']},
+    {id:'make', label:'生产', lines:['10 个文件 · 118 KB','8 版可视化稿']},
+    {id:'check',label:'核验', lines:['截图核对 12 次','你的反馈 4 轮']}
+  ],
+  gate:{closed:true, reason:'未进仓库 · 0 提交'},
+  outlet:{count:0, note:'0 行代码'},
+  feedback:{count:8},
+  pending:[{label:'方案 v0.2', note:'等你拍板 · 未出库'}],
+  updated_at:'2026-10-26T11:45:00+08:00'
+};
+
+const SVG_NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('s');
+const el=(n,a)=>{const e=document.createElementNS(SVG_NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const add=(n,a,txt)=>{const e=el(n,a); if(txt!=null) e.textContent=txt; svg.appendChild(e); return e;};
+const fmt=n=> (n===null||n===undefined) ? '—' : String(n);
+
+const TRUNK=178, HEAD=222;
+
+function render(d){
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  const src=(d.sources||[]).slice(0,5);
+  const step = src.length>1 ? 50 : 0;
+  const y0 = 64;
+
+  // 归一器列
+  add('rect',{x:150,y:y0-24,width:56,height:step*(src.length-1)+48,rx:8,class:'stn','stroke-dasharray':'3 4'});
+  add('text',{x:178,y:y0-34,class:'adp-t','text-anchor':'middle'},'每个源一个归一器');
+
+  src.forEach((s,i)=>{
+    const y=y0+i*step;
+    add('text',{x:18,y:y-12,class:s.dry?'lab-s':'lab'},s.label);
+    if(s.dry){
+      add('path',{d:`M18,${y} H150`,class:'dry'});
+    }else{
+      ['wall','bore','flow'].forEach(c=>add('path',{d:`M18,${y} H150`,class:c}));
+      ['wall','bore'].forEach(c=>add('path',{d:`M190,${y} H${HEAD}`,class:c}));
+      add('path',{d:`M190,${y} H${HEAD}`,class:'flow slow'});
+    }
+    add('circle',{cx:92,cy:y,r:13,class:'meter','stroke-dasharray':s.dry?'2 3':''});
+    const t=add('text',{x:92,y:y+4,class:'meter-n num','text-anchor':'middle'},fmt(s.count));
+    t.dataset.src=s.id;
+    if(s.dry) t.setAttribute('fill','#8b8b93');
+    add('rect',{x:156,y:y-13,width:34,height:26,rx:4,class:'adp'});
+    add('text',{x:173,y:y+4,class:'adp-t','text-anchor':'middle'},'归一');
+    add('circle',{cx:HEAD,cy:y,r:6,class:'meter','stroke-dasharray':s.dry?'2 3':''});
+  });
+
+  // 汇流头 + 总管
+  add('path',{d:`M${HEAD},${y0} V${y0+step*(src.length-1)}`,class:'wall'});
+  add('path',{d:`M${HEAD},${y0} V${y0+step*(src.length-1)}`,class:'bore'});
+  add('path',{d:`M${HEAD},${y0+16} V${y0+step*(src.length-1)-16}`,class:'flow slow'});
+  ['wall','bore'].forEach(c=>add('path',{d:`M${HEAD},${TRUNK} H900`,class:c}));
+  add('path',{d:`M${HEAD},${TRUNK} H812`,class:'flow'});
+  add('path',{d:`M812,${TRUNK} H836`,class:'flow',opacity:'.07'});
+
+  // 工位
+  const sx=[246,424,602];
+  (d.stations||[]).slice(0,3).forEach((st,i)=>{
+    const x=sx[i], w=118;
+    add('path',{d:`M${x+w/2},${TRUNK} V${TRUNK-24}`,stroke:'#cfcfd5','stroke-width':1.5});
+    add('circle',{cx:x+w/2,cy:TRUNK,r:5,class:'meter'});
+    add('rect',{x,y:TRUNK-84,width:w,height:60,rx:8,class:'stn'});
+    add('text',{x:x+12,y:TRUNK-65,class:'stn-n'},st.label);
+    (st.lines||[]).slice(0,2).forEach((ln,j)=>add('text',{x:x+12,y:TRUNK-50+j*12,class:'stn-s'},ln));
+  });
+
+  // 闸门
+  const closed=!!(d.gate&&d.gate.closed);
+  add('circle',{cx:852,cy:TRUNK,r:15,class:'meter'});
+  if(closed){
+    add('path',{d:`M845,${TRUNK-7} L859,${TRUNK+7} M859,${TRUNK-7} L845,${TRUNK+7}`,class:'valve'});
+  }else{
+    add('path',{d:`M845,${TRUNK-6} A10,10 0 0 1 859,${TRUNK+6}`,class:'valve',stroke:'#8b8b93'});
+    add('path',{d:`M859,${TRUNK-6} A10,10 0 0 1 845,${TRUNK+6}`,class:'valve',stroke:'#8b8b93'});
+  }
+  add('text',{x:852,y:TRUNK-26,class:'note','text-anchor':'middle'},closed?'闸门 · 关':'闸门 · 开');
+  add('text',{x:838,y:TRUNK+34,class:'note','text-anchor':'end'},(d.gate&&d.gate.reason)||'');
+
+  // 出库
+  const out=d.outlet||{};
+  const empty=!out.count;
+  if(empty){
+    add('path',{d:'M872,178 H944',class:'dry'});
+    add('text',{x:908,y:168,class:'note','text-anchor':'middle'},'空');
+  }else{
+    ['wall','bore'].forEach(c=>add('path',{d:'M872,178 H944',class:c}));
+    add('path',{d:'M872,178 H944',class:'flow'});
+  }
+  add('path',{d:'M908,178 V194',stroke:'#d6d6db','stroke-width':1,'stroke-dasharray':'2 4'});
+  add('rect',{x:864,y:194,width:88,height:44,rx:6,class:'stn','stroke-dasharray':empty?'3 4':''});
+  add('text',{x:876,y:212,class:'stn-n'},'出库');
+  add('text',{x:876,y:226,class:'stn-s'},out.note||fmt(out.count));
+
+  // 反馈回路
+  ['wall','bore'].forEach(c=>add('path',{d:`M660,${TRUNK} V300 H306 V${TRUNK}`,class:c}));
+  add('path',{d:`M660,${TRUNK+20} V280 H306 V${TRUNK+20}`,class:'flow slow'});
+  add('text',{x:483,y:330,class:'lab','text-anchor':'middle'},`你的反馈 · 回流改型 ${fmt((d.feedback||{}).count)} 次`);
+
+  // 待拍板
+  const pend=(d.pending||[])[0];
+  if(pend){
+    add('path',{d:`M483,${TRUNK} V204`,stroke:'#d6d6db','stroke-width':1.5,'stroke-dasharray':'2 5'});
+    add('rect',{x:395,y:204,width:176,height:38,rx:6,class:'stn','stroke-dasharray':'3 4'});
+    add('text',{x:407,y:222,class:'stn-n'},pend.label);
+    add('text',{x:407,y:235,class:'stn-s'},pend.note);
+  }
+
+  // 箭头
+  const defs=el('defs',{});
+  const mk=el('marker',{id:'ar',viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto'});
+  mk.appendChild(el('path',{d:'M0,0 L10,5 L0,10 z',fill:'#b9b9c0'}));
+  defs.appendChild(mk); svg.appendChild(defs);
+  [380,556,736].forEach(x=>add('path',{d:`M${x},${TRUNK} h1`,stroke:'none','marker-end':'url(#ar)'}));
+  add('path',{d:'M470,300 h1',stroke:'none','marker-end':'url(#ar)',transform:'rotate(180 470 300)'});
+
+  // 头部
+  const up=new Date(d.updated_at||Date.now());
+  document.getElementById('range').textContent =
+    `${String(up.getHours()).padStart(2,'0')}:${String(up.getMinutes()).padStart(2,'0')} 更新`;
+}
+
+function setState(mode,text){
+  const s=document.getElementById('state');
+  s.className='st'+(mode==='live'?'':' off');
+  s.innerHTML='<i></i>'+text;
+}
+
+function updateCount(id,count){
+  const t=svg.querySelector(`text[data-src="${id}"]`);
+  if(!t) return;
+  t.style.opacity='0';
+  setTimeout(()=>{ t.textContent=fmt(count); t.style.opacity='1'; },120);
+}
+
+async function boot(){
+  let data=null, live=false;
+  try{
+    const r=await fetch('/api/pipeline',{cache:'no-store'});
+    if(r.ok){ data=await r.json(); live=true; }
+  }catch{}
+  if(!data){ data=FIXTURE; document.getElementById('badge').textContent='示意数据'; }
+  render(data);
+  setState(live?'live':'off', live?'实时':'示意数据');
+
+  const noStream=new URLSearchParams(location.search).has('nostream');
+  if(live && !noStream){
+    try{
+      const es=new EventSource('/events');
+      es.onmessage=e=>{
+        try{
+          const f=JSON.parse(e.data);
+          if(f.type==='source.count') updateCount(f.payload.id,f.payload.count);
+          else render(Object.assign({},data,f.payload));
+        }catch{}
+      };
+      es.onerror=()=>setState('off','断线 · 保留最后数据');
+    }catch{}
+  }
+}
+boot();
+</script>
+</body>
+</html>
