@@ -223,12 +223,9 @@ def test_bad_params(live, query):
 
 def test_auth_and_untrusted_actor(live, monkeypatch):
     live.stop()
-    # Configured reads now require explicit grants. Preserve the original
-    # authenticated 200 assertion using the historical local-user migration.
-    from mvp.backend.migrate_schema_v1_5 import migrate_schema as migrate5
-    from mvp.backend.migrate_schema_v1_6 import migrate_schema as migrate6
-    migrate5(live.db)
-    migrate6(live.db)
+    # Fresh databases already have reader storage; grant the fixture's owner.
+    with closing(sqlite3.connect(live.db)) as conn, conn:
+        conn.execute("INSERT INTO asset_readers SELECT asset_id,'local-user' FROM assets")
     monkeypatch.setenv("KNOT_TOKEN", "synthetic-test-token")
     live.start()
     assert live.get(f"/assets/{live.asset}?view=content")[1]["error"]["code"] == "FORBIDDEN_VIEW"
