@@ -62,6 +62,7 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             assert [tool.name for tool in listing.tools] == [
                 "knot_lookup_asset", "knot_read_asset", "knot_search_assets",
                 "knot_save_exploration", "knot_load_exploration", "knot_list_explorations",
+                "knot_save_exploration_v2", "knot_load_exploration_v2", "knot_fork_exploration",
             ]
             result = await client.call_tool("knot_lookup_asset", {"content_hash": HASH})
             assert result.structured_content == {"items": [{"asset_id": ASSET, "kind": "text"}]}

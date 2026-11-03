@@ -4,7 +4,8 @@ import re
 from uuid import UUID
 
 from mvp.exploration_policy import (
-    ExplorationError, normalize_snapshot, redact_exploration, validate_revision, validate_uuid,
+    ExplorationError, normalize_snapshot, normalize_snapshot_v2, redact_exploration,
+    redact_exploration_v2, validate_revision, validate_uuid, validate_text, _reject_token,
 )
 from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN, TEXT_MIMES, text_error
 
@@ -234,4 +235,75 @@ def project_exploration_checkpoint(envelope, exploration_id, revision, token):
             raise ExplorationError("UPSTREAM_ERROR")
         return redact_exploration(value, token)
     except ExplorationError:
+        return {"error": "UPSTREAM_ERROR"}
+
+
+def project_exploration_receipt_v2(envelope, exploration_id, expected_revision, token):
+    result = project_exploration_receipt(envelope, exploration_id, expected_revision)
+    if "error" in result:
+        return result
+    try:
+        _reject_token(result.values(), token)
+    except ExplorationError:
+        return {"error": "WRITE_OUTCOME_UNKNOWN"}
+    return result
+
+
+def project_exploration_checkpoint_v2(envelope, exploration_id, revision, token):
+    try:
+        fields = {"exploration_id", "revision", "event_id", "saved_at", "references", "stop_note",
+                  "stop_note_reason", "snapshot_version", "relations", "origin"}
+        value = _exploration_value(envelope, fields)
+        _validate_checkpoint_fields(value); validate_uuid(value["event_id"])
+        if value["exploration_id"] != exploration_id or (revision is not None and value["revision"] != revision):
+            raise ExplorationError("UPSTREAM_ERROR")
+        version = value["snapshot_version"]
+        if type(version) is not int or version not in (1, 2): raise ExplorationError("UPSTREAM_ERROR")
+        refs, statuses = [], {}
+        if type(value["references"]) is not list: raise ExplorationError("UPSTREAM_ERROR")
+        for ref in value["references"]:
+            if type(ref) is not dict or ref.get("status") not in ("available", "forbidden", "missing", "hash_mismatch"):
+                raise ExplorationError("UPSTREAM_ERROR")
+            if ref["status"] != "available" and "reason" in ref: raise ExplorationError("UPSTREAM_ERROR")
+            refs.append({k:v for k,v in ref.items() if k != "status"})
+            statuses[ref.get("asset_id")] = ref["status"]
+        normalized = normalize_snapshot(refs, value["stop_note"])
+        if any(r["expected_content_hash"] != n["expected_content_hash"] for r,n in zip(refs, normalized["references"])):
+            raise ExplorationError("UPSTREAM_ERROR")
+        unavailable = any(status != "available" for status in statuses.values())
+        note, why = value["stop_note"], value["stop_note_reason"]
+        if ((unavailable and (note is not None or why != "dependency_unavailable")) or
+            (not unavailable and (why not in (None, "sensitive_content") or (why is not None and note is not None)))):
+            raise ExplorationError("UPSTREAM_ERROR")
+        if type(value["relations"]) is not list: raise ExplorationError("UPSTREAM_ERROR")
+        validated_relations = []
+        for rel in value["relations"]:
+            if type(rel) is not dict: raise ExplorationError("UPSTREAM_ERROR")
+            ids = {"relation_id", "from_asset_id", "to_asset_id"}
+            is_available = all(statuses.get(rel.get(k)) == "available" for k in ("from_asset_id", "to_asset_id"))
+            if set(rel) == ids | {"label", "reason"}:
+                if not is_available: raise ExplorationError("UPSTREAM_ERROR")
+                checked = rel
+            elif set(rel) == ids | {"reason_code"}:
+                if rel["reason_code"] != ("sensitive_content" if is_available else "dependency_unavailable"):
+                    raise ExplorationError("UPSTREAM_ERROR")
+                checked = {k:rel[k] for k in ids} | {"label":"_", "reason":None}
+            else: raise ExplorationError("UPSTREAM_ERROR")
+            validated_relations.append(checked)
+        normalize_snapshot_v2(2, refs, value["stop_note"], validated_relations)
+        origin = value["origin"]
+        if version == 1 and (value["relations"] or origin is not None): raise ExplorationError("UPSTREAM_ERROR")
+        if origin is not None:
+            if type(origin) is not dict or set(origin) != {"source_exploration_id", "source_revision", "source_event_id", "source_snapshot_sha256", "target_creation_event_id"}:
+                raise ExplorationError("UPSTREAM_ERROR")
+            for k in ("source_exploration_id", "source_event_id", "target_creation_event_id"): validate_uuid(origin[k])
+            validate_revision(origin["source_revision"], 1)
+            if (origin["source_exploration_id"] == exploration_id or origin["source_event_id"] == origin["target_creation_event_id"]
+                or origin["source_event_id"] == value["event_id"]
+                or (value["event_id"] == origin["target_creation_event_id"]) != (value["revision"] == 1)
+                or type(origin["source_snapshot_sha256"]) is not str
+                or not re.fullmatch(r"[0-9a-f]{64}", origin["source_snapshot_sha256"])):
+                raise ExplorationError("UPSTREAM_ERROR")
+        return redact_exploration_v2(value, token)
+    except (ExplorationError, KeyError, TypeError, ValueError, RecursionError):
         return {"error": "UPSTREAM_ERROR"}
