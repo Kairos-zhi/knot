@@ -1,28 +1,41 @@
 # Knot 当前执行状态
 
-更新：2026-10-28。代码核对基线为 `217a0c8da3030e682267963a562e16c9d6c72db4`（PR #27 合并点），开发位于 `mvp/`。开工仍须核当前 Git HEAD、工作区与远端；本文不是实时 Git 查询结果。
+更新：2026-11-03（Asia/Shanghai）。本轮只做本地基线、上下文收口同步及遗漏 P0 补卡，不开展插件或后端功能实现。任务为 [PLUGIN-W1D1-BASELINE-001](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)；新阶段 W1D1 不覆盖旧 MVP Week 1。
 
-## 当前文档任务
+## 本轮基线
 
-[ENTRYPOINT-SYNC-001](mvp/docs/ENTRYPOINT-SYNC-001.md)：修正入口与状态漂移，分支 `codex/fix-mvp-entrypoints`。文档限定复核通过；用户随后授权固定提交并推送本分支，实际完成状态以 Git 提交与远端读回为准，不能据本文称 main 已更新。产品代码、fixture、数据库与在用软件不变。
+- 本地开工 HEAD 与远端 refs/heads/main 均为 `6977bc29e18481cf930dca96bdbecd1cee0503d0`（PR #48 合并点），开工工作树干净。这是查询时点，不是持续监控。
+- 文档分支 `codex/w1d1-baseline-sync-20261103`；本轮本地修改不代表 main、远端或在用环境更新。
+- 核心在 `mvp/`；`ctx/` 是 M1 第一屏快照，不证明完整工作台交付。
+- 当前主承载方向为 Codex 插件，支持创作者探索与思考连续性。DSH 候选保留作对照；旧“直接高度定制 DSH”锚点不再作为新任务默认入口。附件中的具体建议不自动成为授权。
 
-当前读取顺序：[开发基准](mvp/docs/development-baseline.md) → 本页／[队列](QUEUE.md) → 当前任务卡 → [SCHEMA](mvp/docs/SCHEMA.md)／[IMPORT](mvp/docs/IMPORT.md)及源码。
+## main 实现与边界
 
-## 已实现与证据边界
+| 范围 | 源码事实及边界 |
+|---|---|
+| 初始化/迁移 | 新建 schema **1.4**；已有文件/目录/悬空软链拒绝，不询问后删除。1.5/1.6 为显式迁移；不能把迁移器存在写成新库已是1.6 |
+| 资产/支持 | Repo、Frontier17、编号候选、确认/撤回、支持视图、时间查询和 trace 已有；不证明通用自然语言理解或任意关系编辑 |
+| 续接/运输 | bundle/jobs、HTTP、CLI、持久 journal 与 SSE since 重放已有；不是通用 Agent 调度，也非真实模型续接验收 |
+| 权限 | token→actor、reader 正文授权、bundle 幂等 actor 绑定已有；同步 claim 幂等仍只比较 body，见 P0-03 |
+| 一致读 | read_snapshot 与 HTTP/离线查询入口已有；不再按“空白待实现”派卡，本轮仅静态核源 |
+| 来源/查找 | manifest 文件导入已有；origin=v0.4、event_time 来自文件 mtime，不等于聊天来源适配。FTS 不等于现有 HTTP 关键词入口 |
+| Codex | 本机扩展机制已核；没有本轮 Knot 插件安装、发现、连接或用户使用验收证据 |
 
-- 资产、历史事件、规则访问，共享 SQLite 生命周期，候选导入，Frontier17 适配，carry-forward 与稳定支持族投影均已入库。导入按文件提交资产＋事件，整批可部分成功；外置文件不随 DB 回滚自动撤销。
-- 当前 schema 为 1.3，新增 `(snapshot_time,event_id)` 唯一索引；1.2 旧库读取仍保留 rowid 兜底。实现和迁移边界见 [SCHEMA](mvp/docs/SCHEMA.md)、[断言映射 S38–S40](mvp/docs/W1D7-CLAIM-MAP.md)及对应测试。
-- CI 与冻结 fixture 核验配置已入库。Day 7 的69项测试、22资产／22事件／19内嵌＋3外置、22,391组断言均是[历史实跑证据](mvp/docs/W1D7-EVIDENCE.md)，不写成当前重新运行结果。TD01 交接复核记录81项测试及独立临时库核验，属于该卡历史证据，本轮未重跑。
-- 本轮仅做文档、Git 和冻结文件核对，不据此判定完整后端运行健康、真实业务库已迁移或产品已验收。
+## 候选独立登记
 
-## 下一阶段与未决
+| 候选 | 定位 | 当前状态 |
+|---|---|---|
+| L2a → CLI → HTTP | `b0aa782 → f2cf022 → 57cbaf2` | 独立 worktree 依赖链，历史复核保留；未入上述 main，待具体 Gate |
+| F1 | PR [#49](https://github.com/Kairos-zhi/knot/pull/49)，`7091c6a` | 本轮查询 open/draft/unmerged；四项历史证据缺口未闭合 |
+| N1 | PR [#50](https://github.com/Kairos-zhi/knot/pull/50)，`edf8d5a` | 本轮查询 open/draft/unmerged；新建库1.6是该候选行为，不是 main |
+| DSH 001/001B | 独立 knot-first-usable 基于 `57cbaf2` | 旧001交互被用户否定，后续001B保留限定技术复核；两者不混同。casework/dsh未跟踪产物仍在，未获体验/生产接受 |
 
-Week 1 已有结账回执，TD01 已合入本基线；下一阶段按四周 MVP Roadmap 和正式任务卡推进。Roadmap 交接原件名为 `20261028_Knot_前后端Roadmap_写死版_v1.0.md`，正文当前不在仓库；涉及周次／范围先回源，不用旧五阶段／G0–G8 顶替。
+## 人员、运行与接受
 
-后端工程准则 v0.2 是本地待审草案；本轮未实现初始化保护、一致读入口或迁移重跑结构核验。P0-A 初始化保护已由另一独立 worktree 推进（本次只读定位为 `fix/knot-init-create-only@618c7b2`），不属于本卡，也不据此宣称已合入 main。Week 2 抽取／时间轴、后续续接、前端、桌面与整体接受须按任务分别核定，不因现有表结构视作完成。
+Codex 负责本轮收口，独立 Checker 复核。4个相关Codex窗口已读回基线、路线及本轮范围。Hermes桌面中控桥仍记录不可达，原通知无claim/receipt；落盘不等于已读。Dot有退出协作历史，未取得重新在线证据，不占执行槽位。私有路径/进程/同步回执仅登记本地交接件。
 
-## 旧桌面阶段追溯
+已有隔离开发HTTP实例保留运行，原DSH窗口已确认案例环境归属。后续只读取证将PID文件中的父进程与实际监听/锁owner的子进程对应，消除了“两个PID是两个实例”的疑点；当前只识别到这一条Knot HTTP服务链，不证明不存在直接SQLite写入者或已绑定运行时代码hash。旧001体验失败与001B后续修改分别保留，不把后台存活当作体验通过。本轮不重启、迁移、接管或另开写入者。禁止双主写是约束，不等于全部导入/迁移入口已具强制排他机制。
 
-旧048–050记录、候选 `ed54934`／pin及其限定接受是历史来源，不是当前MVP运行状态。原根文件完整保留在 [STATE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/STATE.md)、[QUEUE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/QUEUE.md)，离线可用 `git show 217a0c8:STATE.md`／`QUEUE.md`。
+本轮未重跑产品测试。旧测试数、限定 Checker 结论、用户体验、发布和完整产品接受分开。当前动作见 [QUEUE](QUEUE.md)、[P0台账](mvp/docs/PLUGIN-P0-REGISTER.md)。
 
-旧桌面实现已从当前主线移出；保留工作区未同步或恢复。历史部署与未决 Gate 不外推为新版已完成或已取消；需要沿用时先明确产品对象、基线及适用性。
+旧状态完整保留于 [STATE@6977bc2](https://github.com/Kairos-zhi/knot/blob/6977bc29e18481cf930dca96bdbecd1cee0503d0/STATE.md)。旧 Week1、TD01、ENTRYPOINT-SYNC-001、048–050、冻结候选及 pin 不改；旧接受不外推，路线变化不抹去未决。

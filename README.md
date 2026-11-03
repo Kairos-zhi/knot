@@ -6,20 +6,13 @@ Knot 为人和 Agent 提供共同的工作环境：材料、想法、会话和�
 
 ---
 
-## MVP Development (2026-10-28 onwards)
+## 当前开发入口（2026-11-03）
 
-**当前主线开发位于 `mvp/` 目录。** 开工先读 [开发基准](mvp/docs/development-baseline.md)、[状态](STATE.md) 与 [队列](QUEUE.md)；历史桌面文档不作为当前执行入口。
+当前核心位于 `mvp/`，主承载方向为 Codex 插件，先支持创作者探索与思考连续性。DSH 候选保留对照。开工先读[开发基准](mvp/docs/development-baseline.md)、[STATE](STATE.md)、[QUEUE](QUEUE.md)及[本轮收口卡](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)。本轮仅更新基线、上下文同步与遗漏P0，不实现功能。
 
-All MVP code is under the `mvp/` directory.  
-Legacy exploration code (`knot-desktop`, `knot-flowgram-app`) has been archived (2026-10-28).  
-See [mvp/README.md](mvp/README.md) for MVP documentation and quick start guide.
+旧 knot-desktop/knot-flowgram-app 已移出 main，不是运行入口；根 ctx 为第一屏快照，不证明插件已交付。[MVP说明](mvp/README.md)提供数据与操作入口。
 
-**四周 Roadmap**：交接原件为 `20261028_Knot_前后端Roadmap_写死版_v1.0.md`，正文尚未收录本仓。涉及周次与任务范围须回源核定；本页不重新摘要排期，也不使用旧五阶段路线替代。
-
-**验收标准**:
-- AC-01: 时间节省 ≥50%
-- AC-02: 决策追溯准确率 ≥90%
-- AC-05: 未决问题不杜撰
+原四周 Roadmap 已在本轮交接包本地归档；未复制到公开仓，不再称原件缺失。旧 AC-01 时间节省≥50%、AC-02决策追溯≥90%、AC-05未决不杜撰保留原任务适用范围，不单凭这些指标宣布创作者探索阶段已完成。
 
 ---
 
@@ -36,7 +29,7 @@ See [mvp/README.md](mvp/README.md) for MVP documentation and quick start guide.
 - `evidence/` — 214 份结论件（PR #15-18 相关）
 - `docs/` — 旧架构文档（部分可能过时）
 
-MVP 开发不依赖这些材料，它们仅供历史追溯和参考。
+这些目录不是当前运行入口；涉及产品与研究结论时，按当前任务卡定向引用。文档、研究和讨论也是开发材料，旧实现不作为现行实现地图。
 
 ---
 
@@ -55,21 +48,9 @@ MVP 开发不依赖这些材料，它们仅供历史追溯和参考。
 
 ## 项目状态
 
-**文档开工基线（历史定位）**：`1ea1dfa`（2026-10-28，PR #25 合并点）。
-数字命令与输出见[本轮实读证据](mvp/docs/W1D7-EVIDENCE.md)，断言出处见[代码映射](mvp/docs/W1D7-CLAIM-MAP.md)。
+本轮核对本地及远端 main 为 `6977bc29e18481cf930dca96bdbecd1cee0503d0`。新建库为schema1.4，已有1.5/1.6显式迁移；资产/事件/候选/确认/支持/时间查询/trace/bundle/jobs/HTTP/CLI已有实现。候选L2a整链、F1、N1及DSH集成独立登记于STATE，不算main已交付。
 
-**已完成**:
-- SQLite v1.3：7张业务表、1张版本表及自持FTS，初始化和显式迁移已实现；TD01 同刻同事件唯一索引已随 PR #27 合入 `217a0c8`。
-- AssetRepo/EventStore/RuleRegistry、carry-forward快照查询和稳定支持族视图已实现。
-- v0.4来源包候选导入：22资产、22条import事件、19内嵌/3外置；不代表生产库已导入。
-- Frontier17 的 Day 7 历史证据记录22,391组断言及69项测试；这些数字不是本轮实跑或当前总数。
-- CI配置已在仓库：Python3.12、完整测试及独立字节钉检查；[此运行](https://github.com/Kairos-zhi/knot/actions/runs/40664491008)是历史记录。本轮入口同步未重跑测试或查询远端 CI／保护规则。
-
-**交付跟踪**：当前状态与队列以根 STATE／QUEUE 为入口，具体结论绑定对应任务卡、独立复核回执、提交与CI证据；文档同步不代表软件重新验收。
-
-**后续计划（非已交付能力）**:
-- 后续候选关系抽取、时间轴及续接按正式任务卡推进。
-- 前端与桌面集成、真实协作和整体验收。
+本轮未重跑产品测试；旧Day7、CI、独立复核与用户体验保持各自范围。当前遗漏前置见[P0任务卡](mvp/docs/PLUGIN-P0-REGISTER.md)。文档同步不是生产部署或完整产品接受。
 
 ---
 
@@ -93,5 +74,5 @@ MIT (待确认)
 
 ---
 
-**最后更新**：2026-10-28（数据模型与导入契约说明）
-**下一阶段**：候选关系、时间轴与续接按正式任务卡推进，周次与范围回源核定。
+**最后更新**：2026-11-03（本地基线与上下文收口）
+**下一动作**：按当前收口卡与 P0 台账完成复核、送达登记；工程任务按具体卡推进。
