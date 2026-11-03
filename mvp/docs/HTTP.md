@@ -109,7 +109,7 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录。输入路径不存在时在临时目录创建 schema 1.7 库。它调用全部十七个端点，核对未认证的查找和停点接口拒绝，并检查六次同步命令。成功汇总 23 PASS / 0 FAIL 并退出 0。具备 reader 授权的停点保存、读回和恢复由专项测试验证。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录。输入路径不存在时在临时目录创建 schema 1.7 库。它遍历全部二十个路由，核对未认证的查找和停点接口拒绝，并检查六次同步命令。成功汇总 26 PASS / 0 FAIL 并退出 0。具备 reader 授权的停点保存、读回和恢复由专项测试验证。
 
 ## Run A：读续接包、导出基准与启动错误
 
@@ -168,3 +168,19 @@ python -m mvp.backend.reconcile --db candidate/knot.db --clear --reason "已核�
 写入返回不含正文的收据。响应丢失或输出失败时结果可能未知，调用方可明确以同目标、同请求和同 key 重放恢复；只读状态拒绝写入和重放。探索内容不进入全局命令 journal/SSE。已送达宿主的内容不因撤选而抹除。新 MCP 工具和人的使用接受另卡。
 
 fork 请求只包含来源锚，不重新提交源正文；获授权的 fork 可在核心中完整复制历史快照（其中可能已有凭据标记）。返回的收据不含正文，后续 GET 才依当前规则抑制敏感文本；不能据此称持久历史从未包含该内容。
+
+探索路由的固定错误如下；没有 reason 的行不回传原始异常或请求正文。
+
+| HTTP | code | detail.reason | 含义 |
+|---|---|---|---|
+| 400 | BAD_REQUEST | 无 | 无效参数或格式 |
+| 400 | BAD_REQUEST | asset_unavailable / sensitive_content | 材料当前不可用 / 请求或结构元数据含敏感内容 |
+| 403 | FORBIDDEN_VIEW | 无 | 缺少有效配置身份 |
+| 404 | NOT_FOUND | 无 | 目标或来源不可见、不存在或源锚不匹配 |
+| 409 | BAD_REQUEST | revision_conflict / idempotency_conflict / snapshot_version_required | 修订、请求 key 冲突或旧入口不支持新快照 |
+| 409 | SCHEMA_VERSION_UNSUPPORTED | exploration_migration_required / exploration_schema_invalid | 合法低版本需迁移 / 结构或来源漂移 |
+| 409 | SERVER_BUSY | server_read_only | 服务处于只读状态 |
+| 500 | INTERNAL | exploration_snapshot_invalid | 持久快照格式损坏 |
+| 500 | INTERNAL | 无 | 内部错误，包括写后收据投影失败 |
+
+无 reason 的内部错误或响应中断可能发生在提交之后，不能据此判定回滚；核对后可显式用原请求和原 key 重放恢复。
