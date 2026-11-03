@@ -118,6 +118,23 @@ def test_corrupted_target_creation_snapshot_rejected(db):
         repo.load_v2('A', branch)
 
 
+@pytest.mark.parametrize('mutual', [False, True])
+def test_ordinary_saves_cannot_acquire_forged_origins(db, mutual):
+    migrate_schema_v1_8.migrate_schema(db)
+    migrate_schema_v1_9.migrate_schema(db)
+    repo = ExplorationRepo(db)
+    ids = [uid(), uid()]
+    rows = [repo.save_v2('A', ident, expected_revision=0, request_key=uid(),
+                         snapshot_version=2, references=[], stop_note=None, relations=[]) for ident in ids]
+    raw = db_rows(db, 'SELECT snapshot_json FROM exploration_revisions WHERE exploration_id=?', (ids[0],))[0][0]
+    digest = sha256(raw.encode('utf-8')).hexdigest()
+    for target, source in ([(1, 0), (0, 1)] if mutual else [(1, 0)]):
+        db_rows(db, 'INSERT INTO exploration_origins VALUES (?,?,?,?,?,?,?)',
+                (ids[target], 'A', rows[target]['event_id'], ids[source], 1, rows[source]['event_id'], digest))
+    with pytest.raises(SchemaDriftError, match='invalid exploration origin'):
+        repo.load_v2('A', ids[1])
+
+
 def test_parallel_fork_target_and_key(db):
     repo, source, first, a, b = setup_source(db)
     migrate_schema_v1_9.migrate_schema(db)

@@ -55,15 +55,20 @@ def _validate_history(conn, version):
         return
     for row in conn.execute("""SELECT o.exploration_id,o.actor,o.target_creation_event_id,
             o.source_exploration_id,o.source_revision,o.source_event_id,o.source_snapshot_sha256,
-            t.actor,t.event_id,s.actor,s.event_id,s.snapshot_json,t.snapshot_json
+            t.actor,t.event_id,s.actor,s.event_id,s.snapshot_json,t.snapshot_json,
+            t.request_digest,t.rowid,s.rowid
         FROM exploration_origins o
         LEFT JOIN exploration_revisions t ON t.exploration_id=o.exploration_id AND t.revision=1
         LEFT JOIN exploration_revisions s ON s.exploration_id=o.source_exploration_id AND s.revision=o.source_revision"""):
-        target, actor, creation, source, rev, event, digest, ta, te, sa, se, raw, target_raw = row
+        target, actor, creation, source, rev, event, digest, ta, te, sa, se, raw, target_raw, request_digest, target_rowid, source_rowid = row
         if (target == source or ta != actor or te != creation or sa != actor or se != event
                 or type(rev) is not int or rev < 1 or type(raw) is not str
-                or sha256(raw.encode('utf-8')).hexdigest() != digest):
+                or sha256(raw.encode('utf-8')).hexdigest() != digest
+                or source_rowid is None or target_rowid is None or source_rowid >= target_rowid):
             raise SchemaDriftError("invalid exploration origin")
+        fork_request = json.dumps(["exploration.fork", source, rev, event, target], ensure_ascii=False)
+        if request_digest != sha256(fork_request.encode("utf-8")).hexdigest():
+            raise SchemaDriftError("invalid exploration origin request")
         source_snapshot = decode_snapshot(raw)
         if "snapshot_version" in source_snapshot:
             expected = raw
