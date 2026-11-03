@@ -9,7 +9,7 @@ import sys
 
 import pytest
 
-from mvp.backend.init_db import init_database
+from mvp.tests.schema_helpers import create_v14
 from mvp.backend.migrate_schema_v1_5 import migrate_schema as migrate5
 from mvp.backend.migrate_schema_v1_6 import migrate_schema as migrate6
 from mvp.backend.claim_extractor import extract_claims
@@ -25,7 +25,7 @@ def scoped(tmp_path, monkeypatch):
     monkeypatch.delenv('KNOT_TOKEN', raising=False)
     monkeypatch.delenv('KNOT_TOKENS', raising=False)
     db = tmp_path / 'authz.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     migrate5(db)
     repo = Repo(db)
     assets = []
@@ -203,7 +203,7 @@ def test_ac4_confirmed_missing_eligible(scoped, include_open_questions):
 
 def test_migration_idempotent_and_atomic(tmp_path):
     db = tmp_path / 'migration.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     migrate5(db)
     repo = Repo(db)
     aid = repo.add_asset('historical', 'text/plain', content_blob=b'historical')
@@ -231,7 +231,7 @@ def test_migration_idempotent_and_atomic(tmp_path):
 @pytest.mark.parametrize('versioned', [False, True])
 def test_migration_drift_refuses_without_change(tmp_path, versioned):
     db = tmp_path / 'drift.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     migrate5(db)
     with closing(sqlite3.connect(db)) as conn, conn:
         conn.execute('CREATE TABLE asset_readers (asset_id TEXT, actor TEXT)')
@@ -247,7 +247,7 @@ def test_import_actor_grant_and_failure_rollback(tmp_path, monkeypatch):
     from mvp.backend.import_baseline import import_baseline
     from mvp.backend.asset_access import readable
     db = tmp_path / 'import.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     migrate5(db)
     migrate6(db)
     source = tmp_path / 'source'
@@ -306,7 +306,7 @@ def test_single_user_ignores_grants_and_empty_config_denies(scoped, monkeypatch)
 def test_configured_import_requires_explicit_migration(tmp_path, monkeypatch):
     from mvp.backend.import_baseline import import_baseline
     db = tmp_path / 'old.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     source = tmp_path / 'source'
     source.mkdir()
     (source / 'MANIFEST.sha256').write_text('', encoding='utf-8')

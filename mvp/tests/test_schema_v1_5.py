@@ -13,7 +13,7 @@ import pytest
 from mvp.backend import migrate_schema_v1_5 as migration
 from mvp.backend.asset_repo import AssetRepo
 from mvp.backend.continuation_bundle import generate_bundle
-from mvp.backend.init_db import init_database
+from mvp.tests.schema_helpers import create_v14
 from mvp.contract.selfcheck import seed
 from mvp.tests.test_http_contract import Live
 
@@ -30,7 +30,7 @@ def read(db, sql):
 @pytest.fixture
 def old_db(tmp_path):
     db = tmp_path / 'old.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     asset, _ = seed(db)
     with closing(sqlite3.connect(db)) as conn:
         generate_bundle(conn, [asset])
@@ -66,7 +66,7 @@ def test_ac3_data_preserved_and_three_runs(old_db):
 
 def test_existing_column_skipped(tmp_path):
     db = tmp_path / 'new.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     info = read(db, 'PRAGMA table_info(continuation_bundles)')
     assert migration.migrate_schema(db)['created'] is True
     assert read(db, 'PRAGMA table_info(continuation_bundles)') == info
@@ -93,7 +93,7 @@ def test_old_db_create_refused_explicitly_without_writes(old_db, monkeypatch):
 def test_job_id_write_failure_leaves_no_bundle(tmp_path):
     from mvp.backend.http_server import Server
     db = tmp_path / 'atomic.db'
-    assert init_database(db)['status'] == 'created'
+    assert create_v14(db)['status'] == 'created'
     asset, _ = seed(db)
     with closing(sqlite3.connect(db)) as conn, conn:
         conn.execute("CREATE TRIGGER deny_job BEFORE UPDATE OF job_id ON continuation_bundles "

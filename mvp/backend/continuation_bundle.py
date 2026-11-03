@@ -134,7 +134,8 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                 questions.append(dict(claim_id=row['claim_id'], source_label=row['source_label'], status=view['status']))
         bundle_id = str(uuid4())
         parts = [f'# 续接包 {bundle_id}', '仅含显式选择的资产；候选标签与确认状态来自库，待用户审查。']
-        parts.append(f'{len(requested)} 个选中资产中 {len(requested) - len(selected)} 个因权限未纳入')
+        if len(requested) > len(selected):
+            parts.append(f'{len(requested)} 个选中资产中 {len(requested) - len(selected)} 个因权限未纳入')
         for heading, entries in sections.items():
             parts.extend(['## ' + heading, '\n'.join(entries) or '（当前选择内无条目）'])
         parts.extend(['## 来源清单', '\n'.join(

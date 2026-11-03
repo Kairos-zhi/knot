@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a new, validated schema 1.4 database without replacing any target."""
+"""Create a new, validated schema 1.6 database without replacing any target."""
 
 import argparse
 from contextlib import closing
@@ -15,8 +15,8 @@ def _validate(conn: sqlite3.Connection) -> None:
     if conn.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
         raise ValueError("database integrity check failed")
     versions = conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall()
-    if versions != [("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",)]:
-        raise ValueError("expected schema versions 1.0 through 1.4")
+    if versions != [(f"1.{i}",) for i in range(7)]:
+        raise ValueError("expected schema versions 1.0 through 1.6")
     columns = {row[1]: row for row in conn.execute("PRAGMA table_info(claims_candidates)")}
     for name in ("source_label", "source_members"):
         column = columns.get(name)
@@ -25,8 +25,16 @@ def _validate(conn: sqlite3.Connection) -> None:
     tables = conn.execute(
         "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
     ).fetchone()[0]
-    if tables != 14:
-        raise ValueError("expected 14 tables including FTS tables")
+    if tables != 15:
+        raise ValueError("expected 15 tables including FTS tables")
+    job_id = next((row for row in conn.execute("PRAGMA table_info(continuation_bundles)")
+                   if row[1] == "job_id"), None)
+    if job_id is None or job_id[2].upper() != "TEXT" or job_id[3:] != (0, None, 0):
+        raise ValueError("expected nullable TEXT column continuation_bundles.job_id")
+    readers = [(r[1], r[2].upper(), r[3], r[4], r[5])
+               for r in conn.execute("PRAGMA table_info(asset_readers)")]
+    if readers != [("asset_id", "TEXT", 1, None, 1), ("actor", "TEXT", 1, None, 2)]:
+        raise ValueError("expected asset_readers composite primary key")
     indexes = conn.execute("PRAGMA index_list(eligible_snapshots)").fetchall()
     if not any(row[1] == "uq_eligible_snapshot_event" and row[2] == 1 for row in indexes):
         raise ValueError("missing unique snapshot index")
@@ -44,8 +52,8 @@ def init_database(db_path: str) -> dict:
     """Return created/refused/failed; never read stdin or replace an existing entry."""
     # Do not resolve the final component: even a dangling symlink is an existing target.
     target = Path(os.path.abspath(os.path.expanduser(db_path)))
-    result = dict(db=str(target), status="failed", schema_version="1.4",
-                  tables=14, reason=None, error=None)
+    result = dict(db=str(target), status="failed", schema_version="1.6",
+                  tables=15, reason=None, error=None)
     temporary = None
     temporary_owned = False
     published_identity = None
@@ -61,6 +69,15 @@ def init_database(db_path: str) -> dict:
         os.close(fd)
         with closing(sqlite3.connect(temporary)) as conn:
             conn.executescript(schema)
+            # Only this privately created database is extended. Existing targets
+            # have already been refused; initialization never migrates them.
+            conn.execute("CREATE TABLE asset_readers (asset_id TEXT NOT NULL, "
+                         "actor TEXT NOT NULL, PRIMARY KEY(asset_id,actor))")
+            conn.executemany(
+                "INSERT INTO schema_version (version,applied_at,description) "
+                "VALUES (?,strftime('%s','now') * 1000,?)",
+                [("1.5", "Continuation bundle producing job provenance"),
+                 ("1.6", "Asset read grants separate from token identity")])
             conn.commit()
             _validate(conn)
         _readback(temporary)

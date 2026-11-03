@@ -81,11 +81,11 @@ def test_fresh_migrated_equivalence_preservation_and_rerun(old_db, tmp_path):
     for pragma in ("index_list(claims_candidates)",):
         assert read(fresh, "PRAGMA " + pragma) == read(old_db, "PRAGMA " + pragma)
     assert read(fresh, "SELECT version FROM schema_version ORDER BY version") == [
-        (f"1.{i}",) for i in range(5)
+        (f"1.{i}",) for i in range(7)
     ]
     assert read(fresh, "SELECT count(*) FROM assets") == [(0,)]
     assert read(fresh, "SELECT count(*) FROM sqlite_master WHERE type='table' "
-                "AND name NOT LIKE 'sqlite_%'") == [(14,)]
+                "AND name NOT LIKE 'sqlite_%'") == [(15,)]
     timestamp = read(old_db, "SELECT applied_at FROM schema_version WHERE version='1.4'")
     digest = snapshot(old_db)
     rerun = migration.migrate_schema(old_db)
@@ -197,7 +197,9 @@ def test_cli_outside_repository(old_db, tmp_path):
 def test_init_validator_rejects_missing_or_incompatible_columns(tmp_path, definition):
     path = old_database(tmp_path / "bad.db")
     change(path, f"ALTER TABLE claims_candidates ADD COLUMN {definition};"
-           "INSERT INTO schema_version VALUES ('1.4',0,'test');")
+           "INSERT INTO schema_version VALUES ('1.4',0,'test');"
+           "INSERT INTO schema_version VALUES ('1.5',0,'test');"
+           "INSERT INTO schema_version VALUES ('1.6',0,'test');")
     with closing(sqlite3.connect(path)) as conn:
         with pytest.raises(ValueError, match="nullable TEXT"):
             init_db._validate(conn)
