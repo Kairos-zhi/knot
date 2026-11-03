@@ -1,0 +1,6 @@
+{
+  "name": "knot",
+  "version": "0.1.0",
+  "description": "Look up Knot asset metadata by a known SHA-256 digest.",
+  "mcpServers": "./.mcp.json"
+}
