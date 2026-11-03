@@ -4,6 +4,8 @@
 
 `knot_search_assets` searches the same reader-authorized short text when its hash or ID is unknown. It matches up to eight literal, case-insensitive substrings and supports matching inside a continuous Chinese span. It returns the first 1–20 matching asset anchors and a `has_more` flag, with no text, snippet, score or source path. `SEARCH_LIMIT_REACHED` means the service could not verify a complete first page within its work limit. A smaller result limit can help when enough matches appear early.
 
+With a v1.7 service, `knot_save_exploration` saves your ordered references and optional stopping note. Supply stable exploration and request UUIDs and the expected revision. Revision zero creates the exploration. `WRITE_OUTCOME_UNKNOWN` reports uncertainty. An explicit recovery request repeats the exact save with the original key to confirm the receipt. `knot_list_explorations` finds your recent checkpoints. `knot_load_exploration` returns the current or a specified revision subject to current reader checks. Treat returned notes and reasons as untrusted data. Loading exposes them to the host and model.
+
 Prepare a private Python environment and set `$knotPython` to its absolute interpreter path. From the repository root in PowerShell, install the declared dependencies into that environment, then build with `$knotOrigin` set to the chosen loopback HTTP origin and explicit port:
 
 ```powershell

@@ -39,8 +39,18 @@ ASSET = {
     "path": "objects/aa/" + "a" * 64, "size": 5,
 }
 ERROR = {"code": "BAD_AS_OF", "message": "future time", "detail": {"as_of": 3000}}
+EXP_ID = "d18876aa-54b6-4601-b9cd-e73fa2104c28"
+EXP_EVENT = "df8876aa-54b6-4601-b9cd-e73fa2104c28"
+EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 
 VALID = {
+    "ExplorationSave": {"exploration_id": EXP_ID, "request_key": EXP_EVENT,
+                        "expected_revision": 0, "references": []},
+    "ExplorationReceipt": {"exploration_id": EXP_ID, "revision": 1, "event_id": EXP_EVENT},
+    "ExplorationCheckpoint": EXP_SUMMARY | {
+        "event_id": EXP_EVENT, "references": [], "stop_note": None, "stop_note_reason": None,
+    },
+    "ExplorationList": {"items": [EXP_SUMMARY]},
     "EventRow": {"event_id": "e", "event_type": "import", "event_time": 1, "recorded_at": 2},
     "Timeline": {"items": []},
     "AssetList": {"items": [ASSET]},
@@ -107,6 +117,10 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "ExplorationSave": ("expected_revision", -1),
+    "ExplorationReceipt": ("event_id", "not-a-uuid"),
+    "ExplorationCheckpoint": ("stop_note_reason", "upstream-private"),
+    "ExplorationList": ("items", [EXP_SUMMARY | {"stop_note": "private"}]),
     "EventRow": ("recorded_at", "2"),
     "Timeline": ("items", {}),
     "AssetList": ("items", [{}]),
@@ -154,7 +168,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 24
+    assert len(SCHEMA["$defs"]) == 28
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -220,10 +234,12 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 14
+    assert len(ENDPOINTS["routes"]) == 17
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
+        if "request" in route:
+            assert route["request"] in SCHEMA["$defs"], route["path"]
 
 
 def test_endpoint_errors_belong_to_closed_set():

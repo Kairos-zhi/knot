@@ -102,7 +102,7 @@ def run(argv=None):
                     ("claim.restore", "restored", True)):
                 try:
                     status, body = request(base, "/commands", dict(command=command, args=dict(claim_id=claim)), token=token)
-                    validate(body, next(r for r in http.ROUTES if r["method"] == "POST"))
+                    validate(body, next(r for r in http.ROUTES if r["path"] == "/commands"))
                     assert status == 200 and body["value"]["status"] == expected
                     assert bool(body["value"]["event_id"]) == event and body["value"]["job_id"] is None
                     passes += 1
@@ -118,6 +118,7 @@ def run(argv=None):
                     path += "?content_hash=" + "0" * 64
                 elif route["response"] == "AssetSearchResult":
                     path += "?q=selfcheck"
+                path = path.replace("{exploration_id}", "00000000-0000-0000-0000-000000000000")
                 try:
                     if route.get("stream"):
                         with urlopen(base + path + "?since=0", timeout=3) as stream:
@@ -129,10 +130,10 @@ def run(argv=None):
                                     break
                     else:
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
-                        search = route["response"] == "AssetSearchResult"
-                        status, body = request(base, path, command, token=None if search else token)
+                        restricted = route["response"] == "AssetSearchResult" or route["response"].startswith("Exploration")
+                        status, body = request(base, path, command, token=None if restricted else token)
                         validate(body, route)
-                        expected = (403 if search else 404 if route["response"] in ("Job", "Bundle")
+                        expected = (403 if restricted else 404 if route["response"] in ("Job", "Bundle")
                                     else 400 if command else 200)
                         assert status == expected
                     print(f"PASS {route['method']} {route['path']}")

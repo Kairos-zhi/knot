@@ -13,6 +13,9 @@
 | GET | `/claims/{claim_id}` | `as_of, view=boolean\|roots` → Claim；candidate_level 与 atom_level 必填、分别展示，不从原子支持反推候选确认 |
 | GET | `/assets/{asset_id}` | `view=meta\|content`（默认 meta）→ AssetMeta / AssetContent；信封回显对应 meta / content |
 | GET | `/asset-search` | 必填 `q`，可选 `limit=1…20`（默认 10）→ AssetSearchResult |
+| GET | `/explorations` | 可选 `limit=1…20`（默认 20）→ ExplorationList |
+| GET | `/explorations/{exploration_id}` | 可选正整数 `revision`，默认当前修订 → ExplorationCheckpoint |
+| POST | `/exploration-saves` | ExplorationSave → ExplorationReceipt |
 | GET | `/trace/{claim_id}` | `max_depth` 默认 5 → Trace；断链／成环／超深度分别报 TRACE_BROKEN / TRACE_CYCLE / TRACE_DEPTH_EXCEEDED |
 | GET | `/events` | `since=<seq>` → SSE ChangeEvent；seq 持久递增，重启不归零，重放不重复 |
 | POST | `/commands` | CommandRequest → 同步 CommandResult.event_id；异步 HTTP 202 + job_id |
@@ -56,7 +59,11 @@ TracePathItem 同时要求这两个字段。as_of 是查询坐标，ChangeEvent.
 
 ## 写入与实现边界
 
-写白名单仅含 claim.confirm / claim.revoke / claim.restore / bundle.create / bundle.export；其他命令 COMMAND_NOT_ALLOWED，PUT/PATCH/DELETE 全部 HTTP 405。没有通用写或整表覆盖入口。错误码完整封闭集与版本规则见 CHANGELOG。
+停点接口要求配置身份和有效 Bearer token。服务解析 actor，写请求只接受至多 128 KiB 的严格 UTF-8 JSON。调用方提供探索 UUID、幂等 UUID、预期版本和全量有序引用。版本零用于创建。成功或同键同请求重放均返回不含笔记的收据。版本或键冲突返回 409，未知或其他所有者对象返回 404。读取重核当前 reader。失效引用保留锚点，隐藏对应理由与停点说明。有限凭据标记和本次 token 触发写入拒绝或读回抑制。停点修订在 SQLite 中原子追加，独立于下述旧命令和全局事件流。
+
+服务进入只读或停止时，停点保存及同键重放均在写入前返回 409 `SERVER_BUSY`，原因 `server_read_only`。状态恢复后可携原键提交。
+
+`/commands` 白名单包含 claim.confirm / claim.revoke / claim.restore / bundle.create / bundle.export。其他命令返回 COMMAND_NOT_ALLOWED，PUT/PATCH/DELETE 返回 HTTP 405。错误码完整封闭集与版本规则见 CHANGELOG。
 
 C2 实现为 stdlib http.server + threading，绑定 127.0.0.1；默认端口 7318，`.knot/http.port` 可改，KNOT_PORT 覆盖。单实例锁 `.knot/http.lock`，冲突明确 SERVER_BUSY；SSE seq 落盘 `.knot/http.seq`。不得对外绑定或 CORS 通配放行，业务逻辑复用现有模块。
 
@@ -102,7 +109,7 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十四个端点（含 SSE、未知 job 与未知 bundle 404，以及未认证查找 403），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 20 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录。输入路径不存在时在临时目录创建 schema 1.7 库。它调用全部十七个端点，核对未认证的查找和停点接口拒绝，并检查六次同步命令。成功汇总 23 PASS / 0 FAIL 并退出 0。具备 reader 授权的停点保存、读回和恢复由专项测试验证。
 
 ## Run A：读续接包、导出基准与启动错误
 

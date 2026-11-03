@@ -80,6 +80,7 @@ def test_stdio_lookup_and_boundaries(upstream, capfd, mode):
             listing = await client.list_tools()
             assert [tool.name for tool in listing.tools] == [
                 "knot_lookup_asset", "knot_read_asset", "knot_search_assets",
+                "knot_save_exploration", "knot_load_exploration", "knot_list_explorations",
             ]
             tool = listing.tools[0]
             assert tool.name == "knot_lookup_asset"

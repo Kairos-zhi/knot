@@ -3,6 +3,9 @@
 import re
 from uuid import UUID
 
+from mvp.exploration_policy import (
+    ExplorationError, normalize_snapshot, redact_exploration, validate_revision, validate_uuid,
+)
 from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN, TEXT_MIMES, text_error
 
 
@@ -144,3 +147,91 @@ def project_asset_search(envelope, limit):
             return invalid
         ids.add(asset_id)
     return value
+
+
+def _exploration_value(envelope, fields):
+    if (type(envelope) is not dict or envelope.keys() != {"contract_version", "ok", "value"}
+            or type(envelope["contract_version"]) is not int or envelope["contract_version"] != 1
+            or envelope["ok"] is not True):
+        raise ExplorationError("UPSTREAM_ERROR")
+    value = envelope["value"]
+    if type(value) is not dict or value.keys() != fields:
+        raise ExplorationError("UPSTREAM_ERROR")
+    return value
+
+
+def _validate_checkpoint_fields(value):
+    validate_uuid(value["exploration_id"])
+    validate_revision(value["revision"], 1)
+    if "saved_at" in value and (type(value["saved_at"]) is not int or not 0 <= value["saved_at"] <= 2**63 - 1):
+        raise ExplorationError("UPSTREAM_ERROR")
+
+
+def project_exploration_receipt(envelope, exploration_id, expected_revision):
+    try:
+        value = _exploration_value(envelope, {"exploration_id", "revision", "event_id"})
+        _validate_checkpoint_fields(value)
+        validate_uuid(value["event_id"])
+        if value["exploration_id"] == exploration_id and value["revision"] == expected_revision + 1:
+            return value
+    except ExplorationError:
+        pass
+    return {"error": "WRITE_OUTCOME_UNKNOWN"}
+
+
+def project_exploration_list(envelope, limit):
+    try:
+        value = _exploration_value(envelope, {"items"})
+        items = value["items"]
+        if type(items) is not list or len(items) > limit:
+            raise ExplorationError("UPSTREAM_ERROR")
+        seen = set()
+        for item in items:
+            if type(item) is not dict or item.keys() != {"exploration_id", "revision", "saved_at"}:
+                raise ExplorationError("UPSTREAM_ERROR")
+            _validate_checkpoint_fields(item)
+            if item["exploration_id"] in seen:
+                raise ExplorationError("UPSTREAM_ERROR")
+            seen.add(item["exploration_id"])
+        return value
+    except ExplorationError:
+        return {"error": "UPSTREAM_ERROR"}
+
+
+def project_exploration_checkpoint(envelope, exploration_id, revision, token):
+    try:
+        value = _exploration_value(envelope, {
+            "exploration_id", "revision", "event_id", "saved_at", "references", "stop_note", "stop_note_reason",
+        })
+        _validate_checkpoint_fields(value)
+        validate_uuid(value["event_id"])
+        if value["exploration_id"] != exploration_id or (revision is not None and value["revision"] != revision):
+            raise ExplorationError("UPSTREAM_ERROR")
+        entries = value["references"]
+        if type(entries) is not list or len(entries) > 32:
+            raise ExplorationError("UPSTREAM_ERROR")
+        refs = []
+        unavailable = False
+        for entry in entries:
+            if type(entry) is not dict:
+                raise ExplorationError("UPSTREAM_ERROR")
+            status = entry.get("status")
+            if status not in ("available", "forbidden", "missing", "hash_mismatch"):
+                raise ExplorationError("UPSTREAM_ERROR")
+            if status != "available":
+                if "reason" in entry:
+                    raise ExplorationError("UPSTREAM_ERROR")
+                unavailable = True
+            refs.append({key: item for key, item in entry.items() if key != "status"})
+        normalized = normalize_snapshot(refs, value["stop_note"])
+        if any(saved["expected_content_hash"] != projected["expected_content_hash"]
+               for saved, projected in zip(refs, normalized["references"])):
+            raise ExplorationError("UPSTREAM_ERROR")
+        note, reason = value["stop_note"], value["stop_note_reason"]
+        if ((unavailable and reason != "dependency_unavailable")
+                or (not unavailable and reason not in (None, "sensitive_content"))
+                or (reason is not None and note is not None)):
+            raise ExplorationError("UPSTREAM_ERROR")
+        return redact_exploration(value, token)
+    except ExplorationError:
+        return {"error": "UPSTREAM_ERROR"}

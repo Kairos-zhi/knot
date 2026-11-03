@@ -14,8 +14,9 @@ import pytest
 
 from mvp.backend import exploration_repo, migrate_schema_v1_7
 from mvp.backend.exploration_repo import ExplorationError, ExplorationRepo
-from mvp.backend.init_db import init_database
-from mvp.backend.migrate_schema_v1_6 import SchemaDriftError
+from mvp.backend.migrate_schema_v1_5 import migrate_schema as migrate5
+from mvp.backend.migrate_schema_v1_6 import SchemaDriftError, migrate_schema as migrate6
+from mvp.tests.schema_helpers import create_v14
 
 
 def uid():
@@ -30,7 +31,9 @@ def db_rows(db, sql, params=()):
 @pytest.fixture
 def predecessor(tmp_path):
     db = tmp_path / "exploration.db"
-    assert init_database(db)["status"] == "created"
+    assert create_v14(db)["status"] == "created"
+    migrate5(db)
+    migrate6(db)
     return db
 
 

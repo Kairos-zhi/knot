@@ -30,6 +30,7 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
     page = {"items": [{"asset_id": ASSET, "media_type": "text/plain", "content_hash": HASH}],
             "has_more": False}
     responses.append((200, json.dumps({"contract_version": 1, "ok": True, "value": page}).encode(), {}, 0))
+    responses.append((200, b'{"contract_version":1,"ok":true,"value":{"items":[]}}', {}, 0))
     initial = tmp_path / "initial"
     assert build(initial, origin).returncode == 0
     root = initial.rename(tmp_path / "\u79fb\u52a8 Knot")
@@ -60,6 +61,7 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             listing = await client.list_tools()
             assert [tool.name for tool in listing.tools] == [
                 "knot_lookup_asset", "knot_read_asset", "knot_search_assets",
+                "knot_save_exploration", "knot_load_exploration", "knot_list_explorations",
             ]
             result = await client.call_tool("knot_lookup_asset", {"content_hash": HASH})
             assert result.structured_content == {"items": [{"asset_id": ASSET, "kind": "text"}]}
@@ -67,11 +69,14 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             found = await client.call_tool("knot_search_assets", {"query": "needle"})
             assert found.structured_content == page
             assert not found.is_error
+            checkpoints = await client.call_tool("knot_list_explorations", {})
+            assert checkpoints.structured_content == {"items": []}
 
     asyncio.run(asyncio.wait_for(check(), timeout=10))
     assert requests == [
         (f"/assets?content_hash={HASH}", f"Bearer {PRIVATE}"),
         ("/asset-search?q=needle&limit=10", f"Bearer {PRIVATE}"),
+        ("/explorations?limit=20", f"Bearer {PRIVATE}"),
     ]
     captured = capfd.readouterr()
     assert PRIVATE not in captured.out + captured.err

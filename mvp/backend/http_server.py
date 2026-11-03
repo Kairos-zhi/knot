@@ -20,6 +20,8 @@ from urllib.parse import parse_qs, unquote, urlsplit
 from .asset_repo import AssetRepo
 from .asset_access import token_config, identity_mode, readable
 from .asset_search import ReaderTableMissing, SearchLimitReached, search_assets
+from .exploration_repo import ExplorationRepo
+from .migrate_schema_v1_6 import SchemaDriftError
 from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
@@ -28,6 +30,9 @@ from .timeline_query import read_snapshot, events_range, asset_by_hash
 from mvp.transport_views import metadata, claim_item, trace_view, event_rows
 from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
+from mvp.exploration_policy import (
+    MAX_SAVE_BYTES, ExplorationError, normalize_save, redact_exploration, strict_json,
+)
 from .support_view import compute_support
 from .traceback import trace_claim
 
@@ -39,6 +44,7 @@ ROUTES = SPEC["routes"]
 VERSION = SPEC["contract_version"]
 COMMANDS = SCHEMA["$defs"]["CommandRequest"]["properties"]["command"]["enum"]
 CODES = SCHEMA["$defs"]["Error"]["properties"]["code"]["enum"]
+_EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList"}
 
 
 class Fault(Exception):
@@ -163,7 +169,10 @@ class Server(ThreadingHTTPServer):
                 raise
             except (OSError, sqlite3.Error):
                 raise Fault("INTERNAL", reason="db_unreadable") from None
-            self.jobs = BundleJobs(self)
+            try:
+                self.jobs = BundleJobs(self)
+            except SchemaDriftError:
+                raise Fault("SCHEMA_VERSION_UNSUPPORTED", reason="unsupported_schema") from None
             port_file = self.state / "http.port"
             if port is None:
                 port = int(os.environ.get("KNOT_PORT", port_file.read_text().strip()
@@ -325,6 +334,9 @@ class Handler(BaseHTTPRequestHandler):
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
             actor = authenticate(self.headers.get("Authorization"))
+            exploration = route["response"] in _EXPLORATION_RESPONSES
+            if exploration and (actor is None or identity_mode() != "configured"):
+                raise Fault("FORBIDDEN_VIEW", 403)
             if values.get("require_reader") == "true":
                 if values.get("view") != "content":
                     raise Fault("BAD_REQUEST")
@@ -334,7 +346,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("UNAUTHORIZED" if self.command == "POST" else "FORBIDDEN_VIEW", 401 if self.command == "POST" else 403)
             if route.get("stream"):
                 return self.events(values["since"])
-            if self.command == "POST":
+            if exploration:
+                value = self.exploration(route["response"], values | path_args, actor)
+            elif self.command == "POST":
                 size = int(self.headers.get("Content-Length", "0"))
                 if not 0 < size <= 1_000_000 or self.headers.get("Transfer-Encoding"):
                     raise Fault("BAD_REQUEST")
@@ -365,6 +379,48 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(500, error("INTERNAL"))
 
     do_GET = do_POST = do_PUT = do_PATCH = do_DELETE = do_HEAD = do_OPTIONS = dispatch
+
+    def exploration(self, kind, params, actor):
+        token = self.headers["Authorization"][7:]
+        try:
+            repo = ExplorationRepo(self.server.db)
+            if kind == "ExplorationList":
+                return {"items": repo.list_current(actor, **params)}
+            if kind == "ExplorationCheckpoint":
+                return redact_exploration(repo.load(actor, **params), token)
+
+            lengths = self.headers.get_all("Content-Length", [])
+            if len(lengths) != 1 or self.headers.get_all("Transfer-Encoding"):
+                raise Fault("BAD_REQUEST")
+            length = lengths[0]
+            if len(length) > 6 or not length.isascii() or not length.isdecimal():
+                raise Fault("BAD_REQUEST")
+            size = int(length)
+            if not 0 < size <= MAX_SAVE_BYTES:
+                raise Fault("BAD_REQUEST")
+            self.connection.settimeout(2)
+            raw = self.rfile.read(size)
+            if len(raw) != size:
+                raise Fault("BAD_REQUEST")
+            try:
+                body = strict_json(raw)
+            except (ValueError, RecursionError):
+                raise Fault("BAD_REQUEST") from None
+            save = normalize_save(body, token)
+            with self.server.changed:
+                if self.server.journal.get("pending") or self.server.jobs.failed or self.server.stopping:
+                    raise Fault("SERVER_BUSY", 409, reason="server_read_only")
+                return repo.save(actor, **save)
+        except SchemaDriftError:
+            raise Fault("SCHEMA_VERSION_UNSUPPORTED", 409, reason="exploration_migration_required") from None
+        except ExplorationError as exc:
+            if exc.code == "NOT_FOUND":
+                raise Fault("NOT_FOUND", 404) from None
+            if exc.code in ("REVISION_CONFLICT", "IDEMPOTENCY_CONFLICT"):
+                raise Fault("BAD_REQUEST", 409, reason=exc.code.lower()) from None
+            if exc.code in ("ASSET_UNAVAILABLE", "SENSITIVE_CONTENT"):
+                raise Fault("BAD_REQUEST", reason=exc.code.lower()) from None
+            raise Fault("BAD_REQUEST") from None
 
     def read(self, kind, p, actor=None):
         if kind == "ContractInfo":

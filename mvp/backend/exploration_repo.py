@@ -4,77 +4,22 @@ from contextlib import closing
 from hashlib import sha256
 import json
 from pathlib import Path
-import re
 import sqlite3
 import time
 from uuid import uuid4
 
-from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN
+from mvp.exploration_policy import (
+    MAX_REVISION, ExplorationError, normalize_snapshot, validate_revision, validate_text, validate_uuid,
+)
 
 from .migrate_schema_v1_7 import require_exploration_schema
 from .timeline_query import read_snapshot
 
 
-_MAX_REVISION = 2**63 - 1
-
-
-class ExplorationError(ValueError):
-    """A fixed, recoverable exploration operation error."""
-
-    def __init__(self, code):
-        super().__init__(code)
-        self.code = code
-
-
-def _validate_uuid(value):
-    if type(value) is not str or not re.fullmatch(ASSET_ID_PATTERN, value):
-        raise ExplorationError("INVALID_ARGUMENTS")
-
-
-def _validate_revision(value, minimum):
-    if type(value) is not int or not minimum <= value <= _MAX_REVISION:
-        raise ExplorationError("INVALID_ARGUMENTS")
-
-
-def _validate_text(value, limit):
-    if type(value) is not str or len(value) > limit:
-        raise ExplorationError("INVALID_ARGUMENTS")
-    try:
-        raw = value.encode("utf-8")
-    except UnicodeEncodeError:
-        raise ExplorationError("INVALID_ARGUMENTS") from None
-    if len(raw) > limit or any(byte == 127 or (byte < 32 and byte not in (9, 10, 13)) for byte in raw):
-        raise ExplorationError("INVALID_ARGUMENTS")
-
-
 def _validate_actor(actor):
-    _validate_text(actor, 256)
+    validate_text(actor, 256)
     if not actor.strip() or any(char in actor for char in "\t\r\n"):
         raise ExplorationError("INVALID_ARGUMENTS")
-
-
-def _snapshot(references, stop_note):
-    if type(references) is not list or len(references) > 32:
-        raise ExplorationError("INVALID_ARGUMENTS")
-    if stop_note is not None:
-        _validate_text(stop_note, 2048)
-    entries, seen = [], set()
-    required = {"asset_id", "expected_content_hash", "disposition"}
-    for ref in references:
-        if type(ref) is not dict or ref.keys() - (required | {"reason"}) or not required <= ref.keys():
-            raise ExplorationError("INVALID_ARGUMENTS")
-        asset_id, digest, disposition = ref["asset_id"], ref["expected_content_hash"], ref["disposition"]
-        _validate_uuid(asset_id)
-        if (asset_id in seen or type(digest) is not str or not re.fullmatch(SHA256_PATTERN, digest)
-                or type(disposition) is not str or disposition not in ("selected", "excluded")):
-            raise ExplorationError("INVALID_ARGUMENTS")
-        seen.add(asset_id)
-        reason = ref.get("reason")
-        if reason is not None:
-            _validate_text(reason, 512)
-        entries.append({"asset_id": asset_id, "expected_content_hash": digest.lower(),
-                        "disposition": disposition, "reason": reason})
-    return {"references": entries, "stop_note": stop_note}
 
 
 def _reference_status(conn, ref, actor):
@@ -108,10 +53,10 @@ class ExplorationRepo:
 
     def save(self, actor, exploration_id, *, expected_revision, request_key, references, stop_note=None):
         _validate_actor(actor)
-        _validate_uuid(exploration_id)
-        _validate_uuid(request_key)
-        _validate_revision(expected_revision, 0)
-        snapshot = _snapshot(references, stop_note)
+        validate_uuid(exploration_id)
+        validate_uuid(request_key)
+        validate_revision(expected_revision, 0)
+        snapshot = normalize_snapshot(references, stop_note)
         snapshot_json = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         request = json.dumps([exploration_id, expected_revision, snapshot_json], ensure_ascii=False)
         digest = sha256(request.encode("utf-8")).hexdigest()
@@ -137,7 +82,7 @@ class ExplorationRepo:
                 return _receipt(*replay[:3])
 
             current = head[1] if head is not None else 0
-            if expected_revision != current or current == _MAX_REVISION:
+            if expected_revision != current or current == MAX_REVISION:
                 raise ExplorationError("REVISION_CONFLICT")
             if any(_reference_status(conn, ref, actor) != "available" for ref in snapshot["references"]):
                 raise ExplorationError("ASSET_UNAVAILABLE")
@@ -153,9 +98,9 @@ class ExplorationRepo:
 
     def load(self, actor, exploration_id, *, revision=None):
         _validate_actor(actor)
-        _validate_uuid(exploration_id)
+        validate_uuid(exploration_id)
         if revision is not None:
-            _validate_revision(revision, 1)
+            validate_revision(revision, 1)
         with read_snapshot(self._path) as conn:
             require_exploration_schema(conn)
             row = conn.execute(

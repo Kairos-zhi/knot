@@ -14,6 +14,7 @@ from uuid import UUID, uuid4
 
 from .continuation_bundle import generate_bundle
 from .asset_access import readable
+from .migrate_schema_v1_7 import require_exploration_schema
 
 
 class BundleJobs:
@@ -27,6 +28,9 @@ class BundleJobs:
                 "SELECT 1 FROM schema_version WHERE version='1.5'").fetchone() else '1.4')
             if conn.execute("SELECT 1 FROM schema_version WHERE version='1.6'").fetchone():
                 self.schema_version = '1.6'
+            if conn.execute("SELECT 1 FROM schema_version WHERE version='1.7'").fetchone():
+                require_exploration_schema(conn)
+                self.schema_version = '1.7'
             column = next((row for row in conn.execute('PRAGMA table_info(continuation_bundles)')
                            if row[1] == 'job_id'), None)
             self.provenance_ready = column is not None and column[2].upper() == 'TEXT' and column[3:] == (0, None, 0)

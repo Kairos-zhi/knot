@@ -29,6 +29,7 @@ def main():
         "mvp/plugin_projection.py": source.parent / "plugin_projection.py",
         "mvp/search_policy.py": source.parent / "search_policy.py",
         "mvp/text_policy.py": source.parent / "text_policy.py",
+        "mvp/exploration_policy.py": source.parent / "exploration_policy.py",
     }
     try:
         args.output.mkdir()

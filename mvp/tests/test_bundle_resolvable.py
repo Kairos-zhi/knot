@@ -235,5 +235,5 @@ def test_ac4_selfcheck_with_objects(sources):
     print('AC-4 COMMAND ' + json.dumps(command))
     print(result.stdout)
     assert result.returncode == 0, result.stderr
-    assert '20 PASS / 0 FAIL' in result.stdout
+    assert '23 PASS / 0 FAIL' in result.stdout
     assert (db.read_bytes(), target.read_bytes()) == before
