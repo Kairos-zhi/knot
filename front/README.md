@@ -86,7 +86,7 @@ Boundary HTTP: non-read routes/static traversal=404; PUT=405; PASS
 
 ## pytest 原始输出
 
-首轮共享临时目录 `D:/tmp/pytest-of-x2270` 被拒绝访问，尾行为 `88 passed, 403 errors`。指定独立 basetemp 后尾行为 `2 failed, 487 passed, 2 skipped`；两处 export 测试默认写真实 home，沙箱拒绝，原始日志为 `D:/tmp/knot-f1-pytest.txt`、`D:/tmp/knot-f1-auth.txt`。没有修改后端。
+首轮共享临时目录（路径已脱敏） `D:/tmp/pytest-of-<user>` 被拒绝访问，尾行为 `88 passed, 403 errors`。指定独立 basetemp 后尾行为 `2 failed, 487 passed, 2 skipped`；两处 export 测试默认写真实 home，沙箱拒绝，原始日志为 `D:/tmp/knot-f1-pytest.txt`、`D:/tmp/knot-f1-auth.txt`。没有修改后端。
 
 最终仅为本次测试进程隔离 home，未修改系统或用户环境配置：
 
@@ -122,10 +122,10 @@ python -m pytest mvp/tests/ -q -p no:cacheprovider --basetemp D:/tmp/knot-f1-pyt
 
 ## 交付阻碍
 
-本地 `git add -- front/index.html front/serve.py front/README.md` 原始错误：
+本地 `git add -- front/index.html front/serve.py front/README.md` 错误摘录（路径已脱敏）：
 
 ```text
-fatal: Unable to create 'C:/Users/x2270/Documents/ChatGPT/KONT/.git/worktrees/knot-maker-front/index.lock': Permission denied
+fatal: Unable to create '<repo-root>/.git/worktrees/knot-maker-front/index.lock': Permission denied
 ```
 
 `gh auth status` 报凭据失效；Git 网络查询报 `SEC_E_NO_CREDENTIALS`。GitHub 连接器可读用户指定基线，搜索目标远端分支为空，尝试创建分支时被审批策略拒绝，原始输出：
