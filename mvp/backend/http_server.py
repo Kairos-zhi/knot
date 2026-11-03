@@ -320,6 +320,11 @@ class Handler(BaseHTTPRequestHandler):
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
             actor = authenticate(self.headers.get("Authorization"))
+            if values.get("require_reader") == "true":
+                if values.get("view") != "content":
+                    raise Fault("BAD_REQUEST")
+                if identity_mode() != "configured":
+                    raise Fault("FORBIDDEN_VIEW", 403)
             if actor is None and (self.command == "POST" or values.get("view") == "content"):
                 raise Fault("UNAUTHORIZED" if self.command == "POST" else "FORBIDDEN_VIEW", 401 if self.command == "POST" else 403)
             if route.get("stream"):

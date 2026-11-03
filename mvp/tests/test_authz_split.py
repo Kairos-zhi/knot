@@ -1,5 +1,6 @@
 """S3 counterexamples over actual token-configured loopback processes."""
 
+import asyncio
 from contextlib import closing
 import hashlib
 import json
@@ -84,6 +85,66 @@ def test_ac2_configured_two_actors(scoped, monkeypatch):
         assert denied[1]['error']['code'] == 'FORBIDDEN_VIEW'
         assert meta[0] == 200 and 'content' not in meta[1]['value']
         assert owner[0] == 200
+    finally:
+        live.stop()
+
+
+@pytest.mark.parametrize("configured", [False, True])
+def test_strict_asset_reader_and_codex_adapter(scoped, monkeypatch, configured):
+    from mvp import codex_mcp
+
+    db, assets, _ = scoped
+    if configured:
+        monkeypatch.setenv("KNOT_TOKENS", json.dumps({
+            "token-a": "A", "replacement-a": "A", "token-b": "B",
+        }))
+    live = Live(db)
+    try:
+        path = f"/assets/{assets[0]}"
+        assert request(live.base, path + "?view=content", token="token-a")[0] == 200
+        for suffix in (
+            "?require_reader=true", "?view=meta&require_reader=true",
+            "?view=content&require_reader=false", "?view=content&require_reader=",
+            "?view=content&require_reader=true&require_reader=true",
+        ):
+            assert request(live.base, path + suffix, token="token-a")[0] == 400
+
+        def read(token, aid=assets[0]):
+            return asyncio.run(codex_mcp.read_asset(live.base, {"asset_id": aid}, token))
+
+        assert read(None) == read("unknown") == {"error": "ACCESS_DENIED"}
+        assert read("token-b") == {"error": "ACCESS_DENIED"}
+        if not configured:
+            assert read("token-a") == {"error": "ACCESS_DENIED"}
+            return
+
+        text = "D-12 public decision"
+        expected = {"asset_id": assets[0], "content": text, "media_type": "text/markdown",
+                    "content_hash": hashlib.sha256(text.encode()).hexdigest()}
+        assert read("token-a") == read("replacement-a") == expected
+        assert read("token-a", assets[2]) == {"error": "ACCESS_DENIED"}
+        assert read("token-a", "00000000-0000-0000-0000-000000000000") == {
+            "error": "ASSET_NOT_FOUND"
+        }
+        get_envelope = codex_mcp.get_envelope
+
+        async def revoke_after_meta(origin, path, params, token):
+            result = await get_envelope(origin, path, params, token)
+            if params == {"view": "meta"}:
+                assert result[0] == 200
+                with closing(sqlite3.connect(db)) as conn, conn:
+                    conn.execute("DELETE FROM asset_readers WHERE asset_id=? AND actor='A'",
+                                 (assets[0],))
+            return result
+
+        with monkeypatch.context() as patch:
+            patch.setattr(codex_mcp, "get_envelope", revoke_after_meta)
+            assert read("token-a") == {"error": "ACCESS_DENIED"}
+        assert read("token-a") == {"error": "ACCESS_DENIED"}
+        assert read("replacement-a", assets[1])["content"] == "Q18-01 public question"
+        with closing(sqlite3.connect(db)) as conn, conn:
+            conn.execute("DROP TABLE asset_readers")
+        assert read("replacement-a", assets[1]) == {"error": "ACCESS_DENIED"}
     finally:
         live.stop()
 

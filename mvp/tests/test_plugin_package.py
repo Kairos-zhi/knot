@@ -55,7 +55,7 @@ def test_moved_plugin_starts_and_uses_one_get(tmp_path, upstream, capfd):
     async def check():
         async with Client(params) as client:
             listing = await client.list_tools()
-            assert [tool.name for tool in listing.tools] == ["knot_lookup_asset"]
+            assert [tool.name for tool in listing.tools] == ["knot_lookup_asset", "knot_read_asset"]
             result = await client.call_tool("knot_lookup_asset", {"content_hash": HASH})
             assert result.structured_content == {"items": [{"asset_id": ASSET, "kind": "text"}]}
             assert not result.is_error

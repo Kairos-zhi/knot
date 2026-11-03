@@ -43,6 +43,8 @@ JSON 成功信封为 `{contract_version: 1, ok: true, value: ...}`，失败信�
 
 AtomSupport.minimal_roots 已改可选，以支持 boolean 档省略来源；roots 档必须有来源仍由 C2 按实际 view 检查。Snapshot.view 保持 boolean/roots 两档；content 只属于资产端点。二进制资产使用 `content=null`、`encoding=none` 并必须含 path；该条件已由 AssetContent 的 if/then/else 表达。`/snapshot`、`/claims`、`/claims/{claim_id}` 用 OkEnvelopeTimed，`/assets/{asset_id}` 用 OkEnvelopeViewed，两类均强制 view；只有这两类之外使用 OkEnvelope 的端点可省 view。实际档位与授权内容一致性由 C2 真实服务测试验证。
 
+`GET /assets/{asset_id}?view=content&require_reader=true` 要求服务处于配置身份模式，Bearer token 解析到的 actor 须有该资产的 reader 授权。单用户开放态、无效 token、缺少授权或 reader 表均返回 `FORBIDDEN_VIEW`。参数仅接受字面值 `true`，与其他 view 搭配或重复传入时返回 `BAD_REQUEST`。省略参数时沿用既有授权语义。
+
 ## event_time 与 recorded_at：两条时间轴
 
 `event_time` 表示事件发生时间；`recorded_at` 表示系统记录时间，二者均为 Unix 毫秒，不能在协议层重命名、合并成一个 timestamp 或互相代填。例如历史导入可发生于 1000、记录于 2000，两值应分别保留。EventStore 默认未提供 event_time 时才采用当前 recorded_at，并拒绝未来事件；数据库约束 recorded_at >= event_time。

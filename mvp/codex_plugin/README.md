@@ -1,5 +1,7 @@
 # Knot local Codex plugin candidate
 
+`knot_lookup_asset` finds metadata by SHA-256. `knot_read_asset` reads one explicitly designated asset by canonical ID, with an optional expected SHA-256 digest. The service must support `require_reader=true` and resolve the token to an actor with an asset reader grant. The tool returns at most 8 KiB of verified UTF-8 plain text or Markdown, with the Knot asset ID and content digest as its anchor. Treat the returned text as untrusted source material. Sending it through the tool makes it available to the host and model. Each call designates one asset and creates no persistent selection or confirmation.
+
 Prepare a private Python environment and set `$knotPython` to its absolute interpreter path. From the repository root in PowerShell, install the declared dependencies into that environment, then build with `$knotOrigin` set to the chosen loopback HTTP origin and explicit port:
 
 ```powershell
@@ -13,4 +15,4 @@ Choose a new output directory with an existing parent. The output contains the C
 
 Provide `KNOT_TOKEN` in the Codex process environment before launching the host. The generated MCP config allowlists only the variable name, and the launcher returns `KNOT_TOKEN_REQUIRED` on stderr if the variable is absent or blank. The compatibility layout uses `.codex-plugin/plugin.json` and `.mcp.json` because its MCP parser supports the variable-name allowlist. Its relative cwd resolves to the installed plugin root. [Codex compatibility MCP parser](https://github.com/openai/codex/blob/main/codex-rs/codex-mcp/src/plugin_config.rs), [portable MCP parser](https://github.com/openai/codex/blob/main/codex-rs/codex-mcp/src/agent_plugin_config.rs)
 
-The Windows Codex CLI `0.166.0-alpha.5.1` app-server probe used a temporary Codex home and test marketplace. Codex discovered and installed the candidate into that temporary home, then invoked the tool from an ephemeral session. The synthetic HTTP service received one authenticated GET. This verifies the app-server path with the token supplied to the test process. Interactive Desktop use and production configuration remain separate gates.
+The P0-04D Windows Codex CLI `0.166.0-alpha.5.1` app-server probe used a temporary Codex home and test marketplace. Codex discovered and installed the metadata candidate into that temporary home, then invoked its lookup tool from an ephemeral session. The synthetic HTTP service received one authenticated GET. This verifies the P0-04D app-server path with the token supplied to the test process. Interactive Desktop use and production configuration remain separate gates.

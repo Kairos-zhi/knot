@@ -181,6 +181,13 @@
           "required": false,
           "default": "meta",
           "description": "meta=元数据（信封 view=meta）；content=正文（信封 view=content）。"
+        },
+        {
+          "name": "require_reader",
+          "type": "string",
+          "enum": ["true"],
+          "required": false,
+          "description": "Only for view=content. Require configured token identity and an explicit asset reader grant."
         }
       ],
       "response": "AssetMeta|AssetContent",
