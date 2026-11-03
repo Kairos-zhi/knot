@@ -108,7 +108,7 @@ def decode_snapshot(raw):
         if normalized != value:
             raise ValueError()
         return normalized
-    except (ValueError, TypeError, UnicodeError, AttributeError, KeyError):
+    except (ValueError, TypeError, UnicodeError, AttributeError, KeyError, RecursionError):
         raise ExplorationError("INVALID_SNAPSHOT") from None
 
 

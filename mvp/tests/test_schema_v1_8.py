@@ -46,3 +46,17 @@ def test_migration_failure_and_drift_leave_no_marker(db):
     with pytest.raises(ValueError):
         new.migrate_schema(db)
     assert not db_rows(db, "SELECT version FROM schema_version WHERE version='1.8'")
+
+
+def test_deep_json_rejected_by_migration_read_and_write(db):
+    raw = '[' * 10000 + '0' + ']' * 10000
+    ident = uid()
+    db_rows(db, "INSERT INTO exploration_revisions VALUES (?,?,?,?,?,?,?,?)",
+            (ident, 1, "A", uid(), 1, uid(), "digest", raw))
+    repo = ExplorationRepo(db)
+    for action in (lambda: new.migrate_schema(db), lambda: repo.load("A", ident),
+                   lambda: repo.save("A", ident, expected_revision=1, request_key=uid(), references=[])):
+        with pytest.raises(ExplorationError, match="INVALID_SNAPSHOT"):
+            action()
+    assert not db_rows(db, "SELECT version FROM schema_version WHERE version='1.8'")
+    assert len(db_rows(db, "SELECT * FROM exploration_revisions")) == 1
