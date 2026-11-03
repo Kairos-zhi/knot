@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Knot · 只读视图</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#242426;background:#f5f5f7;accent-color:#353538}
+*{box-sizing:border-box}body{margin:0}header{padding:24px 32px;border-bottom:1px solid #dedee2;background:#fff}h1{font-size:24px;margin:0 0 8px}h2{font-size:18px;margin:0 0 16px}h3{font-size:14px}p,label{font-size:14px;color:#5c5c61}main{display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,2fr);gap:20px;padding:24px 32px;max-width:1600px;margin:auto}section{background:#fff;border:1px solid #dedee2;border-radius:16px;padding:20px;min-width:0}button,input,select,textarea{font:inherit;font-size:14px;border:1px solid #c7c7cc;border-radius:8px;padding:9px;background:#fff;color:inherit}button{cursor:pointer}button:hover{background:#eeeef0}button:disabled{cursor:default;opacity:.5}input{max-width:100%;width:100%;margin:8px 0}a{color:#285eaa;overflow-wrap:anywhere}pre,code,textarea{font-family:ui-monospace,Consolas,monospace;font-size:13px}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;background:#f5f5f7;padding:12px;border-radius:8px}textarea{width:100%;min-height:100px;resize:vertical}.item{padding:12px 0;border-bottom:1px solid #eeeef0;overflow-wrap:anywhere}.item button{max-width:100%;text-align:left;overflow-wrap:anywhere}.notice{padding:12px;border:1px solid #c7c7cc;border-radius:8px;margin:12px 0}.notice button{margin-left:12px}:focus-visible{outline:2px solid #285eaa;outline-offset:3px}[hidden]{display:none!important}@media(max-width:800px){main{grid-template-columns:1fr;padding:16px}header{padding:20px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<header><h1>Knot</h1><p>只读视图 · 找未决，看依据，取材料，读续接包</p></header>
+<main>
+<section aria-labelledby="claims-title"><h2 id="claims-title">未决区</h2><label for="status">候选状态</label> <select id="status"><option value="unconfirmed">unconfirmed</option><option value="">全部</option><option value="confirmed">confirmed</option><option value="revoked">revoked</option></select> <button id="refresh">刷新</button><div id="claims" aria-live="polite"></div><button id="more" hidden>下一页</button></section>
+<section aria-labelledby="trace-title"><h2 id="trace-title">依据区</h2><p>选择一条候选，核读详情与来源。candidate_sources 是事件 ID，不等于资产 ID。</p><div id="claim" aria-live="polite"></div><div id="trace" aria-live="polite"></div></section>
+<section aria-labelledby="assets-title"><h2 id="assets-title">素材区</h2><p>现有接口仅支持按 content_hash 查询；也可从依据或续接包进入资产。</p><label for="hash">content_hash</label><input id="hash" spellcheck="false" autocomplete="off"><button id="search">查询素材</button><div id="assets" aria-live="polite"></div><div id="content" aria-live="polite"></div></section>
+<section aria-labelledby="bundle-title"><h2 id="bundle-title">续接包区</h2><p>输入已有 bundle_id 读取。包内有无条目以原文为准。</p><label for="bundle-id">bundle_id</label><input id="bundle-id" spellcheck="false" autocomplete="off"><button id="read-bundle">读取续接包</button><div id="bundle" aria-live="polite"></div></section>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const show = value => value === null || value === undefined ? '—' : typeof value === 'string' ? value : JSON.stringify(value, (_key, v) => v === null ? '—' : v, 2);
+function node(tag, text) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; return n; }
+function raw(target, value) { target.append(node('pre', show(value))); }
+function action(text, callback) { const b = node('button', text); b.type = 'button'; b.addEventListener('click', callback); return b; }
+function field(target, key, value) { target.append(node('h3', key)); raw(target, value); }
+async function api(path) {
+  const r = await fetch('/api' + path, {method:'GET', cache:'no-store'});
+  let body; try { body = await r.json(); } catch { throw Object.assign(new Error('接口响应无法解析'), {status:r.status}); }
+  if (!r.ok || body.ok !== true) throw Object.assign(new Error(body.error?.message || '接口读取失败'), {status:r.status});
+  return body.value;
+}
+function failed(target, error, retry) {
+  const box = node('div'); box.className = 'notice'; box.setAttribute('role','alert');
+  const message = error.status === 403 ? '无权读' : !error.status || error.status >= 502 ? '服务未起，请启动 Knot 后端后重试' : '读取失败：' + error.message;
+  box.append(node('span',message), action('重试',retry)); target.append(box);
+}
+// Each target owns its request generation: late responses cannot replace a newer selection.
+const generations = new WeakMap();
+async function load(target, path, render) {
+  const generation = (generations.get(target) || 0) + 1; generations.set(target,generation);
+  target.replaceChildren(node('p','读取中…'));
+  const retry = () => load(target,path,render);
+  try { const value = await api(path); if (generations.get(target) !== generation) return; target.replaceChildren(); render(value,target); }
+  catch(e) { if (generations.get(target) !== generation) return; target.replaceChildren(); failed(target,e,retry); }
+}
+function assetPath(id) { return '/assets/' + encodeURIComponent(id) + '?view=content'; }
+function assetLink(target,id) {
+  const row = node('div'); row.className='item'; row.append(node('code',show(id)));
+  if (typeof id === 'string' && id) {
+    const a = node('a','取件'); a.href='#asset=' + encodeURIComponent(id); a.addEventListener('click',e=>{e.preventDefault(); history.replaceState(null,'',a.href); readAsset(id);});
+    row.append(document.createTextNode(' '),a);
+  }
+  target.append(row);
+}
+function readAsset(id) {
+  return load($('content'),assetPath(id),(v,t)=>{field(t,'asset_id',v.asset_id);field(t,'media_type',v.media_type);field(t,'encoding',v.encoding);field(t,'content',v.content); if ('path' in v) field(t,'path',v.path);});
+}
+function selectClaim(id) {
+  load($('claim'),'/claims/'+encodeURIComponent(id),(v,t)=>{field(t,'候选详情',v);});
+  load($('trace'),'/trace/'+encodeURIComponent(id),(v,t)=>{
+    for (const key of ['claim_id','source_label','atom','status','depth','path','candidate_sources']) field(t,key,v[key]);
+    field(t,'why',v.why); t.append(node('p','现有 trace 接口未提供 why；path 原样列出事件链。续接包中的“为什么”保留在包正文。'));
+    field(t,'assets',v.assets); for(const a of v.assets || []) assetLink(t,a.asset_id);
+  });
+}
+let cursor=null;
+function readClaims(next=false) {
+  const q = new URLSearchParams(); if($('status').value) q.set('status',$('status').value); if(next && cursor !== null) q.set('cursor',cursor);
+  $('more').hidden=true;
+  return load($('claims'),'/claims?'+q,(v,t)=>{
+    field(t,'as_of',v.as_of);
+    for(const c of v.items || []) {const row=node('div');row.className='item';row.append(action(show(c.source_label ?? c.claim_id),()=>selectClaim(c.claim_id)));raw(row,c);t.append(row);}
+    if(!v.items?.length) t.append(node('p','当前查询无条目'));
+    cursor=v.next_cursor; $('more').hidden=cursor===null || cursor===undefined;
+  });
+}
+function searchAssets() {
+  const hash=$('hash').value.trim();
+  return load($('assets'),'/assets?content_hash='+encodeURIComponent(hash),(v,t)=>{field(t,'items',v.items);for(const a of v.items || []) assetLink(t,a.asset_id);});
+}
+function copyPointer(target,text) {
+  const area=node('textarea');area.readOnly=true;area.value=text;area.setAttribute('aria-label','完整取件指针');target.append(area);
+  target.append(action('复制取件指针',async()=>{try{await navigator.clipboard.writeText(text);}catch{area.focus();area.select();}}));
+}
+function readBundle() {
+  const id=$('bundle-id').value.trim(), path='/bundles/'+encodeURIComponent(id);
+  return load($('bundle'),path,(v,t)=>{
+    // Keep roots visible even if the independently authorized content read fails.
+    field(t,'包清单',v); const body=node('div');t.append(body);
+    for(const aid of v.authorized_assets || []) assetLink(t,aid);
+    load(body,path+'?view=content',(full,b)=>{
+      field(b,'context_text',full.context_text);
+      const pointers=[];
+      // Preserve complete backend-produced asset_id:line and quoted anchor verbatim.
+      for(const match of (full.context_text || '').matchAll(/^  > ([^\s:]+):(\d+) (.+)$/gm)) {
+        const [original,aid,line,anchor]=match;
+        if(!(full.authorized_assets || []).includes(aid)) continue;
+        pointers.push(original.slice(4));
+        assetLink(b,aid); field(b,'行号锚点',aid+':'+line+' '+anchor);
+      }
+      if(pointers.length) copyPointer(b,pointers.join('\n'));
+      else b.append(node('p','包正文未提供行号锚点；请按完整资产 ID 核读，不推测行号。'));
+    });
+  });
+}
+$('refresh').addEventListener('click',()=>readClaims());$('status').addEventListener('change',()=>readClaims());$('more').addEventListener('click',()=>readClaims(true));$('search').addEventListener('click',searchAssets);$('read-bundle').addEventListener('click',readBundle);
+readClaims();
+if(location.hash.startsWith('#asset=')) {try {readAsset(decodeURIComponent(location.hash.slice(7)));}catch{failed($('content'),new Error('无效资产指针'),()=>{});}}
+</script>
+</html>
