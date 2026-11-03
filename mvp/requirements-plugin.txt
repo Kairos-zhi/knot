@@ -1,0 +1,4 @@
+# Optional Codex MCP stdio entry point (test runner pinned in requirements-dev.txt).
+mcp==2.1.1
+anyio==4.16.0
+httpx2==2.16.0
