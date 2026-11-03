@@ -40,7 +40,7 @@ def test_fresh_supports_v2_and_fork_without_migration(tmp_path):
 def test_sidecar_prevents_publication(tmp_path,monkeypatch):
     actual=init_db.os.path.lexists
     def present(path):
-        if str(path).endswith('-wal'): return True
+        if '.tmp-' in str(path) and str(path).endswith('-wal'): return True
         return actual(path)
     monkeypatch.setattr(init_db.os.path,'lexists',present)
     path=tmp_path/'new.db'; result=init_db.init_database(str(path))
@@ -73,3 +73,36 @@ def test_uncheckpointed_wal_reader_prevents_staging_seal(tmp_path):
     finally:
         reader.close(); writer.close()
     init_db._checkpoint_staging(path)
+
+
+@pytest.mark.parametrize('suffix', ['-wal','-shm','-journal'])
+def test_existing_target_sidecar_refused_and_preserved(tmp_path,suffix):
+    path=tmp_path/'new.db'; side=tmp_path/('new.db'+suffix); side.write_bytes(b'foreign sidecar')
+    result=init_db.init_database(str(path))
+    assert result['status']=='refused' and result['reason']=='target_sidecar_exists'
+    assert not path.exists() and side.read_bytes()==b'foreign sidecar'
+    path.write_bytes(b'foreign target')
+    result=init_db.init_database(str(path))
+    assert result['status']=='refused' and result['reason']=='target_exists'
+    assert path.read_bytes()==b'foreign target' and side.read_bytes()==b'foreign sidecar'
+
+
+def test_sidecar_appears_at_publication_is_preserved(tmp_path,monkeypatch):
+    path=tmp_path/'new.db'; side=tmp_path/'new.db-journal'; link=init_db.os.link
+    def race(source,target):
+        link(source,target); side.write_bytes(b'foreign journal')
+    monkeypatch.setattr(init_db.os,'link',race)
+    result=init_db.init_database(str(path))
+    assert result['status']=='failed' and not path.exists()
+    assert side.read_bytes()==b'foreign journal' and list(tmp_path.iterdir())==[side]
+
+
+def test_sidecar_appears_before_publication_is_preserved(tmp_path,monkeypatch):
+    path=tmp_path/'new.db'; side=tmp_path/'new.db-shm'; readback=init_db._readback
+    def race(target):
+        readback(target)
+        if target!=path: side.write_bytes(b'foreign sidecar')
+    monkeypatch.setattr(init_db,'_readback',race)
+    result=init_db.init_database(str(path))
+    assert result['status']=='refused' and result['reason']=='target_sidecar_exists'
+    assert not path.exists() and side.read_bytes()==b'foreign sidecar'

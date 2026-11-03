@@ -66,6 +66,10 @@ def _checkpoint_staging(path: Path) -> None:
         raise ValueError("staging database has sidecars")
 
 
+def _has_sidecars(path: Path) -> bool:
+    return any(os.path.lexists(str(path) + suffix) for suffix in ("-wal", "-shm", "-journal"))
+
+
 def init_database(db_path: str) -> dict:
     """Return created/refused/failed; never read stdin or replace an existing entry."""
     # Do not resolve the final component: even a dangling symlink is an existing target.
@@ -78,6 +82,9 @@ def init_database(db_path: str) -> dict:
     try:
         if os.path.lexists(target):
             result.update(status="refused", reason="target_exists")
+            return result
+        if _has_sidecars(target):
+            result.update(status="refused", reason="target_sidecar_exists")
             return result
         target.parent.mkdir(parents=True, exist_ok=True)
         schema = Path(__file__).with_name("schema_v1.sql").read_text(encoding="utf-8")
@@ -103,6 +110,12 @@ def init_database(db_path: str) -> dict:
         _checkpoint_staging(temporary)
         _readback(temporary)
         identity = temporary.stat()
+        if os.path.lexists(target):
+            result.update(status="refused", reason="target_exists")
+            return result
+        if _has_sidecars(target):
+            result.update(status="refused", reason="target_sidecar_exists")
+            return result
         try:
             os.link(temporary, target)
         except FileExistsError:
@@ -110,7 +123,11 @@ def init_database(db_path: str) -> dict:
             return result
         published_identity = identity
         temporary.unlink()
+        if _has_sidecars(target):
+            raise ValueError("published target has sidecars")
         _readback(target)
+        if _has_sidecars(target):
+            raise ValueError("published target has sidecars")
         if not os.path.samestat(identity, target.stat()):
             raise ValueError("published database identity changed")
         result["status"] = "created"
