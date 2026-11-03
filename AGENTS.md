@@ -2,7 +2,7 @@
 
 KONT 是 Knot 的历史误拼，指同一个产品。当前开发在 `mvp/`。先读 [开发基准](mvp/docs/development-baseline.md)、根 [STATE.md](STATE.md) / [QUEUE.md](QUEUE.md) 与当前任务卡；数据和操作以 [SCHEMA](mvp/docs/SCHEMA.md)、[IMPORT](mvp/docs/IMPORT.md) 及对应源码为准。旧 `docs/architecture/` 仅用于历史对照，不作为当前实现地图。
 
-2026-11-03 插件阶段入口：[W1D1 基线收口卡](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)与[遗漏 P0 台账](mvp/docs/PLUGIN-P0-REGISTER.md)。本轮只更新基线、上下文和指令；后续代码任务需读对应卡。当前主承载为 Codex 插件，旧 DSH 深度定制锚点保留对照，不自动驱动新任务；附件中的建议不等于用户授权。
+2026-11-03 插件阶段入口：[W1D1 基线收口卡](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)与[遗漏 P0 台账](mvp/docs/PLUGIN-P0-REGISTER.md)。基线与上下文按收口卡维护；工程实现按对应任务卡推进。当前主承载为 Codex 插件，旧 DSH 深度定制锚点保留对照，不自动驱动新任务；附件中的建议不等于用户授权。
 
 - 开工同时核 main、未合候选、未提交产物和活动服务归属；禁止把候选或旧测试数写成主线现状。导入/迁移前核唯一写入者，不假定全部CLI已有排他保护。
 - 多 actor 写接入前处理 claim 幂等归属；正文接入前核 reader、输入时点及撤选限制。工具返回模型可见正文即已输入，撤选不承诺抹除宿主历史。来源适配不把文件 mtime/v0.4 标签冒充聊天来源。

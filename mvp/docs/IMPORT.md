@@ -18,7 +18,7 @@ python -m mvp.backend.import_baseline --source baseline --db candidate/knot.db
 ```
 
 CLI无默认源或默认库。导入先核manifest及源快照，再检查库中是否存在1.1版本记录；
-当前 main 新建1.4库保留该记录，因此可导入。不能仅凭“版本数字大于1.1”就假定通过：
+当前 main 新建的 1.6 库保留该历史记录，满足此项检查。不能仅凭“版本数字大于1.1”就假定通过：
 实际查询是`WHERE version='1.1'`，缺少该行会报
 `schema 1.1 required; migrate explicitly before importing`，不自动建库或迁移。[I02]
 

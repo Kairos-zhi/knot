@@ -8,7 +8,7 @@ Knot 为人和 Agent 提供共同的工作环境：材料、想法、会话和�
 
 ## 当前开发入口（2026-11-03）
 
-当前核心位于 `mvp/`，主承载方向为 Codex 插件，先支持创作者探索与思考连续性。DSH 候选保留对照。开工先读[开发基准](mvp/docs/development-baseline.md)、[STATE](STATE.md)、[QUEUE](QUEUE.md)及[本轮收口卡](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)。本轮仅更新基线、上下文同步与遗漏P0，不实现功能。
+当前核心位于 `mvp/`，主承载方向为 Codex 插件，先支持创作者探索与思考连续性。DSH 候选保留对照。开工先读[开发基准](mvp/docs/development-baseline.md)、[STATE](STATE.md)、[QUEUE](QUEUE.md)及[本轮收口卡](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)。本次文档修订更新基线与同步状态，工程实现按具体任务卡推进。
 
 旧 knot-desktop/knot-flowgram-app 已移出 main，不是运行入口；根 ctx 为第一屏快照，不证明插件已交付。[MVP说明](mvp/README.md)提供数据与操作入口。
 
@@ -48,9 +48,9 @@ Knot 为人和 Agent 提供共同的工作环境：材料、想法、会话和�
 
 ## 项目状态
 
-本轮核对本地及远端 main 为 `6977bc29e18481cf930dca96bdbecd1cee0503d0`。新建库为schema1.4，已有1.5/1.6显式迁移；资产/事件/候选/确认/支持/时间查询/trace/bundle/jobs/HTTP/CLI已有实现。候选L2a整链、F1、N1及DSH集成独立登记于STATE，不算main已交付。
+本次核对远端 main 为 `5a731a0e4509350ad0bc4e258cf903ffc83a81c5`。#49/F1 与 #50/N1 已合入，包含只读 front 入口及 schema 1.6 新建库。已有库升级仍走显式迁移。L2a 整链、DSH 集成及 claim 修复草稿分开登记于 STATE。
 
-本轮未重跑产品测试；旧Day7、CI、独立复核与用户体验保持各自范围。当前遗漏前置见[P0任务卡](mvp/docs/PLUGIN-P0-REGISTER.md)。文档同步不是生产部署或完整产品接受。
+本次文档修订未重跑产品测试；旧Day7、CI、独立复核与用户体验保持各自范围。当前遗漏前置见[P0任务卡](mvp/docs/PLUGIN-P0-REGISTER.md)。文档同步不是生产部署或完整产品接受。
 
 ---
 
