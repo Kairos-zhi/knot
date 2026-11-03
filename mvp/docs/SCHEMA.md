@@ -14,7 +14,7 @@ python -m mvp.backend.init_db candidate/knot.db
 以硬链接原子发布，再只读读回目标。已有文件、目录或软链（含悬空软链）一律拒绝，
 不交互、不打开写、不覆盖；失败清理本次临时文件，不留下半成品。文件系统须支持硬链接。
 stdout为一行JSON，status为created/refused/failed；成功退出0，拒绝或失败退出1，人话写stderr。
-已有目标须走显式迁移。新库记录 1.0 至 1.7 八个版本，表示初始化包含这些结构。[S02][S41]
+已有目标须走显式迁移。本候选新库记录 1.0 至 1.9 十个版本，表示初始化包含这些结构。[S02][S41]
 
 schema启用WAL；外键开关属于连接，Repo及迁移器各自启用
 `PRAGMA foreign_keys=ON`。自己建立SQLite连接写入时也须开启，否则不能依赖FK拦截。[S03]
@@ -201,14 +201,14 @@ meta 仍可读。续接包取 selected 与 readable 的交集，正文说明排�
 
 ## 探索停点修订（v1.7）
 
-初始化以 create-only 方式发布通过校验的 v1.7 新库。已有 v1.6 库须显式运行 `python -m mvp.backend.migrate_schema_v1_7 <database>`。迁移新增私有、只追加的探索修订表与保护约束，资产及 reader 记录保持原样。Health 报告载入的数据库版本。已标记 v1.7 的库若缺少有效停点结构，服务拒绝启动。
+本候选初始化以 create-only 方式发布通过校验的 v1.9 新库。已有 v1.6 库须显式运行 `python -m mvp.backend.migrate_schema_v1_7 <database>`，后续升级也需显式进行。1.7迁移新增私有、只追加的探索修订表与保护约束，资产及 reader 记录保持原样。Health 报告载入的数据库版本。已标记 v1.7 的库若缺少有效停点结构，服务拒绝启动。
 
 ### 探索快照格式屏障 1.8（核心候选）
 
-显式运行 `python -m mvp.backend.migrate_schema_v1_8 <database>`，只在校验 1.7 结构及全部历史快照后追加版本记录；不改变旧行或触发器。默认初始化和服务仍为 1.7，本候选未接入 HTTP/MCP。迁移后新启动的 09B 服务与旧 ExplorationRepo 逐操作拒绝 1.8；已运行服务及其他 CLI 不因此自动安全。执行实际迁移前须另行核唯一写入者并取得相应授权。
+显式运行 `python -m mvp.backend.migrate_schema_v1_8 <database>`，只在校验 1.7 结构及全部历史快照后追加版本记录；不改变旧行或触发器。迁移后新启动的旧 09B 服务与旧 ExplorationRepo 逐操作拒绝 1.8；已运行服务及其他 CLI 不因此自动安全。执行实际迁移前须另行核唯一写入者并取得相应授权。
 
 v2 快照保存有序材料及暂定关系；关系仅连接当前选中材料，变更与解除通过完整新修订表示，旧历史保留。关系不确认 claim 或授予读取权限；返回时重新核 reader 与内容哈希，不可用端点的关系文本被抑制。旧保存不能覆盖已进入 v2 的探索；旧成功请求可按原 key 取得不含正文的回执。详细核心契约见 [09C1](PLUGIN-P0-09C1-RELATION-CORE.md)。
 
 ### 探索分岔来源屏障 1.9（核心候选）
 
-显式 `python -m mvp.backend.migrate_schema_v1_9 <database>` 从完整 1.8 迁移，新增只追加来源锚并保留历史修订。分岔指定源探索、修订和事件，当前材料 reader/hash 不足时拒绝；v2 来源逐字节复制存储快照，v1 来源确定性升级为 v2。来源摘要只绑定数据库中的快照文本，不是原聊天或文件摘要。旧 C1 探索实例逐操作及迁移后的新实例拒绝 1.9；已运行服务和其他 CLI 不因此自动安全。默认初始化、HTTP/MCP 未改，真实迁移另需授权、停服务及唯一写入者核查。详见 [09C2](PLUGIN-P0-09C2-EXPLORATION-FORK.md)。
+显式 `python -m mvp.backend.migrate_schema_v1_9 <database>` 从完整 1.8 迁移，新增只追加来源锚并保留历史修订。分岔指定源探索、修订和事件，当前材料 reader/hash 不足时拒绝；v2 来源逐字节复制存储快照，v1 来源确定性升级为 v2。来源摘要只绑定数据库中的快照文本，不是原聊天或文件摘要。旧 C1 探索实例逐操作及迁移后的新实例拒绝 1.9；已运行服务和其他 CLI 不因此自动安全。真实迁移另需授权、停服务及唯一写入者核查。详见 [09C2](PLUGIN-P0-09C2-EXPLORATION-FORK.md)。

@@ -8,8 +8,6 @@ from pathlib import Path
 import pytest
 from mcp import Client, StdioServerParameters
 from mvp.backend.init_db import init_database
-from mvp.backend.migrate_schema_v1_8 import migrate_schema as migrate8
-from mvp.backend.migrate_schema_v1_9 import migrate_schema as migrate9
 from mvp.tests.test_http_contract import Live
 from mvp.tests.test_exploration_core import asset, db_rows, uid
 from mvp.contract.selfcheck import request
@@ -22,7 +20,7 @@ TOKEN='synthetic-c3b-token'
 
 def test_sdk_relation_fork_and_large_load(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A','other-synthetic':'B'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'isolated.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'isolated.db'; init_database(db)
     a,b=asset(db,b'a'),asset(db,b'b'); live=Live(db)
     def params(token=TOKEN):
         return StdioServerParameters(command=sys.executable,args=['-B','-m','mvp.codex_mcp','--origin',live.base],cwd=ROOT,env={'KNOT_TOKEN':token})
@@ -92,7 +90,7 @@ def test_all_write_500_unknown(monkeypatch):
 
 def test_sdk_lost_fork_receipt_and_restart(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'lost.db'; init_database(db); migrate8(db); migrate9(db); live=Live(db)
+    db=tmp_path/'lost.db'; init_database(db); live=Live(db)
     args=dict(exploration_id=uid(),expected_revision=0,request_key=uid(),snapshot_version=2,references=[],stop_note=None,relations=[])
     first=request(live.base,'/exploration-v2-saves',args,token=TOKEN)[1]['value']
     fork=dict(source_exploration_id=args['exploration_id'],source_revision=1,source_event_id=first['event_id'],exploration_id=uid(),request_key=uid())
@@ -150,7 +148,7 @@ def test_legacy_fixed_errors(monkeypatch):
 def test_v2_readonly_refuses_write_and_replay(tmp_path,monkeypatch):
     from mvp.backend.http_server import Server
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'readonly.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'readonly.db'; init_database(db)
     server=Server(db,port=0); thread=Thread(target=server.serve_forever,daemon=True); thread.start()
     origin='http://127.0.0.1:'+str(server.server_port)
     args=dict(exploration_id=uid(),expected_revision=0,request_key=uid(),snapshot_version=2,references=[],stop_note=None,relations=[])

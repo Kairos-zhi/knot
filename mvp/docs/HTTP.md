@@ -109,7 +109,7 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录。输入路径不存在时在临时目录创建 schema 1.7 库。它遍历全部二十个路由，核对未认证的查找和停点接口拒绝，并检查六次同步命令。成功汇总 26 PASS / 0 FAIL 并退出 0。具备 reader 授权的停点保存、读回和恢复由专项测试验证。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录。输入路径不存在时在临时目录创建 schema 1.9 库。它遍历全部二十个路由，核对未认证的查找和停点接口拒绝，并检查六次同步命令。成功汇总 26 PASS / 0 FAIL 并退出 0。具备 reader 授权的停点保存、读回和恢复由专项测试验证。
 
 ## Run A：读续接包、导出基准与启动错误
 
@@ -163,7 +163,7 @@ python -m mvp.backend.reconcile --db candidate/knot.db --clear --reason "已核�
 
 配置 token 身份后，`POST /exploration-v2-saves` 完整提交版本、材料、关系和停点；`GET /explorations/{exploration_id}/v2` 返回当前或指定历史；`POST /exploration-forks` 以明确源修订及事件创建新探索。请求字段和返回形状以 contract 为准。旧路由的成功形状不变，旧入口遇新版本或分支返回 `snapshot_version_required`。关系及停点按当前 reader 与凭据规则抑制，公开 origin 不包含 actor；来源摘要仅指数据库快照文本。
 
-默认新库仍为 1.7，不自动迁移。服务在启动时核对并报告实际 1.7、1.8、1.9，旧 1.6 保持非探索功能；低版本新操作返回 `exploration_migration_required`，结构漂移返回 `exploration_schema_invalid`，坏快照返回 `exploration_snapshot_invalid`。服务启动后不得在外部迁移或替换其数据库，真实迁移须另行授权并核唯一写入者。已运行旧服务与其他 CLI 的安全性未由此证明。
+本候选默认新库为 1.9，已有库不自动迁移。服务在启动时核对并报告实际 1.7、1.8、1.9，旧 1.6 保持非探索功能；低版本新操作返回 `exploration_migration_required`，结构漂移返回 `exploration_schema_invalid`，坏快照返回 `exploration_snapshot_invalid`。服务启动后不得在外部迁移或替换其数据库，真实迁移须另行授权并核唯一写入者。已运行旧服务与其他 CLI 的安全性未由此证明。
 
 写入返回不含正文的收据。响应丢失或输出失败时结果可能未知，调用方可明确以同目标、同请求和同 key 重放恢复；只读状态拒绝写入和重放。探索内容不进入全局命令 journal/SSE。已送达宿主的内容不因撤选而抹除。新 MCP 工具和人的使用接受另卡。
 

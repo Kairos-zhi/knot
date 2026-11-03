@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a new, validated schema 1.7 database without replacing any target."""
+"""Create a new, validated schema 1.9 database without replacing any target."""
 
 import argparse
 from contextlib import closing
@@ -10,16 +10,19 @@ import sqlite3
 import sys
 from uuid import uuid4
 
-from .migrate_schema_v1_7 import migrate_schema, require_exploration_schema
+from .migrate_schema_v1_7 import migrate_schema
+from .migrate_schema_v1_8 import migrate_schema as migrate_schema_1_8
+from .migrate_schema_v1_9 import migrate_schema as migrate_schema_1_9, require_exploration_schema
 
 
 def _validate(conn: sqlite3.Connection) -> None:
     if conn.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
         raise ValueError("database integrity check failed")
     versions = conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall()
-    if versions != [(f"1.{i}",) for i in range(8)]:
-        raise ValueError("expected schema versions 1.0 through 1.7")
-    require_exploration_schema(conn)
+    if versions != [(f"1.{i}",) for i in range(10)]:
+        raise ValueError("expected schema versions 1.0 through 1.9")
+    if require_exploration_schema(conn) != "1.9":
+        raise ValueError("expected exploration schema 1.9")
     columns = {row[1]: row for row in conn.execute("PRAGMA table_info(claims_candidates)")}
     for name in ("source_label", "source_members"):
         column = columns.get(name)
@@ -28,8 +31,8 @@ def _validate(conn: sqlite3.Connection) -> None:
     tables = conn.execute(
         "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
     ).fetchone()[0]
-    if tables != 16:
-        raise ValueError("expected 16 tables including FTS tables")
+    if tables != 17:
+        raise ValueError("expected 17 tables including FTS tables")
     job_id = next((row for row in conn.execute("PRAGMA table_info(continuation_bundles)")
                    if row[1] == "job_id"), None)
     if job_id is None or job_id[2].upper() != "TEXT" or job_id[3:] != (0, None, 0):
@@ -51,12 +54,24 @@ def _readback(path: Path) -> None:
         _validate(conn)
 
 
+def _checkpoint_staging(path: Path) -> None:
+    """Make the private staging database self-contained before immutable reads."""
+    with closing(sqlite3.connect(path.as_uri() + "?mode=rw", uri=True)) as conn:
+        if conn.execute("PRAGMA journal_mode").fetchone()[0].lower() != "wal":
+            raise ValueError("expected WAL staging database")
+        busy, log, checkpointed = conn.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()
+        if busy or log != 0 or checkpointed != 0:
+            raise ValueError("staging checkpoint incomplete")
+    if any(os.path.lexists(str(path) + suffix) for suffix in ("-wal", "-shm", "-journal")):
+        raise ValueError("staging database has sidecars")
+
+
 def init_database(db_path: str) -> dict:
     """Return created/refused/failed; never read stdin or replace an existing entry."""
     # Do not resolve the final component: even a dangling symlink is an existing target.
     target = Path(os.path.abspath(os.path.expanduser(db_path)))
-    result = dict(db=str(target), status="failed", schema_version="1.7",
-                  tables=16, reason=None, error=None)
+    result = dict(db=str(target), status="failed", schema_version="1.9",
+                  tables=17, reason=None, error=None)
     temporary = None
     temporary_owned = False
     published_identity = None
@@ -83,6 +98,9 @@ def init_database(db_path: str) -> dict:
                  ("1.6", "Asset read grants separate from token identity")])
             conn.commit()
         migrate_schema(temporary)
+        migrate_schema_1_8(temporary)
+        migrate_schema_1_9(temporary)
+        _checkpoint_staging(temporary)
         _readback(temporary)
         identity = temporary.stat()
         try:

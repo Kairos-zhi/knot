@@ -28,12 +28,12 @@ def test_n1_fresh_versions_and_live_service(tmp_path, monkeypatch):
     with closing(sqlite3.connect(db)) as conn:
         versions = conn.execute('SELECT version FROM schema_version ORDER BY version').fetchall()
         print('AC-1 SELECT version FROM schema_version ORDER BY version:', versions)
-        assert versions == [(f'1.{i}',) for i in range(8)]
+        assert versions == [(f'1.{i}',) for i in range(10)]
         assert next(r for r in conn.execute('PRAGMA table_info(continuation_bundles)')
                     if r[1] == 'job_id')[2:] == ('TEXT', 0, None, 0)
         assert [(r[1], *r[2:]) for r in conn.execute('PRAGMA table_info(asset_readers)')] == [
             ('asset_id', 'TEXT', 1, None, 1), ('actor', 'TEXT', 1, None, 2)]
-    assert result['status'] == 'created' and result['schema_version'] == '1.7'
+    assert result['status'] == 'created' and result['schema_version'] == '1.9'
     server = http.Server(db, port=0)
     thread = threading.Thread(target=server.serve_forever)
     thread.start()
@@ -42,7 +42,7 @@ def test_n1_fresh_versions_and_live_service(tmp_path, monkeypatch):
         print('AC-1 HTTP', json.dumps(response))
         print('AC-1 BundleJobs.schema_version:', server.jobs.schema_version)
         assert response[0] == 200
-        assert server.jobs.schema_version == response[1]['value']['schema_version'] == '1.7'
+        assert server.jobs.schema_version == response[1]['value']['schema_version'] == '1.9'
     finally:
         server.shutdown()
         server.server_close()

@@ -74,7 +74,7 @@ def test_http_owner_receipts_revisions_and_private_journal(tmp_path, configured)
     live = Live(db)
     try:
         health = live.get("/health")[1]["value"]
-        assert health["schema_version"] == "1.7"
+        assert health["schema_version"] == "1.9"
         journal = db.parent / ".knot" / "http.seq"
         old_journal = journal.read_bytes() if journal.exists() else None
 

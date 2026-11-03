@@ -27,12 +27,12 @@ def readback(target):
     with closing(sqlite3.connect(target.as_uri() + "?mode=ro&immutable=1", uri=True)) as conn:
         assert conn.execute("PRAGMA integrity_check").fetchall() == [("ok",)]
         assert conn.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [
-            ("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",), ("1.5",), ("1.6",), ("1.7",),
+            ("1.0",), ("1.1",), ("1.2",), ("1.3",), ("1.4",), ("1.5",), ("1.6",), ("1.7",), ("1.8",), ("1.9",),
         ]
         assert conn.execute(
             "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        ).fetchone() == (16,)
-        init_db.require_exploration_schema(conn)
+        ).fetchone() == (17,)
+        assert init_db.require_exploration_schema(conn) == "1.9"
         assert conn.execute(
             "SELECT count(*) FROM sqlite_master WHERE type='index' AND name='uq_eligible_snapshot_event'"
         ).fetchone() == (1,)
@@ -79,14 +79,14 @@ def test_create_readonly_readback_and_closed_stdin(tmp_path, nested):
     assert completed.returncode == 0, completed.stderr
     assert len(completed.stdout.splitlines()) == 1
     assert json.loads(completed.stdout) == dict(
-        db=str(target), status="created", schema_version="1.7", tables=16, reason=None, error=None,
+        db=str(target), status="created", schema_version="1.9", tables=17, reason=None, error=None,
     )
     assert "created" in completed.stderr
     readback(target)
     assert sorted(p.name for p in target.parent.iterdir()) == [target.name]
 
 
-@pytest.mark.parametrize("stage", ["schema", "exploration_migration", "validate", "temporary_readback", "link", "target_readback"])
+@pytest.mark.parametrize("stage", ["schema", "exploration_migration", "migration_18", "migration_19", "checkpoint", "validate", "temporary_readback", "link", "target_readback"])
 def test_injected_failure_cleans_all_files(tmp_path, monkeypatch, stage, capsys):
     target = tmp_path / "new.db"
     original_readback = init_db._readback
@@ -111,6 +111,15 @@ def test_injected_failure_cleans_all_files(tmp_path, monkeypatch, stage, capsys)
             fail()
 
         monkeypatch.setattr(init_db, "migrate_schema", failed_migration)
+    elif stage in ("migration_18", "migration_19"):
+        name = "migrate_schema_1_8" if stage == "migration_18" else "migrate_schema_1_9"
+        original_migrate = getattr(init_db, name)
+        def failed_upgrade(path):
+            original_migrate(path)
+            fail()
+        monkeypatch.setattr(init_db, name, failed_upgrade)
+    elif stage == "checkpoint":
+        monkeypatch.setattr(init_db, "_checkpoint_staging", fail)
     elif stage == "validate":
         monkeypatch.setattr(init_db, "_validate", fail)
     elif stage in ("temporary_readback", "target_readback"):

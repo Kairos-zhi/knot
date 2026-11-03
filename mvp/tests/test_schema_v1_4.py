@@ -15,6 +15,8 @@ from mvp.backend import init_db, migrate_schema_v1_4 as migration
 from mvp.backend.migrate_schema_v1_3 import SchemaDriftError as PrerequisiteDrift
 from mvp.backend.migrate_schema_v1_6 import migrate_schema as migrate6
 from mvp.backend.migrate_schema_v1_7 import migrate_schema as migrate7
+from mvp.backend.migrate_schema_v1_8 import migrate_schema as migrate8
+from mvp.backend.migrate_schema_v1_9 import migrate_schema as migrate9
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "mvp/backend/schema_v1.sql"
@@ -83,11 +85,11 @@ def test_fresh_migrated_equivalence_preservation_and_rerun(old_db, tmp_path):
     for pragma in ("index_list(claims_candidates)",):
         assert read(fresh, "PRAGMA " + pragma) == read(old_db, "PRAGMA " + pragma)
     assert read(fresh, "SELECT version FROM schema_version ORDER BY version") == [
-        (f"1.{i}",) for i in range(8)
+        (f"1.{i}",) for i in range(10)
     ]
     assert read(fresh, "SELECT count(*) FROM assets") == [(0,)]
     assert read(fresh, "SELECT count(*) FROM sqlite_master WHERE type='table' "
-                "AND name NOT LIKE 'sqlite_%'") == [(16,)]
+                "AND name NOT LIKE 'sqlite_%'") == [(17,)]
     timestamp = read(old_db, "SELECT applied_at FROM schema_version WHERE version='1.4'")
     digest = snapshot(old_db)
     rerun = migration.migrate_schema(old_db)
@@ -203,6 +205,8 @@ def test_init_validator_rejects_missing_or_incompatible_columns(tmp_path, defini
            "INSERT INTO schema_version VALUES ('1.5',0,'test');")
     migrate6(path)
     migrate7(path)
+    migrate8(path)
+    migrate9(path)
     with closing(sqlite3.connect(path)) as conn:
         with pytest.raises(ValueError, match="nullable TEXT"):
             init_db._validate(conn)

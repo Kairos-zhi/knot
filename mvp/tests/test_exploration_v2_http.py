@@ -12,10 +12,14 @@ from mvp.backend.exploration_repo import ExplorationRepo
 from mvp.backend.http_server import ROUTES, Server, Fault
 from mvp.backend.migrate_schema_v1_8 import migrate_schema as migrate8
 from mvp.backend.migrate_schema_v1_9 import migrate_schema as migrate9
+from mvp.backend.migrate_schema_v1_5 import migrate_schema as migrate5
+from mvp.backend.migrate_schema_v1_6 import migrate_schema as migrate6
+from mvp.backend.migrate_schema_v1_7 import migrate_schema as migrate7
 from mvp.backend import migrate_schema_v1_7
 from mvp.contract.selfcheck import request, validate
 from mvp.tests.test_http_contract import Live
 from mvp.tests.test_exploration_core import asset, db_rows, uid
+from mvp.tests.schema_helpers import create_v14
 
 TOKEN = 'synthetic-token-09c3a'
 
@@ -23,7 +27,7 @@ TOKEN = 'synthetic-token-09c3a'
 def server(tmp_path, monkeypatch):
     monkeypatch.delenv('KNOT_TOKEN', raising=False)
     monkeypatch.setenv('KNOT_TOKENS', json.dumps({TOKEN:'A','synthetic-other':'B'}))
-    db=tmp_path/'isolated.db'; assert init_database(db)['status']=='created'; migrate8(db); migrate9(db)
+    db=tmp_path/'isolated.db'; assert init_database(db)['status']=='created'
     a,b=asset(db,b'a'),asset(db,b'b')
     live=Live(db)
     try: yield live,db,a,b
@@ -89,7 +93,7 @@ def test_historical_sensitive_content_redacted(server):
 
 def test_schema_matrix(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'matrix.db'; init_database(db)
+    db=tmp_path/'matrix.db'; create_v14(db); migrate5(db); migrate6(db); migrate7(db)
     for version in ('1.7','1.8','1.9'):
         live=Live(db)
         try:
@@ -118,7 +122,7 @@ def test_malformed_raw_and_size(server):
 
 def test_pending_rejects_replay_until_recovery(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'pending.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'pending.db'; init_database(db)
     server=Server(db,port=0); thread=Thread(target=server.serve_forever,daemon=True); thread.start()
     base='http://127.0.0.1:'+str(server.server_port)
     args=dict(exploration_id=uid(),expected_revision=0,request_key=uid(),snapshot_version=2,references=[],stop_note=None,relations=[])
@@ -153,7 +157,7 @@ def test_bad_snapshot_and_structure_have_fixed_errors(server):
 
 def test_token_as_structural_id_is_refused(tmp_path,monkeypatch):
     token=uid(); monkeypatch.setenv('KNOT_TOKENS',json.dumps({token:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'token.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'token.db'; init_database(db)
     repo=ExplorationRepo(db); repo.save_v2('A',token,expected_revision=0,request_key=uid(),snapshot_version=2,references=[],stop_note=None,relations=[])
     live=Live(db)
     try:
@@ -186,7 +190,7 @@ def test_http_competition_and_lost_response_recovery(server):
 
 def test_origin_does_not_disclose_actor_equal_to_token(tmp_path,monkeypatch):
     token='synthetic-actor-secret'; monkeypatch.setenv('KNOT_TOKENS',json.dumps({token:token})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'actor.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'actor.db'; init_database(db)
     repo=ExplorationRepo(db); source=uid()
     first=repo.save_v2(token,source,expected_revision=0,request_key=uid(),snapshot_version=2,references=[],stop_note=None,relations=[])
     branch=uid(); repo.fork(token,source,1,first['event_id'],branch,uid())
@@ -199,7 +203,7 @@ def test_origin_does_not_disclose_actor_equal_to_token(tmp_path,monkeypatch):
 
 def test_bad_receipt_after_commit_is_unknown_then_replay(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'})); monkeypatch.delenv('KNOT_TOKEN',raising=False)
-    db=tmp_path/'receipt.db'; init_database(db); migrate8(db); migrate9(db)
+    db=tmp_path/'receipt.db'; init_database(db)
     original=ExplorationRepo.save_v2
     def malformed(self,*args,**kwargs):
         original(self,*args,**kwargs)
@@ -221,7 +225,9 @@ def test_bad_receipt_after_commit_is_unknown_then_replay(tmp_path,monkeypatch):
 
 @pytest.mark.parametrize('damage', ['future', 'partial'])
 def test_bad_version_and_partial_origin_fail_startup(tmp_path,damage):
-    db=tmp_path/'bad.db'; init_database(db)
+    db=tmp_path/'bad.db'
+    if damage=='future': init_database(db)
+    else: create_v14(db); migrate5(db); migrate6(db); migrate7(db)
     if damage=='future': db_rows(db,"INSERT INTO schema_version VALUES ('1.10',0,'future')")
     else: db_rows(db,'CREATE TABLE exploration_origins (untrusted TEXT)')
     with pytest.raises(Fault) as exc: Server(db,port=0)
