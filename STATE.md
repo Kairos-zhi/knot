@@ -30,7 +30,7 @@
 | N1 | PR [#50](https://github.com/Kairos-zhi/knot/pull/50)，`edf8d5a` | 已合入 `5a731a0`，主线新建库为 1.6。历史独立复核缺口单列 |
 | P0-03 / P0-08 | [#52](https://github.com/Kairos-zhi/knot/pull/52)，`a33ca1276d55ee983842c355bfa26b2cac7fd584` | 开放草稿，未合并。独立 Checker 已绑定候选，Maker 全量 501 passed、2 skipped，Human Gate 待定 |
 | P0-04B | 独立分支 `codex/p0-04b-meta-projection`，`85417d5f4e23946214a16a39e16e9fde52c42ba0` | 离线元数据投影，28 项定向测试与独立复核通过；仅本地提交，未推送/合并/接入宿主 |
-| P0-04C | 以 `85417d5` 为依赖的隔离 Codex MCP 只读入口卡 | GPT-6.1 实施中；仅按已知 hash 查 meta，不是关键词查找、正文阅读或完整插件交付 |
+| P0-04C | `codex/p0-04c-codex-mcp`，`df0b9a108016d83e6dbbd59a8b2a50fc9c4c7a7c`，依赖 `85417d5` | 本地只读 MCP 入口；默认依赖收集阻塞已修，独立定向36项通过、全树只收集531项，最终提交已独立绑定。未推送/注册宿主，不是关键词查找或正文阅读 |
 | DSH 001/001B | 独立 knot-first-usable 基于 `57cbaf2` | 旧001交互被用户否定，后续001B保留限定技术复核；两者不混同。casework/dsh未跟踪产物仍在，未获体验/生产接受 |
 
 ## 人员、运行与接受
