@@ -127,3 +127,7 @@ candidate_level 必填 boolean、minimal_roots，与 atom_level 并列，互不�
 ## B2a-1 S2：pending 恢复底线（2026-10-30）
 
 仅修订 Health.pending 的 description：未完成命令保留现场，允许 degraded 只读启动，拒绝写入，仍须离线 reconcile；契约结构、错误码与路由不变。本条取代上方历史记录中的“阻断重启”。
+
+## C3a：探索关系与分岔 HTTP
+
+增加 save v2、历史 v2 读取及 fork 路由与闭合 schema；保留旧成功形状。配置身份和当前 reader 约束、来源摘要语义、固定错误与未知结果恢复见 HTTP.md。数据库默认初始化版本不变。

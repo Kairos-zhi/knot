@@ -32,6 +32,7 @@ from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
 from mvp.exploration_policy import (
     MAX_SAVE_BYTES, ExplorationError, normalize_save, redact_exploration, strict_json,
+    normalize_save_v2, normalize_fork, redact_exploration_v2, _reject_token, validate_uuid, validate_revision,
 )
 from .support_view import compute_support
 from .traceback import trace_claim
@@ -44,7 +45,8 @@ ROUTES = SPEC["routes"]
 VERSION = SPEC["contract_version"]
 COMMANDS = SCHEMA["$defs"]["CommandRequest"]["properties"]["command"]["enum"]
 CODES = SCHEMA["$defs"]["Error"]["properties"]["code"]["enum"]
-_EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList"}
+_EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList",
+                          "ExplorationV2Receipt", "ExplorationCheckpointV2", "ExplorationForkReceipt"}
 
 
 class Fault(Exception):
@@ -383,11 +385,15 @@ class Handler(BaseHTTPRequestHandler):
     def exploration(self, kind, params, actor):
         token = self.headers["Authorization"][7:]
         try:
+            if self.server.jobs.schema_version in ("1.4", "1.5", "1.6"):
+                raise Fault("SCHEMA_VERSION_UNSUPPORTED", 409, reason="exploration_migration_required")
             repo = ExplorationRepo(self.server.db)
             if kind == "ExplorationList":
                 return {"items": repo.list_current(actor, **params)}
             if kind == "ExplorationCheckpoint":
                 return redact_exploration(repo.load(actor, **params), token)
+            if kind == "ExplorationCheckpointV2":
+                return redact_exploration_v2(repo.load_v2(actor, **params), token)
 
             lengths = self.headers.get_all("Content-Length", [])
             if len(lengths) != 1 or self.headers.get_all("Transfer-Encoding"):
@@ -406,18 +412,47 @@ class Handler(BaseHTTPRequestHandler):
                 body = strict_json(raw)
             except (ValueError, RecursionError):
                 raise Fault("BAD_REQUEST") from None
-            save = normalize_save(body, token)
+            if kind == "ExplorationV2Receipt":
+                save = normalize_save_v2(body, token)
+            elif kind == "ExplorationForkReceipt":
+                save = normalize_fork(body, token)
+            else:
+                save = normalize_save(body, token)
             with self.server.changed:
                 if self.server.journal.get("pending") or self.server.jobs.failed or self.server.stopping:
                     raise Fault("SERVER_BUSY", 409, reason="server_read_only")
-                return repo.save(actor, **save)
+                if kind == "ExplorationV2Receipt":
+                    result = repo.save_v2(actor, **save)
+                elif kind == "ExplorationForkReceipt":
+                    result = repo.fork(actor, **save)
+                else:
+                    result = repo.save(actor, **save)
+                if kind in ("ExplorationV2Receipt", "ExplorationForkReceipt"):
+                    try:
+                        if type(result) is not dict or result.keys() != {"exploration_id", "revision", "event_id"}:
+                            raise ExplorationError("invalid receipt")
+                        validate_uuid(result["exploration_id"]); validate_uuid(result["event_id"])
+                        validate_revision(result["revision"], 1)
+                        expected = 1 if kind == "ExplorationForkReceipt" else save["expected_revision"] + 1
+                        if result["exploration_id"] != save["exploration_id"] or result["revision"] != expected:
+                            raise ExplorationError("invalid receipt")
+                        _reject_token(result.values(), token)
+                    except (ExplorationError, KeyError, TypeError):
+                        raise Fault("INTERNAL", 500) from None
+                return result
         except SchemaDriftError:
-            raise Fault("SCHEMA_VERSION_UNSUPPORTED", 409, reason="exploration_migration_required") from None
+            raise Fault("SCHEMA_VERSION_UNSUPPORTED", 409, reason="exploration_schema_invalid") from None
         except ExplorationError as exc:
             if exc.code == "NOT_FOUND":
                 raise Fault("NOT_FOUND", 404) from None
             if exc.code in ("REVISION_CONFLICT", "IDEMPOTENCY_CONFLICT"):
                 raise Fault("BAD_REQUEST", 409, reason=exc.code.lower()) from None
+            if exc.code.lower() == "snapshot_version_required":
+                raise Fault("BAD_REQUEST", 409, reason="snapshot_version_required") from None
+            if exc.code.lower() == "exploration_migration_required":
+                raise Fault("SCHEMA_VERSION_UNSUPPORTED", 409, reason="exploration_migration_required") from None
+            if exc.code.lower() == "invalid_snapshot":
+                raise Fault("INTERNAL", 500, reason="exploration_snapshot_invalid") from None
             if exc.code in ("ASSET_UNAVAILABLE", "SENSITIVE_CONTENT"):
                 raise Fault("BAD_REQUEST", reason=exc.code.lower()) from None
             raise Fault("BAD_REQUEST") from None

@@ -181,8 +181,8 @@
       "params": [{"name": "limit", "type": "integer", "required": false, "min": 1, "max": 20, "default": 20}],
       "response": "ExplorationList",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SCHEMA_VERSION_UNSUPPORTED"],
-      "status": [200, 400, 403, 409],
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SCHEMA_VERSION_UNSUPPORTED", "INTERNAL"],
+      "status": [200, 400, 403, 409, 500],
       "envelope": "plain"
     },
     {
@@ -194,8 +194,8 @@
       ],
       "response": "ExplorationCheckpoint",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SCHEMA_VERSION_UNSUPPORTED"],
-      "status": [200, 400, 403, 404, 409],
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SCHEMA_VERSION_UNSUPPORTED", "INTERNAL"],
+      "status": [200, 400, 403, 404, 409, 500],
       "envelope": "plain"
     },
     {
@@ -205,8 +205,95 @@
       "request": "ExplorationSave",
       "response": "ExplorationReceipt",
       "as_of": false,
-      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SCHEMA_VERSION_UNSUPPORTED", "SERVER_BUSY"],
-      "status": [200, 400, 403, 404, 409],
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SCHEMA_VERSION_UNSUPPORTED", "SERVER_BUSY", "INTERNAL"],
+      "status": [200, 400, 403, 404, 409, 500],
+      "envelope": "plain"
+    },
+    {
+      "method": "POST",
+      "path": "/exploration-v2-saves",
+      "params": [],
+      "request": "ExplorationSaveV2",
+      "response": "ExplorationV2Receipt",
+      "as_of": false,
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SCHEMA_VERSION_UNSUPPORTED",
+        "SERVER_BUSY",
+        "INTERNAL"
+      ],
+      "status": [
+        200,
+        400,
+        403,
+        404,
+        409,
+        500
+      ],
+      "envelope": "plain"
+    },
+    {
+      "method": "GET",
+      "path": "/explorations/{exploration_id}/v2",
+      "params": [
+        {
+          "name": "exploration_id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "revision",
+          "type": "integer",
+          "required": false,
+          "min": 1,
+          "max": 9223372036854775807
+        }
+      ],
+      "response": "ExplorationCheckpointV2",
+      "as_of": false,
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SCHEMA_VERSION_UNSUPPORTED",
+        "INTERNAL"
+      ],
+      "status": [
+        200,
+        400,
+        403,
+        404,
+        409,
+        500
+      ],
+      "envelope": "plain"
+    },
+    {
+      "method": "POST",
+      "path": "/exploration-forks",
+      "params": [],
+      "request": "ExplorationFork",
+      "response": "ExplorationForkReceipt",
+      "as_of": false,
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SCHEMA_VERSION_UNSUPPORTED",
+        "SERVER_BUSY",
+        "INTERNAL"
+      ],
+      "status": [
+        200,
+        400,
+        403,
+        404,
+        409,
+        500
+      ],
       "envelope": "plain"
     },
     {

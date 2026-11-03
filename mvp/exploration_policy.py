@@ -155,3 +155,67 @@ def redact_exploration(value, token):
     if note is not None and has_credential_marker(note, token):
         redacted.update(stop_note=None, stop_note_reason="sensitive_content")
     return redacted
+
+
+def _reject_token(values, token):
+    if token and any(type(value) is str and token in value for value in values):
+        raise ExplorationError("SENSITIVE_CONTENT")
+
+
+def normalize_save_v2(body, token):
+    required = SAVE_REQUIRED | {"snapshot_version", "stop_note", "relations"}
+    if type(body) is not dict or body.keys() != required:
+        raise ExplorationError("INVALID_ARGUMENTS")
+    validate_uuid(body["exploration_id"]); validate_uuid(body["request_key"])
+    validate_revision(body["expected_revision"], 0)
+    snap = normalize_snapshot_v2(body["snapshot_version"], body["references"], body["stop_note"], body["relations"])
+    structural = [body["exploration_id"], body["request_key"]]
+    structural.extend(ref["expected_content_hash"] for ref in body["references"])
+    for ref in snap["references"]:
+        structural.extend((ref["asset_id"], ref["expected_content_hash"]))
+    for rel in snap["relations"]:
+        structural.extend((rel["relation_id"], rel["from_asset_id"], rel["to_asset_id"]))
+    _reject_token(structural, token)
+    texts = [snap["stop_note"], *(r["reason"] for r in snap["references"])]
+    texts.extend(v for rel in snap["relations"] for v in (rel["label"], rel["reason"]))
+    if any(value is not None and has_credential_marker(value, token) for value in texts):
+        raise ExplorationError("SENSITIVE_CONTENT")
+    return {k: body[k] for k in ("exploration_id", "expected_revision", "request_key")} | snap
+
+
+def normalize_fork(body, token):
+    required = {"source_exploration_id", "source_revision", "source_event_id", "exploration_id", "request_key"}
+    if type(body) is not dict or body.keys() != required:
+        raise ExplorationError("INVALID_ARGUMENTS")
+    for name in required - {"source_revision"}:
+        validate_uuid(body[name])
+    validate_revision(body["source_revision"], 1)
+    if body["source_exploration_id"] == body["exploration_id"]:
+        raise ExplorationError("INVALID_ARGUMENTS")
+    _reject_token([body[k] for k in required - {"source_revision"}], token)
+    return body
+
+
+def redact_exploration_v2(value, token):
+    result = redact_exploration(value, token)
+    origin = result.pop("origin", None)
+    if origin is not None:
+        origin = {key: origin[key] for key in ("source_exploration_id", "source_revision", "source_event_id",
+                                                "source_snapshot_sha256", "target_creation_event_id")}
+    result["origin"] = origin
+    structural = [result["exploration_id"], result["event_id"]]
+    for ref in result["references"]:
+        structural.extend((ref["asset_id"], ref["expected_content_hash"]))
+    relations = []
+    for relation in result["relations"]:
+        item = relation.copy()
+        structural.extend(item[k] for k in ("relation_id", "from_asset_id", "to_asset_id"))
+        if "reason_code" not in item and any(v is not None and has_credential_marker(v, token)
+                                            for v in (item["label"], item["reason"])):
+            item.pop("label"); item.pop("reason"); item["reason_code"] = "sensitive_content"
+        relations.append(item)
+    if origin is not None:
+        structural.extend(origin.values())
+    _reject_token(structural, token)
+    result["relations"] = relations
+    return result

@@ -158,3 +158,13 @@ python -m mvp.backend.reconcile --db candidate/knot.db --clear --reason "已核�
 两种操作只许离线。list 给出 pending 身份／时间／命令及 body 的 hash、参数键摘要，不输出凭据值。clear 必须有非空 reason：先向 `~/.knot/reconcile.log` 追加完整原 pending、body 摘要、理由、UTC 时间与本机操作者，flush/fsync 成功后才原子替换 http.seq 清除 pending；审计失败不清空。不补事件、不回放命令、不清 jobs/frames/keys。
 
 逐条输出、两种 selfcheck 与独立复核见 [Run B1 回执](XWIN-B1-EVIDENCE.md)。
+
+## 探索关系与分岔 HTTP（C3a 候选）
+
+配置 token 身份后，`POST /exploration-v2-saves` 完整提交版本、材料、关系和停点；`GET /explorations/{exploration_id}/v2` 返回当前或指定历史；`POST /exploration-forks` 以明确源修订及事件创建新探索。请求字段和返回形状以 contract 为准。旧路由的成功形状不变，旧入口遇新版本或分支返回 `snapshot_version_required`。关系及停点按当前 reader 与凭据规则抑制，公开 origin 不包含 actor；来源摘要仅指数据库快照文本。
+
+默认新库仍为 1.7，不自动迁移。服务在启动时核对并报告实际 1.7、1.8、1.9，旧 1.6 保持非探索功能；低版本新操作返回 `exploration_migration_required`，结构漂移返回 `exploration_schema_invalid`，坏快照返回 `exploration_snapshot_invalid`。服务启动后不得在外部迁移或替换其数据库，真实迁移须另行授权并核唯一写入者。已运行旧服务与其他 CLI 的安全性未由此证明。
+
+写入返回不含正文的收据。响应丢失或输出失败时结果可能未知，调用方可明确以同目标、同请求和同 key 重放恢复；只读状态拒绝写入和重放。探索内容不进入全局命令 journal/SSE。已送达宿主的内容不因撤选而抹除。新 MCP 工具和人的使用接受另卡。
+
+fork 请求只包含来源锚，不重新提交源正文；获授权的 fork 可在核心中完整复制历史快照（其中可能已有凭据标记）。返回的收据不含正文，后续 GET 才依当前规则抑制敏感文本；不能据此称持久历史从未包含该内容。

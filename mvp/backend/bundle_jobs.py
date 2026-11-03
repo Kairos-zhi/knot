@@ -14,7 +14,10 @@ from uuid import UUID, uuid4
 
 from .continuation_bundle import generate_bundle
 from .asset_access import readable
-from .migrate_schema_v1_7 import require_exploration_schema
+from .migrate_schema_v1_9 import require_exploration_schema, _validate_history, _objects
+from .migrate_schema_v1_7 import _versions, _objects as _revision_objects
+from .migrate_schema_v1_6 import SchemaDriftError
+from mvp.exploration_policy import ExplorationError
 
 
 class BundleJobs:
@@ -24,13 +27,18 @@ class BundleJobs:
         self.threads = []
         self.failed = False
         with closing(sqlite3.connect(server.db.as_uri() + '?mode=ro', uri=True)) as conn:
-            self.schema_version = ('1.5' if conn.execute(
-                "SELECT 1 FROM schema_version WHERE version='1.5'").fetchone() else '1.4')
-            if conn.execute("SELECT 1 FROM schema_version WHERE version='1.6'").fetchone():
-                self.schema_version = '1.6'
-            if conn.execute("SELECT 1 FROM schema_version WHERE version='1.7'").fetchone():
-                require_exploration_schema(conn)
-                self.schema_version = '1.7'
+            versions = _versions(conn)
+            lower = {f'1.{i}' for i in range(4)}
+            if versions in (lower | {'1.4'}, lower | {'1.4', '1.5'}, lower | {'1.4', '1.5', '1.6'}):
+                if _objects(conn) or _revision_objects(conn):
+                    raise SchemaDriftError('unexpected exploration structure')
+                self.schema_version = max(versions)
+            else:
+                self.schema_version = require_exploration_schema(conn)
+                try:
+                    _validate_history(conn, self.schema_version)
+                except ExplorationError:
+                    raise SchemaDriftError('invalid exploration history') from None
             column = next((row for row in conn.execute('PRAGMA table_info(continuation_bundles)')
                            if row[1] == 'job_id'), None)
             self.provenance_ready = column is not None and column[2].upper() == 'TEXT' and column[3:] == (0, None, 0)
