@@ -221,7 +221,8 @@ class Server(ThreadingHTTPServer):
                 raise Fault("SERVER_BUSY", 409, reason="incomplete_command_requires_review")
             if key is not None and key in self.journal["keys"]:
                 original = self.journal["keys"][key]
-                if original["body"] != body:
+                if ('actor' not in original or original['actor'] != actor or
+                        original["body"] != body):
                     raise Fault("BAD_REQUEST", reason="idempotency_key_conflict")
                 return original["value"]
             # A file journal and SQLite cannot commit atomically. Record intent
@@ -251,7 +252,7 @@ class Server(ThreadingHTTPServer):
                           "restored": "claim.restored"}[result["status"]], ts=int(time.time() * 1000),
                     payload=dict(claim_id=args["claim_id"], event_id=result["event_id"], actor=actor)))
             if key is not None:
-                journal["keys"][key] = dict(body=body, value=value)
+                journal["keys"][key] = dict(body=body, value=value, actor=actor)
             self.persist(journal)
             self.journal = journal
             self.changed.notify_all()
