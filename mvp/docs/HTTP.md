@@ -131,6 +131,10 @@ events 映射 `/timeline`（半开区间 [start,end)，limit 最大 500），ass
 
 ## Token 与 actor
 
+同步 claim.confirm / claim.revoke / claim.restore 的幂等记录与 bundle 一样绑定服务解析的 actor。仅同 actor、同 key、同请求体可重放；不同 token 映射到同 actor 时仍可重放。跨 actor 或请求体冲突返回 400 BAD_REQUEST，detail.reason=idempotency_key_conflict，不返回旧结果、不追加事件或 seq。
+
+历史 journal key 缺 actor 时拒绝该 key 的重放，不猜测 local-user，也不自动补写旧日志；新 key 的独立动作仍可用。调用方须先核对旧动作结果，不能收到冲突后自动换 key 重发。绑定随 journal 持久化，在重启后仍生效；此规则不新增逐 claim 写 ACL，也不改变正文 reader 权限。
+
 服务端 `KNOT_TOKENS` 接受 JSON token→actor 映射，例如 `{"<token-a>":"hermes","<token-b>":"codex"}`。`KNOT_TOKEN` 仍映射 local-user；两者 token 重合时以 KNOT_TOKENS 为准。CLI 用自身 KNOT_TOKEN 作为 Bearer token。未配置 token 时沿用 loopback 开放态，actor=local-user。写命令无有效 token 返回 UNAUTHORIZED，content 档返回 FORBIDDEN_VIEW；不接受请求体自报 actor。
 
 新确认事件的 payload.actor 在 review 自己的事务内、提交前注入；已有确认事件的撤销／恢复不改写历史 actor。pending 同时保存 actor 与 since；bundle.export 的 actor 透传到导出首行，正文与 job 状态机、持久结构和失败语义保持原状。
