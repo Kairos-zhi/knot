@@ -64,6 +64,54 @@ def normalize_snapshot(references, stop_note):
     return {"references": entries, "stop_note": stop_note}
 
 
+def normalize_snapshot_v2(snapshot_version, references, stop_note, relations):
+    if type(snapshot_version) is not int or snapshot_version != 2:
+        raise ExplorationError("INVALID_ARGUMENTS")
+    snapshot = normalize_snapshot(references, stop_note)
+    if type(relations) is not list or len(relations) > 64:
+        raise ExplorationError("INVALID_ARGUMENTS")
+    selected = {r["asset_id"] for r in snapshot["references"] if r["disposition"] == "selected"}
+    entries, seen = [], set()
+    required = {"relation_id", "from_asset_id", "to_asset_id", "label"}
+    for relation in relations:
+        if (type(relation) is not dict or not required <= relation.keys()
+                or relation.keys() - (required | {"reason"})):
+            raise ExplorationError("INVALID_ARGUMENTS")
+        rid, source, target, label = (relation[k] for k in
+                                       ("relation_id", "from_asset_id", "to_asset_id", "label"))
+        for value in (rid, source, target):
+            validate_uuid(value)
+        validate_text(label, 128)
+        if not label.strip() or rid in seen or source == target or source not in selected or target not in selected:
+            raise ExplorationError("INVALID_ARGUMENTS")
+        reason = relation.get("reason")
+        if reason is not None:
+            validate_text(reason, 512)
+        seen.add(rid)
+        entries.append(dict(relation_id=rid, from_asset_id=source, to_asset_id=target,
+                            label=label, reason=reason))
+    return {"snapshot_version": 2, **snapshot, "relations": entries}
+
+
+def decode_snapshot(raw):
+    """Decode persisted snapshots strictly; never repair malformed historical rows."""
+    try:
+        value = strict_json(raw.encode("utf-8"))
+        if type(value) is not dict:
+            raise ValueError()
+        if set(value) == {"references", "stop_note"}:
+            normalized = normalize_snapshot(value["references"], value["stop_note"])
+        elif set(value) == {"snapshot_version", "references", "stop_note", "relations"}:
+            normalized = normalize_snapshot_v2(**value)
+        else:
+            raise ValueError()
+        if normalized != value:
+            raise ValueError()
+        return normalized
+    except (ValueError, TypeError, UnicodeError, AttributeError, KeyError):
+        raise ExplorationError("INVALID_SNAPSHOT") from None
+
+
 def strict_json(raw):
     def object_from_pairs(pairs):
         result = {}
