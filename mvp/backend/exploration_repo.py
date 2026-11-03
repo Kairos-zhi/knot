@@ -13,7 +13,7 @@ from mvp.exploration_policy import (
     validate_revision, validate_text, validate_uuid,
 )
 
-from .migrate_schema_v1_8 import require_exploration_schema
+from .migrate_schema_v1_9 import require_exploration_schema
 from .timeline_query import read_snapshot
 
 
@@ -81,7 +81,7 @@ class ExplorationRepo:
             ).fetchone()
             if (head is None and expected_revision != 0) or (head is not None and head[0] != actor):
                 raise ExplorationError("NOT_FOUND")
-            if v2 and schema != "1.8":
+            if v2 and schema == "1.7":
                 raise ExplorationError("EXPLORATION_MIGRATION_REQUIRED")
             replay = conn.execute(
                 """SELECT exploration_id, revision, event_id, request_digest
@@ -93,6 +93,9 @@ class ExplorationRepo:
                     raise ExplorationError("IDEMPOTENCY_CONFLICT")
                 return _receipt(*replay[:3])
 
+            if not v2 and schema == "1.9" and conn.execute(
+                    "SELECT 1 FROM exploration_origins WHERE exploration_id=?", (exploration_id,)).fetchone():
+                raise ExplorationError("SNAPSHOT_VERSION_REQUIRED")
             history = [decode_snapshot(row[0]) for row in conn.execute(
                 "SELECT snapshot_json FROM exploration_revisions WHERE exploration_id = ? ORDER BY revision",
                 (exploration_id,))]
@@ -127,6 +130,60 @@ class ExplorationRepo:
             )
             return _receipt(exploration_id, revision, event_id)
 
+    def fork(self, actor, source_exploration_id, source_revision, source_event_id,
+             exploration_id, request_key):
+        _validate_actor(actor)
+        for value in (source_exploration_id, source_event_id, exploration_id, request_key):
+            validate_uuid(value)
+        validate_revision(source_revision, 1)
+        if source_exploration_id == exploration_id:
+            raise ExplorationError("INVALID_ARGUMENTS")
+        request = json.dumps(["exploration.fork", source_exploration_id, source_revision,
+                              source_event_id, exploration_id], ensure_ascii=False)
+        digest = sha256(request.encode("utf-8")).hexdigest()
+        with closing(sqlite3.connect(self._uri, uri=True)) as conn, conn:
+            conn.execute("BEGIN IMMEDIATE")
+            if require_exploration_schema(conn) != "1.9":
+                raise ExplorationError("EXPLORATION_MIGRATION_REQUIRED")
+            source = conn.execute(
+                """SELECT snapshot_json FROM exploration_revisions WHERE exploration_id=?
+                   AND revision=? AND event_id=? AND actor=?""",
+                (source_exploration_id, source_revision, source_event_id, actor)).fetchone()
+            if source is None:
+                raise ExplorationError("NOT_FOUND")
+            target = conn.execute("SELECT actor FROM exploration_revisions WHERE exploration_id=? LIMIT 1",
+                                  (exploration_id,)).fetchone()
+            if target is not None and target[0] != actor:
+                raise ExplorationError("NOT_FOUND")
+            replay = conn.execute("""SELECT exploration_id,revision,event_id,request_digest
+                    FROM exploration_revisions WHERE actor=? AND request_key=?""", (actor, request_key)).fetchone()
+            if replay is not None:
+                if replay[3] != digest:
+                    raise ExplorationError("IDEMPOTENCY_CONFLICT")
+                return _receipt(*replay[:3])
+            if target is not None:
+                raise ExplorationError("REVISION_CONFLICT")
+            raw = source[0]
+            snapshot = decode_snapshot(raw)
+            if any(_reference_status(conn, ref, actor) != "available" for ref in snapshot["references"]):
+                raise ExplorationError("ASSET_UNAVAILABLE")
+            if "snapshot_version" not in snapshot:
+                snapshot = {"snapshot_version": 2, **snapshot, "relations": []}
+                target_json = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            else:
+                target_json = raw
+            event_id = str(uuid4())
+            conn.execute("""INSERT INTO exploration_revisions
+                (exploration_id,revision,actor,event_id,saved_at,request_key,request_digest,snapshot_json)
+                VALUES (?,1,?,?,?,?,?,?)""", (exploration_id, actor, event_id,
+                time.time_ns() // 1_000_000, request_key, digest, target_json))
+            conn.execute("""INSERT INTO exploration_origins
+                (exploration_id,actor,target_creation_event_id,source_exploration_id,source_revision,
+                 source_event_id,source_snapshot_sha256) VALUES (?,?,?,?,?,?,?)""",
+                (exploration_id, actor, event_id, source_exploration_id, source_revision, source_event_id,
+                 sha256(raw.encode("utf-8")).hexdigest()))
+            return _receipt(exploration_id, 1, event_id)
+
     def load(self, actor, exploration_id, *, revision=None):
         return self._load(actor, exploration_id, revision, False)
 
@@ -148,11 +205,17 @@ class ExplorationRepo:
             ).fetchone()
             if row is None:
                 raise ExplorationError("NOT_FOUND")
-            if v2 and schema != "1.8":
+            if v2 and schema == "1.7":
                 raise ExplorationError("EXPLORATION_MIGRATION_REQUIRED")
+            origin = None
+            if schema == "1.9":
+                origin_row = conn.execute("SELECT * FROM exploration_origins WHERE exploration_id=?", (exploration_id,)).fetchone()
+                origin = dict(origin_row) if origin_row else None
+                if origin is not None and not v2:
+                    raise ExplorationError("SNAPSHOT_VERSION_REQUIRED")
             snapshot = decode_snapshot(row["snapshot_json"])
             is_v2 = "snapshot_version" in snapshot
-            if is_v2 and schema != "1.8":
+            if is_v2 and schema == "1.7":
                 raise ExplorationError("INVALID_SNAPSHOT")
             if is_v2 and not v2:
                 raise ExplorationError("SNAPSHOT_VERSION_REQUIRED")
@@ -180,6 +243,8 @@ class ExplorationRepo:
                     else:
                         relations.append(rel.copy())
                 result.update(snapshot_version=2 if is_v2 else 1, relations=relations)
+                if schema == "1.9":
+                    result["origin"] = origin
             return result
 
     def list_current(self, actor, *, limit=20):
