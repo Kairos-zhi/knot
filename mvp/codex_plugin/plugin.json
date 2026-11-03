@@ -1,6 +1,6 @@
 {
   "name": "knot",
   "version": "0.1.0",
-  "description": "Look up Knot asset metadata and read authorized text for a specified asset.",
+  "description": "Find reader-authorized Knot assets and read the text of a specified asset.",
   "mcpServers": "./.mcp.json"
 }

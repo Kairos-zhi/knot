@@ -34,7 +34,7 @@ def test_selfcheck_missing_source_and_export_directory(tmp_path):
                             capture_output=True, text=True, timeout=20, env=env)
     assert result.returncode == 0, result.stdout + result.stderr
     assert 'PASS GET /bundles/{bundle_id}' in result.stdout
-    assert '19 PASS / 0 FAIL' in result.stdout
+    assert '20 PASS / 0 FAIL' in result.stdout
     assert not source.parent.exists()
     assert not (home / '.knot' / 'exports').exists()
 
@@ -60,7 +60,7 @@ def test_selfcheck_existing_source_with_external_objects(tmp_path):
                             cwd=Path(__file__).resolve().parents[2],
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert '19 PASS / 0 FAIL' in result.stdout
+    assert '20 PASS / 0 FAIL' in result.stdout
     assert (source.read_bytes(), obj.read_bytes()) == before
 
 

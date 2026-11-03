@@ -96,8 +96,11 @@ def test_routes_and_error_code_scan(live):
             path += "?start=0&end=9999999999999"
         elif route["response"] == "AssetList":
             path += "?content_hash=" + "0" * 64
+        elif route["response"] == "AssetSearchResult":
+            path += "?q=synthetic"
         status, body = live.get(path)
-        assert status == (404 if route["response"] in ("Job", "Bundle") else 200)
+        expected = {"AssetSearchResult": 403, "Job": 404, "Bundle": 404}
+        assert status == expected.get(route["response"], 200)
         validate(body, route)
     assert live.get("/not-a-route")[0] == 404
     assert request(live.base, "/commands", method="GET")[0] == 405
@@ -239,7 +242,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "19 PASS / 0 FAIL" in result.stdout
+    assert "20 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 

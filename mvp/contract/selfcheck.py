@@ -116,6 +116,8 @@ def run(argv=None):
                     path += "?start=0&end=9999999999999"
                 elif route["response"] == "AssetList":
                     path += "?content_hash=" + "0" * 64
+                elif route["response"] == "AssetSearchResult":
+                    path += "?q=selfcheck"
                 try:
                     if route.get("stream"):
                         with urlopen(base + path + "?since=0", timeout=3) as stream:
@@ -127,9 +129,11 @@ def run(argv=None):
                                     break
                     else:
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
-                        status, body = request(base, path, command, token=token)
+                        search = route["response"] == "AssetSearchResult"
+                        status, body = request(base, path, command, token=None if search else token)
                         validate(body, route)
-                        expected = 404 if route["response"] in ("Job", "Bundle") else 400 if command else 200
+                        expected = (403 if search else 404 if route["response"] in ("Job", "Bundle")
+                                    else 400 if command else 200)
                         assert status == expected
                     print(f"PASS {route['method']} {route['path']}")
                     passes += 1

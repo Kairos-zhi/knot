@@ -163,6 +163,20 @@
     },
     {
       "method": "GET",
+      "path": "/asset-search",
+      "params": [
+        {"name": "q", "type": "string", "required": true,
+         "description": "Literal casefold substring terms. All of up to 8 terms must match. Maximum 128 UTF-8 bytes."},
+        {"name": "limit", "type": "integer", "required": false, "min": 1, "max": 20, "default": 10}
+      ],
+      "response": "AssetSearchResult",
+      "as_of": false,
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SERVER_BUSY"],
+      "status": [200, 400, 403, 503],
+      "envelope": "plain"
+    },
+    {
+      "method": "GET",
       "path": "/assets/{asset_id}",
       "params": [
         {

@@ -9,14 +9,14 @@ from ._db import validate_limit
 
 
 @contextmanager
-def read_snapshot(db_path) -> Iterator[sqlite3.Connection]:
+def read_snapshot(db_path, *, timeout=5.0) -> Iterator[sqlite3.Connection]:
     """Open an existing v1.4 database read-only, roll back and close on exit.
 
     BEGIN precedes schema validation, so validation and all caller reads see
     the same SQLite snapshot. No initialization, migration or repair occurs.
     """
     uri = Path(db_path).expanduser().resolve().as_uri() + "?mode=ro"
-    with closing(sqlite3.connect(uri, uri=True)) as conn:
+    with closing(sqlite3.connect(uri, uri=True, timeout=timeout)) as conn:
         conn.row_factory = sqlite3.Row
         conn.execute("BEGIN")
         try:

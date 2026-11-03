@@ -12,6 +12,7 @@
 | GET | `/claims` | `as_of, status, atom, limit, cursor` → ClaimList（items + next_cursor） |
 | GET | `/claims/{claim_id}` | `as_of, view=boolean\|roots` → Claim；candidate_level 与 atom_level 必填、分别展示，不从原子支持反推候选确认 |
 | GET | `/assets/{asset_id}` | `view=meta\|content`（默认 meta）→ AssetMeta / AssetContent；信封回显对应 meta / content |
+| GET | `/asset-search` | 必填 `q`，可选 `limit=1…20`（默认 10）→ AssetSearchResult |
 | GET | `/trace/{claim_id}` | `max_depth` 默认 5 → Trace；断链／成环／超深度分别报 TRACE_BROKEN / TRACE_CYCLE / TRACE_DEPTH_EXCEEDED |
 | GET | `/events` | `since=<seq>` → SSE ChangeEvent；seq 持久递增，重启不归零，重放不重复 |
 | POST | `/commands` | CommandRequest → 同步 CommandResult.event_id；异步 HTTP 202 + job_id |
@@ -44,6 +45,8 @@ JSON 成功信封为 `{contract_version: 1, ok: true, value: ...}`，失败信�
 AtomSupport.minimal_roots 已改可选，以支持 boolean 档省略来源；roots 档必须有来源仍由 C2 按实际 view 检查。Snapshot.view 保持 boolean/roots 两档；content 只属于资产端点。二进制资产使用 `content=null`、`encoding=none` 并必须含 path；该条件已由 AssetContent 的 if/then/else 表达。`/snapshot`、`/claims`、`/claims/{claim_id}` 用 OkEnvelopeTimed，`/assets/{asset_id}` 用 OkEnvelopeViewed，两类均强制 view；只有这两类之外使用 OkEnvelope 的端点可省 view。实际档位与授权内容一致性由 C2 真实服务测试验证。
 
 `GET /assets/{asset_id}?view=content&require_reader=true` 要求服务处于配置身份模式，Bearer token 解析到的 actor 须有该资产的 reader 授权。单用户开放态、无效 token、缺少授权或 reader 表均返回 `FORBIDDEN_VIEW`。参数仅接受字面值 `true`，与其他 view 搭配或重复传入时返回 `BAD_REQUEST`。省略参数时沿用既有授权语义。
+
+`GET /asset-search` 要求配置身份、有效 Bearer token 和 reader 表。仅搜索当前 actor 有 reader 授权、可通过短文本读取校验的内嵌正文。查询最多 128 UTF-8 字节、8 个空白分隔词，按 Unicode casefold 后的字面子串逐词匹配，标点按原样处理。控制字符、非法 UTF-8、当前 token 和有限凭据标记返回 `BAD_REQUEST`。授权结果按导入时间与行 ID 倒序，返回首批 `asset_id`、`content_hash`、`media_type` 及 `has_more`。搜索最多检查 1000 个授权候选，一秒预算内无法确定首批结果时返回 `SERVER_BUSY` / 503，`detail.reason=search_limit`，无部分结果。
 
 ## event_time 与 recorded_at：两条时间轴
 
@@ -99,7 +102,7 @@ python -m mvp.contract.selfcheck --db candidate/disposable.db
 python -m pytest mvp/tests/ -q
 ```
 
-selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十三个端点（含 SSE、未知 job 与未知 bundle 404），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 19 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
+selfcheck 对存在的输入库做 SQLite backup 到临时目录；输入路径不存在时仅在临时目录创建 schema 1.4 库，不创建输入路径。所有合成种子及命令均只落临时副本，输入库不变。它启动临时端口、调用全部十四个端点（含 SSE、未知 job 与未知 bundle 404，以及未认证查找 403），逐条按契约定义校验，另检查六次同步命令状态，逐行 PASS/FAIL；成功汇总 20 PASS / 0 FAIL、退出 0，失败退出 1。jsonschema 仅用于开发自检与测试，服务运行不导入第三方库。分页、历史支持、授权、SSE 多客户端与跨进程重启、单实例及只读哈希由真实服务测试覆盖；不代表在用部署或人的产品验收。
 
 ## Run A：读续接包、导出基准与启动错误
 

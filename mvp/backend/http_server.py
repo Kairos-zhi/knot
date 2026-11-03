@@ -19,12 +19,15 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 from .asset_repo import AssetRepo
 from .asset_access import token_config, identity_mode, readable
+from .asset_search import ReaderTableMissing, SearchLimitReached, search_assets
 from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
 from .claim_review import review_claim
 from .claim_support import claim_support_many
 from .timeline_query import read_snapshot, events_range, asset_by_hash
 from mvp.transport_views import metadata, claim_item, trace_view, event_rows
+from mvp.search_policy import query_terms
+from mvp.text_policy import has_credential_marker
 from .support_view import compute_support
 from .traceback import trace_claim
 
@@ -296,7 +299,8 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("METHOD_NOT_ALLOWED", 405)
             if route is None:
                 raise Fault("NOT_FOUND", 404)
-            query = parse_qs(parsed.query, keep_blank_values=True)
+            query = parse_qs(parsed.query, keep_blank_values=True,
+                             errors="strict" if route["response"] == "AssetSearchResult" else "replace")
             params = {p["name"]: p for p in route["params"] if p.get("in") != "path"}
             if set(query) - set(params) or any(len(v) != 1 for v in query.values()):
                 raise Fault("BAD_REQUEST")
@@ -380,6 +384,20 @@ class Handler(BaseHTTPRequestHandler):
             if job is None:
                 raise Fault("NOT_FOUND", 404)
             return job
+        if kind == "AssetSearchResult":
+            if actor is None or identity_mode() != "configured":
+                raise Fault("FORBIDDEN_VIEW", 403)
+            token = self.headers["Authorization"][7:]
+            query = p["q"]
+            terms = query_terms(query)
+            if not terms or has_credential_marker(query, token):
+                raise Fault("BAD_REQUEST")
+            try:
+                return search_assets(self.server.db, terms, p["limit"], actor, token)
+            except ReaderTableMissing:
+                raise Fault("FORBIDDEN_VIEW", 403) from None
+            except SearchLimitReached:
+                raise Fault("SERVER_BUSY", 503, reason="search_limit") from None
         with read_snapshot(self.server.db) as conn:
             if kind == "Timeline":
                 return dict(start=p["start"], end=p["end"], items=event_rows(events_range(

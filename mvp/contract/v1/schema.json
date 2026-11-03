@@ -270,6 +270,28 @@
         "depth": { "type": "integer", "minimum": 1 }
       }
     },
+    "AssetSearchResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "has_more"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["asset_id", "content_hash", "media_type"],
+            "properties": {
+              "asset_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+              "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "media_type": {"enum": ["text/plain", "text/markdown"]}
+            }
+          }
+        },
+        "has_more": {"type": "boolean"}
+      }
+    },
     "AssetMeta": {
       "type": "object",
       "additionalProperties": false,

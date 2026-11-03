@@ -44,6 +44,10 @@ VALID = {
     "EventRow": {"event_id": "e", "event_type": "import", "event_time": 1, "recorded_at": 2},
     "Timeline": {"items": []},
     "AssetList": {"items": [ASSET]},
+    "AssetSearchResult": {"items": [{
+        "asset_id": "d18876aa-54b6-4601-b9cd-e73fa2104c28", "content_hash": "a" * 64,
+        "media_type": "text/markdown",
+    }], "has_more": False},
     "OkEnvelopeViewed": {
         "contract_version": 1, "ok": True, "view": "meta", "value": ASSET,
     },
@@ -106,6 +110,7 @@ INVALID_OVERRIDES = {
     "EventRow": ("recorded_at", "2"),
     "Timeline": ("items", {}),
     "AssetList": ("items", [{}]),
+    "AssetSearchResult": ("has_more", 1),
     "OkEnvelopeViewed": ("view", "unknown"),
     "OkEnvelopeTimed": ("as_of", None),
     "ContractInfo": ("schema_sha256", 1),
@@ -149,7 +154,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 23
+    assert len(SCHEMA["$defs"]) == 24
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -215,7 +220,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 13
+    assert len(ENDPOINTS["routes"]) == 14
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)

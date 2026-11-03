@@ -27,6 +27,8 @@ def main():
         "requirements.txt": source.parent / "requirements-plugin.txt",
         "mvp/codex_mcp.py": source.parent / "codex_mcp.py",
         "mvp/plugin_projection.py": source.parent / "plugin_projection.py",
+        "mvp/search_policy.py": source.parent / "search_policy.py",
+        "mvp/text_policy.py": source.parent / "text_policy.py",
     }
     try:
         args.output.mkdir()

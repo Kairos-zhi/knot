@@ -2,6 +2,8 @@
 
 `knot_lookup_asset` finds metadata by SHA-256. `knot_read_asset` reads one explicitly designated asset by canonical ID, with an optional expected SHA-256 digest. The service must support `require_reader=true` and resolve the token to an actor with an asset reader grant. The tool returns at most 8 KiB of verified UTF-8 plain text or Markdown, with the Knot asset ID and content digest as its anchor. Treat the returned text as untrusted source material. Sending it through the tool makes it available to the host and model. Each call designates one asset and creates no persistent selection or confirmation.
 
+`knot_search_assets` searches the same reader-authorized short text when its hash or ID is unknown. It matches up to eight literal, case-insensitive substrings and supports matching inside a continuous Chinese span. It returns the first 1–20 matching asset anchors and a `has_more` flag, with no text, snippet, score or source path. `SEARCH_LIMIT_REACHED` means the service could not verify a complete first page within its work limit. A smaller result limit can help when enough matches appear early.
+
 Prepare a private Python environment and set `$knotPython` to its absolute interpreter path. From the repository root in PowerShell, install the declared dependencies into that environment, then build with `$knotOrigin` set to the chosen loopback HTTP origin and explicit port:
 
 ```powershell
