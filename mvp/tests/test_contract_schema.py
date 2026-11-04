@@ -44,6 +44,18 @@ EXP_EVENT = "df8876aa-54b6-4601-b9cd-e73fa2104c28"
 EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 
 VALID = {
+    # Five exploration v2 definitions predate 05B2; the slice is new in 05B2.
+    "ExplorationSaveV2": {"exploration_id": EXP_ID, "request_key": EXP_EVENT,
+                          "expected_revision": 0, "references": [], "snapshot_version": 2,
+                          "stop_note": None, "relations": []},
+    "ExplorationFork": {"source_exploration_id": EXP_ID, "source_revision": 1,
+                        "source_event_id": EXP_EVENT, "exploration_id": EXP_ID, "request_key": EXP_EVENT},
+    "ExplorationV2Receipt": {"exploration_id": EXP_ID, "revision": 1, "event_id": EXP_EVENT},
+    "ExplorationForkReceipt": {"exploration_id": EXP_ID, "revision": 1, "event_id": EXP_EVENT},
+    "ExplorationCheckpointV2": EXP_SUMMARY | {"event_id": EXP_EVENT, "references": [],
+        "stop_note": None, "stop_note_reason": None, "snapshot_version": 2, "relations": [], "origin": None},
+    "AssetTextSlice": {"asset_id": EXP_ID, "content_hash": "a" * 64, "media_type": "text/plain",
+                       "total_bytes": 3, "offset": 0, "next_offset": 3, "text": "abc", "has_more": False},
     "ExplorationSave": {"exploration_id": EXP_ID, "request_key": EXP_EVENT,
                         "expected_revision": 0, "references": []},
     "ExplorationReceipt": {"exploration_id": EXP_ID, "revision": 1, "event_id": EXP_EVENT},
@@ -117,6 +129,12 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "ExplorationSaveV2": ("snapshot_version", 1),
+    "ExplorationFork": ("source_revision", 0),
+    "ExplorationV2Receipt": ("event_id", "not-a-uuid"),
+    "ExplorationForkReceipt": ("revision", 0),
+    "ExplorationCheckpointV2": ("snapshot_version", 3),
+    "AssetTextSlice": ("content_hash", "A" * 64),
     "ExplorationSave": ("expected_revision", -1),
     "ExplorationReceipt": ("event_id", "not-a-uuid"),
     "ExplorationCheckpoint": ("stop_note_reason", "upstream-private"),
@@ -168,7 +186,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 28
+    assert len(SCHEMA["$defs"]) == 34
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -234,7 +252,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 17
+    assert len(ENDPOINTS["routes"]) == 21
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
