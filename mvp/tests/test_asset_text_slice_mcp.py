@@ -6,8 +6,9 @@ import sys
 from pathlib import Path
 
 import pytest
-from mvp.codex_mcp import read_asset_slice
+from mvp.codex_mcp import read_asset_slice, _SLICE_TOOL
 from mvp.plugin_projection import project_asset_slice
+from jsonschema import Draft202012Validator
 from mcp import Client, StdioServerParameters
 from mcp.types import CallToolResult
 from mcp_types import methods as sdk_methods
@@ -19,6 +20,15 @@ ARGS={'asset_id':ASSET,'expected_hash':HASH,'offset':0,'limit':4}
 VALUE={'asset_id':ASSET,'content_hash':HASH,'media_type':'text/plain','total_bytes':8,
        'offset':0,'next_offset':4,'text':'abcd','has_more':True}
 ENV={'contract_version':1,'ok':True,'value':VALUE}
+
+
+def test_declared_schema_matches_canonical_input():
+    validator=Draft202012Validator(_SLICE_TOOL.input_schema)
+    assert validator.is_valid(ARGS)
+    for bad in (ARGS | {'asset_id':'x'+ASSET}, ARGS | {'asset_id':ASSET+'x'},
+                ARGS | {'asset_id':ASSET+'\n'}, ARGS | {'expected_hash':HASH+'\n'}):
+        assert not validator.is_valid(bad)
+        assert asyncio.run(read_asset_slice('http://127.0.0.1:1',bad,PRIVATE))=={'error':'INVALID_ARGUMENTS'}
 
 
 def test_projection_invariants():
