@@ -862,6 +862,19 @@
         }
       }
     },
+    "AssetTextSlice": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "content_hash", "media_type", "total_bytes", "offset", "next_offset", "text", "has_more"],
+      "properties": {
+        "asset_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "media_type": {"enum": ["text/plain", "text/markdown"]},
+        "total_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "next_offset": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "text": {"type": "string"}, "has_more": {"type": "boolean"}
+      }
+    },
     "AssetSearchResult": {
       "type": "object",
       "additionalProperties": false,

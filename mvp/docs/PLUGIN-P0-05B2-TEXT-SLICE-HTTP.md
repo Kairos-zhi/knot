@@ -1,0 +1,11 @@
+# 05B2: HTTP embedded text slices
+
+`GET /asset-text-slices?asset_id=...&expected_hash=...&offset=0&limit=8192` requires all four query values exactly once. UUID and SHA-256 are canonical lowercase; offset and limit use canonical ASCII decimal, offset 0–1,000,000 and limit 4–8192. Unknown, repeated, empty, malformed percent/UTF-8 or noncanonical parameters are rejected. No actor or token query parameter is accepted.
+
+Configured Bearer authentication resolves the actor on the server. Missing or invalid credentials and single-user mode return 403. Each page separately invokes the core against the current reader grant and verified whole content; no page is fetched automatically. Text returned to a caller is input to that caller; deselection cannot erase content already in host history. The caller must decide when to send it onward.
+
+Success is a plain version-1 envelope with the core's eight fields: `asset_id`, `content_hash`, `media_type`, `total_bytes`, `offset`, `next_offset`, `text`, `has_more`. Offsets are UTF-8 bytes, endpoints preserve character boundaries and `next_offset` is the end even at EOF. The complete actual ensure-ASCII JSON bytes are checked before any response header, capped at 65,536 bytes, and checked for both raw and JSON-escaped active token bytes. A short token can coincidentally match envelope fields and cause conservative refusal; fixed error text is not guaranteed free of arbitrary short token coincidences.
+
+`INVALID_ARGUMENT` maps to 400 `BAD_REQUEST`; `ASSET_UNAVAILABLE` and `READER_TABLE_MISSING` share 403 `FORBIDDEN_VIEW`. `UNSUPPORTED_CONTENT`, `CONTENT_TOO_LARGE`, `CONTENT_MISMATCH`, `SENSITIVE_CONTENT` map to 400 `BAD_REQUEST` with their lowercase fixed `detail.reason`. `READ_LIMIT_REACHED` maps to 503 `SERVER_BUSY`, reason `text_slice_limit`; `READ_UNAVAILABLE`, unknown core exceptions/codes and serialization overflow map to 500 `INTERNAL`. A token match in the serialized success maps to 400 `BAD_REQUEST`, reason `sensitive_content`. No failure returns a partial success body or exception text.
+
+The 05B1 core trusts the server-provided actor/token and uses a per-call read snapshot; its one-second budget is cooperative, not a hard wall-clock guarantee. This route does not provide original-source reconstruction, external-file reading, MCP integration, installation, model use or human acceptance.

@@ -176,6 +176,18 @@
       "envelope": "plain"
     },
     {
+      "method": "GET", "path": "/asset-text-slices",
+      "params": [
+        {"name": "asset_id", "type": "string", "required": true},
+        {"name": "expected_hash", "type": "string", "required": true},
+        {"name": "offset", "type": "integer", "required": true, "min": 0, "max": 1000000},
+        {"name": "limit", "type": "integer", "required": true, "min": 4, "max": 8192}
+      ],
+      "response": "AssetTextSlice", "as_of": false,
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SERVER_BUSY", "INTERNAL"],
+      "status": [200, 400, 403, 500, 503], "envelope": "plain"
+    },
+    {
       "method": "GET",
       "path": "/explorations",
       "params": [{"name": "limit", "type": "integer", "required": false, "min": 1, "max": 20, "default": 20}],

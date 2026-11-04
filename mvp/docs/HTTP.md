@@ -184,3 +184,6 @@ fork 请求只包含来源锚，不重新提交源正文；获授权的 fork 可
 | 500 | INTERNAL | 无 | 内部错误，包括写后收据投影失败 |
 
 无 reason 的内部错误或响应中断可能发生在提交之后，不能据此判定回滚；核对后可显式用原请求和原 key 重放恢复。
+# Embedded text slice endpoint
+
+`GET /asset-text-slices` provides a configured-reader-only bounded embedded UTF-8 slice. Its strict query, error mapping, actual serialized response limit and token exclusion are specified in [05B2](PLUGIN-P0-05B2-TEXT-SLICE-HTTP.md). Each call rechecks access and whole-content integrity; prior returned content cannot be withdrawn from a host.

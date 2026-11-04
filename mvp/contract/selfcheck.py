@@ -118,6 +118,8 @@ def run(argv=None):
                     path += "?content_hash=" + "0" * 64
                 elif route["response"] == "AssetSearchResult":
                     path += "?q=selfcheck"
+                elif route["response"] == "AssetTextSlice":
+                    path += "?asset_id=" + asset + "&expected_hash=" + "0" * 64 + "&offset=0&limit=4"
                 path = path.replace("{exploration_id}", "00000000-0000-0000-0000-000000000000")
                 try:
                     if route.get("stream"):
@@ -130,7 +132,7 @@ def run(argv=None):
                                     break
                     else:
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
-                        restricted = route["response"] == "AssetSearchResult" or route["response"].startswith("Exploration")
+                        restricted = route["response"] in ("AssetSearchResult", "AssetTextSlice") or route["response"].startswith("Exploration")
                         status, body = request(base, path, command, token=None if restricted else token)
                         validate(body, route)
                         expected = (403 if restricted else 404 if route["response"] in ("Job", "Bundle")
