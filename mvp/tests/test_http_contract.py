@@ -100,10 +100,12 @@ def test_routes_and_error_code_scan(live):
             path += "?content_hash=" + "0" * 64
         elif route["response"] == "AssetSearchResult":
             path += "?q=synthetic"
+        if route["response"] == "AssetSource":
+            path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64
         if route["response"] == "AssetTextSlice":
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64 + "&offset=0&limit=4"
         status, body = live.get(path)
-        expected = {"AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
+        expected = {"AssetSource": 403, "AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
                     "Job": 404, "Bundle": 404}
         assert status == expected.get(route["response"], 200)
         validate(body, route)
@@ -247,7 +249,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "27 PASS / 0 FAIL" in result.stdout
+    assert "28 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 

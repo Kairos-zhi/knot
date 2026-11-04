@@ -862,6 +862,22 @@
         }
       }
     },
+    "AssetSource": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "content_hash", "source_status", "relative_path", "reason", "provenance_verified", "import_evidence_checked"],
+      "properties": {
+        "asset_id": {"type": "string", "minLength": 36, "maxLength": 36, "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+        "content_hash": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+        "source_status": {"enum": ["recorded_file_reference", "unknown"]},
+        "relative_path": {"type": ["string", "null"]},
+        "reason": {"enum": [null, "missing_source", "unsupported_source", "invalid_source", "inconsistent_source", "sensitive_source", "source_limit"]},
+        "provenance_verified": {"const": false}, "import_evidence_checked": {"const": false}
+      },
+      "oneOf": [
+        {"properties": {"source_status": {"const": "recorded_file_reference"}, "relative_path": {"type": "string", "minLength": 1}, "reason": {"const": null}}},
+        {"properties": {"source_status": {"const": "unknown"}, "relative_path": {"const": null}, "reason": {"enum": ["missing_source", "unsupported_source", "invalid_source", "inconsistent_source", "sensitive_source", "source_limit"]}}}
+      ]
+    },
     "AssetTextSlice": {
       "type": "object", "additionalProperties": false,
       "required": ["asset_id", "content_hash", "media_type", "total_bytes", "offset", "next_offset", "text", "has_more"],

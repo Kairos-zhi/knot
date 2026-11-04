@@ -176,6 +176,16 @@
       "envelope": "plain"
     },
     {
+      "method": "GET", "path": "/asset-sources",
+      "params": [
+        {"name": "asset_id", "type": "string", "required": true},
+        {"name": "expected_hash", "type": "string", "required": true}
+      ],
+      "response": "AssetSource", "as_of": false,
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SERVER_BUSY", "INTERNAL"],
+      "status": [200, 400, 403, 500, 503], "envelope": "plain"
+    },
+    {
       "method": "GET", "path": "/asset-text-slices",
       "params": [
         {"name": "asset_id", "type": "string", "required": true},

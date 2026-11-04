@@ -187,3 +187,6 @@ fork 请求只包含来源锚，不重新提交源正文；获授权的 fork 可
 # Embedded text slice endpoint
 
 `GET /asset-text-slices` provides a configured-reader-only bounded embedded UTF-8 slice. Its strict query, error mapping, actual serialized response limit and token exclusion are specified in [05B2](PLUGIN-P0-05B2-TEXT-SLICE-HTTP.md). Each call rechecks access and whole-content integrity; prior returned content cannot be withdrawn from a host.
+
+
+GET /asset-sources provides the configured-reader-only recorded source reference projection. Its exact two-parameter query, seven-field closed result, honest unknown states, two false verification flags, fixed errors and actual 32768-byte success-envelope guard are specified in [05C2](PLUGIN-P0-05C2-SOURCE-HTTP.md). It does not open a source or verify original provenance.

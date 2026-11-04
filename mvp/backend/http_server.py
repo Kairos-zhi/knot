@@ -22,6 +22,7 @@ from .asset_repo import AssetRepo
 from .asset_access import token_config, identity_mode, readable
 from .asset_search import ReaderTableMissing, SearchLimitReached, search_assets
 from .asset_text_slice import TextSliceError, read_asset_text_slice
+from .asset_source import SourceError, read_asset_source
 from .exploration_repo import ExplorationRepo
 from .migrate_schema_v1_6 import SchemaDriftError
 from .http_lock import owner_guard
@@ -317,16 +318,23 @@ class Handler(BaseHTTPRequestHandler):
             if route is None:
                 raise Fault("NOT_FOUND", 404)
             is_slice = route["response"] == "AssetTextSlice"
-            if is_slice and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
+            is_source = route["response"] == "AssetSource"
+            if (is_slice or is_source) and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
                 raise Fault("BAD_REQUEST")
             query = parse_qs(parsed.query, keep_blank_values=True,
-                             errors="strict" if route["response"] in ("AssetSearchResult", "AssetTextSlice") else "replace")
+                             errors="strict" if route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource") else "replace")
             if is_slice:
                 if (set(query) != {"asset_id", "expected_hash", "offset", "limit"}
                         or any(len(v) != 1 or not v[0] for v in query.values())
                         or not re.fullmatch(r'[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}', query['asset_id'][0])
                         or not re.fullmatch(r'[0-9a-f]{64}', query['expected_hash'][0])
                         or any(not re.fullmatch(r'0|[1-9][0-9]*', query[k][0]) for k in ('offset', 'limit'))):
+                    raise Fault("BAD_REQUEST")
+            if is_source:
+                if (set(query) != {"asset_id", "expected_hash"}
+                        or any(len(v) != 1 or not v[0] for v in query.values())
+                        or not re.fullmatch(r'[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}', query['asset_id'][0])
+                        or not re.fullmatch(r'[0-9a-f]{64}', query['expected_hash'][0])):
                     raise Fault("BAD_REQUEST")
             params = {p["name"]: p for p in route["params"] if p.get("in") != "path"}
             if set(query) - set(params) or any(len(v) != 1 for v in query.values()):
@@ -351,7 +359,7 @@ class Handler(BaseHTTPRequestHandler):
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
             actor = authenticate(self.headers.get("Authorization"))
-            if is_slice and (actor is None or identity_mode() != "configured"):
+            if (is_slice or is_source) and (actor is None or identity_mode() != "configured"):
                 raise Fault("FORBIDDEN_VIEW", 403)
             exploration = route["response"] in _EXPLORATION_RESPONSES
             if exploration and (actor is None or identity_mode() != "configured"):
@@ -380,12 +388,18 @@ class Handler(BaseHTTPRequestHandler):
                 body["view"] = values.get("view", "roots")
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
-            if is_slice:
-                data = json.dumps(body, ensure_ascii=True).encode('utf-8')
+            if is_slice or is_source:
+                if is_source:
+                    try:
+                        data = json.dumps(body, ensure_ascii=True).encode('utf-8')
+                    except Exception:
+                        raise Fault('INTERNAL', 500) from None
+                else:
+                    data = json.dumps(body, ensure_ascii=True).encode('utf-8')
                 token = self.headers['Authorization'][7:]
                 if token.encode('utf-8') in data or json.dumps(token, ensure_ascii=True)[1:-1].encode('ascii') in data:
                     raise Fault('BAD_REQUEST', 400, reason='sensitive_content')
-                if len(data) > 65536:
+                if len(data) > (32768 if is_source else 65536):
                     raise Fault('INTERNAL', 500)
                 return self.reply_bytes(200, data)
             self.reply(202 if self.command == 'POST' and value.get('job_id') else 200, body)
@@ -515,6 +529,19 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("FORBIDDEN_VIEW", 403) from None
             except SearchLimitReached:
                 raise Fault("SERVER_BUSY", 503, reason="search_limit") from None
+        if kind == "AssetSource":
+            try:
+                return read_asset_source(self.server.db, p['asset_id'], p['expected_hash'], actor, self.headers['Authorization'][7:])
+            except SourceError as exc:
+                code = str(exc)
+                if code == 'INVALID_ARGUMENT': raise Fault('BAD_REQUEST') from None
+                if code in ('ASSET_UNAVAILABLE', 'READER_TABLE_MISSING'): raise Fault('FORBIDDEN_VIEW', 403) from None
+                if code in ('CONTENT_MISMATCH', 'SENSITIVE_CONTENT'):
+                    raise Fault('BAD_REQUEST', 400, reason=code.lower()) from None
+                if code == 'READ_LIMIT_REACHED': raise Fault('SERVER_BUSY', 503, reason='source_limit') from None
+                raise Fault('INTERNAL', 500) from None
+            except Exception:
+                raise Fault('INTERNAL', 500) from None
         if kind == "AssetTextSlice":
             try:
                 return read_asset_text_slice(self.server.db, p['asset_id'], p['expected_hash'], p['offset'], p['limit'], actor, self.headers['Authorization'][7:])

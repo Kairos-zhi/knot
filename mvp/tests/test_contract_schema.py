@@ -44,6 +44,9 @@ EXP_EVENT = "df8876aa-54b6-4601-b9cd-e73fa2104c28"
 EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 
 VALID = {
+    "AssetSource": {"asset_id": EXP_ID, "content_hash": "a" * 64,
+                    "source_status": "recorded_file_reference", "relative_path": "notes/汉😀.md",
+                    "reason": None, "provenance_verified": False, "import_evidence_checked": False},
     # Five exploration v2 definitions predate 05B2; the slice is new in 05B2.
     "ExplorationSaveV2": {"exploration_id": EXP_ID, "request_key": EXP_EVENT,
                           "expected_revision": 0, "references": [], "snapshot_version": 2,
@@ -129,6 +132,7 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "AssetSource": ("provenance_verified", True),
     "ExplorationSaveV2": ("snapshot_version", 1),
     "ExplorationFork": ("source_revision", 0),
     "ExplorationV2Receipt": ("event_id", "not-a-uuid"),
@@ -186,7 +190,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 34
+    assert len(SCHEMA["$defs"]) == 35
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -252,7 +256,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 21
+    assert len(ENDPOINTS["routes"]) == 22
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
@@ -287,3 +291,23 @@ def test_endpoint_timed_envelopes_match_exact_routes():
 def test_endpoint_viewed_envelopes_match_exact_routes():
     assert {route["path"] for route in ENDPOINTS["routes"]
             if route["envelope"] == "viewed"} == {"/assets/{asset_id}", "/bundles/{bundle_id}", "/assets"}
+
+
+@pytest.mark.parametrize('reason', ['missing_source', 'unsupported_source', 'invalid_source',
+                                    'inconsistent_source', 'sensitive_source', 'source_limit'])
+def test_source_unknown_schema(reason):
+    value = VALID['AssetSource'] | dict(source_status='unknown', relative_path=None, reason=reason)
+    definition_validator('AssetSource').validate(value)
+
+
+@pytest.mark.parametrize('change', [
+    {'extra': 'private'}, {'provenance_verified': True}, {'import_evidence_checked': True},
+    {'source_status': 'unknown'}, {'relative_path': None}, {'relative_path': ''},
+    {'reason': 'missing_source'}, {'source_status': 'unknown', 'relative_path': None, 'reason': None},
+    {'source_status': 'unknown', 'relative_path': None, 'reason': 'invented'},
+    {'asset_id': EXP_ID.upper()}, {'asset_id': EXP_ID + '\n'}, {'asset_id': 'asset-1'},
+    {'content_hash': 'A' * 64}, {'content_hash': 'a' * 64 + '\n'}, {'content_hash': 'a' * 63},
+])
+def test_source_schema_closed_combinations(change):
+    with pytest.raises(ValidationError):
+        definition_validator('AssetSource').validate(VALID['AssetSource'] | change)
