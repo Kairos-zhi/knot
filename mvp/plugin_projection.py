@@ -7,7 +7,7 @@ from mvp.exploration_policy import (
     ExplorationError, normalize_snapshot, normalize_snapshot_v2, redact_exploration,
     redact_exploration_v2, validate_revision, validate_uuid, validate_text, _reject_token,
 )
-from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN, TEXT_MIMES, text_error
+from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN, TEXT_MIMES, text_error, has_credential_marker
 
 
 _MIME_KIND = {
@@ -121,6 +121,40 @@ def project_asset_text(envelope, anchor, token):
     if error:
         return {"error": error}
     return anchor | {"content": content}
+
+
+def project_asset_slice(envelope, asset_id, digest, offset, limit, token):
+    invalid = {"error": "UPSTREAM_ERROR"}
+    if (type(envelope) is not dict or set(envelope) != {'contract_version', 'ok', 'value'}
+            or type(envelope['contract_version']) is not int or envelope['contract_version'] != 1
+            or envelope['ok'] is not True):
+        return invalid
+    value = envelope['value']
+    fields = {'asset_id', 'content_hash', 'media_type', 'total_bytes', 'offset', 'next_offset', 'text', 'has_more'}
+    if type(value) is not dict or set(value) != fields:
+        return invalid
+    if (value['asset_id'] != asset_id or value['content_hash'] != digest
+            or type(value['media_type']) is not str or value['media_type'] not in TEXT_MIMES or type(value['text']) is not str
+            or any(type(value[k]) is not int for k in ('total_bytes', 'offset', 'next_offset'))
+            or type(value['has_more']) is not bool):
+        return invalid
+    total, start, end = value['total_bytes'], value['offset'], value['next_offset']
+    if not (0 <= start == offset <= end <= total <= 1_000_000):
+        return invalid
+    try:
+        raw = value['text'].encode('utf-8')
+    except UnicodeEncodeError:
+        return invalid
+    n = len(raw)
+    if (n != end - start or n > limit or value['has_more'] != (end < total)
+            or (total - start <= limit and n != total - start)
+            or (total - start > limit and not limit - 3 <= n <= limit)
+            or (end < total and n == 0)
+            or any(b == 127 or (b < 32 and b not in (9, 10, 13)) for b in raw)):
+        return invalid
+    if has_credential_marker(value['text'], token):
+        return {"error": "SENSITIVE_CONTENT"}
+    return value
 
 
 def project_asset_search(envelope, limit):

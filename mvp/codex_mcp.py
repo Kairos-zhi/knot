@@ -11,10 +11,13 @@ import httpx2
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import CallToolResult, ListToolsResult, TextContent, Tool
+from mcp_types import methods as sdk_methods
+from mcp_types.version import MODERN_PROTOCOL_VERSIONS
 
 from mvp.plugin_projection import (
     project_asset_meta,
     project_asset_search,
+    project_asset_slice,
     project_asset_text,
     project_exploration_checkpoint,
     project_exploration_list,
@@ -32,6 +35,7 @@ from mvp.text_policy import ASSET_ID_PATTERN, SHA256_PATTERN, has_credential_mar
 
 
 _TOOL_NAME = "knot_lookup_asset"
+_SLICE_NAME = "knot_read_asset_slice"
 _READ_TOOL_NAME = "knot_read_asset"
 _SEARCH_TOOL_NAME = "knot_search_assets"
 _SAVE_TOOL_NAME = "knot_save_exploration"
@@ -49,6 +53,16 @@ _SEARCH_LIMIT_ENVELOPE = {
     "contract_version": 1, "ok": False,
     "error": {"code": "SERVER_BUSY", "message": "SERVER_BUSY", "detail": {"reason": "search_limit"}},
 }
+_SLICE_TOOL = Tool(name=_SLICE_NAME, description=(
+    "Read one authorized UTF-8 byte slice of a specified asset. Returned text enters the host; "
+    "deselection cannot erase prior history. The server verifies the whole asset hash."),
+    input_schema={"type": "object", "additionalProperties": False,
+        "required": ["asset_id", "expected_hash", "offset", "limit"],
+        "properties": {"asset_id": {"type": "string", "pattern": ASSET_ID_PATTERN},
+                       "expected_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                       "offset": {"type": "integer", "minimum": 0, "maximum": 1000000},
+                       "limit": {"type": "integer", "minimum": 4, "maximum": 8192}}})
+
 _TOOL = Tool(
     name=_TOOL_NAME,
     description="Look up asset metadata by a known SHA-256 digest.",
@@ -235,6 +249,39 @@ async def lookup(origin, digest, token):
     return projected
 
 
+async def read_asset_slice(origin, arguments, token):
+    if (type(arguments) is not dict or set(arguments) != {'asset_id', 'expected_hash', 'offset', 'limit'}
+            or type(arguments['asset_id']) is not str or not re.fullmatch(ASSET_ID_PATTERN, arguments['asset_id'])
+            or type(arguments['expected_hash']) is not str or not re.fullmatch(r'[0-9a-f]{64}', arguments['expected_hash'])
+            or type(arguments['offset']) is not int or not 0 <= arguments['offset'] <= 1_000_000
+            or type(arguments['limit']) is not int or not 4 <= arguments['limit'] <= 8192):
+        return {'error': 'INVALID_ARGUMENTS'}
+    if type(token) is not str or not token.strip():
+        return {'error': 'ACCESS_DENIED'}
+    status, envelope = await request_envelope(origin, '/asset-text-slices', arguments, token,
+                                               error_statuses=(400, 403, 503), strict=True)
+    if status == 200:
+        return project_asset_slice(envelope, arguments['asset_id'], arguments['expected_hash'],
+                                   arguments['offset'], arguments['limit'], token)
+    if (type(envelope) is not dict or set(envelope) != {'contract_version', 'ok', 'error'}
+            or type(envelope['contract_version']) is not int or envelope['contract_version'] != 1
+            or envelope['ok'] is not False or type(envelope['error']) is not dict):
+        return {'error': 'UPSTREAM_ERROR'}
+    e = envelope['error']
+    if set(e) != {'code', 'message', 'detail'} or type(e['code']) is not str or e['message'] != e['code'] or type(e['detail']) is not dict:
+        return {'error': 'UPSTREAM_ERROR'}
+    if e['detail'] == {}:
+        mapped = {(400, 'BAD_REQUEST'): 'INVALID_ARGUMENTS', (403, 'FORBIDDEN_VIEW'): 'ACCESS_DENIED'}.get((status, e['code']))
+    elif set(e['detail']) == {'reason'} and type(e['detail']['reason']) is str:
+        reason = e['detail']['reason']
+        mapped = reason.upper() if status == 400 and e['code'] == 'BAD_REQUEST' and reason in ('unsupported_content', 'content_too_large', 'content_mismatch', 'sensitive_content') else None
+        if (status, e['code'], reason) == (503, 'SERVER_BUSY', 'text_slice_limit'):
+            mapped = 'READ_LIMIT_REACHED'
+    else:
+        mapped = None
+    return {'error': mapped or 'UPSTREAM_ERROR'}
+
+
 async def read_asset(origin, arguments, token):
     asset_id = arguments.get("asset_id")
     expected_hash = arguments.get("expected_content_hash")
@@ -406,11 +453,34 @@ async def strict_stdio_input():
 async def serve(origin, token):
     async def list_tools(ctx, params):
         return ListToolsResult(tools=[_TOOL, _READ_TOOL, _SEARCH_TOOL, _SAVE_TOOL, _LOAD_TOOL, _LIST_TOOL,
-                                      _SAVE_V2_TOOL, _LOAD_V2_TOOL, _FORK_TOOL])
+                                      _SAVE_V2_TOOL, _LOAD_V2_TOOL, _FORK_TOOL, _SLICE_TOOL])
 
     async def call_tool(ctx, params):
         arguments = params.arguments or {}
         digest = arguments.get("content_hash")
+        if params.name == _SLICE_NAME:
+            result = await read_asset_slice(origin, arguments, token)
+            output = CallToolResult(content=[TextContent(type="text", text=json.dumps(result))],
+                                    structured_content=result, is_error="error" in result)
+            if 'error' not in result:
+                # Match the SDK runner's version sieve before stdio's compact JSON.
+                wire_value = sdk_methods.serialize_server_result(
+                    'tools/call', ctx.protocol_version,
+                    output.model_dump(by_alias=True, mode='json', exclude_none=True))
+                if ctx.protocol_version in MODERN_PROTOCOL_VERSIONS:
+                    wire_value['resultType'] = 'complete'
+                    wire_value['_meta'] = {'io.modelcontextprotocol/serverInfo': server.server_info_stamp}
+                wire = json.dumps(wire_value, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+                inner = output.content[0].text.encode('utf-8')
+                patterns = (token.encode('utf-8'), json.dumps(token, ensure_ascii=True)[1:-1].encode('ascii'))
+                if any(p in wire or p in inner for p in patterns):
+                    result = {'error': 'SENSITIVE_CONTENT'}
+                elif len(wire) > _MAX_RESPONSE:
+                    result = {'error': 'UPSTREAM_ERROR'}
+                else:
+                    return output
+            return CallToolResult(content=[TextContent(type="text", text=json.dumps(result))],
+                                  structured_content=result, is_error=True)
         if params.name == _READ_TOOL_NAME:
             result = await read_asset(origin, arguments, token)
         elif params.name == _SEARCH_TOOL_NAME:

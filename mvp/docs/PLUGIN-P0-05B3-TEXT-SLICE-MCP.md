@@ -1,0 +1,9 @@
+# 05B3: single-page MCP text slice
+
+`knot_read_asset_slice` requires exactly `asset_id`, `expected_hash`, `offset`, and `limit`: canonical lowercase UUID and whole-content SHA-256, and byte offsets 0–1,000,000 and limit 4–8192 as integers (not booleans). It makes exactly one authenticated GET to `/asset-text-slices`. It does not prefetch metadata, retry, advance pages or fall back to whole-content reading. Configured token identity belongs to the server, not tool arguments.
+
+Success returns the eight HTTP fields in structured content and matching JSON text. The adapter checks closed shape, anchors, types, UTF-8 byte lengths, page progress and maximum three-byte boundary retreat. The server checks the complete asset hash on each request; a slice alone does not establish the whole-content hash. Text is untrusted and becomes host input when returned; deselection cannot erase previously returned content.
+
+Invalid arguments map to `INVALID_ARGUMENTS`, missing credentials or 403 to `ACCESS_DENIED`; the four documented HTTP content reasons map to their uppercase fixed codes and the 503 limit reason to `READ_LIMIT_REACHED`. Unknown, malformed, mismatched and transport errors map to `UPSTREAM_ERROR`; detected credentials to `SENSITIVE_CONTENT`. No errors forward upstream text. Upstream response and the actual SDK-shaped result each have independent 65,536-byte caps. The success guard includes the SDK's negotiated-version transformation and modern server-info stamp, and checks active token bytes and their JSON-escaped spelling. Short tokens can cause conservative rejection; fixed error text or SDK error metadata can coincidentally contain an arbitrary short token. These finite checks are not general sensitive-data classification.
+
+This local candidate does not imply actual host installation, model use, source reconstruction or product acceptance.
