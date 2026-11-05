@@ -1,28 +1,49 @@
 # Knot 当前执行状态
 
-更新：2026-10-28。代码核对基线为 `217a0c8da3030e682267963a562e16c9d6c72db4`（PR #27 合并点），开发位于 `mvp/`。开工仍须核当前 Git HEAD、工作区与远端；本文不是实时 Git 查询结果。
+更新：2026-11-03（Asia/Shanghai）。本次修订记录远端主线、独立工程候选和上下文同步增量。任务为 [PLUGIN-W1D1-BASELINE-001](mvp/docs/PLUGIN-W1D1-BASELINE-001.md)；新阶段 W1D1 不覆盖旧 MVP Week 1。
 
-## 当前文档任务
+## 本轮基线
 
-[ENTRYPOINT-SYNC-001](mvp/docs/ENTRYPOINT-SYNC-001.md)：修正入口与状态漂移，分支 `codex/fix-mvp-entrypoints`。文档限定复核通过；用户随后授权固定提交并推送本分支，实际完成状态以 Git 提交与远端读回为准，不能据本文称 main 已更新。产品代码、fixture、数据库与在用软件不变。
+- 初版开工时本地及远端 main 均为 `6977bc2`（#48 合并点）。本次核对远端 main 为 `5a731a0e4509350ad0bc4e258cf903ffc83a81c5`，本地 main 仍为 `6977bc2`。
+- 文档草稿 [#51](https://github.com/Kairos-zhi/knot/pull/51) 来自 `codex/w1d1-baseline-sync-20261103`，仍从 `6977bc2` 分叉。下列产品事实按远端 main 核对。
+- 核心在 `mvp/`；`ctx/` 是 M1 第一屏快照，不证明完整工作台交付。
+- 用户最新明确先完成交接包定义的 Codex 第一阶段，再基于共用核心推进 Hermes、DSH 薄适配。第一阶段的五组能力与收口条件见 [阶段路线](mvp/docs/PLUGIN-CODEX-PHASE1.md)；不能收窄为工具发现、检索或固定续接案例。DSH 候选保留作对照，附件的具体建议不自动成为执行授权。
 
-当前读取顺序：[开发基准](mvp/docs/development-baseline.md) → 本页／[队列](QUEUE.md) → 当前任务卡 → [SCHEMA](mvp/docs/SCHEMA.md)／[IMPORT](mvp/docs/IMPORT.md)及源码。
+## main 实现与边界
 
-## 已实现与证据边界
+| 范围 | 源码事实及边界 |
+|---|---|
+| 初始化/迁移 | 新建 schema **1.6**，校验 1.0 至 1.6 七条版本记录。已有文件/目录/悬空软链拒绝，已有库升级须显式迁移 |
+| 资产/支持 | Repo、Frontier17、编号候选、确认/撤回、支持视图、时间查询和 trace 已有；不证明通用自然语言理解或任意关系编辑 |
+| 续接/运输 | bundle/jobs、HTTP、CLI、持久 journal 与 SSE since 重放已有；不是通用 Agent 调度，也非真实模型续接验收 |
+| 权限 | token→actor、reader 正文授权、bundle 幂等 actor 绑定已有；同步 claim 幂等仍只比较 body，见 P0-03 |
+| 一致读 | read_snapshot 与 HTTP/离线查询入口已有；不再按“空白待实现”派卡，本轮仅静态核源 |
+| 来源/查找 | manifest 文件导入已有；origin=v0.4、event_time 来自文件 mtime，不等于聊天来源适配。FTS 不等于现有 HTTP 关键词入口 |
+| Codex | 独立候选已在隔离 app-server 中发现六个工具，查找/阅读与停点保存/列表/读回调用通过；hash元数据调用保留前卡证据。本轮未向当前用户桌面配置安装，真实业务材料、模型使用及人的体验尚未验收 |
 
-- 资产、历史事件、规则访问，共享 SQLite 生命周期，候选导入，Frontier17 适配，carry-forward 与稳定支持族投影均已入库。导入按文件提交资产＋事件，整批可部分成功；外置文件不随 DB 回滚自动撤销。
-- 当前 schema 为 1.3，新增 `(snapshot_time,event_id)` 唯一索引；1.2 旧库读取仍保留 rowid 兜底。实现和迁移边界见 [SCHEMA](mvp/docs/SCHEMA.md)、[断言映射 S38–S40](mvp/docs/W1D7-CLAIM-MAP.md)及对应测试。
-- CI 与冻结 fixture 核验配置已入库。Day 7 的69项测试、22资产／22事件／19内嵌＋3外置、22,391组断言均是[历史实跑证据](mvp/docs/W1D7-EVIDENCE.md)，不写成当前重新运行结果。TD01 交接复核记录81项测试及独立临时库核验，属于该卡历史证据，本轮未重跑。
-- 本轮仅做文档、Git 和冻结文件核对，不据此判定完整后端运行健康、真实业务库已迁移或产品已验收。
+## 主线合入与候选登记
 
-## 下一阶段与未决
+| 候选 | 定位 | 当前状态 |
+|---|---|---|
+| L2a → CLI → HTTP | `b0aa782 → f2cf022 → 57cbaf2` | 独立 worktree 依赖链，历史复核保留；未入上述 main，待具体 Gate |
+| F1 | PR [#49](https://github.com/Kairos-zhi/knot/pull/49)，`7091c6a` | 已合入 `2ec6d6c`，提供只读视图与取件入口。四项历史证据缺口仍保留 |
+| N1 | PR [#50](https://github.com/Kairos-zhi/knot/pull/50)，`edf8d5a` | 已合入 `5a731a0`，主线新建库为 1.6。历史独立复核缺口单列 |
+| P0-03 / P0-08 | [#52](https://github.com/Kairos-zhi/knot/pull/52)，`a33ca1276d55ee983842c355bfa26b2cac7fd584` | 开放草稿，未合并。独立 Checker 已绑定候选，Maker 全量 501 passed、2 skipped，Human Gate 待定 |
+| P0-04B | 独立分支 `codex/p0-04b-meta-projection`，`85417d5f4e23946214a16a39e16e9fde52c42ba0` | 离线元数据投影，28 项定向测试与独立复核通过；仅本地提交，未推送/合并/接入宿主 |
+| P0-04C | `codex/p0-04c-codex-mcp`，`df0b9a108016d83e6dbbd59a8b2a50fc9c4c7a7c`，依赖 `85417d5` | 本地只读 MCP 入口；默认依赖收集阻塞已修，独立定向36项通过、全树只收集531项，最终提交已独立绑定。未推送/注册宿主，不是关键词查找或正文阅读 |
+| P0-04D | `codex/p0-04d-plugin-package`，`8f59798e16a1dd7703bd81d88dff66ee5fdda198`，依赖 `df0b9a1` | 本地封装候选，六文件。独立40项定向通过，依赖清单增量后另核4项包测试；535是收集数。Codex临时配置中真实发现/调用及令牌转发正反对照通过；未推送、未装在用环境 |
+| P0-04E | `codex/p0-04e-authorized-content`，`53312e4bb9b11a6b9585bc8fe44935a389e6f7ce`，依赖 `8f59798` | 指定资产的授权文本读取与字节哈希回源；HTTP显式要求configured reader，插件拒绝单用户降级。最终独立152项回归及24项补充反例通过，真实Codex+临时SQLite六例/8 GET通过。仅本地提交，未推送；非持久选材、授权管理或产品接受 |
+| P0-05A | `codex/p0-05a-keyword-search`，`524399f3a898d52a88b59c1b10e55f63177f7a53`，依赖 `53312e4` | 有界字面关键词查找，支持连续中文子串；reader及短文本策略先于结果计数，超限不返回partial。独立238+26项通过，真实Codex+临时SQLite12例/13 GET通过。仅本地提交，非全库语义检索或聊天来源接入 |
+| P0-09A | `codex/p0-09a-exploration-core`，`e3dc9e6d156ed823c15d95212ae173f10b5581d1`，依赖 `524399f` | 所有者范围的有序选材/停点、修订、原子幂等与返回核心；显式临时1.7迁移，不改变默认init1.6。rowid覆盖历史缺口已修，独立最终42项通过，组合及跨进程读回通过。仅本地提交，尚无HTTP/MCP写入口或业务库升级 |
+| P0-09B | `codex/p0-09b-exploration-transport`，`84c47412368819b665f55557f6e9bcaa58a5ebb7`，依赖 `e3dc9e6` 并以本地 cherry-pick 采用 #52 两修复 | 三条HTTP及三个MCP停点操作，默认新库/Health为1.7；旧1.6不自动迁移。独立222通过/2跳过，真实Codex+临时SQLite22例/21HTTP通过，含丢失响应后同键恢复及只读拒写。Maker全量568通过/2跳过/12失败，12项在修正夹具或Bash环境后定向全部通过；非一次全绿。仅本地提交，未推送/合并/部署 |
+| DSH 001/001B | 独立 knot-first-usable 基于 `57cbaf2` | 旧001交互被用户否定，后续001B保留限定技术复核；两者不混同。casework/dsh未跟踪产物仍在，未获体验/生产接受 |
 
-Week 1 已有结账回执，TD01 已合入本基线；下一阶段按四周 MVP Roadmap 和正式任务卡推进。Roadmap 交接原件名为 `20261028_Knot_前后端Roadmap_写死版_v1.0.md`，正文当前不在仓库；涉及周次／范围先回源，不用旧五阶段／G0–G8 顶替。
+## 人员、运行与接受
 
-后端工程准则 v0.2 是本地待审草案；本轮未实现初始化保护、一致读入口或迁移重跑结构核验。P0-A 初始化保护已由另一独立 worktree 推进（本次只读定位为 `fix/knot-init-create-only@618c7b2`），不属于本卡，也不据此宣称已合入 main。Week 2 抽取／时间轴、后续续接、前端、桌面与整体接受须按任务分别核定，不因现有表结构视作完成。
+GPT-6 中控、GPT-6.1 实现，独立 Checker 复核。PR51/52 的固定增量通知已由四个 Codex 窗口、Hermes、Dot 共 6/6 读回；Dot 的接收者 claim/receipt 与日志经独立核验。Hermes 通过已有会话排队提交并产生合法回执，旧桥失败及旧回执枚举差异仍保留。该闭环只覆盖原固定 DELTA，不代表本轮路线和后续代码增量已全部送达。路线新广播发出后，用户明确无开发计划的窗口无需同步；后续仅覆盖当前开发/复核 Agent，不再追旧窗口齐套回执。P0-04A 未找到可验证的 Knot 宿主，未运行真实宿主 canary；这不阻止隔离适配开发。
 
-## 旧桌面阶段追溯
+此前隔离开发HTTP实例归属已由原DSH窗口确认，父进程与实际监听/锁owner的子进程也已对应。P0-04D开工只读快照中，原端口已无监听、原父子PID均未见；不再用旧快照声称服务仍在线，也不据此推定业务库无其他写入者或自行恢复服务。旧001体验失败与001B限定复核保留。本轮只启动临时合成测试服务，不重启、迁移或接管案例环境。禁止双主写是约束，不等于全部导入/迁移入口已具强制排他机制。
 
-旧048–050记录、候选 `ed54934`／pin及其限定接受是历史来源，不是当前MVP运行状态。原根文件完整保留在 [STATE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/STATE.md)、[QUEUE@217a0c8](https://github.com/Kairos-zhi/knot/blob/217a0c8da3030e682267963a562e16c9d6c72db4/QUEUE.md)，离线可用 `git show 217a0c8:STATE.md`／`QUEUE.md`。
+本次文档修订未重跑产品测试。旧测试数、限定 Checker 结论、用户体验、发布和完整产品接受分开。当前动作见 [QUEUE](QUEUE.md)、[P0台账](mvp/docs/PLUGIN-P0-REGISTER.md)。
 
-旧桌面实现已从当前主线移出；保留工作区未同步或恢复。历史部署与未决 Gate 不外推为新版已完成或已取消；需要沿用时先明确产品对象、基线及适用性。
+旧状态完整保留于 [STATE@6977bc2](https://github.com/Kairos-zhi/knot/blob/6977bc29e18481cf930dca96bdbecd1cee0503d0/STATE.md)。旧 Week1、TD01、ENTRYPOINT-SYNC-001、048–050、冻结候选及 pin 不改；旧接受不外推，路线变化不抹去未决。
