@@ -1,6 +1,7 @@
 """Project decoded HTTP asset responses for the thin host adapter."""
 
 import re
+import unicodedata
 from uuid import UUID
 
 from mvp.exploration_policy import (
@@ -153,6 +154,51 @@ def project_asset_slice(envelope, asset_id, digest, offset, limit, token):
             or any(b == 127 or (b < 32 and b not in (9, 10, 13)) for b in raw)):
         return invalid
     if has_credential_marker(value['text'], token):
+        return {"error": "SENSITIVE_CONTENT"}
+    return value
+
+
+_SOURCE_REASONS = ("missing_source", "unsupported_source", "invalid_source",
+                   "inconsistent_source", "sensitive_source", "source_limit")
+
+
+def project_asset_source(envelope, asset_id, digest, token):
+    invalid = {"error": "UPSTREAM_ERROR"}
+    if (type(envelope) is not dict or set(envelope) != {"contract_version", "ok", "value"}
+            or type(envelope["contract_version"]) is not int or envelope["contract_version"] != 1
+            or envelope["ok"] is not True):
+        return invalid
+    value = envelope["value"]
+    fields = {"asset_id", "content_hash", "source_status", "relative_path", "reason",
+              "provenance_verified", "import_evidence_checked"}
+    if type(value) is not dict or set(value) != fields:
+        return invalid
+    if (type(value["asset_id"]) is not str or value["asset_id"] != asset_id
+            or not re.fullmatch(ASSET_ID_PATTERN, value["asset_id"])
+            or type(value["content_hash"]) is not str or value["content_hash"] != digest
+            or not re.fullmatch(r"[0-9a-f]{64}", value["content_hash"])
+            or value["provenance_verified"] is not False or value["import_evidence_checked"] is not False):
+        return invalid
+    status, path, reason = value["source_status"], value["relative_path"], value["reason"]
+    if type(status) is not str:
+        return invalid
+    if status == "unknown":
+        return value if path is None and type(reason) is str and reason in _SOURCE_REASONS else invalid
+    if status != "recorded_file_reference" or reason is not None or type(path) is not str:
+        return invalid
+    try:
+        if not path or len(path.encode("utf-8")) > 1024:
+            return invalid
+        if any(character in path for character in "\\:%@?#"):
+            return invalid
+        if any(unicodedata.category(character).startswith("C") for character in path):
+            return invalid
+        if any(not segment or segment in (".", "..") or segment != segment.strip()
+               or len(segment.encode("utf-8")) > 255 for segment in path.split("/")):
+            return invalid
+    except UnicodeError:
+        return invalid
+    if has_credential_marker(path, token):
         return {"error": "SENSITIVE_CONTENT"}
     return value
 

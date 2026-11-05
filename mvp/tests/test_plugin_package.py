@@ -31,6 +31,10 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             "has_more": False}
     responses.append((200, json.dumps({"contract_version": 1, "ok": True, "value": page}).encode(), {}, 0))
     responses.append((200, b'{"contract_version":1,"ok":true,"value":{"items":[]}}', {}, 0))
+    source = dict(asset_id=ASSET, content_hash=HASH, source_status="unknown",
+                  relative_path=None, reason="missing_source", provenance_verified=False,
+                  import_evidence_checked=False)
+    responses.append((200, json.dumps(dict(contract_version=1, ok=True, value=source)).encode(), {}, 0))
     initial = tmp_path / "initial"
     assert build(initial, origin).returncode == 0
     root = initial.rename(tmp_path / "\u79fb\u52a8 Knot")
@@ -62,7 +66,7 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             assert [tool.name for tool in listing.tools] == [
                 "knot_lookup_asset", "knot_read_asset", "knot_search_assets",
                 "knot_save_exploration", "knot_load_exploration", "knot_list_explorations",
-                "knot_save_exploration_v2", "knot_load_exploration_v2", "knot_fork_exploration", "knot_read_asset_slice",
+                "knot_save_exploration_v2", "knot_load_exploration_v2", "knot_fork_exploration", "knot_read_asset_slice", "knot_read_asset_source",
             ]
             result = await client.call_tool("knot_lookup_asset", {"content_hash": HASH})
             assert result.structured_content == {"items": [{"asset_id": ASSET, "kind": "text"}]}
@@ -72,12 +76,15 @@ def test_moved_plugin_starts_and_searches(tmp_path, upstream, capfd):
             assert not found.is_error
             checkpoints = await client.call_tool("knot_list_explorations", {})
             assert checkpoints.structured_content == {"items": []}
+            source_result = await client.call_tool("knot_read_asset_source", {"asset_id": ASSET, "expected_hash": HASH})
+            assert source_result.structured_content == source == json.loads(source_result.content[0].text)
 
     asyncio.run(asyncio.wait_for(check(), timeout=10))
     assert requests == [
         (f"/assets?content_hash={HASH}", f"Bearer {PRIVATE}"),
         ("/asset-search?q=needle&limit=10", f"Bearer {PRIVATE}"),
         ("/explorations?limit=20", f"Bearer {PRIVATE}"),
+        (f"/asset-sources?asset_id={ASSET}&expected_hash={HASH}", f"Bearer {PRIVATE}"),
     ]
     captured = capfd.readouterr()
     assert PRIVATE not in captured.out + captured.err

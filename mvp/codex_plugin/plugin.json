@@ -1,6 +1,6 @@
 {
   "name": "knot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Find and read authorized Knot assets, and save and return to exploration checkpoints.",
   "mcpServers": "./.mcp.json"
 }

@@ -81,7 +81,7 @@ def test_stdio_lookup_and_boundaries(upstream, capfd, mode):
             assert [tool.name for tool in listing.tools] == [
                 "knot_lookup_asset", "knot_read_asset", "knot_search_assets",
                 "knot_save_exploration", "knot_load_exploration", "knot_list_explorations",
-                "knot_save_exploration_v2", "knot_load_exploration_v2", "knot_fork_exploration", "knot_read_asset_slice",
+                "knot_save_exploration_v2", "knot_load_exploration_v2", "knot_fork_exploration", "knot_read_asset_slice", "knot_read_asset_source",
             ]
             tool = listing.tools[0]
             assert tool.name == "knot_lookup_asset"
