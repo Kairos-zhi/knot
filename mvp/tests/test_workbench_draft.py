@@ -124,7 +124,7 @@ vm.runInContext('draft=draftFromCheckpoint(checkpoint);renderDraft()',ctx);
 assert.equal(vm.runInContext('draft.expected_revision',ctx),'9223372036854775806');
 ctx.checkpoint.references[0].status='forbidden';assert.throws(()=>vm.runInContext('draftFromCheckpoint(checkpoint)',ctx));
 ctx.checkpoint.references[0].status='available';delete ctx.checkpoint.references[0].reason;assert.throws(()=>vm.runInContext('draftFromCheckpoint(checkpoint)',ctx));
-vm.runInContext('showWriteState({phase:"prepared",operation_id:"op",digest:"digest"})',ctx);
+vm.runInContext('draftOperation="op";showWriteState({phase:"prepared",operation_id:"op",digest:"digest"})',ctx);
 assert.equal(els['stop-note'].disabled,true);assert.equal(els['confirm-save'].disabled,false);assert.equal(els['recover-save'].disabled,true);
 vm.runInContext('showWriteState({phase:"unknown",operation_id:"op",digest:"digest",error:"ACCESS_DENIED"})',ctx);
 assert.equal(els['cancel-save'].disabled,true);assert.equal(els['recover-save'].disabled,false);assert.equal(calls.length,0);

@@ -137,7 +137,7 @@ assert(elements.checkpoint.children.some(e=>e.textContent===context.sample.stop_
 context.sample.references=[{asset_id:'unavailable',expected_content_hash:'a',disposition:'selected',status:'forbidden'}];
 context.sample.relations=[{from_asset_id:'a',to_asset_id:'b',reason_code:'dependency_unavailable'}];
 vm.runInContext('showCheckpoint(sample)',context);
-const material=elements.checkpoint.children.find(e=>e.className==='material');assert(material.children.find(e=>e.textContent==='选择此材料').disabled);
+const material=elements.checkpoint.children.find(e=>e.className==='material');assert(material.children.find(e=>e.textContent==='阅读这份材料').disabled);
 assert(elements.checkpoint.children.some(e=>e.className==='relation'));
 vm.runInContext('read({asset_id:"a",expected_hash:"b",offset:"0",limit:"8"})',context).then(()=>{assert.equal(count,1);assert.equal(elements.body.textContent,'one page');assert.equal(elements.next.disabled,false);vm.runInContext('choose("different","hash")',context);assert.equal(elements.next.disabled,true);assert.equal(elements.body.textContent,'');console.log('PASS: zero initial reads, literal source text, one page request, reset anchors');}).catch(e=>{console.error(e);process.exitCode=1;});
 '''
