@@ -91,6 +91,14 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
+    def discard_small_body(self):
+        lengths=self.headers.get_all('Content-Length',[])
+        if (not self.headers.get_all('Transfer-Encoding') and len(lengths)==1
+                and re.fullmatch('[1-9][0-9]{0,5}',lengths[0]) and int(lengths[0])<=131072):
+            self.connection.settimeout(2)
+            try:self.rfile.read(int(lengths[0]))
+            except OSError:pass
+
     def reply(self, status, value, html=False):
         raw = value if html else json.dumps(value, ensure_ascii=True).encode('utf-8')
         self.send_response(status)
@@ -156,7 +164,10 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(503, {'error': 'UPSTREAM_ERROR'})
 
     def do_POST(self):
-        if self.server.writer is None:
+        context_actions={'/api/context-prepare':'prepare','/api/context-export':'export'}
+        context_request=self.path in context_actions
+        target=self.server.context if context_request else self.server.writer
+        if target is None:
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
         if (self.headers.get('Host') != host or self.headers.get('Origin') != 'http://' + host
@@ -167,20 +178,15 @@ class Handler(BaseHTTPRequestHandler):
             # Drain only a small, well-framed rejected request before closing;
             # otherwise Windows may reset the connection before the fixed
             # rejection response reaches the browser.
-            lengths = self.headers.get_all('Content-Length',[])
-            if (not self.headers.get_all('Transfer-Encoding') and len(lengths)==1
-                    and re.fullmatch('[1-9][0-9]{0,5}',lengths[0]) and int(lengths[0])<=131072):
-                self.connection.settimeout(2)
-                try:
-                    self.rfile.read(int(lengths[0]))
-                except OSError:
-                    pass
+            self.discard_small_body()
             self.close_connection = True
             return self.reply(403, {'error':'ORIGIN_DENIED'})
         from mvp.devtools.workbench_write import WriteError
+        from mvp.context_sync_policy import PacketError
         try:
             actions = {'/api/prepare':'prepare','/api/confirm':'confirm',
                        '/api/recover':'recover','/api/cancel':'cancel'}
+            if context_request: actions=context_actions
             if self.path not in actions: raise Invalid()
             lengths = self.headers.get_all('Content-Length',[])
             if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
@@ -190,28 +196,38 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            result = getattr(self.server.writer,actions[self.path])(body)
+            result = getattr(target,actions[self.path])(body)
             self.reply(200,result)
-        except WriteError as exc:
-            self.reply(409, {'error':exc.code})
+        except (WriteError,PacketError) as exc:
+            self.reply(409, {'error':exc.code if isinstance(exc,WriteError) else str(exc)})
         except (Invalid,ValueError,TypeError,KeyError,UnicodeError,RecursionError):
             self.reply(400, {'error':'INVALID_ARGUMENTS'})
         except Exception:
             self.reply(503, {'error':'WRITE_STATE_UNAVAILABLE'})
 
     def reject(self):
+        self.discard_small_body()
         self.close_connection = True
         self.reply(405, {'error': 'READ_ONLY'})
 
     do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0, state_root=None):
+def create_server(backend_port, token, port=0, state_root=None,packet_root=None):
     if not token or len(token) < 16 or any(c.isspace() for c in token):
         raise Invalid('TOKEN_REQUIRED')
     server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
     server.backend_port, server.token = backend_port, token
     server.writer = None
+    server.context = None
+    if packet_root is not None:
+        try:
+            from mvp.devtools.context_workbench import ContextWorkbench
+            server.context=ContextWorkbench(packet_root,token,lambda ident,revision:
+                project(backend_port,'checkpoint',dict(exploration_id=ident,revision=revision),token))
+        except Exception:
+            server.server_close()
+            raise
     if state_root is not None:
         try:
             from mvp.devtools.workbench_write import WriteJournal
@@ -227,12 +243,14 @@ def main():
     parser.add_argument('--origin', required=True)
     parser.add_argument('--port', type=int, default=0)
     parser.add_argument('--state-root', type=Path, help='explicit private save journal directory; absent means read-only')
+    parser.add_argument('--packet-root',type=Path,help='existing local private export directory outside repository')
     args = parser.parse_args()
     try:
-        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root)
+        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root,args.packet_root)
     except (ValueError, OSError):
         raise SystemExit('WORKBENCH_CONFIG_INVALID') from None
-    print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else 'read_only'}), flush=True)
+    print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else ('local_export' if server.context else 'read_only'),
+                      'context_export':server.context is not None}), flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
