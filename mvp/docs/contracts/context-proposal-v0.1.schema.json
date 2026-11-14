@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:knot:draft:context-proposal:0.1",
+  "title": "Draft local context exchange proposal; not a platform API",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proposal", "local_confirmation"],
+  "properties": {
+    "proposal": {"$ref": "#/$defs/proposal"},
+    "local_confirmation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["action", "proposal_sha256", "actor_verified"],
+      "properties": {
+        "action": {"const": "local_export_only"},
+        "proposal_sha256": {"$ref": "#/$defs/sha256"},
+        "actor_verified": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "uuid": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "proposal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "packet_id", "producer", "scope", "checkpoint", "reported_status", "summary", "evidence", "sharing"],
+      "properties": {
+        "version": {"const": "knot.context-proposal/0.1-draft"},
+        "packet_id": {"$ref": "#/$defs/uuid"},
+        "producer": {
+          "type": "object", "additionalProperties": false,
+          "required": ["host", "instance_id", "identity_status"],
+          "properties": {"host": {"const": "codex"}, "instance_id": {"$ref": "#/$defs/uuid"}, "identity_status": {"const": "local_unverified"}}
+        },
+        "scope": {
+          "type": "object", "additionalProperties": false,
+          "required": ["namespace_id", "project_id", "task_id", "binding_status"],
+          "properties": {"namespace_id": {"$ref": "#/$defs/uuid"}, "project_id": {"$ref": "#/$defs/uuid"}, "task_id": {"$ref": "#/$defs/uuid"}, "binding_status": {"const": "user_assigned_unverified"}}
+        },
+        "checkpoint": {
+          "type": "object", "additionalProperties": false,
+          "required": ["exploration_id", "revision", "event_id"],
+          "properties": {"exploration_id": {"$ref": "#/$defs/uuid"}, "revision": {"type": "string", "pattern": "^[1-9][0-9]{0,18}$", "description": "Semantic validation must additionally enforce <=9223372036854775807."}, "event_id": {"$ref": "#/$defs/uuid"}}
+        },
+        "reported_status": {"enum": ["in_progress", "blocked", "ready_for_review", "reported_done"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 1024, "description": "Operator-authored; byte/control/credential checks are additional semantic requirements."},
+        "evidence": {
+          "type": "array", "maxItems": 32, "uniqueItems": true,
+          "items": {"type": "object", "additionalProperties": false, "required": ["asset_id", "content_hash"], "properties": {"asset_id": {"$ref": "#/$defs/uuid"}, "content_hash": {"$ref": "#/$defs/sha256"}}}
+        },
+        "sharing": {
+          "type": "object", "additionalProperties": false,
+          "required": ["purpose", "raw_content_included", "public_reuse_allowed", "completion_verified"],
+          "properties": {"purpose": {"const": "local_export_review"}, "raw_content_included": {"const": false}, "public_reuse_allowed": {"const": false}, "completion_verified": {"const": false}}
+        }
+      }
+    }
+  }
+}
