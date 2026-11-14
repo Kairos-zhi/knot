@@ -1,4 +1,4 @@
-"""Explicit-action, GET-only local exploration workbench. No database access."""
+"""Explicit-action local exploration workbench; optional durable save bridge."""
 import argparse
 from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -130,6 +130,10 @@ class Handler(BaseHTTPRequestHandler):
             if len(self.path) > 4096 or re.search(r'%(?![0-9a-fA-F]{2})', path.query): raise Invalid()
             query = parse_qs(path.query, keep_blank_values=True, errors='strict')
             if any(len(v) != 1 for v in query.values()): raise Invalid()
+            if path.path == '/api/write-state' and not query:
+                if self.server.writer is None:
+                    return self.reply(200, {'phase': 'disabled'})
+                return self.reply(200, self.server.writer.state())
             value = project(self.server.backend_port, path.path[5:], {k:v[0] for k,v in query.items()}, self.server.token)
             # JavaScript cannot exactly represent the contract's 64-bit
             # revision integers. Preserve these identifiers as decimal text
@@ -151,18 +155,70 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             self.reply(503, {'error': 'UPSTREAM_ERROR'})
 
+    def do_POST(self):
+        if self.server.writer is None:
+            return self.reject()
+        host = f'127.0.0.1:{self.server.server_port}'
+        if (self.headers.get('Host') != host or self.headers.get('Origin') != 'http://' + host
+                or self.headers.get('X-Knot-Action') != 'explicit'
+                or self.headers.get('Sec-Fetch-Site') not in (None,'same-origin')
+                or self.headers.get_all('Transfer-Encoding')
+                or self.headers.get('Content-Type') != 'application/json'):
+            # Drain only a small, well-framed rejected request before closing;
+            # otherwise Windows may reset the connection before the fixed
+            # rejection response reaches the browser.
+            lengths = self.headers.get_all('Content-Length',[])
+            if (not self.headers.get_all('Transfer-Encoding') and len(lengths)==1
+                    and re.fullmatch('[1-9][0-9]{0,5}',lengths[0]) and int(lengths[0])<=131072):
+                self.connection.settimeout(2)
+                try:
+                    self.rfile.read(int(lengths[0]))
+                except OSError:
+                    pass
+            self.close_connection = True
+            return self.reply(403, {'error':'ORIGIN_DENIED'})
+        from mvp.devtools.workbench_write import WriteError
+        try:
+            actions = {'/api/prepare':'prepare','/api/confirm':'confirm',
+                       '/api/recover':'recover','/api/cancel':'cancel'}
+            if self.path not in actions: raise Invalid()
+            lengths = self.headers.get_all('Content-Length',[])
+            if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
+            size = int(lengths[0])
+            if size > 131072: raise Invalid()
+            self.connection.settimeout(3)
+            raw = self.rfile.read(size)
+            if len(raw) != size: raise Invalid()
+            body = strict_json(raw)
+            result = getattr(self.server.writer,actions[self.path])(body)
+            self.reply(200,result)
+        except WriteError as exc:
+            self.reply(409, {'error':exc.code})
+        except (Invalid,ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+            self.reply(400, {'error':'INVALID_ARGUMENTS'})
+        except Exception:
+            self.reply(503, {'error':'WRITE_STATE_UNAVAILABLE'})
+
     def reject(self):
         self.close_connection = True
         self.reply(405, {'error': 'READ_ONLY'})
 
-    do_POST = do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
+    do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0):
+def create_server(backend_port, token, port=0, state_root=None):
     if not token or len(token) < 16 or any(c.isspace() for c in token):
         raise Invalid('TOKEN_REQUIRED')
     server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
     server.backend_port, server.token = backend_port, token
+    server.writer = None
+    if state_root is not None:
+        try:
+            from mvp.devtools.workbench_write import WriteJournal
+            server.writer = WriteJournal(state_root, f'http://127.0.0.1:{backend_port}',token)
+        except Exception:
+            server.server_close()
+            raise
     return server
 
 
@@ -170,12 +226,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--origin', required=True)
     parser.add_argument('--port', type=int, default=0)
+    parser.add_argument('--state-root', type=Path, help='explicit private save journal directory; absent means read-only')
     args = parser.parse_args()
     try:
-        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port)
-    except (Invalid, OSError):
+        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root)
+    except (ValueError, OSError):
         raise SystemExit('WORKBENCH_CONFIG_INVALID') from None
-    print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'read_only'}), flush=True)
+    print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else 'read_only'}), flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
