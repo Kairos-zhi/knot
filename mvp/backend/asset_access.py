@@ -2,6 +2,7 @@
 
 import json
 import os
+from mvp.decision_policy import ARCHIVE_MIME
 
 
 def token_config():
@@ -21,6 +22,12 @@ def identity_mode():
 
 
 def readable(conn, asset_id, actor):
+    # A recap embeds derived text and quotations. Raw-content routes (including
+    # bundles) must never bypass its dependencies through the parent's grant.
+    # The dedicated decision reader validates parent and sources on one snapshot.
+    derived = conn.execute('SELECT media_type FROM assets WHERE asset_id=?', (asset_id,)).fetchone()
+    if derived is not None and derived[0] == ARCHIVE_MIME:
+        return False
     if identity_mode() == 'single-user':
         return True
     if actor is None:

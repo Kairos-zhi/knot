@@ -10,6 +10,20 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/decision-history",
+      "params": [
+        {"name": "asset_id", "type": "string", "required": true},
+        {"name": "expected_hash", "type": "string", "required": true}
+      ],
+      "response": "DecisionHistory",
+      "as_of": false,
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "SERVER_BUSY", "INTERNAL"],
+      "status": [200],
+      "envelope": "plain",
+      "description": "同一只读快照验证回顾和全部来源的reader/hash/原话/日期；1MiB实际编码硬限，超限503 SERVER_BUSY。"
+    },
+    {
+      "method": "GET",
       "path": "/contract",
       "params": [],
       "response": "ContractInfo",

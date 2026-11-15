@@ -80,7 +80,7 @@ def test_routes_and_error_code_scan(live):
     tree = ast.parse(Path(http.__file__).read_text())
     constants = {n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)
                  and n.value.isupper() and "_" in n.value and not n.value.startswith("KNOT_")}
-    core_errors = {"REVISION_CONFLICT", "IDEMPOTENCY_CONFLICT", "ASSET_UNAVAILABLE", "SENSITIVE_CONTENT", "INVALID_ARGUMENT", "READER_TABLE_MISSING", "UNSUPPORTED_CONTENT", "CONTENT_TOO_LARGE", "CONTENT_MISMATCH", "READ_LIMIT_REACHED", "READ_UNAVAILABLE"}
+    core_errors = {"REVISION_CONFLICT", "IDEMPOTENCY_CONFLICT", "ASSET_UNAVAILABLE", "SENSITIVE_CONTENT", "INVALID_ARGUMENT", "READER_TABLE_MISSING", "UNSUPPORTED_CONTENT", "CONTENT_TOO_LARGE", "CONTENT_MISMATCH", "READ_LIMIT_REACHED", "READ_UNAVAILABLE", "ACCESS_DENIED", "INVALID_ARGUMENTS", "RESPONSE_LIMIT"}
     assert constants - core_errors <= set(http.CODES)
     print("AC-3 routes", json.dumps([(r["method"], r["path"]) for r in http.ROUTES]))
     print("AC-4 scanned", json.dumps(sorted(constants)))
@@ -102,10 +102,12 @@ def test_routes_and_error_code_scan(live):
             path += "?q=synthetic"
         if route["response"] == "AssetSource":
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64
+        if route["response"] == "DecisionHistory":
+            path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64
         if route["response"] == "AssetTextSlice":
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64 + "&offset=0&limit=4"
         status, body = live.get(path)
-        expected = {"AssetSource": 403, "AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
+        expected = {"DecisionHistory": 403, "AssetSource": 403, "AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
                     "Job": 404, "Bundle": 404}
         assert status == expected.get(route["response"], 200)
         validate(body, route)
@@ -249,7 +251,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "28 PASS / 0 FAIL" in result.stdout
+    assert "29 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 

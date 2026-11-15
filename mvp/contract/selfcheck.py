@@ -120,6 +120,8 @@ def run(argv=None):
                     path += "?q=selfcheck"
                 elif route["response"] == "AssetSource":
                     path += "?asset_id=" + asset + "&expected_hash=" + "0" * 64
+                elif route["response"] == "DecisionHistory":
+                    path += "?asset_id=" + asset + "&expected_hash=" + "0" * 64
                 elif route["response"] == "AssetTextSlice":
                     path += "?asset_id=" + asset + "&expected_hash=" + "0" * 64 + "&offset=0&limit=4"
                 path = path.replace("{exploration_id}", "00000000-0000-0000-0000-000000000000")
@@ -134,7 +136,7 @@ def run(argv=None):
                                     break
                     else:
                         command = dict(command="bundle.create", args={}) if route["method"] == "POST" else None
-                        restricted = route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource") or route["response"].startswith("Exploration")
+                        restricted = route["response"] in ("DecisionHistory", "AssetSearchResult", "AssetTextSlice", "AssetSource") or route["response"].startswith("Exploration")
                         status, body = request(base, path, command, token=None if restricted else token)
                         validate(body, route)
                         expected = (403 if restricted else 404 if route["response"] in ("Job", "Bundle")

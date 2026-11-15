@@ -44,6 +44,8 @@ EXP_EVENT = "df8876aa-54b6-4601-b9cd-e73fa2104c28"
 EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 
 VALID = {
+    "DecisionHistory": {"archive_id": EXP_ID, "archive_hash": "a" * 64,
+                        "title": "Saved history", "method": "curated_recap", "items": [], "has_unavailable": False},
     "AssetSource": {"asset_id": EXP_ID, "content_hash": "a" * 64,
                     "source_status": "recorded_file_reference", "relative_path": "notes/汉😀.md",
                     "reason": None, "provenance_verified": False, "import_evidence_checked": False},
@@ -132,6 +134,7 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "DecisionHistory": ("method", "user_confirmed"),
     "AssetSource": ("provenance_verified", True),
     "ExplorationSaveV2": ("snapshot_version", 1),
     "ExplorationFork": ("source_revision", 0),
@@ -190,7 +193,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 35
+    assert len(SCHEMA["$defs"]) == 36
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -256,7 +259,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 22
+    assert len(ENDPOINTS["routes"]) == 23
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)

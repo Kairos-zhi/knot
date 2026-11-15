@@ -38,6 +38,8 @@ from mvp.exploration_policy import (
     normalize_save_v2, normalize_fork, redact_exploration_v2, _reject_token, validate_uuid, validate_revision,
 )
 from .support_view import compute_support
+from .decision_archive import read_decision_history
+from mvp.decision_policy import DecisionError
 from .traceback import trace_claim
 
 CONTRACT = Path(__file__).resolve().parents[1] / "contract" / "v1"
@@ -319,10 +321,11 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("NOT_FOUND", 404)
             is_slice = route["response"] == "AssetTextSlice"
             is_source = route["response"] == "AssetSource"
-            if (is_slice or is_source) and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
+            is_history = route["response"] == "DecisionHistory"
+            if (is_slice or is_source or is_history) and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
                 raise Fault("BAD_REQUEST")
             query = parse_qs(parsed.query, keep_blank_values=True,
-                             errors="strict" if route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource") else "replace")
+                             errors="strict" if route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource", "DecisionHistory") else "replace")
             if is_slice:
                 if (set(query) != {"asset_id", "expected_hash", "offset", "limit"}
                         or any(len(v) != 1 or not v[0] for v in query.values())
@@ -330,7 +333,7 @@ class Handler(BaseHTTPRequestHandler):
                         or not re.fullmatch(r'[0-9a-f]{64}', query['expected_hash'][0])
                         or any(not re.fullmatch(r'0|[1-9][0-9]*', query[k][0]) for k in ('offset', 'limit'))):
                     raise Fault("BAD_REQUEST")
-            if is_source:
+            if is_source or is_history:
                 if (set(query) != {"asset_id", "expected_hash"}
                         or any(len(v) != 1 or not v[0] for v in query.values())
                         or not re.fullmatch(r'[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}', query['asset_id'][0])
@@ -359,7 +362,7 @@ class Handler(BaseHTTPRequestHandler):
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
             actor = authenticate(self.headers.get("Authorization"))
-            if (is_slice or is_source) and (actor is None or identity_mode() != "configured"):
+            if (is_slice or is_source or is_history) and (actor is None or identity_mode() != "configured"):
                 raise Fault("FORBIDDEN_VIEW", 403)
             exploration = route["response"] in _EXPLORATION_RESPONSES
             if exploration and (actor is None or identity_mode() != "configured"):
@@ -388,6 +391,11 @@ class Handler(BaseHTTPRequestHandler):
                 body["view"] = values.get("view", "roots")
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
+            if is_history:
+                data = json.dumps(body, ensure_ascii=True).encode('utf-8')
+                if len(data) > 1048576:
+                    raise Fault('SERVER_BUSY', 503, reason='decision_response_limit')
+                return self.reply_bytes(200, data)
             if is_slice or is_source:
                 if is_source:
                     try:
@@ -515,6 +523,19 @@ class Handler(BaseHTTPRequestHandler):
             if job is None:
                 raise Fault("NOT_FOUND", 404)
             return job
+        if kind == "DecisionHistory":
+            try:
+                return read_decision_history(self.server.db, p['asset_id'], p['expected_hash'], actor, self.headers['Authorization'][7:])
+            except DecisionError as exc:
+                if exc.code == 'ACCESS_DENIED':
+                    raise Fault('FORBIDDEN_VIEW', 403) from None
+                if exc.code in ('INVALID_ARGUMENTS', 'CONTENT_MISMATCH', 'SENSITIVE_CONTENT'):
+                    raise Fault('BAD_REQUEST') from None
+                if exc.code == 'RESPONSE_LIMIT':
+                    raise Fault('SERVER_BUSY', 503, reason='decision_response_limit') from None
+                raise Fault('INTERNAL', 500) from None
+            except Exception:
+                raise Fault('INTERNAL', 500) from None
         if kind == "AssetSearchResult":
             if actor is None or identity_mode() != "configured":
                 raise Fault("FORBIDDEN_VIEW", 403)

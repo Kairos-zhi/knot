@@ -4,6 +4,57 @@
   "title": "Knot HTTP Contract v1 (draft for review)",
   "$comment": "规范接口草案。contract_version 是整数；同版本内只许新增可选字段，删除/改名/改类型一律 +1。前端不认的版本必须拒渲染，不静默降级。",
   "$defs": {
+    "DecisionHistory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archive_id", "archive_hash", "title", "method", "items", "has_unavailable"],
+      "properties": {
+        "archive_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+        "archive_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "title": {"type": "string", "maxLength": 256},
+        "method": {"const": "curated_recap"},
+        "has_unavailable": {"type": "boolean"},
+        "items": {
+          "type": "array", "maxItems": 20,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "kind", "title", "before", "after", "reason", "occurred_on", "archived_on", "document_on", "caution", "evidence"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,79}$"},
+              "kind": {"enum": ["direct_user_message", "archived_user_excerpt", "document_plan"]},
+              "title": {"type": "string", "maxLength": 256},
+              "before": {"type": ["string", "null"], "maxLength": 2048},
+              "after": {"type": ["string", "null"], "maxLength": 2048},
+              "reason": {"type": ["string", "null"], "maxLength": 2048},
+              "caution": {"type": ["string", "null"], "maxLength": 2048},
+              "occurred_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+              "archived_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+              "document_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+              "evidence": {
+                "type": "array", "minItems": 1, "maxItems": 4,
+                "items": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["asset_id", "content_hash", "title", "quote", "message_time_ms", "source_url"],
+                  "properties": {
+                    "asset_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+                    "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                    "title": {"type": "string", "maxLength": 256},
+                    "quote": {"type": "string", "maxLength": 4096},
+                    "message_time_ms": {"type": ["integer", "null"], "minimum": 0, "maximum": 253402300799999},
+                    "source_url": {"type": ["string", "null"], "pattern": "^https://chatgpt\\.com/c/[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"}
+                  }
+                }
+              }
+            },
+            "allOf": [
+              {"if": {"properties": {"kind": {"const": "direct_user_message"}}}, "then": {"properties": {"occurred_on": {"type": "string"}, "archived_on": {"type": "null"}, "document_on": {"type": "null"}}}},
+              {"if": {"properties": {"kind": {"const": "archived_user_excerpt"}}}, "then": {"properties": {"occurred_on": {"type": "null"}, "archived_on": {"type": "string"}, "document_on": {"type": "null"}}}},
+              {"if": {"properties": {"kind": {"const": "document_plan"}}}, "then": {"properties": {"occurred_on": {"type": "null"}, "archived_on": {"type": "null"}, "document_on": {"type": "string"}}}}
+            ]
+          }
+        }
+      }
+    },
     "OkEnvelope": {
       "type": "object",
       "additionalProperties": false,

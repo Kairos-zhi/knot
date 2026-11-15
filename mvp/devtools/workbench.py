@@ -15,6 +15,7 @@ from mvp.plugin_projection import (project_exploration_list, project_exploration
                                    project_asset_search, project_asset_slice, project_asset_source)
 from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
+from mvp.decision_policy import DecisionError, project_decision_history
 
 
 class Invalid(ValueError):
@@ -33,16 +34,30 @@ def origin_port(origin):
     return int(match[1])
 
 
-def upstream(port, path, params, token):
+def upstream(port, path, params, token, max_bytes=262144):
     conn = HTTPConnection('127.0.0.1', port, timeout=2)
     try:
         conn.request('GET', path + ('?' + urlencode(params) if params else ''),
                      headers={'Authorization': 'Bearer ' + token, 'Accept-Encoding': 'identity'})
         response = conn.getresponse()
-        raw = response.read(262145)
-        if len(raw) > 262144 or response.getheader('Content-Encoding', 'identity') != 'identity':
+        raw = response.read(max_bytes + 1)
+        if len(raw) > max_bytes:
+            if max_bytes == 1048576:
+                raise DecisionError('RESPONSE_LIMIT')
+            raise Invalid('UPSTREAM_ERROR')
+        if response.getheader('Content-Encoding', 'identity') != 'identity':
             raise Invalid('UPSTREAM_ERROR')
         if response.status != 200:
+            if max_bytes == 1048576 and response.status == 503:
+                response_limit = False
+                try:
+                    failure = strict_json(raw)
+                    response_limit = (failure.get('error', {}).get('code') == 'SERVER_BUSY'
+                                      and failure['error'].get('detail', {}).get('reason') == 'decision_response_limit')
+                except (ValueError, TypeError, AttributeError, KeyError):
+                    pass
+                if response_limit:
+                    raise DecisionError('RESPONSE_LIMIT')
             # Upstream error text never enters browser output.
             raise UpstreamFailure({403: 'ACCESS_DENIED', 404: 'NOT_FOUND',
                                    400: 'INVALID_ARGUMENTS', 409: 'VERSION_CONFLICT',
@@ -53,6 +68,11 @@ def upstream(port, path, params, token):
 
 
 def project(port, action, args, token):
+    if action == 'decisions' and set(args) == {'asset_id', 'expected_hash'}:
+        validate_uuid(args['asset_id'])
+        if not re.fullmatch('[0-9a-f]{64}', args['expected_hash']): raise Invalid()
+        envelope = upstream(port, '/decision-history', args, token, max_bytes=1048576)
+        return project_decision_history(envelope, args['asset_id'], args['expected_hash'], token)
     if action == 'explorations' and not args:
         env = upstream(port, '/explorations', {'limit': 20}, token)
         return project_exploration_list(env, 20)
@@ -131,6 +151,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header('Content-Length', str(len(raw)))
                 self.end_headers(); self.wfile.write(raw); return
             page = re.sub(r'<script id="workbench-code">.*?</script>', '<script src="/workbench.js" defer></script>', page, flags=re.S)
+            if self.server.history_asset is not None:
+                page = page.replace('<body>', '<body data-history="enabled">', 1)
             return self.reply(200, page.encode(), html=True)
         if not path.path.startswith('/api/'):
             return self.reply(404, {'error': 'NOT_FOUND'})
@@ -142,7 +164,12 @@ class Handler(BaseHTTPRequestHandler):
                 if self.server.writer is None:
                     return self.reply(200, {'phase': 'disabled'})
                 return self.reply(200, self.server.writer.state())
-            value = project(self.server.backend_port, path.path[5:], {k:v[0] for k,v in query.items()}, self.server.token)
+            if path.path == '/api/decisions':
+                if query or self.server.history_asset is None: raise Invalid()
+                value = project(self.server.backend_port, 'decisions',
+                                dict(asset_id=self.server.history_asset, expected_hash=self.server.history_hash), self.server.token)
+            else:
+                value = project(self.server.backend_port, path.path[5:], {k:v[0] for k,v in query.items()}, self.server.token)
             # JavaScript cannot exactly represent the contract's 64-bit
             # revision integers. Preserve these identifiers as decimal text
             # only in this browser-specific projection.
@@ -153,11 +180,18 @@ class Handler(BaseHTTPRequestHandler):
                 if value.get('origin'):
                     value['origin'] = value['origin'] | {'source_revision': str(value['origin']['source_revision'])}
             raw = json.dumps(value, ensure_ascii=True)
+            if path.path == '/api/decisions' and len(raw.encode('utf-8')) > 1048576:
+                raise DecisionError('RESPONSE_LIMIT')
             if self.server.token in raw or json.dumps(self.server.token)[1:-1] in raw:
                 value = {'error': 'SENSITIVE_CONTENT'}
             self.reply(200, value)
         except UpstreamFailure as exc:
             self.reply(200, {'error': exc.code})
+        except DecisionError as exc:
+            if exc.code == 'RESPONSE_LIMIT':
+                self.reply(503, {'error': 'SERVER_BUSY', 'reason': 'decision_response_limit'})
+            else:
+                self.reply(503, {'error': 'UPSTREAM_ERROR'})
         except (Invalid, ExplorationError, ValueError, TypeError, KeyError):
             self.reply(400, {'error': 'INVALID_ARGUMENTS'})
         except Exception:
@@ -213,11 +247,16 @@ class Handler(BaseHTTPRequestHandler):
     do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0, state_root=None,packet_root=None):
+def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None):
+    if (history_asset is None) != (history_hash is None): raise ValueError('HISTORY_BINDING_REQUIRED')
+    if history_asset is not None:
+        validate_uuid(history_asset)
+        if type(history_hash) is not str or not re.fullmatch('[0-9a-f]{64}', history_hash): raise ValueError('HISTORY_BINDING_INVALID')
     if not token or len(token) < 16 or any(c.isspace() for c in token):
         raise Invalid('TOKEN_REQUIRED')
     server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
     server.backend_port, server.token = backend_port, token
+    server.history_asset, server.history_hash = history_asset, history_hash
     server.writer = None
     server.context = None
     if packet_root is not None:
@@ -244,9 +283,12 @@ def main():
     parser.add_argument('--port', type=int, default=0)
     parser.add_argument('--state-root', type=Path, help='explicit private save journal directory; absent means read-only')
     parser.add_argument('--packet-root',type=Path,help='existing local private export directory outside repository')
+    parser.add_argument('--history-asset', help='explicit saved decision archive to show on entry')
+    parser.add_argument('--history-hash', help='expected hash of that decision archive')
     args = parser.parse_args()
     try:
-        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root,args.packet_root)
+        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root,args.packet_root,
+                               history_asset=args.history_asset, history_hash=args.history_hash)
     except (ValueError, OSError):
         raise SystemExit('WORKBENCH_CONFIG_INVALID') from None
     print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else ('local_export' if server.context else 'read_only'),
