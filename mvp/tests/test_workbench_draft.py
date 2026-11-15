@@ -113,10 +113,10 @@ def test_draft_programmatic_semantics(tmp_path):
     code=r'''
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const html=fs.readFileSync(process.argv[1],'utf8');
-class E{constructor(tag='DIV'){this.tagName=tag;this.children=[];this.value='';this.textContent='';this.dataset={};this.disabled=false;}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}}
+class E{constructor(tag='DIV'){this.tagName=tag;this.children=[];this.value='';this.textContent='';this.dataset={};this.disabled=false;}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}setAttribute(key,value){this[key]=value;}}
 const els={};for(const m of html.matchAll(/id="([^"]+)"/g))els[m[1]]=new E();
 let calls=[];let answer={phase:'prepared',operation_id:'op',digest:'digest'};
-const ctx=vm.createContext({document:{getElementById:id=>els[id],createElement:t=>new E(t.toUpperCase())},URLSearchParams,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>answer};}});
+const ctx=vm.createContext({document:{body:{dataset:{write:"enabled",context:"enabled"}},getElementById:id=>els[id],createElement:t=>new E(t.toUpperCase())},URLSearchParams,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>answer};}});
 vm.runInContext(html.split('<script id="workbench-code">')[1].split('</script>')[0],ctx);assert.equal(calls.length,0);
 const ref={asset_id:'a',expected_content_hash:'b',disposition:'selected',reason:'why',status:'available'};
 ctx.checkpoint={exploration_id:'x',revision:'9223372036854775806',stop_note:'pending',stop_note_reason:null,references:[ref],relations:[]};

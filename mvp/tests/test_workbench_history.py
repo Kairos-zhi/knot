@@ -48,8 +48,8 @@ assert.equal(execute('autoHistory'),false);
 def test_bound_mode_loads_once_and_distinguishes_archive_dates_and_background():
     node = shutil.which('node')
     if not node: pytest.skip('Node required')
-    harness = HARNESS.replace('document:{getElementById:',
-                             'document:{body:{dataset:{history:"enabled"}},getElementById:')
+    harness = HARNESS.replace('dataset:{write:"enabled",context:"enabled"}',
+                             'dataset:{write:"enabled",context:"enabled",history:"enabled"}')
     harness = harness.replace("let respond=()=>{throw Error('Unexpected request');};",
                               'let respond=()=>('+json.dumps(VIEW)+');')
     harness = harness.replace('assert.equal(calls.length,0);', 'assert.equal(calls.length,1);')

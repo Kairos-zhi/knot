@@ -151,8 +151,12 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header('Content-Length', str(len(raw)))
                 self.end_headers(); self.wfile.write(raw); return
             page = re.sub(r'<script id="workbench-code">.*?</script>', '<script src="/workbench.js" defer></script>', page, flags=re.S)
+            # Declare configured bridges only; never inspect state or probe upstream.
+            capabilities = (' data-write="' + ('enabled' if self.server.writer is not None else 'disabled')
+                            + '" data-context="' + ('enabled' if self.server.context is not None else 'disabled') + '"')
             if self.server.history_asset is not None:
-                page = page.replace('<body>', '<body data-history="enabled">', 1)
+                capabilities += ' data-history="enabled"'
+            page = page.replace('<body>', '<body' + capabilities + '>', 1)
             return self.reply(200, page.encode(), html=True)
         if not path.path.startswith('/api/'):
             return self.reply(404, {'error': 'NOT_FOUND'})

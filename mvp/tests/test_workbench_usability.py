@@ -68,7 +68,7 @@ const els={};
 for(const m of html.split('<script')[0].matchAll(/<([\w-]+)\b[^>]*\bid="([^"]+)"[^>]*>/g))els[m[2]]=new E(m[1]);
 const calls=[];
 let respond=()=>{throw Error('Unexpected request');};
-const ctx=vm.createContext({document:{getElementById:id=>els[id],createElement:tag=>new E(tag),querySelectorAll:()=>Object.values(els).filter(e=>['BUTTON','INPUT','TEXTAREA','SELECT'].includes(e.tagName))},URLSearchParams,crypto:{randomUUID:()=> '33333333-3333-4333-8333-333333333333'},fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>respond(url,options)};}});
+const ctx=vm.createContext({document:{body:{dataset:{write:"enabled",context:"enabled"}},getElementById:id=>els[id],createElement:tag=>new E(tag),querySelectorAll:()=>Object.values(els).filter(e=>['BUTTON','INPUT','TEXTAREA','SELECT'].includes(e.tagName))},URLSearchParams,crypto:{randomUUID:()=> '33333333-3333-4333-8333-333333333333'},fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>respond(url,options)};}});
 const execute=code=>vm.runInContext(code,ctx);
 execute(html.split('<script id="workbench-code">')[1].split('</script>')[0]);
 assert.equal(calls.length,0);

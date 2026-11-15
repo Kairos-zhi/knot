@@ -134,9 +134,9 @@ def test_context_form_logic_without_clicks():
     script=r'''
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const html=fs.readFileSync(process.argv[1],'utf8');
-class E{constructor(tag='DIV'){this.tagName=tag;this.children=[];this.value='';this.checked=false;this.disabled=false;this.style={};this.dataset={};this.textContent='';}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}}
+class E{constructor(tag='DIV'){this.tagName=tag;this.children=[];this.value='';this.checked=false;this.disabled=false;this.style={};this.dataset={};this.textContent='';}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}setAttribute(key,value){this[key]=value;}}
 const els={};for(const m of html.matchAll(/id="([^"]+)"/g))els[m[1]]=new E();
-let calls=[],resolve;const ctx=vm.createContext({document:{getElementById:id=>els[id],createElement:t=>new E(t.toUpperCase())},URLSearchParams,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:()=>new Promise(r=>resolve=r)};}});
+let calls=[],resolve;const ctx=vm.createContext({document:{body:{dataset:{write:"enabled",context:"enabled"}},getElementById:id=>els[id],createElement:t=>new E(t.toUpperCase())},URLSearchParams,fetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:()=>new Promise(r=>resolve=r)};}});
 vm.runInContext(html.split('<script id="workbench-code">')[1].split('</script>')[0],ctx);assert.equal(calls.length,0);
 ctx.source={exploration_id:'source',revision:'9223372036854775806',event_id:'event',references:[{asset_id:'a',expected_content_hash:'hash',disposition:'selected',status:'available'}]};
 vm.runInContext('selectContextSource(source)',ctx);assert.equal(els['context-evidence'].children[0].children[0].checked,false);assert.equal(vm.runInContext('contextBody().allow_assets.length',ctx),0);assert.equal(vm.runInContext('contextBody().revision',ctx),'9223372036854775806');

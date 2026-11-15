@@ -127,9 +127,9 @@ def test_page_logic_without_browser_or_clicks(tmp_path):
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const html=fs.readFileSync(process.argv[1],'utf8');
 const code=html.split('<script id="workbench-code">')[1].split('</script>')[0];
-class E{constructor(){this.children=[];this.dataset={};this.value='';this.textContent='';this.disabled=false;}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}}
+class E{constructor(){this.children=[];this.dataset={};this.value='';this.textContent='';this.disabled=false;}append(e){this.children.push(e);}replaceChildren(){this.children=[];}addEventListener(){}setAttribute(key,value){this[key]=value;}}
 const elements={};for(const match of html.matchAll(/id="([^"]+)"/g))elements[match[1]]=new E();
-let count=0;const context=vm.createContext({document:{getElementById:id=>elements[id],createElement:()=>new E()},URLSearchParams,fetch:async()=>{count++;return {ok:true,json:async()=>({text:'one page',offset:0,next_offset:8,total_bytes:16,has_more:true})};}});
+let count=0;const context=vm.createContext({document:{body:{dataset:{write:"enabled",context:"enabled"}},getElementById:id=>elements[id],createElement:()=>new E()},URLSearchParams,fetch:async()=>{count++;return {ok:true,json:async()=>({text:'one page',offset:0,next_offset:8,total_bytes:16,has_more:true})};}});
 vm.runInContext(code,context);assert.equal(count,0);
 context.sample={exploration_id:'x',revision:1,origin:null,stop_note:'<img src=x onerror=alert(1)>',references:[],relations:[]};
 vm.runInContext('showCheckpoint(sample)',context);
