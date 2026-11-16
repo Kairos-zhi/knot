@@ -62,14 +62,32 @@ def _token(token):
         raise ProjectError('INVALID_ARGUMENTS')
 
 
+def validate_capture_source(value, token, *, allow_archived=False):
+    """Accept only complete Codex user-message sources, preserving every field."""
+    error = None
+    try:
+        decision.validate_source(value, token)
+        if value['kind'] != 'user_message' or value['locator']['channel'] != 'codex':
+            raise ProjectError('INVALID_ARGUMENTS')
+        if not allow_archived and value['archived_on'] is not None:
+            raise ProjectError('INVALID_ARGUMENTS')
+        for field in ('thread_id', 'message_id'):
+            decision.text(value['locator'][field], 2048, nonempty=True)
+    except decision.DecisionError as exc:
+        error = _convert(exc)
+    if error:
+        raise ProjectError(error)
+    return value
+
+
 def validate_import(body, token):
     """Copy the caller's closed request without normalizing its text or ordering."""
     error, result = None, None
     try:
         _token(token)
         result = decision.decode_json(decision.canonical(body))
-        decision.closed(result, {'project_id', 'title', 'expected_revision', 'request_id',
-                                 'documents', 'archive_ref'})
+        fields = {'project_id', 'title', 'expected_revision', 'request_id', 'documents', 'archive_ref'}
+        decision.closed(result, fields | ({'sources'} if type(result) is dict and 'sources' in result else set()))
         decision.uuid(result['project_id'])
         decision.uuid(result['request_id'])
         decision.text(result['title'], 256, nonempty=True)
@@ -83,11 +101,23 @@ def validate_import(body, token):
             decision.text(document['title'], 256, nonempty=True)
             decision.text(document['text'], MAX_DOCUMENT_BYTES)
             size += len(document['text'].encode('utf-8'))
+        sources = result.get('sources', [])
+        if type(sources) is not list or len(documents) + len(sources) > MAX_DOCUMENTS:
+            raise ProjectError('INVALID_ARGUMENTS')
+        identities = {}
+        for source in sources:
+            validate_capture_source(source, token)
+            size += len(source['text'].encode('utf-8'))
+            key = (source['locator']['thread_id'], source['locator']['message_id'])
+            raw = decision.canonical(source)
+            if key in identities and identities[key] != raw:
+                raise ProjectError('CONTENT_MISMATCH')
+            identities[key] = raw
         if size > MAX_IMPORT_TEXT_BYTES:
             raise ProjectError('INVALID_ARGUMENTS')
         if result['archive_ref'] is not None:
             _ref(result['archive_ref'])
-        if result['expected_revision'] == '0' and not documents and result['archive_ref'] is None:
+        if result['expected_revision'] == '0' and not documents and not sources and result['archive_ref'] is None:
             raise ProjectError('INVALID_ARGUMENTS')
         decision.sensitive(result, token)
     except decision.DecisionError as exc:
@@ -207,6 +237,8 @@ def project_response(kind, value, token, **bindings):
                 {'project_id', 'title', 'revision', 'manifest_hash', 'saved_at', 'snapshots',
                  'materials', 'decisions', 'has_unavailable'} if kind == 'scene' else
                 {'project_id', 'revision', 'asset_id', 'content_hash', 'title', 'text'})
+            if kind == 'scene' and type(result) is dict and 'observations' in result:
+                fields |= {'observations'}
             decision.closed(result, fields)
             decision.uuid(result['project_id'])
             revision(result['revision'])
@@ -258,6 +290,34 @@ def project_response(kind, value, token, **bindings):
                         if material['asset_id'] in sources:
                             raise ProjectError('INVALID_ARGUMENTS')
                         sources[material['asset_id']] = material
+                    if 'observations' in result:
+                        observations = result['observations']
+                        if type(observations) is not list or not 1 <= len(observations) <= MAX_MATERIALS:
+                            raise ProjectError('INVALID_ARGUMENTS')
+                        seen_assets, seen_messages = set(), set()
+                        for observation in observations:
+                            decision.closed(observation, {'asset_id', 'content_hash', 'title', 'text',
+                                'message_time_ms', 'thread_id', 'message_id'})
+                            material = {k: observation[k] for k in ('asset_id', 'content_hash', 'title')}
+                            _material(material)
+                            if sources.get(observation['asset_id']) != material:
+                                raise ProjectError('CONTENT_MISMATCH')
+                            # Apply the same text, timestamp and locator policy independently
+                            # at the broker boundary, without trusting a supplied source kind.
+                            text = observation['text']
+                            decision.text(text, MAX_DOCUMENT_BYTES)
+                            validate_capture_source(dict(version=decision.SOURCE_VERSION,
+                                kind='user_message', title=observation['title'], text=text,
+                                text_sha256=sha256(text.encode('utf-8')).hexdigest(),
+                                message_time_ms=observation['message_time_ms'], document_on=None,
+                                archived_on=None, locator=dict(channel='codex',
+                                    thread_id=observation['thread_id'], message_id=observation['message_id'],
+                                    section=None)), token)
+                            key = (observation['thread_id'], observation['message_id'])
+                            if observation['asset_id'] in seen_assets or key in seen_messages:
+                                raise ProjectError('CONTENT_MISMATCH')
+                            seen_assets.add(observation['asset_id'])
+                            seen_messages.add(key)
                     view = result['decisions']
                     if view is not None:
                         if type(view) is not dict:

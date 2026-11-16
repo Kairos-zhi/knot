@@ -10,12 +10,16 @@
 .nav-group{display:flex;flex-direction:column;gap:4px}.nav-group+.nav-group{margin-top:24px}.nav-group-title{font-size:12px;margin:0 12px 8px;color:var(--muted)}.work-section{padding:24px 0;border-top:1px solid var(--line);margin-top:24px}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}.section-heading h2{margin:0}.section-kicker{font-size:12px;color:var(--accent);display:block;margin-bottom:4px}.section-actions{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.history-entry .evidence-button{margin-top:12px}.history-entry details{margin-top:8px}.history-entry:last-child{border-bottom:0}#history-background{padding:24px;background:var(--panel);border-radius:12px}#history-background>summary{color:var(--ink);font-size:16px}#history-background h2{margin-top:16px}#write-copy{border-top:0;margin-top:0;padding-top:8px}#write-save{background:var(--panel);padding:24px;border-radius:12px}.history-overview{padding:24px 0 0}.history-overview h2{margin:0}.history-entry h3{margin-top:8px}@media(max-width:700px){.entry-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.nav-group+.nav-group{margin-top:0}.nav-group-title{margin:0 6px 4px}.nav-group .entry{width:100%}.work-section{padding:20px 0}.section-heading{align-items:start;flex-wrap:wrap}#write-save,#history-background{padding:16px}.section-actions button{flex:1}}
 .recall-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:32px;align-items:start}.recall-rail{position:sticky;top:20px;max-height:80vh;overflow:auto;padding-right:16px;border-right:1px solid var(--line)}.recall-rail h2{font-size:14px}.recall-rail button{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;background:transparent;border-color:transparent;border-left:3px solid var(--line)}.recall-rail button small{display:block;font-size:12px}.recall-rail button[aria-current=true]{background:var(--soft);border-left-color:var(--knot-accent)}.history-entry.is-current{border-left:3px solid var(--knot-accent);padding-left:20px;background:var(--panel);border-radius:8px;padding-right:16px}.history-entry{scroll-margin-top:24px;overflow-wrap:anywhere}.history-entry h3:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.recall-rail button{overflow-wrap:anywhere}#nav-write:disabled #nav-write-help{display:block}.recall-content{min-width:0}#history-position{font-size:13px;color:var(--accent);margin:0 0 16px}@media(max-width:900px){.recall-layout{grid-template-columns:1fr;gap:16px}.recall-rail{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);padding:0 0 16px}.recall-rail nav{display:flex;overflow-x:auto;gap:8px}.recall-rail button{min-width:190px;max-width:230px;flex-shrink:0;margin:0}}
 .project-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;margin:24px 0}.project-card,.decision-card{display:block;width:100%;text-align:left;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-wrap:anywhere}.project-card .card-title,.decision-card .card-title{display:block;font-size:18px;font-weight:500;line-height:1.6}.project-card small,.decision-card .card-reason{display:block;margin-top:12px;font-size:14px;color:var(--muted);line-height:1.8}.decision-card[aria-expanded=true]{border-color:var(--accent);box-shadow:inset 3px 0 var(--knot-accent)}.project-scene-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}.project-decisions{display:grid;gap:16px;margin:20px 0}.project-detail{position:sticky;top:24px;background:var(--panel);padding:24px;border:1px solid var(--line);border-radius:12px;min-width:0;overflow-wrap:anywhere}.project-detail h2{outline-offset:4px}.project-detail blockquote{margin:16px 0;border-left:2px solid var(--accent);padding-left:12px;white-space:pre-wrap}.project-detail pre{line-height:1.9}.project-detail .detail-label{font-size:12px;color:var(--muted);margin-top:24px}.project-import{margin:24px 0;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-width:760px}.project-import ul{padding-left:20px}.project-import li{overflow-wrap:anywhere;margin:8px 0}.project-import label{margin:16px 0}.project-timeline{margin:24px 0}.project-timeline label{flex:1;min-width:160px}.project-timeline input{padding:0;accent-color:var(--accent)}#project-status{font-size:14px;min-height:1.65em}#project-status[data-error=true]{color:var(--accent)}#project-materials-section{border-top:1px solid var(--line);padding-top:20px;margin-top:32px}#project-material-query{margin:16px 0}#project-material-list{margin-top:16px}#project-import-status{white-space:pre-wrap}#project-navigation{margin-top:24px}#project-navigation button{width:100%}@media(max-width:900px){.project-scene-grid{grid-template-columns:minmax(0,1fr)}.project-detail{position:static}.project-detail:not(.has-content){display:none}}@media(max-width:700px){.project-import,.project-card,.decision-card,.project-detail{padding:18px}.project-cards{gap:16px}.project-timeline{align-items:start}}
+.capture-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:8px 0}.capture-line button{border:0;background:transparent;padding:4px 8px;min-height:32px;font-size:13px}.capture-details{margin:0 0 16px;font-size:13px}.capture-details p{font-size:13px}.capture-details ul{padding-left:20px}.choice-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.choice-sections.single-section{grid-template-columns:minmax(0,1fr)}.card-origin{display:block;font-size:12px;color:var(--muted);margin-top:12px}.observation-card .card-title{font-size:17px}.project-detail pre{white-space:pre-wrap;overflow-wrap:anywhere}#project-latest{font-size:13px}@media(max-width:1150px){.choice-sections{grid-template-columns:minmax(0,1fr)}}@media(max-width:900px){.project-detail{display:none}.project-detail.has-content{display:block;position:fixed;inset:16px 16px 16px auto;width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;z-index:10;box-shadow:0 12px 48px #0003}.project-detail .bar{align-items:start}}
+.observation-match{flex-basis:100%;margin:0;color:var(--ink);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
 </style></head><body>
 <div class="app-shell"><aside class="app-sidebar"><div class="wordmark">Knot<span class="brand-dot" aria-hidden="true"></span></div><p class="sidebar-caption">个人思考空间</p><nav id="legacy-navigation" class="entry-actions" aria-label="工作导航"><div class="nav-group"><p class="nav-group-title">回顾与查找</p><button id="nav-history" class="entry" aria-pressed="false" hidden>决定回顾<small>重要决定与原话</small></button><button id="nav-search" class="entry" aria-pressed="false">找一份材料<small>查找并阅读</small></button></div><div class="nav-group"><p class="nav-group-title">思考与整理</p><button id="nav-continue" class="entry" aria-pressed="true">继续上次思考<small>回到保存的现场</small></button><button id="nav-write" class="entry" aria-pressed="false">留下这次想法<span id="nav-write-state" class="nav-state" hidden></span><small id="nav-write-help">写下并检查保存</small></button></div></nav><nav id="project-navigation" aria-label="项目导航" hidden><button id="nav-projects" class="entry" aria-pressed="true">我的项目</button></nav><p id="sidebar-mode" class="sidebar-note">阅读、加入草稿和保存是三个不同动作。<br>写入前，会请你确认。</p></aside><div class="workspace"><header class="workspace-toolbar"><div><h1 id="focus-title" tabindex="-1">继续上次思考</h1><p id="focus-subtitle">打开一次保存，回到当时的材料和想法。</p></div><span id="focus-status" class="focus-status">尚未打开内容</span></header>
 <div id="notice" role="status" aria-live="polite">第一次来？先点下面的“查看保存的思考”。目前还没有读取材料。</div>
 <main>
 <section id="projects-pane" class="panel" hidden>
-<div class="bar"><button id="projects-back" hidden>所有项目</button><div class="grow"></div><button id="projects-refresh">刷新项目</button><button id="project-import-new" class="primary">导入项目</button></div>
+<div class="bar"><button id="projects-back" hidden>所有项目</button><div class="grow"></div><button id="projects-refresh">刷新项目</button><button id="project-import-new">补充材料</button></div>
+<div id="capture-line" class="capture-line" hidden><span id="capture-status" role="status" aria-live="polite"></span><button id="capture-control" disabled>暂停</button></div>
+<details id="capture-details" class="capture-details" hidden><summary>跟随详情</summary><p id="capture-counts"></p><p id="capture-times"></p><ul id="capture-discovered"></ul><ul id="capture-issues"></ul></details>
 <p id="project-status" role="status" aria-live="polite"></p>
 <section id="project-import-panel" class="project-import" aria-labelledby="project-import-title" hidden>
 <h2 id="project-import-title" tabindex="-1">导入项目</h2>
@@ -26,12 +30,12 @@
 <p id="project-import-status" role="status" aria-live="polite"></p>
 <div class="bar"><button id="project-import-preview" class="primary">检查导入清单</button><button id="project-import-confirm" class="primary" hidden disabled>确认导入</button><button id="project-import-edit" hidden>返回修改</button><button id="project-import-open" hidden>打开导入的项目</button><button id="project-import-dismiss">收起</button></div>
 </section>
-<div id="projects-overview"><div id="projects-list" class="project-cards"></div><p id="projects-empty" hidden>还没有项目。导入自己的材料，从一个真实项目开始。</p></div>
+<div id="projects-overview"><div id="projects-list" class="project-cards"></div><p id="projects-empty" hidden>还没有已留存项目。</p></div>
 <section id="project-scene" hidden>
-<div class="bar project-timeline"><label>留存现场<input id="project-timeline" type="range" min="0" max="0" value="0" disabled></label><small id="project-snapshot-label"></small></div>
-<div class="project-scene-grid"><div><h2>重要决定</h2><div id="project-decisions" class="project-decisions"></div><p id="project-decisions-empty" hidden></p>
+<div class="bar project-timeline"><label>留存现场<input id="project-timeline" type="range" min="0" max="0" value="0" disabled></label><small id="project-snapshot-label"></small><button id="project-latest" hidden>有新留存 · 回到最新</button></div>
+<div class="project-scene-grid"><div><div id="project-choice-sections" class="choice-sections single-section"><section id="project-observations-section" hidden><h2>自动整理<span class="section-kicker">原话</span></h2><div id="project-observations" class="project-decisions"></div><p id="project-observations-empty" hidden>最近原话中暂无精选。</p></section><section><h2 id="project-decisions-heading">重要决定</h2><div id="project-decisions" class="project-decisions"></div><p id="project-decisions-empty" hidden></p></section></div>
 <details id="project-background" hidden><summary>路线背景</summary><div id="project-background-cards" class="project-decisions"></div></details>
-<details id="project-materials-section"><summary id="project-materials-summary">项目材料</summary><label>按材料名称查找<input id="project-material-query" type="search" placeholder="只筛选当前项目已列出的材料"></label><div id="project-material-list"></div><button id="project-import-append">追加材料</button></details></div>
+<details id="project-materials-section"><summary id="project-materials-summary">项目材料与原话</summary><label>查找原话或材料<input id="project-material-query" type="search" placeholder="搜索当前项目已留存原话正文与材料名"></label><div id="project-material-list"></div><button id="project-import-append">补充材料</button></details></div>
 <aside id="project-detail" class="project-detail" aria-label="决定与材料详情"><p id="project-detail-empty">选择一张决定，查看原话与来源。</p><div id="project-detail-view" hidden><div class="bar"><h2 id="project-detail-title" class="grow" tabindex="-1"></h2><button id="project-detail-close">关闭详情</button></div><div id="project-detail-content"></div></div></aside></div>
 </section></section>
 <section id="history-pane" class="panel" hidden><div class="bar"><div class="grow"><h2 id="history-title">我的重要决定</h2><p id="history-state" role="status" aria-live="polite">尚未读取回顾。</p></div><button id="history-refresh">刷新回顾</button></div><div class="section-actions" role="group" aria-label="回顾操作"><button id="history-expand" disabled>展开决定原话</button><button id="history-collapse" disabled>收起决定原话</button><button id="history-background-toggle" aria-controls="history-background" aria-expanded="false" disabled>查看路线背景</button></div><div class="recall-layout"><aside class="recall-rail" aria-label="决定回溯条"><h2>回溯条</h2><nav id="history-rail" aria-label="定位决定区块"></nav></aside><div class="recall-content"><p id="history-position" role="status">选择一条记录，定位对应决定。</p><div class="work-section history-overview" role="region" aria-labelledby="history-personal-title"><div class="section-heading"><h2 id="history-personal-title">个人重要决定</h2><small id="history-count">尚未读取</small></div><div id="history-list"></div></div><details id="history-background" hidden><summary>更早的路线背景（文档方案）</summary><h2 id="history-background-title" tabindex="-1">历史路线背景</h2><div id="history-plans"></div></details></div></div><p class="history-caption">回溯整理 · 新对话持续采集尚未接入</p></section>
@@ -60,6 +64,13 @@ const unavailableAnchors=new Set();
 let activePane='continue';
 let lastSearch=null;
 const canProjects=document.body?.dataset?.projects==='enabled';
+const canCapture=canProjects&&document.body?.dataset?.capture==='enabled';
+let captureState=null;
+let captureBusy=false;
+let captureFailure=false;
+let captureListFailure=false;
+let captureTimer=null;
+let captureLoad=null;
 let projectItems=[];
 let projectScene=null;
 let projectRoute='overview';
@@ -115,15 +126,143 @@ async function projectRequest(action,params={},body=null){
 function projectSavedAt(value){const date=new Date(value);return Number.isFinite(date.getTime())?'保存于 '+date.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'}):'保存时间不可显示';}
 function projectRevision(value){return typeof value==='string'&&/^[1-9][0-9]*$/.test(value);}
 function compareProjectRevisions(a,b){return a.length-b.length||(a<b?-1:a>b?1:0);}
+const captureIssueLabels={REGISTRY_UNAVAILABLE:'项目登记暂不可读',REGISTRY_LIMIT:'项目登记超出本轮范围',ROLLOUT_UNAVAILABLE:'部分最近对话暂不可读',ROLLOUT_LIMIT:'部分最近对话超出本轮范围',ROLLOUT_INVALID:'部分对话格式无法读取',UNSUPPORTED_MESSAGES:'部分消息来源暂不支持',INCOMPLETE_MESSAGE:'等待完整消息',MESSAGE_CONFLICT:'原消息内容或时间存在冲突',PROJECT_LIMIT:'部分项目超出本轮范围',IMPORT_UNAVAILABLE:'部分原话暂未留存',ACCESS_DENIED:'部分来源暂无读取权限',AMBIGUOUS_PROJECT:'部分对话的项目归属待明确'};
+const captureUUID=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+const captureCount=value=>Number.isSafeInteger(value)&&value>=0;
+const captureTime=value=>captureCount(value)&&Number.isFinite(new Date(value).getTime());
+function validCaptureState(value){
+  return value&&['starting','watching','paused','unavailable'].includes(value.phase)&&
+    [value.scanned_at,value.last_saved_at].every(time=>time===null||captureTime(time))&&
+    captureCount(value.added_sources)&&captureCount(value.retained_sources)&&typeof value.limited==='boolean'&&
+    Array.isArray(value.discovered)&&value.discovered.length<=116&&value.discovered.every(item=>item&&captureUUID(item.source_id)&&captureUUID(item.project_id)&&typeof item.title==='string'&&typeof item.retained==='boolean'&&captureCount(item.eligible_threads))&&
+    Array.isArray(value.issues)&&value.issues.every(item=>item&&typeof item.code==='string'&&captureCount(item.count));
+}
+function captureDate(value){return value===null?'尚无记录':new Date(value).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'});}
+function renderCaptureState(){
+  $('capture-line').hidden=!canCapture;$('capture-details').hidden=!canCapture;if(!canCapture)return;
+  const state=captureState,button=$('capture-control');button.disabled=captureBusy;
+  button.textContent=captureBusy?'正在核对…':captureFailure||!state||state.phase==='unavailable'?'核对状态':state.phase==='paused'?'恢复':'暂停';
+  const pending=state?.discovered.filter(item=>!item.retained)||[];
+  const labels={starting:'正在准备跟随最近对话',watching:'正在跟随最近对话',paused:'自动跟随已暂停',unavailable:'自动跟随暂不可用'};
+  $('capture-status').textContent=captureFailure?'自动跟随状态待核对':(state?labels[state.phase]:'正在读取自动跟随状态')+(state?.limited?' · 本轮范围受限':'')+(pending.length?' · '+pending.length+' 个项目待留存':'');
+  $('capture-counts').textContent=state?'最近一轮新增 '+state.added_sources+' 条原话 · 已留存 '+state.retained_sources+' 条原话'+(captureListFailure?' · 项目概览暂未更新':''):'';
+  $('capture-times').textContent=state?'最近扫描：'+captureDate(state.scanned_at)+' · 最近留存：'+captureDate(state.last_saved_at):'';
+  $('capture-discovered').replaceChildren();for(const item of pending)text($('capture-discovered'),'li',item.title+' · 已发现，尚未留存');
+  $('capture-issues').replaceChildren();for(const issue of state?.issues||[])text($('capture-issues'),'li',(Object.hasOwn(captureIssueLabels,issue.code)?captureIssueLabels[issue.code]:'部分来源暂未完成处理')+' · '+issue.count);
+}
+function syncProjectLatest(){
+  const latest=projectScene&&projectItems.find(item=>item.project_id===projectScene.project_id);
+  const head=projectSnapshots[projectSnapshots.length-1];
+  $('project-latest').hidden=!canCapture||!projectScene||![latest,head].some(item=>item&&projectRevision(item.revision)&&compareProjectRevisions(item.revision,projectScene.revision)>0);
+}
+function renderProjectList(){
+  $('projects-list').replaceChildren();
+  for(const item of projectItems){const card=text($('projects-list'),'button','','project-card');text(card,'span',item.title,'card-title');text(card,'small','已留存 '+item.material_count+' 条材料/原话'+(item.decision_count>0?' · '+item.decision_count+' 项决定':''));text(card,'small',projectSavedAt(item.saved_at));card.addEventListener('click',()=>projectAction(()=>openProject(item.project_id)));}
+  $('projects-empty').hidden=!!projectItems.length;
+}
+async function refreshCapturedProjects(){
+  const generation=projectListGeneration;
+  try{const value=await projectRequest('projects');if(generation!==projectListGeneration)return;
+    if(!Array.isArray(value?.items))throw Error();
+    const changed=JSON.stringify(projectItems)!==JSON.stringify(value.items);projectItems=value.items;captureListFailure=false;
+    if(projectRoute==='overview'&&changed){renderProjectList();$('focus-status').textContent=projectItems.length+' 个项目';}
+    syncProjectLatest();
+  }catch(_){captureListFailure=true;}
+}
+async function captureRequest(body=null){
+  if(!canCapture)throw Error('自动跟随未启用');
+  if(body!==null&&(body.explicit!==true||typeof body.paused!=='boolean'||Object.keys(body).sort().join(',')!=='explicit,paused'))throw Error('自动跟随操作无效');
+  const state=await projectRequest(body===null?'capture-state':'capture-control',{},body===null?null:JSON.stringify(body));
+  if(!validCaptureState(state))throw Error('自动跟随状态待核对');return state;
+}
+async function pollCapture(refreshOverview=true){
+  if(!canCapture||captureBusy)return false;captureBusy=true;renderCaptureState();
+  try{captureState=await captureRequest();captureFailure=false;if(refreshOverview)await refreshCapturedProjects();return true;}
+  catch(_){captureFailure=true;return false;}
+  finally{captureBusy=false;renderCaptureState();}
+}
+async function controlCapture(){
+  if(!canCapture||captureBusy)return false;
+  if(captureFailure||!captureState||captureState.phase==='unavailable')return pollCapture();
+  const paused=captureState.phase!=='paused';captureBusy=true;renderCaptureState();
+  try{captureState=await captureRequest({explicit:true,paused});captureFailure=false;return true;}
+  catch(_){captureFailure=true;return false;}
+  finally{captureBusy=false;renderCaptureState();}
+}
+function scheduleCapturePoll(){
+  if(!canCapture)return;
+  captureTimer=globalThis.setTimeout?.(async()=>{captureTimer=null;await pollCapture();scheduleCapturePoll();},30000);
+}
+function projectObservations(){
+  return (Array.isArray(projectScene?.observations)?projectScene.observations:[]).filter(item=>item&&captureUUID(item.asset_id)&&typeof item.content_hash==='string'&&/^[0-9a-f]{64}$/.test(item.content_hash)&&typeof item.title==='string'&&typeof item.text==='string'&&captureTime(item.message_time_ms)&&typeof item.thread_id==='string'&&!!item.thread_id&&typeof item.message_id==='string'&&!!item.message_id&&!projectUnavailableMaterials.has(item.asset_id+':'+item.content_hash));
+}
+function observationReply(raw){
+  // A structured reply is accepted only as one closed envelope with a typed array.
+  const match=raw.trim().match(/^<send_user_message_question_reply>\s*([\s\S]*?)\s*<\/send_user_message_question_reply>$/);if(!match)return null;
+  let answers;try{answers=JSON.parse(match[1]);}catch(_){return null;}
+  return Array.isArray(answers)&&answers.every(item=>item&&typeof item==='object'&&['questionItemId','question','answer'].every(key=>typeof item[key]==='string'))?answers:null;
+}
+function observationExcerpts(source){
+  const raw=source.text;
+  if(raw.includes('send_user_message_question_reply')){
+    return (observationReply(raw)||[]).filter(item=>usefulObservationQuote(item.answer)).map(item=>({quote:item.answer,question:item.question}));
+  }
+  const preference=/^(?:我(?:希望|更希望|想要|选择|决定|倾向于|更倾向|更喜欢|更看重|不想|不希望|不喜欢)|首页(?:要|应该|应当))/;
+  return (raw.match(/[^。！？!?\r\n]+(?:[。！？!?]+|$)/g)||[]).map(sentence=>sentence.trim()).filter(quote=>preference.test(quote)&&!/[？?]$/.test(quote)&&usefulObservationQuote(quote)).map(quote=>({quote,question:null}));
+}
+function usefulObservationQuote(quote){
+  return quote.trim().length>=8&&quote.length<=180&&!/[<>\n\r]/.test(quote)&&!/^\s*(?:请)?(?:继续|推进|执行|开工|跑测试|提交|收到|好的|定义PASS|PASS)/i.test(quote)&&!/^\s*我(?:希望|选择|决定)(?:你|先|继续|现在|接着|开始|执行|跑测试|提交|完成)/.test(quote);
+}
+function observationSearchSnippet(source,query){
+  if(!query)return null;
+  const answers=observationReply(source.text);
+  const values=answers?[...answers.map(item=>item.answer),...answers.map(item=>item.question)]:[source.text];
+  for(const value of values){
+    const characters=Array.from(value),folded=characters.map(character=>character.toLocaleLowerCase());
+    const index=folded.join('').indexOf(query);if(index<0)continue;
+    let position=0,offset=0;while(position<characters.length&&offset+folded[position].length<=index)offset+=folded[position++].length;
+    const context=Math.min(24,Math.max(0,80-Array.from(query).length));
+    const start=Math.min(Math.max(0,position-context),Math.max(0,characters.length-80));
+    return characters.slice(start,start+80).join('');
+  }
+  return null;
+}
+function renderProjectObservations(){
+  const sources=projectObservations(),host=$('project-observations');host.replaceChildren();
+  const present=Array.isArray(projectScene.observations);$('project-observations-section').hidden=!present;
+  $('project-choice-sections').className='choice-sections'+(present?'':' single-section');$('project-decisions-heading').textContent=present?'原回顾 · 重要决定':'重要决定';
+  const seen=new Set();let count=0;
+  for(const source of [...sources].sort((a,b)=>b.message_time_ms-a.message_time_ms))for(const excerpt of observationExcerpts(source)){
+    if(count>=3||seen.has(excerpt.quote))continue;seen.add(excerpt.quote);
+    const button=text(host,'button','','decision-card observation-card'),id='observation:'+source.asset_id+':'+source.content_hash+':'+count++;
+    button.setAttribute('aria-controls','project-detail-view');button.setAttribute('aria-expanded','false');text(button,'span',excerpt.quote,'card-title');text(button,'small','自动整理·原话','card-origin');
+    projectCards.push({id,button,observation:source,excerpt});button.addEventListener('click',()=>selectProjectObservation(id));
+  }
+  $('project-observations-empty').hidden=count>0;
+}
+function showProjectObservation(source,excerpt=null,origin=null){
+  clearProjectDetail();openProjectDetail(excerpt?.quote||source.title,origin);
+  const host=$('project-detail-content');text(host,'small',excerpt?'自动整理·原话':'已留存原话');text(host,'small','原消息时间：'+captureDate(source.message_time_ms));
+  if(excerpt?.question){text(host,'p','原问题','detail-label');text(host,'p',excerpt.question);}
+  if(excerpt)text(host,'blockquote',excerpt.quote);
+  text(host,'p','完整原文','detail-label');text(host,'pre',source.text);
+  const record=text(host,'details','');text(record,'summary','来源记录');text(record,'p',source.title);
+  for(const [label,value] of [['原话标识',source.asset_id],['内容校验',source.content_hash],['对话标识',source.thread_id],['消息标识',source.message_id]]){text(record,'p',label,'detail-label');text(record,'code',value);}
+}
+function selectProjectObservation(id){
+  requireProjects();const selected=projectCards.find(card=>card.id===id&&card.observation);if(!selected||!projectObservations().includes(selected.observation))return false;
+  showProjectObservation(selected.observation,selected.excerpt,selected.button);selected.button.setAttribute('aria-expanded','true');return true;
+}
 function syncProjectWorkspace(){
   $('legacy-navigation').hidden=true;$('project-navigation').hidden=false;$('projects-pane').hidden=false;$('notice').hidden=true;
   for(const pane of ['continue','search','write','history'])$(pane+'-pane').hidden=true;
-  $('context-panel').hidden=true;$('sidebar-mode').textContent='项目资料只在确认导入后保存。';
+  $('context-panel').hidden=true;$('sidebar-mode').hidden=true;
   $('focus-title').textContent=projectRoute==='overview'?'我的项目':projectScene?.title||'正在打开项目';
-  $('focus-subtitle').textContent=projectRoute==='overview'?'选择一个项目，回到它的思考现场。':'决定留在原处，详情在侧边阅读。';
+  $('focus-subtitle').textContent='';
   $('focus-status').textContent=projectRoute==='overview'?projectItems.length+' 个项目':projectScene?'留存版本 '+projectScene.revision:'尚未打开现场';
   $('projects-back').hidden=projectRoute==='overview';$('projects-overview').hidden=projectRoute!=='overview';$('project-scene').hidden=projectRoute!=='scene';
   $('projects-refresh').hidden=projectRoute!=='overview';$('project-import-new').hidden=projectRoute!=='overview';
+  syncProjectLatest();
 }
 function clearProjectDetail(moveFocus=false){
   projectReadGeneration++;$('project-detail-content').replaceChildren();$('project-detail-title').textContent='';$('project-detail-view').hidden=true;$('project-detail-empty').hidden=false;$('project-detail').className='project-detail';
@@ -132,7 +271,8 @@ function clearProjectDetail(moveFocus=false){
 }
 function clearProjectScene(){
   clearProjectDetail();projectScene=null;projectCards=[];projectSnapshots=[];projectUnavailableMaterials.clear();
-  for(const id of ['project-decisions','project-background-cards','project-material-list'])$(id).replaceChildren();
+  for(const id of ['project-decisions','project-background-cards','project-material-list','project-observations'])$(id).replaceChildren();
+  $('project-observations-section').hidden=true;$('project-latest').hidden=true;
   $('project-material-query').value='';$('project-materials-section').open=false;$('project-background').hidden=true;$('project-background').open=false;
   $('project-timeline').disabled=true;$('project-snapshot-label').textContent='';$('project-decisions-empty').hidden=true;$('project-import-append').disabled=true;
 }
@@ -141,21 +281,21 @@ async function loadProjects(){
   requireProjects();const generation=++projectListGeneration;projectItems=[];$('projects-list').replaceChildren();$('projects-empty').hidden=true;projectMessage('正在读取项目…');syncProjectWorkspace();
   try{const value=await projectRequest('projects');if(generation!==projectListGeneration||projectRoute!=='overview')return false;
     if(!Array.isArray(value?.items))throw projectError('READ_UNAVAILABLE');projectItems=value.items;
-    for(const item of projectItems){const card=text($('projects-list'),'button','','project-card');text(card,'span',item.title,'card-title');text(card,'small',item.material_count+' 份材料 · '+item.decision_count+' 项决定');text(card,'small',projectSavedAt(item.saved_at));card.addEventListener('click',()=>projectAction(()=>openProject(item.project_id)));}
-    $('projects-empty').hidden=!!projectItems.length;projectMessage('');syncProjectWorkspace();return true;
+    renderProjectList();projectMessage('');syncProjectWorkspace();return true;
   }catch(error){if(generation!==projectListGeneration||projectRoute!=='overview')return false;projectMessage(error.message,true);throw error;}
 }
 function projectDecisionCard(item,host){
   const card=text(host,'button','','decision-card');card.setAttribute('aria-controls','project-detail-view');card.setAttribute('aria-expanded','false');text(card,'span',item.title,'card-title');
-  const reason=item.reason?item.reason.slice(0,120)+(item.reason.length>120?'…':''):'原记录未写明原因';text(card,'span',reason,'card-reason');
+  if(item.reason)text(card,'span',item.reason.slice(0,120)+(item.reason.length>120?'…':''),'card-reason');
   projectCards.push({id:item.id,button:card,item});card.addEventListener('click',()=>selectProjectDecision(item.id));
 }
 function renderProjectScene(){
   const scene=projectScene;projectCards=[];$('project-decisions').replaceChildren();$('project-background-cards').replaceChildren();
   const items=(scene.decisions?.items||[]).filter(item=>item.evidence.every(ref=>!projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash)));const decisions=items.filter(item=>item.kind!=='document_plan'),background=items.filter(item=>item.kind==='document_plan');
   for(const item of decisions)projectDecisionCard(item,$('project-decisions'));for(const item of background)projectDecisionCard(item,$('project-background-cards'));
+  renderProjectObservations();
   $('project-background').hidden=!background.length;$('project-decisions-empty').hidden=!!decisions.length;
-  $('project-decisions-empty').textContent=scene.has_unavailable||scene.decisions?.has_unavailable||projectUnavailableMaterials.size?'部分来源当前不可读，相关决定已隐藏。':scene.decisions?'这个留存现场尚无个人决定。':'材料已导入，尚未整理决定';
+  $('project-decisions-empty').textContent=scene.has_unavailable||scene.decisions?.has_unavailable||projectUnavailableMaterials.size?'部分来源当前不可读，相关决定已隐藏。':Array.isArray(scene.observations)?'暂无原回顾决定。':scene.decisions?'这个留存现场尚无个人决定。':'材料已导入，尚未整理决定';
   projectSnapshots=[...scene.snapshots].sort((a,b)=>compareProjectRevisions(a.revision,b.revision));const index=projectSnapshots.findIndex(s=>s.revision===scene.revision);
   $('project-timeline').min='0';$('project-timeline').max=String(Math.max(0,projectSnapshots.length-1));$('project-timeline').value=String(Math.max(0,index));$('project-timeline').disabled=projectSnapshots.length<2;
   $('project-snapshot-label').textContent=projectSavedAt(scene.saved_at)+(projectSnapshots.length<2?' · 仅一个留存版本':' · 仅回看实际留存版本');
@@ -174,19 +314,20 @@ function openProjectDetail(title,origin=null){
   $('project-detail-title').textContent=title;$('project-detail-content').replaceChildren();$('project-detail-empty').hidden=true;$('project-detail-view').hidden=false;$('project-detail').className='project-detail has-content';projectDetailFocus=origin;$('project-detail-title').focus?.({preventScroll:true});
 }
 function selectProjectDecision(id){
-  requireProjects();const selected=projectCards.find(card=>card.id===id);if(!selected)return false;clearProjectDetail();openProjectDetail(selected.item.title,selected.button);selected.button.setAttribute('aria-expanded','true');
+  requireProjects();const selected=projectCards.find(card=>card.id===id&&card.item);if(!selected)return false;clearProjectDetail();openProjectDetail(selected.item.title,selected.button);selected.button.setAttribute('aria-expanded','true');
   const item=selected.item,host=$('project-detail-content');text(host,'small',historyDate(item));
   for(const [key,label] of [['before','此前'],['after',item.kind==='document_plan'?'方案':'决定'],['reason','原因'],['caution','来源说明']])if(item[key]){text(host,'p',label,'detail-label');text(host,'p',item[key]);}
-  if(!item.reason)text(host,'p','原记录未写明原因。');
   for(const evidence of item.evidence){text(host,'blockquote',evidence.quote);text(host,'small',evidence.title);const material=projectScene.materials.find(ref=>ref.asset_id===evidence.asset_id&&ref.content_hash===evidence.content_hash);if(material){const readButton=text(host,'button','阅读这份材料');readButton.addEventListener('click',()=>projectAction(()=>readProjectMaterial(material,selected.button)));}}
   return true;
 }
 function renderProjectMaterials(){
   const host=$('project-material-list');host.replaceChildren();if(!projectScene)return;
   const query=$('project-material-query').value.trim().toLocaleLowerCase();const materials=projectScene.materials.filter(ref=>!projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash)&&ref.title.toLocaleLowerCase().includes(query));
-  $('project-materials-summary').textContent='项目材料 · '+projectScene.materials.length;
+  $('project-materials-summary').textContent=Array.isArray(projectScene.observations)?'材料与原话':'项目材料 · '+projectScene.materials.length;
   for(const ref of materials){const row=text(host,'div','','material');text(row,'span',ref.title);const button=text(row,'button','阅读');button.addEventListener('click',()=>projectAction(()=>readProjectMaterial(ref,button)));}
-  if(!materials.length)text(host,'p',query?'没有匹配的可读材料。':'暂无可读材料。');
+  const observations=projectObservations().map(source=>({source,snippet:observationSearchSnippet(source,query)})).filter(item=>item.snippet!==null);
+  for(const {source,snippet} of observations){const row=text(host,'div','','material');text(row,'span',source.title);text(row,'small','已留存原话');const button=text(row,'button','阅读原话');button.addEventListener('click',()=>{if(projectObservations().includes(source))showProjectObservation(source,null,button);});text(row,'p',snippet,'observation-match');}
+  if(!materials.length&&!observations.length)text(host,'p',query?'没有匹配的可读材料或原话。':'暂无可读材料。');
 }
 async function readProjectMaterial(ref,origin=null){
   requireProjects();if(!projectScene?.materials.some(item=>item.asset_id===ref.asset_id&&item.content_hash===ref.content_hash)||projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash))throw projectError('ACCESS_DENIED');
@@ -240,7 +381,7 @@ async function confirmProjectImport(){
   }catch(error){session.phase=error.uncertain?'unknown':'rejected';$('project-import-status').textContent=error.message;syncProjectImport();return false;}
 }
 async function projectAction(handler){try{return await handler();}catch(error){projectMessage(error.message,true);return false;}}
-function startProjectMode(){syncProjectWorkspace();projectsLoad=projectAction(loadProjects);}
+function startProjectMode(){syncProjectWorkspace();projectsLoad=projectAction(loadProjects);if(canCapture){captureLoad=pollCapture(false);captureLoad.then(scheduleCapturePoll);}}
 function notice(message, error=false){$('notice').textContent=message;$('notice').dataset.error=String(error);}
 function text(parent, tag, value, cls){const node=document.createElement(tag);node.textContent=value;if(cls)node.className=cls;parent.append(node);return node;}
 function syncWorkspace(){
@@ -514,8 +655,11 @@ if(canProjects){
   $('project-import-dismiss').addEventListener('click',()=>projectAction(dismissProjectImport));
   $('project-import-open').addEventListener('click',()=>projectAction(()=>openProject(projectImport.receipt.project_id)));
   $('project-detail-close').addEventListener('click',()=>clearProjectDetail(true));
+  $('project-detail').addEventListener('keydown',event=>{if(event.key==='Escape')clearProjectDetail(true);});
+  $('project-latest').addEventListener('click',()=>{if(projectScene)projectAction(()=>openProject(projectScene.project_id));});
   $('project-material-query').addEventListener('input',renderProjectMaterials);
   $('project-timeline').addEventListener('change',()=>projectAction(()=>selectProjectSnapshot(Number($('project-timeline').value))));
 }
+if(canCapture)$('capture-control').addEventListener('click',controlCapture);
 if(canProjects){startProjectMode();}else if(autoHistory){$('nav-history').hidden=false;showPane('history',false);historyLoad=runAction(loadDecisionHistory);}else showPane('continue',false);
 </script></body></html>

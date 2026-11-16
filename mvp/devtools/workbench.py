@@ -24,6 +24,14 @@ class Invalid(ValueError):
     pass
 
 
+class WorkbenchServer(ThreadingHTTPServer):
+    def server_close(self):
+        capture = getattr(self, 'capture', None)
+        if capture is not None:
+            capture.close()
+        super().server_close()
+
+
 class UpstreamFailure(Exception):
     def __init__(self, code):
         self.code = code
@@ -160,6 +168,8 @@ class Handler(BaseHTTPRequestHandler):
                 capabilities += ' data-history="enabled"'
             if self.server.projects_enabled:
                 capabilities += ' data-projects="enabled"'
+            if self.server.capture is not None:
+                capabilities += ' data-capture="enabled"'
             page = page.replace('<body>', '<body' + capabilities + '>', 1)
             return self.reply(200, page.encode(), html=True)
         if not path.path.startswith('/api/'):
@@ -172,6 +182,10 @@ class Handler(BaseHTTPRequestHandler):
                 if self.server.writer is None:
                     return self.reply(200, {'phase': 'disabled'})
                 return self.reply(200, self.server.writer.state())
+            if path.path == '/api/capture-state' and not query:
+                if self.server.capture is None: raise Invalid()
+                from mvp.devtools.codex_capture import project_capture_state
+                return self.reply(200, project_capture_state(self.server.capture.state(), self.server.token))
             project_actions = {'/api/projects':'list', '/api/project':'scene', '/api/project-material':'material'}
             if path.path in project_actions:
                 if not self.server.projects_enabled: raise Invalid()
@@ -218,7 +232,9 @@ class Handler(BaseHTTPRequestHandler):
         context_actions={'/api/context-prepare':'prepare','/api/context-export':'export'}
         context_request=self.path in context_actions
         project_request=self.path == '/api/project-import'
+        capture_request=self.path == '/api/capture-control'
         target=self.server.context if context_request else self.server.writer
+        if capture_request: target=self.server.capture
         if (project_request and not self.server.projects_enabled) or (not project_request and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
@@ -239,6 +255,7 @@ class Handler(BaseHTTPRequestHandler):
             actions = {'/api/prepare':'prepare','/api/confirm':'confirm',
                        '/api/recover':'recover','/api/cancel':'cancel'}
             if context_request: actions=context_actions
+            if capture_request: actions={'/api/capture-control':'control'}
             if not project_request and self.path not in actions: raise Invalid()
             lengths = self.headers.get_all('Content-Length',[])
             if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,6}' if project_request else '[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
@@ -250,6 +267,9 @@ class Handler(BaseHTTPRequestHandler):
             body = strict_json(raw)
             result = (project_import(self.server.backend_port,self.server.token,body)
                       if project_request else getattr(target,actions[self.path])(body))
+            if capture_request:
+                from mvp.devtools.codex_capture import project_capture_state
+                result=project_capture_state(result,self.server.token)
             self.reply(200,result)
         except ProjectError as exc:
             self.project_error(exc)
@@ -274,18 +294,20 @@ class Handler(BaseHTTPRequestHandler):
     do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None, projects_enabled=False):
+def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None, projects_enabled=False, capture=None):
     if type(projects_enabled) is not bool: raise ValueError('PROJECTS_FLAG_INVALID')
+    if capture is not None and not projects_enabled: raise ValueError('CAPTURE_REQUIRES_PROJECTS')
     if (history_asset is None) != (history_hash is None): raise ValueError('HISTORY_BINDING_REQUIRED')
     if history_asset is not None:
         validate_uuid(history_asset)
         if type(history_hash) is not str or not re.fullmatch('[0-9a-f]{64}', history_hash): raise ValueError('HISTORY_BINDING_INVALID')
     if not token or len(token) < 16 or any(c.isspace() for c in token):
         raise Invalid('TOKEN_REQUIRED')
-    server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
+    server = WorkbenchServer(('127.0.0.1', port), Handler)
     server.backend_port, server.token = backend_port, token
     server.history_asset, server.history_hash = history_asset, history_hash
     server.projects_enabled = projects_enabled
+    server.capture = capture
     server.writer = None
     server.context = None
     if packet_root is not None:
@@ -303,6 +325,12 @@ def create_server(backend_port, token, port=0, state_root=None,packet_root=None,
         except Exception:
             server.server_close()
             raise
+    if capture is not None:
+        try:
+            capture.start()
+        except Exception:
+            server.server_close()
+            raise
     return server
 
 
@@ -315,10 +343,29 @@ def main():
     parser.add_argument('--history-asset', help='explicit saved decision archive to show on entry')
     parser.add_argument('--history-hash', help='expected hash of that decision archive')
     parser.add_argument('--projects', action='store_true', help='enable project overview and explicit material import')
+    parser.add_argument('--follow-codex', action='store_true', help='follow recent primary Codex conversations locally; requires --projects')
+    parser.add_argument('--capture-binding', action='append', default=[], metavar='THREAD:PROJECT:TITLE', help='explicitly link a projectless Codex conversation to an existing Knot project')
     args = parser.parse_args()
     try:
-        server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root,args.packet_root,
-                               history_asset=args.history_asset, history_hash=args.history_hash, projects_enabled=args.projects)
+        backend_port, token = origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN')
+        capture = None
+        if args.follow_codex:
+            if not args.projects: raise ValueError('CAPTURE_REQUIRES_PROJECTS')
+            bindings = {}
+            for raw in args.capture_binding:
+                tid, pid, title = raw.split(':', 2)
+                validate_uuid(tid); validate_uuid(pid)
+                if tid in bindings: raise ValueError('DUPLICATE_BINDING')
+                bindings[tid] = dict(project_id=pid, title=title)
+            from mvp.devtools.codex_capture import CodexCapture
+            capture = CodexCapture(Path.home()/'.codex',
+                listing=lambda:project_get(backend_port,token,'list',{}),
+                reading=lambda pid:project_get(backend_port,token,'scene',dict(project_id=pid)),
+                importing=lambda body:project_import(backend_port,token,body),bindings=bindings)
+        elif args.capture_binding:
+            raise ValueError('CAPTURE_NOT_ENABLED')
+        server = create_server(backend_port, token, args.port,args.state_root,args.packet_root,
+                               history_asset=args.history_asset, history_hash=args.history_hash, projects_enabled=args.projects,capture=capture)
     except (ValueError, OSError):
         raise SystemExit('WORKBENCH_CONFIG_INVALID') from None
     print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else ('local_export' if server.context else 'read_only'),

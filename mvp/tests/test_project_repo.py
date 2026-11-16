@@ -710,3 +710,378 @@ def test_hash_valid_but_invalid_source_is_suppressed_and_direct_read_refuses(db,
     assert_error('CONTENT_MISMATCH', lambda: repo.import_project(ACTOR, TOKEN, body(
         documents=[], archive_ref=archive_ref | {'content_hash': parent_hash})))
     assert counts(db) == before
+
+
+def captured_source(text='Literal user preference\r\n原话 🧶', message_id='message-one',
+                    thread_id='11111111-1111-4111-8111-111111111111'):
+    value = source(text=text)
+    value['title'] = 'Captured user message'
+    value['archived_on'] = None
+    value['locator'] = dict(channel='codex', thread_id=thread_id, message_id=message_id, section=None)
+    return value
+
+
+def test_capture_source_only_roundtrip_observations_and_no_automatic_decisions(db):
+    repo = backend.ProjectRepo(db)
+    captured = captured_source()
+    request = body(documents=[], sources=[captured])
+    original = deepcopy(request)
+    receipt = repo.import_project(ACTOR, TOKEN, request)
+    value = scene(db, request)
+    ref = value['materials'][0]
+    assert request == original and value['decisions'] is None and not value['has_unavailable']
+    assert ref.keys() == {'asset_id', 'content_hash', 'title'}
+    assert value['observations'] == [ref | dict(text=captured['text'],
+        message_time_ms=captured['message_time_ms'], thread_id=captured['locator']['thread_id'],
+        message_id=captured['locator']['message_id'])]
+    assert repo.list_projects(ACTOR, TOKEN)['items'][0]['decision_count'] == 0
+    assert counts(db) == (2, 2, 2, 2)
+    with closing(sqlite3.connect(db)) as conn:
+        raw = conn.execute('SELECT content_blob FROM assets WHERE asset_id=?', (ref['asset_id'],)).fetchone()[0]
+        assert raw == decision.canonical(captured)
+        assert conn.execute('SELECT count(*) FROM assets WHERE media_type=?', (decision.ARCHIVE_MIME,)).fetchone()[0] == 0
+        manifest = json.loads(conn.execute('SELECT content_blob FROM assets WHERE content_hash=?',
+                                           (receipt['manifest_hash'],)).fetchone()[0])
+        assert manifest.keys() == {'version', 'project_id', 'title', 'revision', 'owner',
+            'previous_hash', 'request_id', 'request_hash', 'materials', 'archive_ref'}
+    material = repo.read_material(ACTOR, TOKEN, request['project_id'], '1', ref['asset_id'], ref['content_hash'])
+    assert material['text'] == captured['text']
+    assert repo.import_project(ACTOR, TOKEN, request) == receipt
+    assert counts(db) == (2, 2, 2, 2)
+
+
+def test_capture_keeps_legacy_missing_sources_hash_receipt_and_old_scene_shape(db):
+    repo, original = backend.ProjectRepo(db), body()
+    validated = policy.validate_import(original, TOKEN)
+    assert validated == original and 'sources' not in validated
+    expected_hash = sha256(decision.canonical({'actor': ACTOR, 'body': original})).hexdigest()
+    receipt = repo.import_project(ACTOR, TOKEN, original)
+    with closing(sqlite3.connect(db)) as conn:
+        manifest = json.loads(conn.execute('SELECT content_blob FROM assets WHERE content_hash=?',
+                                           (receipt['manifest_hash'],)).fetchone()[0])
+    assert manifest['request_hash'] == expected_hash
+    assert 'observations' not in scene(db, original)
+    update = original | dict(expected_revision='1', request_id=str(uuid4()), documents=[],
+                              sources=[captured_source()])
+    repo.import_project(ACTOR, TOKEN, update)
+    assert len(scene(db, original)['observations']) == 1
+    assert 'observations' not in scene(db, original, revision='1')
+    assert repo.import_project(ACTOR, TOKEN, original) == receipt
+    assert_error('IDEMPOTENCY_CONFLICT', lambda: repo.import_project(ACTOR, TOKEN, original | {'sources': []}))
+
+
+def test_capture_dedup_preserves_distinct_message_and_thread_identities(db):
+    repo, first = backend.ProjectRepo(db), captured_source()
+    request = body(documents=[], sources=[first, deepcopy(first)])
+    repo.import_project(ACTOR, TOKEN, request)
+    assert len(scene(db, request)['observations']) == 1 and counts(db) == (2, 2, 2, 2)
+    same_text_new_id = captured_source(message_id='message-two')
+    same_id_other_thread = captured_source(thread_id='22222222-2222-4222-8222-222222222222')
+    update = request | dict(expected_revision='1', request_id=str(uuid4()),
+        sources=[first, same_text_new_id, same_id_other_thread])
+    repo.import_project(ACTOR, TOKEN, update)
+    value = scene(db, request)
+    assert len(value['materials']) == len(value['observations']) == 3
+    assert len({o['content_hash'] for o in value['observations']}) == 3
+    assert counts(db) == (5, 5, 5, 5)
+
+
+@pytest.mark.parametrize('field', ['text', 'message_time_ms', 'title', 'archived_on', 'section'])
+@pytest.mark.parametrize('within_batch', [False, True])
+def test_capture_identity_compares_full_canonical_source_metadata_not_just_text(db, field, within_batch):
+    repo, original = backend.ProjectRepo(db), captured_source()
+    changed = deepcopy(original)
+    if field == 'text':
+        changed['text'] += ' Changed'
+        changed['text_sha256'] = sha256(changed['text'].encode()).hexdigest()
+    elif field == 'message_time_ms':
+        changed[field] += 1
+    elif field == 'archived_on':
+        changed[field] = '2026-11-15'
+    elif field == 'section':
+        changed['locator'][field] = 'changed section'
+    else:
+        changed[field] += ' Changed'
+    request = body(documents=[], sources=[original])
+    if within_batch:
+        request['sources'] += [changed]
+    else:
+        repo.import_project(ACTOR, TOKEN, request)
+        request = request | dict(expected_revision='1', request_id=str(uuid4()),
+            sources=[captured_source(message_id='new-before-conflict'), changed])
+    before = counts(db)
+    assert_error('INVALID_ARGUMENTS' if field == 'archived_on' else 'CONTENT_MISMATCH',
+                 lambda: repo.import_project(ACTOR, TOKEN, request))
+    assert counts(db) == before
+
+
+def test_capture_existing_archive_source_participates_in_identity_conflict_and_decision_count_stays(db):
+    pkg, captured = package(), captured_source(text='Synthetic exact source quotation.')
+    pkg['sources']['one'] = captured
+    ref = import_archive(db, pkg)
+    repo, request = backend.ProjectRepo(db), body(documents=[], archive_ref=ref)
+    repo.import_project(ACTOR, TOKEN, request)
+    assert len(scene(db, request)['observations']) == 1
+    assert repo.list_projects(ACTOR, TOKEN)['items'][0]['decision_count'] == 1
+    changed = captured | {'title': 'Changed same locator'}
+    before = counts(db)
+    assert_error('CONTENT_MISMATCH', lambda: repo.import_project(ACTOR, TOKEN, request | dict(
+        expected_revision='1', request_id=str(uuid4()), sources=[changed], archive_ref=None)))
+    assert counts(db) == before
+
+
+@pytest.mark.parametrize('change', [
+    lambda s: s.update(kind='document', message_time_ms=None),
+    lambda s: s['locator'].update(channel='chatgpt'),
+    lambda s: s['locator'].update(channel='file'),
+    lambda s: s['locator'].update(thread_id=None),
+    lambda s: s['locator'].update(thread_id=' '),
+    lambda s: s['locator'].update(message_id=None),
+    lambda s: s['locator'].update(message_id=''),
+    lambda s: s['locator'].update(message_id=' \t\n'),
+    lambda s: s['locator'].update(message_id='C:/PRIVATE'),
+    lambda s: s.update(message_time_ms=None),
+    lambda s: s.update(message_time_ms=True),
+    lambda s: s.update(message_time_ms=-1),
+    lambda s: s.update(message_time_ms=10**30),
+    lambda s: s.update(archived_on='2026-11-15'),
+    lambda s: s.update(role='user'),
+    lambda s: s.update(version='unknown'),
+    lambda s: s.update(text='x' * 65537, text_sha256=sha256(b'x' * 65537).hexdigest()),
+])
+def test_capture_closed_complete_codex_user_source_validation_before_writes(db, change):
+    value = captured_source()
+    change(value)
+    assert_error('INVALID_ARGUMENTS', lambda: backend.ProjectRepo(db).import_project(
+        ACTOR, TOKEN, body(documents=[], sources=[value])))
+    assert counts(db) == (0, 0, 0, 0)
+
+
+@pytest.mark.parametrize('sources', [None, {}, 'invalid'])
+def test_capture_sources_must_be_array(db, sources):
+    assert_error('INVALID_ARGUMENTS', lambda: backend.ProjectRepo(db).import_project(
+        ACTOR, TOKEN, body(sources=sources)))
+    assert counts(db) == (0, 0, 0, 0)
+
+
+def test_capture_combined_count_and_utf8_text_budgets(db):
+    repo = backend.ProjectRepo(db)
+    request = body(documents=[dict(title=f'raw-{i}', text='doc') for i in range(10)],
+        sources=[captured_source(message_id=f'message-{i}') for i in range(10)])
+    repo.import_project(ACTOR, TOKEN, request)
+    assert len(scene(db, request)['materials']) == 20
+    before = counts(db)
+    assert_error('INVALID_ARGUMENTS', lambda: repo.import_project(ACTOR, TOKEN, body(
+        documents=request['documents'] + [dict(title='one-too-many', text='doc')], sources=request['sources'])))
+    exact = body(documents=[dict(title=f'raw-{i}', text='x' * 65536) for i in range(2)],
+        sources=[captured_source(text='🧶' * 16384, message_id=f'large-{i}') for i in range(2)])
+    repo.import_project(ACTOR, TOKEN, exact)
+    assert len(scene(db, exact)['observations']) == 2
+    before = counts(db)
+    too_large = deepcopy(exact)
+    too_large['project_id'], too_large['request_id'] = str(uuid4()), str(uuid4())
+    too_large['documents'].append(dict(title='extra', text='x'))
+    assert_error('INVALID_ARGUMENTS', lambda: repo.import_project(ACTOR, TOKEN, too_large))
+    assert counts(db) == before
+
+
+def test_capture_accumulated_full_text_ascii_scene_limit_rolls_back_new_sources_and_revision(db):
+    repo = backend.ProjectRepo(db)
+    request = body(documents=[], sources=[captured_source(text='🧶' * 16384, message_id=f'large-{i}')
+                                          for i in range(3)])
+    repo.import_project(ACTOR, TOKEN, request)
+    old_scene = scene(db, request)
+    assert len(old_scene['observations']) == 3
+    before = counts(db)
+    update = request | dict(expected_revision='1', request_id=str(uuid4()), sources=[
+        captured_source(text='🧶' * 16384, message_id=f'large-{i}') for i in range(3, 6)])
+    assert_error('RESPONSE_LIMIT', lambda: repo.import_project(ACTOR, TOKEN, update))
+    assert counts(db) == before and scene(db, request) == old_scene
+
+
+@pytest.mark.parametrize('mutation', ['revoke', 'blob', 'hash', 'mime', 'file', 'missing'])
+def test_capture_invalid_source_removes_observation_and_preserves_independent_material(db, mutation):
+    repo, request = backend.ProjectRepo(db), body(sources=[captured_source()])
+    repo.import_project(ACTOR, TOKEN, request)
+    ref = scene(db, request)['observations'][0]
+    with closing(sqlite3.connect(db)) as conn, conn:
+        if mutation == 'revoke':
+            conn.execute('DELETE FROM asset_readers WHERE asset_id=?', (ref['asset_id'],))
+        elif mutation == 'missing':
+            conn.execute('DELETE FROM assets WHERE asset_id=?', (ref['asset_id'],))
+        elif mutation == 'blob':
+            conn.execute('UPDATE assets SET content_blob=? WHERE asset_id=?', (b'PRIVATE', ref['asset_id']))
+        elif mutation == 'hash':
+            conn.execute('UPDATE assets SET content_hash=? WHERE asset_id=?', ('0' * 64, ref['asset_id']))
+        elif mutation == 'mime':
+            conn.execute('UPDATE assets SET media_type=? WHERE asset_id=?', ('text/plain', ref['asset_id']))
+        else:
+            conn.execute('UPDATE assets SET file_path=? WHERE asset_id=?', ('C:/PRIVATE', ref['asset_id']))
+    value = scene(db, request)
+    assert value['has_unavailable'] and 'observations' not in value
+    assert [m['title'] for m in value['materials']] == ['raw.md']
+    assert ref['title'] not in json.dumps(value) and 'PRIVATE' not in json.dumps(value)
+
+
+def test_capture_revocation_blocks_identity_comparison_without_regrant_and_docs_still_append(db):
+    repo, request = backend.ProjectRepo(db), body(documents=[], sources=[captured_source()])
+    repo.import_project(ACTOR, TOKEN, request)
+    ref = scene(db, request)['observations'][0]
+    with closing(sqlite3.connect(db)) as conn, conn:
+        conn.execute('DELETE FROM asset_readers WHERE asset_id=?', (ref['asset_id'],))
+    before = counts(db)
+    assert_error('ACCESS_DENIED', lambda: repo.import_project(ACTOR, TOKEN, request | dict(
+        expected_revision='1', request_id=str(uuid4()), sources=[captured_source(message_id='next')])))
+    assert counts(db) == before
+    repo.import_project(ACTOR, TOKEN, request | dict(expected_revision='1', request_id=str(uuid4()),
+        sources=[], documents=[dict(title='independent.txt', text='Independent')]))
+    assert 'observations' not in scene(db, request)
+
+
+def test_capture_owner_and_current_head_grants_precede_source_identity_or_replay(db):
+    repo, request = backend.ProjectRepo(db), body(documents=[], sources=[captured_source()])
+    receipt = repo.import_project(ACTOR, TOKEN, request)
+    ref = scene(db, request)['observations'][0]
+    grant(db, manifest_id(db, receipt['manifest_hash']))
+    grant(db, ref['asset_id'])
+    assert len(repo.read_project(OTHER, OTHER_TOKEN, request['project_id'])['observations']) == 1
+    assert_error('ACCESS_DENIED', lambda: repo.import_project(OTHER, OTHER_TOKEN, request))
+    before = counts(db)
+    with closing(sqlite3.connect(db)) as conn, conn:
+        conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?',
+                     (manifest_id(db, receipt['manifest_hash']), ACTOR))
+    before = counts(db)
+    assert_error('ACCESS_DENIED', lambda: repo.import_project(ACTOR, TOKEN, request))
+    assert_error('ACCESS_DENIED', lambda: repo.read_project(ACTOR, TOKEN, request['project_id'], '1'))
+    assert counts(db) == before
+
+
+@pytest.mark.parametrize('change,code', [
+    (lambda v: v.update(observations=[]), 'INVALID_ARGUMENTS'),
+    (lambda v: v.update(observations=None), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(extra=True), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(asset_id=str(uuid4())), 'CONTENT_MISMATCH'),
+    (lambda v: v['observations'][0].update(content_hash='0' * 64), 'CONTENT_MISMATCH'),
+    (lambda v: v['observations'][0].update(title='Different title'), 'CONTENT_MISMATCH'),
+    (lambda v: v['observations'][0].update(message_time_ms=True), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(thread_id=None), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(message_id=''), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(message_id='C:/PRIVATE'), 'INVALID_ARGUMENTS'),
+    (lambda v: v['observations'][0].update(text=TOKEN), 'SENSITIVE_CONTENT'),
+    (lambda v: v['observations'].append(deepcopy(v['observations'][0])), 'CONTENT_MISMATCH'),
+    (lambda v: v['observations'][1].update(message_id=v['observations'][0]['message_id']), 'CONTENT_MISMATCH'),
+])
+def test_capture_broker_observations_are_closed_bound_nonempty_unique_and_sensitive(db, change, code):
+    repo, request = backend.ProjectRepo(db), body(documents=[], sources=[
+        captured_source(), captured_source(message_id='message-two')])
+    repo.import_project(ACTOR, TOKEN, request)
+    value = scene(db, request)
+    change(value)
+    assert_error(code, lambda: policy.project_response('scene', value, TOKEN, project_id=request['project_id']))
+
+
+def test_capture_non_codex_user_sources_do_not_change_legacy_scene_shape(db):
+    request = body(documents=[], archive_ref=import_archive(db))
+    backend.ProjectRepo(db).import_project(ACTOR, TOKEN, request)
+    value = scene(db, request)
+    assert 'observations' not in value and len(value['decisions']['items']) == 1
+
+
+def test_capture_late_manifest_event_failure_rolls_back_all_source_grants_events_and_fts(db, monkeypatch):
+    original = backend._DecisionRepo.add_event
+    def fail(self, *args, **kwargs):
+        if kwargs.get('source') == policy.PROJECT_VERSION:
+            raise sqlite3.IntegrityError('PRIVATE captured append failure')
+        return original(self, *args, **kwargs)
+    monkeypatch.setattr(backend._DecisionRepo, 'add_event', fail)
+    assert_error('IMPORT_UNAVAILABLE', lambda: backend.ProjectRepo(db).import_project(ACTOR, TOKEN,
+        body(documents=[], sources=[captured_source(), captured_source(message_id='message-two')])))
+    assert counts(db) == (0, 0, 0, 0)
+
+
+def test_capture_broker_charges_exact_ascii_envelope_with_observations(db, monkeypatch):
+    request = body(documents=[], sources=[captured_source(text='🧶' * 100)])
+    backend.ProjectRepo(db).import_project(ACTOR, TOKEN, request)
+    value = scene(db, request)
+    envelope = dict(contract_version=1, ok=True, value=value)
+    actual = len(json.dumps(envelope, ensure_ascii=True).encode('utf-8'))
+    assert actual > len(json.dumps(envelope, ensure_ascii=False).encode('utf-8'))
+    monkeypatch.setattr(policy, 'MAX_RESPONSE_BYTES', actual)
+    assert policy.project_response('scene', value, TOKEN, project_id=request['project_id']) == value
+    monkeypatch.setattr(policy, 'MAX_RESPONSE_BYTES', actual - 1)
+    assert_error('RESPONSE_LIMIT', lambda: policy.project_response('scene', value, TOKEN,
+        project_id=request['project_id']))
+
+
+def test_capture_legacy_archive_metadata_is_preserved_and_compared_without_normalizing(db):
+    value = captured_source(text='Synthetic exact source quotation.')
+    old = value | {'archived_on': '2026-11-15'}
+    pkg = package()
+    pkg['sources']['one'] = old
+    request = body(documents=[], archive_ref=import_archive(db, pkg))
+    repo = backend.ProjectRepo(db)
+    repo.import_project(ACTOR, TOKEN, request)
+    assert len(scene(db, request)['observations']) == 1
+    before = counts(db)
+    assert_error('CONTENT_MISMATCH', lambda: repo.import_project(ACTOR, TOKEN, request | dict(
+        expected_revision='1', request_id=str(uuid4()), archive_ref=None, sources=[value])))
+    assert counts(db) == before
+
+
+@pytest.mark.parametrize('thread_id,message_id', [
+    (None, None), ('', ''), (' \t', '\n'),
+    (None, 'known-message'), ('known-thread', None),
+    (' ', 'known-message'), ('known-thread', ' \t\n'),
+])
+def test_capture_legacy_unknown_anchors_preserve_material_and_archive_readability(db, thread_id, message_id):
+    legacy = captured_source(text='Synthetic exact source quotation.',
+                             thread_id=thread_id, message_id=message_id)
+    pkg = package()
+    pkg['sources']['one'] = legacy
+    ref = import_archive(db, pkg)
+    original = archive.read_decision_history(db, ref['asset_id'], ref['content_hash'], ACTOR, TOKEN)
+    repo, request = backend.ProjectRepo(db), body(documents=[], archive_ref=ref)
+    repo.import_project(ACTOR, TOKEN, request)
+    before = counts(db)
+    value = scene(db, request)
+    assert not value['has_unavailable'] and 'observations' not in value
+    assert value['decisions'] == original and not original['has_unavailable']
+    assert len(value['materials']) == 1
+    material = value['materials'][0]
+    assert repo.read_material(ACTOR, TOKEN, request['project_id'], '1',
+        material['asset_id'], material['content_hash'])['text'] == legacy['text']
+    assert repo.list_projects(ACTOR, TOKEN)['items'][0]['decision_count'] == 1
+    assert counts(db) == before
+
+
+@pytest.mark.parametrize('thread_id,message_id', [
+    (None, None), ('', ''), (' \t', '\n'),
+    (None, 'known-message'), ('known-thread', None),
+    (' ', 'known-message'), ('known-thread', ' \t\n'),
+])
+def test_capture_legacy_unknown_anchors_do_not_conflict_when_appending_known_message(db, thread_id, message_id):
+    pkg = package()
+    pkg['sources'] = {key: captured_source(text=text, thread_id=thread_id, message_id=message_id)
+        for key, text in [('one', 'Synthetic exact source quotation.'),
+                          ('two', 'Second exact source quotation.')]}
+    pkg['archive']['items'].append(item('two', quote='Second', ident='independent'))
+    repo, request = backend.ProjectRepo(db), body(documents=[], archive_ref=import_archive(db, pkg))
+    repo.import_project(ACTOR, TOKEN, request)
+    before = counts(db)
+    known = captured_source(message_id='new-known-message')
+    update = request | dict(expected_revision='1', request_id=str(uuid4()),
+                            archive_ref=None, sources=[known])
+    repo.import_project(ACTOR, TOKEN, update)
+    value = scene(db, request)
+    assert value['revision'] == '2' and not value['has_unavailable']
+    assert len(value['materials']) == 3 and len(value['decisions']['items']) == 2
+    assert len(value['observations']) == 1
+    assert value['observations'][0]['message_id'] == known['locator']['message_id']
+    assert counts(db) == tuple(n + 2 for n in before)
+    # Unknown anchors remain unchanged, including after a complete message is appended.
+    with closing(sqlite3.connect(db)) as conn:
+        for material in value['materials'][:2]:
+            stored = json.loads(conn.execute('SELECT content_blob FROM assets WHERE asset_id=?',
+                                             (material['asset_id'],)).fetchone()[0])
+            assert stored['locator']['thread_id'] == thread_id
+            assert stored['locator']['message_id'] == message_id

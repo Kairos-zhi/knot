@@ -181,11 +181,17 @@ def _snapshot(entry):
 def _scene(conn, history, selected, actor, token, sources=None):
     sources = sources or _Sources(conn, actor, token)
     manifest = selected['value']
-    materials, unavailable = [], False
+    materials, observations, unavailable = [], [], False
     for ref in manifest['materials']:
         try:
             source = sources.get(ref)
             materials.append(ref | {'title': source['title']})
+            if _codex_user(source):
+                # Existing curated sources retain their original metadata;
+                # only new capture input forbids filling an archive date.
+                policy.validate_capture_source(source, token, allow_archived=True)
+                observations.append(ref | {k: source[k] for k in ('title', 'text', 'message_time_ms')}
+                    | {k: source['locator'][k] for k in ('thread_id', 'message_id')})
         except policy.ProjectError as exc:
             if exc.code == 'RESPONSE_LIMIT':
                 raise
@@ -206,6 +212,8 @@ def _scene(conn, history, selected, actor, token, sources=None):
     result = dict(project_id=manifest['project_id'], title=manifest['title'],
                   **_snapshot(selected), snapshots=snapshots, materials=materials,
                   decisions=decisions, has_unavailable=unavailable)
+    if observations:
+        result['observations'] = observations
     return policy.project_response('scene', result, token, project_id=manifest['project_id'],
                                    revision=manifest['revision'])
 
@@ -215,6 +223,32 @@ def _document(document):
                 text_sha256=sha256(document['text'].encode('utf-8')).hexdigest(),
                 message_time_ms=None, document_on=None, archived_on=None,
                 locator=dict(channel='file', thread_id=None, message_id=None, section=None))
+
+
+def _codex_user(source):
+    """Only known anchors identify observations; legacy unknown IDs stay readable."""
+    return (source['kind'] == 'user_message' and source['locator']['channel'] == 'codex'
+            and all(type(source['locator'][field]) is str and source['locator'][field].strip()
+                    for field in ('thread_id', 'message_id')))
+
+
+def _check_message_identities(sources, existing_refs, candidates):
+    """Compare complete canonical sources, not merely their text or locator.
+
+    When appending captured messages every retained material must be readable
+    and valid to establish that a conflicting identity has not been hidden.
+    Document-only updates keep their existing unavailable-material behavior.
+    """
+    identities = {}
+    for source in [sources.get(ref) for ref in existing_refs] + candidates:
+        if not _codex_user(source):
+            continue
+        locator = source['locator']
+        key = (locator['thread_id'], locator['message_id'])
+        raw = decision.canonical(source)
+        if key in identities and identities[key] != raw:
+            raise policy.ProjectError('CONTENT_MISMATCH')
+        identities[key] = raw
 
 
 class ProjectRepo:
@@ -257,8 +291,14 @@ class ProjectRepo:
                 if view['has_unavailable']:
                     raise policy.ProjectError('CONTENT_MISMATCH')
                 materials.extend(refs)
+            captured = body.get('sources', [])
+            if captured:
+                _check_message_identities(sources, materials, captured)
             for document in body['documents']:
                 source = decision.validate_source(_document(document), token)
+                aid, content_digest, _ = _store(repo, source, decision.SOURCE_MIME, actor)
+                materials.append(dict(asset_id=aid, content_hash=content_digest))
+            for source in captured:
                 aid, content_digest, _ = _store(repo, source, decision.SOURCE_MIME, actor)
                 materials.append(dict(asset_id=aid, content_hash=content_digest))
             unique = {}
