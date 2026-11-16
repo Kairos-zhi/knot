@@ -40,6 +40,8 @@ from mvp.exploration_policy import (
 from .support_view import compute_support
 from .decision_archive import read_decision_history
 from mvp.decision_policy import DecisionError
+from .project_repo import ProjectRepo
+from mvp.project_policy import ProjectError
 from .traceback import trace_claim
 
 CONTRACT = Path(__file__).resolve().parents[1] / "contract" / "v1"
@@ -52,6 +54,7 @@ COMMANDS = SCHEMA["$defs"]["CommandRequest"]["properties"]["command"]["enum"]
 CODES = SCHEMA["$defs"]["Error"]["properties"]["code"]["enum"]
 _EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList",
                           "ExplorationV2Receipt", "ExplorationCheckpointV2", "ExplorationForkReceipt"}
+_PROJECT_RESPONSES = {'ProjectList', 'ProjectScene', 'ProjectMaterial', 'ProjectImportReceipt'}
 
 
 class Fault(Exception):
@@ -322,10 +325,11 @@ class Handler(BaseHTTPRequestHandler):
             is_slice = route["response"] == "AssetTextSlice"
             is_source = route["response"] == "AssetSource"
             is_history = route["response"] == "DecisionHistory"
-            if (is_slice or is_source or is_history) and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
+            is_project = route['response'] in _PROJECT_RESPONSES
+            if (is_slice or is_source or is_history or is_project) and re.search(r'%(?![0-9a-fA-F]{2})', parsed.query):
                 raise Fault("BAD_REQUEST")
             query = parse_qs(parsed.query, keep_blank_values=True,
-                             errors="strict" if route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource", "DecisionHistory") else "replace")
+                             errors="strict" if is_project or route["response"] in ("AssetSearchResult", "AssetTextSlice", "AssetSource", "DecisionHistory") else "replace")
             if is_slice:
                 if (set(query) != {"asset_id", "expected_hash", "offset", "limit"}
                         or any(len(v) != 1 or not v[0] for v in query.values())
@@ -362,6 +366,8 @@ class Handler(BaseHTTPRequestHandler):
             if route["as_of"] and not 0 <= values["as_of"] <= now:
                 raise Fault("BAD_AS_OF")
             actor = authenticate(self.headers.get("Authorization"))
+            if is_project and (actor is None or identity_mode() != 'configured'):
+                raise Fault('FORBIDDEN_VIEW', 403)
             if (is_slice or is_source or is_history) and (actor is None or identity_mode() != "configured"):
                 raise Fault("FORBIDDEN_VIEW", 403)
             exploration = route["response"] in _EXPLORATION_RESPONSES
@@ -376,7 +382,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise Fault("UNAUTHORIZED" if self.command == "POST" else "FORBIDDEN_VIEW", 401 if self.command == "POST" else 403)
             if route.get("stream"):
                 return self.events(values["since"])
-            if exploration:
+            if is_project:
+                value = self.project(route['response'], values | path_args, actor)
+            elif exploration:
                 value = self.exploration(route["response"], values | path_args, actor)
             elif self.command == "POST":
                 size = int(self.headers.get("Content-Length", "0"))
@@ -391,10 +399,10 @@ class Handler(BaseHTTPRequestHandler):
                 body["view"] = values.get("view", "roots")
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
-            if is_history:
+            if is_history or is_project:
                 data = json.dumps(body, ensure_ascii=True).encode('utf-8')
                 if len(data) > 1048576:
-                    raise Fault('SERVER_BUSY', 503, reason='decision_response_limit')
+                    raise Fault('SERVER_BUSY', 503, reason='project_response_limit' if is_project else 'decision_response_limit')
                 return self.reply_bytes(200, data)
             if is_slice or is_source:
                 if is_source:
@@ -428,6 +436,49 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(500, error("INTERNAL"))
 
     do_GET = do_POST = do_PUT = do_PATCH = do_DELETE = do_HEAD = do_OPTIONS = dispatch
+
+    def project(self, kind, params, actor):
+        token = self.headers['Authorization'][7:]
+        repo = ProjectRepo(self.server.db)
+        try:
+            if kind == 'ProjectList':
+                return repo.list_projects(actor, token)
+            if kind == 'ProjectScene':
+                return repo.read_project(actor, token, params['project_id'], params.get('revision'))
+            if kind == 'ProjectMaterial':
+                return repo.read_material(actor, token, **params)
+            lengths = self.headers.get_all('Content-Length', [])
+            if (len(lengths) != 1 or self.headers.get_all('Transfer-Encoding')
+                    or self.headers.get('Content-Type') != 'application/json'
+                    or not re.fullmatch('[1-9][0-9]{0,6}', lengths[0])):
+                raise Fault('BAD_REQUEST')
+            size = int(lengths[0])
+            if size > 1048576:
+                raise Fault('BAD_REQUEST')
+            self.connection.settimeout(3)
+            raw = self.rfile.read(size)
+            if len(raw) != size:
+                raise Fault('BAD_REQUEST')
+            try:
+                body = strict_json(raw)
+            except (ValueError, UnicodeError, RecursionError):
+                raise Fault('BAD_REQUEST') from None
+            with self.server.changed:
+                if self.server.journal.get('pending') or self.server.jobs.failed or self.server.stopping:
+                    raise Fault('SERVER_BUSY', 409, reason='server_read_only')
+                return repo.import_project(actor, token, body)
+        except ProjectError as exc:
+            if exc.code == 'ACCESS_DENIED':
+                raise Fault('FORBIDDEN_VIEW', 403) from None
+            if exc.code == 'NOT_FOUND':
+                raise Fault('NOT_FOUND', 404) from None
+            if exc.code in ('REVISION_CONFLICT', 'IDEMPOTENCY_CONFLICT'):
+                raise Fault('BAD_REQUEST', 409, reason=exc.code.lower()) from None
+            if exc.code == 'RESPONSE_LIMIT':
+                raise Fault('SERVER_BUSY', 503, reason='project_response_limit') from None
+            if exc.code in ('INVALID_ARGUMENTS', 'CONTENT_MISMATCH', 'SENSITIVE_CONTENT'):
+                raise Fault('BAD_REQUEST', 400, reason=exc.code.lower()) from None
+            raise Fault('INTERNAL', 500) from None
 
     def exploration(self, kind, params, actor):
         token = self.headers["Authorization"][7:]

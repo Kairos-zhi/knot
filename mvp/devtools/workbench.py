@@ -16,6 +16,8 @@ from mvp.plugin_projection import (project_exploration_list, project_exploration
 from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
 from mvp.decision_policy import DecisionError, project_decision_history
+from mvp.project_policy import ProjectError
+from mvp.devtools.project_transport import project_get, project_import
 
 
 class Invalid(ValueError):
@@ -156,6 +158,8 @@ class Handler(BaseHTTPRequestHandler):
                             + '" data-context="' + ('enabled' if self.server.context is not None else 'disabled') + '"')
             if self.server.history_asset is not None:
                 capabilities += ' data-history="enabled"'
+            if self.server.projects_enabled:
+                capabilities += ' data-projects="enabled"'
             page = page.replace('<body>', '<body' + capabilities + '>', 1)
             return self.reply(200, page.encode(), html=True)
         if not path.path.startswith('/api/'):
@@ -168,7 +172,12 @@ class Handler(BaseHTTPRequestHandler):
                 if self.server.writer is None:
                     return self.reply(200, {'phase': 'disabled'})
                 return self.reply(200, self.server.writer.state())
-            if path.path == '/api/decisions':
+            project_actions = {'/api/projects':'list', '/api/project':'scene', '/api/project-material':'material'}
+            if path.path in project_actions:
+                if not self.server.projects_enabled: raise Invalid()
+                value = project_get(self.server.backend_port, self.server.token,
+                                    project_actions[path.path], {k:v[0] for k,v in query.items()})
+            elif path.path == '/api/decisions':
                 if query or self.server.history_asset is None: raise Invalid()
                 value = project(self.server.backend_port, 'decisions',
                                 dict(asset_id=self.server.history_asset, expected_hash=self.server.history_hash), self.server.token)
@@ -184,6 +193,8 @@ class Handler(BaseHTTPRequestHandler):
                 if value.get('origin'):
                     value['origin'] = value['origin'] | {'source_revision': str(value['origin']['source_revision'])}
             raw = json.dumps(value, ensure_ascii=True)
+            if path.path in project_actions and len(raw.encode('utf-8')) > 1048576:
+                raise ProjectError('RESPONSE_LIMIT')
             if path.path == '/api/decisions' and len(raw.encode('utf-8')) > 1048576:
                 raise DecisionError('RESPONSE_LIMIT')
             if self.server.token in raw or json.dumps(self.server.token)[1:-1] in raw:
@@ -191,6 +202,8 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(200, value)
         except UpstreamFailure as exc:
             self.reply(200, {'error': exc.code})
+        except ProjectError as exc:
+            self.project_error(exc)
         except DecisionError as exc:
             if exc.code == 'RESPONSE_LIMIT':
                 self.reply(503, {'error': 'SERVER_BUSY', 'reason': 'decision_response_limit'})
@@ -204,8 +217,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         context_actions={'/api/context-prepare':'prepare','/api/context-export':'export'}
         context_request=self.path in context_actions
+        project_request=self.path == '/api/project-import'
         target=self.server.context if context_request else self.server.writer
-        if target is None:
+        if (project_request and not self.server.projects_enabled) or (not project_request and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
         if (self.headers.get('Host') != host or self.headers.get('Origin') != 'http://' + host
@@ -225,17 +239,20 @@ class Handler(BaseHTTPRequestHandler):
             actions = {'/api/prepare':'prepare','/api/confirm':'confirm',
                        '/api/recover':'recover','/api/cancel':'cancel'}
             if context_request: actions=context_actions
-            if self.path not in actions: raise Invalid()
+            if not project_request and self.path not in actions: raise Invalid()
             lengths = self.headers.get_all('Content-Length',[])
-            if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
+            if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,6}' if project_request else '[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
             size = int(lengths[0])
-            if size > 131072: raise Invalid()
+            if size > (1048576 if project_request else 131072): raise Invalid()
             self.connection.settimeout(3)
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            result = getattr(target,actions[self.path])(body)
+            result = (project_import(self.server.backend_port,self.server.token,body)
+                      if project_request else getattr(target,actions[self.path])(body))
             self.reply(200,result)
+        except ProjectError as exc:
+            self.project_error(exc)
         except (WriteError,PacketError) as exc:
             self.reply(409, {'error':exc.code if isinstance(exc,WriteError) else str(exc)})
         except (Invalid,ValueError,TypeError,KeyError,UnicodeError,RecursionError):
@@ -248,10 +265,17 @@ class Handler(BaseHTTPRequestHandler):
         self.close_connection = True
         self.reply(405, {'error': 'READ_ONLY'})
 
+    def project_error(self, exc):
+        status = {'ACCESS_DENIED':403, 'NOT_FOUND':404, 'INVALID_ARGUMENTS':400,
+                  'CONTENT_MISMATCH':400, 'SENSITIVE_CONTENT':400,
+                  'REVISION_CONFLICT':409, 'IDEMPOTENCY_CONFLICT':409}.get(exc.code,503)
+        self.reply(status, {'error':exc.code})
+
     do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None):
+def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None, projects_enabled=False):
+    if type(projects_enabled) is not bool: raise ValueError('PROJECTS_FLAG_INVALID')
     if (history_asset is None) != (history_hash is None): raise ValueError('HISTORY_BINDING_REQUIRED')
     if history_asset is not None:
         validate_uuid(history_asset)
@@ -261,6 +285,7 @@ def create_server(backend_port, token, port=0, state_root=None,packet_root=None,
     server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
     server.backend_port, server.token = backend_port, token
     server.history_asset, server.history_hash = history_asset, history_hash
+    server.projects_enabled = projects_enabled
     server.writer = None
     server.context = None
     if packet_root is not None:
@@ -289,10 +314,11 @@ def main():
     parser.add_argument('--packet-root',type=Path,help='existing local private export directory outside repository')
     parser.add_argument('--history-asset', help='explicit saved decision archive to show on entry')
     parser.add_argument('--history-hash', help='expected hash of that decision archive')
+    parser.add_argument('--projects', action='store_true', help='enable project overview and explicit material import')
     args = parser.parse_args()
     try:
         server = create_server(origin_port(args.origin), os.environ.get('KNOT_WORKBENCH_TOKEN'), args.port,args.state_root,args.packet_root,
-                               history_asset=args.history_asset, history_hash=args.history_hash)
+                               history_asset=args.history_asset, history_hash=args.history_hash, projects_enabled=args.projects)
     except (ValueError, OSError):
         raise SystemExit('WORKBENCH_CONFIG_INVALID') from None
     print(json.dumps({'url': f'http://127.0.0.1:{server.server_port}', 'mode': 'explicit_save' if server.writer else ('local_export' if server.context else 'read_only'),

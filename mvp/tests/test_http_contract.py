@@ -93,6 +93,7 @@ def test_routes_and_error_code_scan(live):
         if route.get("stream") or route["method"] == "POST":
             continue
         path = route["path"].replace("{claim_id}", live.claim).replace("{asset_id}", live.asset).replace("{job_id}", "unknown").replace("{bundle_id}", "unknown")
+        path = path.replace("{project_id}", "00000000-0000-0000-0000-000000000000")
         path = path.replace("{exploration_id}", "00000000-0000-0000-0000-000000000000")
         if route["response"] == "Timeline":
             path += "?start=0&end=9999999999999"
@@ -104,10 +105,12 @@ def test_routes_and_error_code_scan(live):
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64
         if route["response"] == "DecisionHistory":
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64
+        if route["response"] == "ProjectMaterial":
+            path += "?project_id="+live.asset+"&revision=1&asset_id="+live.asset+"&expected_hash="+"0"*64
         if route["response"] == "AssetTextSlice":
             path += "?asset_id=" + live.asset + "&expected_hash=" + "0" * 64 + "&offset=0&limit=4"
         status, body = live.get(path)
-        expected = {"DecisionHistory": 403, "AssetSource": 403, "AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
+        expected = {"ProjectList":403, "ProjectScene":403, "ProjectMaterial":403, "DecisionHistory": 403, "AssetSource": 403, "AssetTextSlice": 403, "AssetSearchResult": 403, "ExplorationCheckpoint": 403, "ExplorationCheckpointV2": 403, "ExplorationList": 403,
                     "Job": 404, "Bundle": 404}
         assert status == expected.get(route["response"], 200)
         validate(body, route)
@@ -251,7 +254,7 @@ def test_selfcheck(live):
     before = hashlib.sha256(live.db.read_bytes()).hexdigest()
     result = subprocess.run([sys.executable, "-m", "mvp.contract.selfcheck", "--db", str(live.db)], cwd=ROOT, capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert "29 PASS / 0 FAIL" in result.stdout
+    assert "33 PASS / 0 FAIL" in result.stdout
     assert hashlib.sha256(live.db.read_bytes()).hexdigest() == before
 
 

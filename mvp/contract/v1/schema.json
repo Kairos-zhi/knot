@@ -1085,6 +1085,312 @@
         "payload": { "type": "object" }
       },
       "description": "SSE 帧形状（GET /events）。seq 单调递增且落盘，重启不归零；?since= 重放不重复。"
+    },
+    "ProjectImportRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "title",
+        "expected_revision",
+        "request_id",
+        "documents",
+        "archive_ref"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expected_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,18})$"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "title",
+              "text"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 65536
+              }
+            }
+          },
+          "maxItems": 20
+        },
+        "archive_ref": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "asset_id",
+                "content_hash"
+              ],
+              "properties": {
+                "asset_id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+                },
+                "content_hash": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ProjectImportReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "revision",
+        "manifest_hash"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$"
+        },
+        "manifest_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "ProjectList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "project_id",
+              "title",
+              "revision",
+              "manifest_hash",
+              "saved_at",
+              "material_count",
+              "decision_count"
+            ],
+            "properties": {
+              "project_id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,18}$"
+              },
+              "manifest_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "saved_at": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "material_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 128
+              },
+              "decision_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              }
+            }
+          },
+          "maxItems": 100
+        }
+      }
+    },
+    "ProjectScene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "title",
+        "revision",
+        "manifest_hash",
+        "saved_at",
+        "snapshots",
+        "materials",
+        "decisions",
+        "has_unavailable"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$"
+        },
+        "manifest_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "saved_at": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snapshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revision",
+              "manifest_hash",
+              "saved_at"
+            ],
+            "properties": {
+              "revision": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,18}$"
+              },
+              "manifest_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "saved_at": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "maxItems": 1024
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "asset_id",
+              "content_hash",
+              "title"
+            ],
+            "properties": {
+              "asset_id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          },
+          "maxItems": 128
+        },
+        "decisions": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DecisionHistory"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "has_unavailable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ProjectMaterial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "revision",
+        "asset_id",
+        "content_hash",
+        "title",
+        "text"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$"
+        },
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 65536
+        }
+      }
     }
   },
   "oneOf": [

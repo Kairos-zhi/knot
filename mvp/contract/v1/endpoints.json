@@ -10,6 +10,108 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/projects",
+      "params": [],
+      "response": "ProjectList",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SERVER_BUSY"
+      ],
+      "status": [
+        200
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/projects/{project_id}",
+      "params": [
+        {
+          "name": "project_id",
+          "type": "string",
+          "required": true,
+          "in": "path"
+        },
+        {
+          "name": "revision",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "response": "ProjectScene",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SERVER_BUSY"
+      ],
+      "status": [
+        200
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/project-material",
+      "params": [
+        {
+          "name": "project_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "revision",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "expected_hash",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "response": "ProjectMaterial",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SERVER_BUSY"
+      ],
+      "status": [
+        200
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/project-imports",
+      "params": [],
+      "response": "ProjectImportReceipt",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": [
+        "BAD_REQUEST",
+        "FORBIDDEN_VIEW",
+        "NOT_FOUND",
+        "SERVER_BUSY"
+      ],
+      "status": [
+        200
+      ],
+      "body": "ProjectImportRequest"
+    },
+    {
+      "method": "GET",
       "path": "/decision-history",
       "params": [
         {"name": "asset_id", "type": "string", "required": true},

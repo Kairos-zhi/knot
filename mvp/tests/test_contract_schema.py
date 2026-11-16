@@ -44,6 +44,11 @@ EXP_EVENT = "df8876aa-54b6-4601-b9cd-e73fa2104c28"
 EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 
 VALID = {
+    "ProjectImportRequest": {"project_id":EXP_ID,"title":"Synthetic project","expected_revision":"0","request_id":EXP_EVENT,"documents":[{"title":"note.md","text":"Synthetic source"}],"archive_ref":None},
+    "ProjectImportReceipt": {"project_id":EXP_ID,"revision":"1","manifest_hash":"a"*64},
+    "ProjectList": {"items":[{"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"material_count":1,"decision_count":0}]},
+    "ProjectScene": {"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"snapshots":[{"revision":"1","manifest_hash":"a"*64,"saved_at":0}],"materials":[{"asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md"}],"decisions":None,"has_unavailable":False},
+    "ProjectMaterial": {"project_id":EXP_ID,"revision":"1","asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md","text":"Synthetic source"},
     "DecisionHistory": {"archive_id": EXP_ID, "archive_hash": "a" * 64,
                         "title": "Saved history", "method": "curated_recap", "items": [], "has_unavailable": False},
     "AssetSource": {"asset_id": EXP_ID, "content_hash": "a" * 64,
@@ -134,6 +139,11 @@ VALID = {
 # One targeted violation per definition. Keep enum/type/boundary failures visible
 # instead of using the same missing-field failure for every definition.
 INVALID_OVERRIDES = {
+    "ProjectImportRequest": ("expected_revision",0),
+    "ProjectImportReceipt": ("revision","0"),
+    "ProjectList": ("items",{}),
+    "ProjectScene": ("has_unavailable",1),
+    "ProjectMaterial": ("content_hash","A"*64),
     "DecisionHistory": ("method", "user_confirmed"),
     "AssetSource": ("provenance_verified", True),
     "ExplorationSaveV2": ("snapshot_version", 1),
@@ -193,7 +203,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 36
+    assert len(SCHEMA["$defs"]) == 41
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -259,7 +269,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 23
+    assert len(ENDPOINTS["routes"]) == 27
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)
