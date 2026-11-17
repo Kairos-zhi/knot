@@ -1,10 +1,11 @@
-"""Read-only Knot asset search, lookup and authorized text over MCP stdio."""
+"""Read-only Knot asset search, lookup, authorized text and context review over MCP stdio."""
 
 import argparse
 import json
 import os
 import re
 import sys
+import time
 
 import anyio
 import httpx2
@@ -20,6 +21,7 @@ from mvp.plugin_projection import (
     project_asset_slice,
     project_asset_source,
     project_asset_text,
+    project_context_review,
     project_exploration_checkpoint,
     project_exploration_list,
     project_exploration_receipt,
@@ -46,6 +48,7 @@ _LIST_TOOL_NAME = "knot_list_explorations"
 _SAVE_V2_NAME = "knot_save_exploration_v2"
 _LOAD_V2_NAME = "knot_load_exploration_v2"
 _FORK_NAME = "knot_fork_exploration"
+_CONTEXT_NAME = "knot_context_review"
 _MAX_RESPONSE = 64 * 1024
 _TIMEOUT = 2
 _HASH_SCHEMA = {"type": "string", "pattern": f"^{SHA256_PATTERN}$", "maxLength": 64}
@@ -210,6 +213,15 @@ _FORK_TOOL = Tool(name=_FORK_NAME, description=(
     "required":["source_exploration_id","source_revision","source_event_id","exploration_id","request_key"],
     "properties":{"source_exploration_id":_UUID_SCHEMA,"source_revision":_REVISION_SCHEMA,
                   "source_event_id":_UUID_SCHEMA,"exploration_id":_UUID_SCHEMA,"request_key":_UUID_SCHEMA}})
+
+
+_CONTEXT_TOOL = Tool(name=_CONTEXT_NAME, description=(
+    "在开始任何与 Knot 项目相关的工作（读材料、整理决定、写回顾）之前先调用本工具。"
+    "把返回的待维护项原样呈现给用户，由用户决定是否处理。"
+    "本工具只读，不修改数据库、不导入、不写入。"
+    "原因码固定为 CAPTURE_STALE、NO_SOURCE、NO_DECISION、DORMANT，"
+    "suggested_action 取优先级最高的原因给出的动作；没有待维护项时 items 为空。"), input_schema={
+    "type": "object", "additionalProperties": False, "properties": {}})
 
 
 def loopback_origin(value):
@@ -425,6 +437,27 @@ async def search_assets(origin, arguments, token):
     return project_asset_search(envelope, limit)
 
 
+async def context_review(origin, arguments, token):
+    """Report project maintenance items from the existing read-only project list."""
+    if type(arguments) is not dict or arguments:
+        return {"error": "INVALID_ARGUMENTS"}
+    if type(token) is not str or not token.strip():
+        return {"error": "ACCESS_DENIED"}
+    status, envelope = await get_envelope(origin, "/projects", {}, token)
+    if status in (401, 403):
+        return {"error": "ACCESS_DENIED"}
+    if status != 200:
+        return {"error": "UPSTREAM_ERROR"}
+    # One clock read per response; the projection derives every stamp from it.
+    result = project_context_review(envelope, time.time_ns() // 1_000_000)
+    if "error" not in result:
+        inner = json.dumps(result)
+        patterns = (token, json.dumps(token)[1:-1], json.dumps(token, ensure_ascii=False)[1:-1])
+        if any(pattern in inner for pattern in patterns):
+            return {"error": "SENSITIVE_CONTENT"}
+    return result
+
+
 _EXPLORATION_ERRORS = {
     (400, "BAD_REQUEST", None): "INVALID_ARGUMENTS",
     (400, "BAD_REQUEST", "asset_unavailable"): "ASSET_UNAVAILABLE",
@@ -539,10 +572,18 @@ async def strict_stdio_input():
             yield line.decode("utf-8")
 
 
-async def serve(origin, token):
+def tool_list(projects=True):
+    """Stable tool order; context review is absent when projects are not enabled."""
+    tools = [_TOOL, _READ_TOOL, _SEARCH_TOOL, _SAVE_TOOL, _LOAD_TOOL, _LIST_TOOL,
+             _SAVE_V2_TOOL, _LOAD_V2_TOOL, _FORK_TOOL, _SLICE_TOOL, _SOURCE_TOOL]
+    if not projects:
+        return tools
+    return tools + [_CONTEXT_TOOL]
+
+
+async def serve(origin, token, projects=True):
     async def list_tools(ctx, params):
-        return ListToolsResult(tools=[_TOOL, _READ_TOOL, _SEARCH_TOOL, _SAVE_TOOL, _LOAD_TOOL, _LIST_TOOL,
-                                      _SAVE_V2_TOOL, _LOAD_V2_TOOL, _FORK_TOOL, _SLICE_TOOL, _SOURCE_TOOL])
+        return ListToolsResult(tools=tool_list(projects))
 
     async def call_tool(ctx, params):
         if params.name == _SOURCE_NAME:
@@ -572,7 +613,9 @@ async def serve(origin, token):
                     return output
             return CallToolResult(content=[TextContent(type="text", text=json.dumps(result))],
                                   structured_content=result, is_error=True)
-        if params.name == _READ_TOOL_NAME:
+        if params.name == _CONTEXT_NAME:
+            result = await context_review(origin, arguments, token)
+        elif params.name == _READ_TOOL_NAME:
             result = await read_asset(origin, arguments, token)
         elif params.name == _SEARCH_TOOL_NAME:
             result = await search_assets(origin, arguments, token)
