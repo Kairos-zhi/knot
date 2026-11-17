@@ -1219,7 +1219,8 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "items"
+        "items",
+        "hidden_count"
       ],
       "properties": {
         "items": {
@@ -1234,7 +1235,9 @@
               "manifest_hash",
               "saved_at",
               "material_count",
-              "decision_count"
+              "decision_count",
+              "last_activity_at",
+              "state"
             ],
             "properties": {
               "project_id": {
@@ -1267,10 +1270,33 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 20
+              },
+              "last_activity_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "所选版本内最新的真实活动时间（UTC）；取不到任何时间时为 null",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{3})?Z$"
+              },
+              "state": {
+                "type": "string",
+                "description": "active 七日内有料；dormant 有料但已静默；empty 无料无决策，不进主列表",
+                "enum": [
+                  "active",
+                  "dormant",
+                  "empty"
+                ]
               }
             }
           },
           "maxItems": 100
+        },
+        "hidden_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "被折叠的 empty 项目数与超出主列表上限的项目数之和"
         }
       }
     },

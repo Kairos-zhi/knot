@@ -29,8 +29,8 @@ def test_sdk_relation_fork_and_large_load(tmp_path,monkeypatch):
         args=dict(exploration_id=ident,expected_revision=0,request_key=uid(),snapshot_version=2,references=[a,b],stop_note='continue',relations=rels)
         async with Client(params()) as client:
             listing = await client.list_tools()
-            assert len(listing.tools) == 11
-            assert [tool.name for tool in listing.tools[-2:]] == ['knot_read_asset_slice', 'knot_read_asset_source']
+            assert len(listing.tools) == 12
+            assert [tool.name for tool in listing.tools[-3:-1]] == ['knot_read_asset_slice', 'knot_read_asset_source']
             first=(await client.call_tool('knot_save_exploration_v2',args)).structured_content
             assert first['revision']==1
             saved=(await client.call_tool('knot_save_exploration_v2',args|{'expected_revision':1,'request_key':uid(),'relations':[]})).structured_content

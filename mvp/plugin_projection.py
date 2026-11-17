@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from datetime import datetime, timezone
 from uuid import UUID
 
 from mvp.exploration_policy import (
@@ -327,6 +328,174 @@ def project_exploration_receipt_v2(envelope, exploration_id, expected_revision, 
     except ExplorationError:
         return {"error": "WRITE_OUTCOME_UNKNOWN"}
     return result
+
+
+# CONTEXT-MAINT-001: read-only maintenance review over the existing project list.
+#
+# Bounds and field names mirror mvp/contract/v1/schema.json (ProjectList) instead
+# of importing service-side policy: the packaged plugin ships only the projection
+# modules and must not depend on backend packages.
+MAX_LIST_PROJECTS = 100
+MAX_LIST_MATERIALS = 128
+MAX_LIST_DECISION_ITEMS = 20
+MAX_REVIEW_ITEMS = 20
+DORMANT_AFTER_MS = 30 * 24 * 60 * 60 * 1000
+_REVIEW_REASONS = ("CAPTURE_STALE", "NO_SOURCE", "NO_DECISION", "DORMANT")
+_REVIEW_ACTIONS = {
+    "CAPTURE_STALE": "review_capture",
+    "NO_SOURCE": "import_material",
+    "NO_DECISION": "curate_decision",
+    "DORMANT": "archive_or_merge",
+}
+_LIST_ITEM_FIELDS = {"project_id", "title", "revision", "manifest_hash",
+                     "saved_at", "material_count", "decision_count"}
+# CONTEXT-LIST-001 adds curated activity fields; older backends omit them.
+_CURATED_ITEM_FIELDS = {"last_activity_at", "state"}
+_LIST_STATES = {"active", "dormant", "empty"}
+_REVISION_TEXT = re.compile(r"[1-9][0-9]{0,18}")
+
+
+def _review_instant(value):
+    """Accept the contract's UTC instant text (or None); reject anything else."""
+    if value is None:
+        return True
+    if type(value) is not str or not value.endswith("Z"):
+        return False
+    try:
+        datetime.fromisoformat(value[:-1] + "+00:00")
+    except ValueError:
+        return False
+    return True
+
+
+def _review_text(value):
+    """Titles are display data: bounded, encodable and free of control characters."""
+    if type(value) is not str or not 1 <= len(value) <= 256:
+        return False
+    try:
+        value.encode("utf-8")
+    except UnicodeError:
+        return False
+    return not any(unicodedata.category(character).startswith("C") for character in value)
+
+
+def project_list_view(envelope):
+    """Validate one /projects contract envelope and return its items, or a fixed error."""
+    if (type(envelope) is not dict or set(envelope) != {"contract_version", "ok", "value"}
+            or type(envelope["contract_version"]) is not int or envelope["contract_version"] != 1
+            or envelope["ok"] is not True):
+        return {"error": "UPSTREAM_ERROR"}
+    value = envelope["value"]
+    if type(value) is not dict or set(value) not in ({"items"}, {"items", "hidden_count"}):
+        return {"error": "UPSTREAM_ERROR"}
+    if "hidden_count" in value and (type(value["hidden_count"]) is not int
+                                    or not 0 <= value["hidden_count"] <= MAX_LIST_PROJECTS):
+        return {"error": "UPSTREAM_ERROR"}
+    items = value["items"]
+    if type(items) is not list or len(items) > MAX_LIST_PROJECTS:
+        return {"error": "UPSTREAM_ERROR"}
+    seen = set()
+    for item in items:
+        if (type(item) is not dict
+                or set(item) not in (_LIST_ITEM_FIELDS,
+                                     _LIST_ITEM_FIELDS | _CURATED_ITEM_FIELDS)):
+            return {"error": "UPSTREAM_ERROR"}
+        if _CURATED_ITEM_FIELDS <= set(item) and (
+                not _review_instant(item["last_activity_at"])
+                or item["state"] not in _LIST_STATES):
+            return {"error": "UPSTREAM_ERROR"}
+        project_id = item["project_id"]
+        if (type(project_id) is not str or not re.fullmatch(ASSET_ID_PATTERN, project_id)
+                or project_id in seen or not _review_text(item["title"])
+                or type(item["revision"]) is not str
+                or not _REVISION_TEXT.fullmatch(item["revision"])
+                or type(item["manifest_hash"]) is not str
+                or not re.fullmatch(SHA256_PATTERN, item["manifest_hash"])
+                or type(item["saved_at"]) is not int or not 0 <= item["saved_at"] <= 2**63 - 1
+                or type(item["material_count"]) is not int
+                or not 0 <= item["material_count"] <= MAX_LIST_MATERIALS
+                or type(item["decision_count"]) is not int
+                or not 0 <= item["decision_count"] <= MAX_LIST_DECISION_ITEMS):
+            return {"error": "UPSTREAM_ERROR"}
+        seen.add(project_id)
+    return {"items": items}
+
+
+def _review_timestamp(stamp):
+    if stamp is None:
+        return None
+    return (datetime.fromtimestamp(stamp / 1000, timezone.utc)
+            .isoformat(timespec="milliseconds").replace("+00:00", "Z"))
+
+
+def _capture_watermarks(capture):
+    """Validated host watermark per project, or None when capture is not observable."""
+    if capture is None:
+        return None
+    if (type(capture) is not dict or set(capture) != {"enabled", "newest_user_message_ms"}
+            or type(capture["enabled"]) is not bool
+            or type(capture["newest_user_message_ms"]) is not dict):
+        return False
+    if capture["enabled"] is False:
+        return None
+    watermarks = capture["newest_user_message_ms"]
+    for project_id, stamp in watermarks.items():
+        if (type(project_id) is not str or not re.fullmatch(ASSET_ID_PATTERN, project_id)
+                or type(stamp) is not int or not 0 <= stamp <= 2**63 - 1):
+            return False
+    return watermarks
+
+
+def project_context_review(envelope, now_ms, capture=None):
+    """Project the read-only maintenance review; never invent a maintenance item.
+
+    A project contributes only its fixed reason codes. ``capture`` is an optional
+    content-free host watermark (``{"enabled": True, "newest_user_message_ms":
+    {project_id: ms}}``); when it is absent or disabled, CAPTURE_STALE is simply
+    not evaluated and the remaining reasons are still reported.
+    """
+    listing = project_list_view(envelope)
+    if "error" in listing:
+        return listing
+    if type(now_ms) is not int or not 0 <= now_ms <= 2**63 - 1:
+        return {"error": "UPSTREAM_ERROR"}
+    watermarks = _capture_watermarks(capture)
+    if watermarks is False:
+        return {"error": "UPSTREAM_ERROR"}
+
+    assert tuple(_REVIEW_ACTIONS) == _REVIEW_REASONS  # fixed priority order
+    items, seen = [], set()
+    for item in listing["items"]:
+        project_id = item["project_id"]
+        # Maintenance is measured by when the project was last saved. The list
+        # publishes content activity instead, so the two fields are named
+        # differently on purpose: one project can read "active" there and still
+        # need maintenance here.
+        project_saved = item["saved_at"] or None
+        reasons = []
+        host_stamp = (watermarks or {}).get(project_id)
+        if host_stamp is not None and project_saved is not None and host_stamp > project_saved:
+            reasons.append("CAPTURE_STALE")
+        if item["material_count"] == 0:
+            reasons.append("NO_SOURCE")
+        elif item["decision_count"] == 0:
+            reasons.append("NO_DECISION")
+        if project_saved is not None and now_ms - project_saved > DORMANT_AFTER_MS:
+            reasons.append("DORMANT")
+        if not reasons or project_id in seen:
+            continue
+        seen.add(project_id)
+        items.append((project_saved, {
+            "project_id": project_id,
+            "title": item["title"],
+            "reasons": reasons,
+            "suggested_action": _REVIEW_ACTIONS[reasons[0]],
+            "project_saved_at": _review_timestamp(project_saved),
+        }))
+
+    items.sort(key=lambda pair: (pair[0] is None, -(pair[0] or 0), pair[1]["project_id"]))
+    return {"checked_at": _review_timestamp(now_ms),
+            "items": [entry for _, entry in items[:MAX_REVIEW_ITEMS]]}
 
 
 def project_exploration_checkpoint_v2(envelope, exploration_id, revision, token):

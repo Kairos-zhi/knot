@@ -129,6 +129,27 @@ def test_project_origin_identity_closed_queries_and_revoke(env):
         assert call(disabled,'/api/project-import',supplied,broker=True)[0]==405
 
 
+def test_project_list_folds_empty_projects_and_reports_activity(env):
+    db,core,ui=env
+    filled,filled_up=body(),body('Synthetic folded','Folded source words')
+    for supplied in (filled,filled_up):
+        assert call(ui,'/api/project-import',supplied,broker=True)[0]==200
+    # Revoking the only material leaves a project with no material and no decision.
+    ref=call(ui,'/api/project?'+urlencode({'project_id':filled_up['project_id']}))[1]['materials'][0]
+    with sqlite3.connect(db) as conn:
+        conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?',(ref['asset_id'],'A'))
+    status,catalog,_=call(ui,'/api/projects')
+    assert status==200 and catalog['hidden_count']==1
+    ids=[p['project_id'] for p in catalog['items']]
+    assert filled['project_id'] in ids
+    folded=[p for p in catalog['items'] if p['project_id']==filled_up['project_id']]
+    assert [p['state'] for p in folded]==['empty']
+    active=[p for p in catalog['items'] if p['project_id']==filled['project_id']][0]
+    assert active['state']=='active' and active['last_activity_at'].endswith('Z')
+    definition_validator('ProjectList').validate(catalog)
+    assert call(core,'/projects')[1]['value']['hidden_count']==1
+
+
 def test_pending_core_refuses_new_project_without_partial_write(tmp_path,monkeypatch):
     monkeypatch.setenv('KNOT_TOKENS',json.dumps({TOKEN:'A'}));monkeypatch.delenv('KNOT_TOKEN',raising=False)
     db=tmp_path/'pending.sqlite3';assert init_database(db)['status']=='created'

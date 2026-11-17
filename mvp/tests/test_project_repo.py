@@ -3,6 +3,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 import json
 import sqlite3
@@ -16,6 +17,7 @@ from mvp.backend import decision_archive as archive
 from mvp.backend import project_repo as backend
 from mvp.backend.init_db import init_database
 from mvp.tests.test_decision_archive import item, package, source
+from test_contract_schema import definition_validator
 
 TOKEN, OTHER_TOKEN = 'synthetic-project-owner-token', 'synthetic-project-reader-token'
 ACTOR, OTHER = 'synthetic-owner', 'synthetic-reader'
@@ -129,7 +131,7 @@ def test_configured_identity_owner_only_and_head_revocation_blocks_every_old_pat
     repo, request = backend.ProjectRepo(db), body()
     receipt = repo.import_project(ACTOR, TOKEN, request)
     ref = scene(db, request)['materials'][0]
-    assert repo.list_projects(OTHER, OTHER_TOKEN) == {'items': []}
+    assert repo.list_projects(OTHER, OTHER_TOKEN) == {'items': [], 'hidden_count': 0}
     assert_error('ACCESS_DENIED', lambda: repo.import_project(OTHER, OTHER_TOKEN, request))
     assert_error('ACCESS_DENIED', lambda: repo.read_project(OTHER, TOKEN, request['project_id']))
     grant(db, manifest_id(db, receipt['manifest_hash']))
@@ -140,11 +142,11 @@ def test_configured_identity_owner_only_and_head_revocation_blocks_every_old_pat
     update = request | dict(expected_revision='1', request_id=str(uuid4()), documents=[])
     latest = repo.import_project(ACTOR, TOKEN, update)
     # Reader of revision one cannot see or claim the new head.
-    assert repo.list_projects(OTHER, OTHER_TOKEN) == {'items': []}
+    assert repo.list_projects(OTHER, OTHER_TOKEN) == {'items': [], 'hidden_count': 0}
     assert_error('ACCESS_DENIED', lambda: repo.read_project(OTHER, OTHER_TOKEN, request['project_id'], '1'))
     with closing(sqlite3.connect(db)) as conn, conn:
         conn.execute('DELETE FROM asset_readers WHERE asset_id=?', (manifest_id(db, latest['manifest_hash']),))
-    assert repo.list_projects(ACTOR, TOKEN) == {'items': []}
+    assert repo.list_projects(ACTOR, TOKEN) == {'items': [], 'hidden_count': 0}
     for action in (
         lambda: repo.import_project(ACTOR, TOKEN, request),
         lambda: repo.import_project(ACTOR, TOKEN, update),
@@ -468,7 +470,9 @@ def test_missing_material_with_retained_source_import_event_still_suppresses_onl
     before = counts(db)
     value = scene(db, request)
     assert value['has_unavailable'] and value['materials'] == []
-    assert repo.list_projects(ACTOR, TOKEN)['items'][0]['material_count'] == 0
+    listing = repo.list_projects(ACTOR, TOKEN)
+    assert [item['state'] for item in listing['items']] == ['empty']
+    assert listing['hidden_count'] == 1
     assert counts(db) == before
 
 
@@ -545,7 +549,7 @@ def test_actual_100_project_limit_and_101st_refused_atomically(db):
     for index in range(100):
         repo.import_project(ACTOR, TOKEN, body(title=f'Project {index}'))
     listing = repo.list_projects(ACTOR, TOKEN)
-    assert len(listing['items']) == 100
+    assert len(listing['items']) == 100 and listing['hidden_count'] == 0
     before = counts(db)
     assert_error('RESPONSE_LIMIT', lambda: repo.import_project(ACTOR, TOKEN, body(title='Project 101')))
     assert counts(db) == before
@@ -625,6 +629,9 @@ def test_new_archive_import_rejects_partial_valid_multi_source_decision(db):
     ('list', lambda v: v['items'][0].update(material_count=True), 'INVALID_ARGUMENTS'),
     ('list', lambda v: v['items'][0].update(decision_count=-1), 'INVALID_ARGUMENTS'),
     ('list', lambda v: v['items'].append(v['items'][0]), 'INVALID_ARGUMENTS'),
+    ('list', lambda v: v['items'][0].update(state='stale'), 'INVALID_ARGUMENTS'),
+    ('list', lambda v: v['items'][0].update(last_activity_at='2026-11-17 09:00'), 'INVALID_ARGUMENTS'),
+    ('list', lambda v: v.update(hidden_count=-1), 'INVALID_ARGUMENTS'),
     ('material', lambda v: v.update(asset_id=str(uuid4())), 'CONTENT_MISMATCH'),
     ('material', lambda v: v.update(content_hash='0' * 64), 'CONTENT_MISMATCH'),
     ('material', lambda v: v.update(revision='2'), 'CONTENT_MISMATCH'),
@@ -1085,3 +1092,124 @@ def test_capture_legacy_unknown_anchors_do_not_conflict_when_appending_known_mes
                                              (material['asset_id'],)).fetchone()[0])
             assert stored['locator']['thread_id'] == thread_id
             assert stored['locator']['message_id'] == message_id
+
+
+# --- CONTEXT-LIST-001: main-list selection, ordering and fold counts ---------
+
+NOW = int(datetime(2026, 11, 17, 9, 0, tzinfo=timezone.utc).timestamp() * 1000)
+DAY = 24 * 60 * 60 * 1000
+
+
+def fixed(db, clock=NOW):
+    """One injected server clock, so every 7-day comparison is reproducible."""
+    return backend.ProjectRepo(db, clock=lambda: clock)
+
+
+def restamp(db, digest, stamp):
+    """Backdate a manifest asset; created_at is the only source of its saved_at."""
+    with closing(sqlite3.connect(db)) as conn, conn:
+        assert conn.execute('UPDATE assets SET created_at=? WHERE content_hash=?',
+                            (stamp, digest)).rowcount == 1
+
+
+def empty_project(db, repo, title):
+    """A first revision needs material, so an empty row is one whose grant is gone.
+
+    The material text is unique per title: identical bytes dedup to one asset,
+    and revoking that shared grant would empty an unrelated project too.
+    """
+    request = body(title=title, documents=[dict(title='raw.md', text='Empty source for ' + title)])
+    repo.import_project(ACTOR, TOKEN, request)
+    material = scene(db, request)['materials'][0]
+    with closing(sqlite3.connect(db)) as conn, conn:
+        assert conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?',
+                            (material['asset_id'], ACTOR)).rowcount == 1
+    return request
+
+
+def test_list_orders_by_activity_folds_empty_and_hides_unknown_time_last(db):
+    repo = fixed(db)
+    recent = body(title='Recent alpha')
+    restamp(db, repo.import_project(ACTOR, TOKEN, recent)['manifest_hash'], NOW - 2 * DAY)
+    captured = captured_source()
+    captured['message_time_ms'] = NOW - 3 * DAY
+    source_only = body(title='Captured beta', documents=[], sources=[captured])
+    restamp(db, repo.import_project(ACTOR, TOKEN, source_only)['manifest_hash'], NOW - 10 * DAY)
+    stale = body(title='Stale gamma')
+    restamp(db, repo.import_project(ACTOR, TOKEN, stale)['manifest_hash'], NOW - 8 * DAY)
+    timeless = body(title='Timeless delta')
+    restamp(db, repo.import_project(ACTOR, TOKEN, timeless)['manifest_hash'], 0)
+    empty_project(db, repo, 'Empty one')
+    empty_project(db, repo, 'Empty two')
+    listing = repo.list_projects(ACTOR, TOKEN)
+    definition_validator('ProjectList').validate(listing)
+    assert [item['title'] for item in listing['items']][:4] == [
+        'Recent alpha', 'Captured beta', 'Stale gamma', 'Timeless delta']
+    assert [item['state'] for item in listing['items']][:4] == ['active', 'active', 'dormant', 'dormant']
+    assert {item['title'] for item in listing['items'][4:]} == {'Empty one', 'Empty two'}
+    assert all(item['state'] == 'empty' for item in listing['items'][4:])
+    assert listing['hidden_count'] == 2
+    # The captured message, not the later import stamp, is the real activity.
+    assert listing['items'][1]['last_activity_at'] == '2026-11-14T09:00:00.000Z'
+    assert listing['items'][3]['last_activity_at'] is None
+    assert [item['material_count'] for item in listing['items']][:4] == [1, 1, 1, 1]
+
+
+def test_list_publishes_every_row_and_leaves_folding_to_the_view(db):
+    repo = fixed(db)
+    for index in range(21):
+        request = body(title=f'Active {index}')
+        restamp(db, repo.import_project(ACTOR, TOKEN, request)['manifest_hash'],
+                NOW - (21 - index) * 60 * 1000)
+    listing = repo.list_projects(ACTOR, TOKEN)
+    definition_validator('ProjectList').validate(listing)
+    assert len(listing['items']) == 21 and listing['hidden_count'] == 0
+    assert [item['title'] for item in listing['items']] == [
+        f'Active {index}' for index in range(20, -1, -1)]
+    assert {item['state'] for item in listing['items']} == {'active'}
+
+
+def test_state_boundary_flips_at_exactly_seven_days_with_one_injected_now(db):
+    repo = fixed(db)
+    inside = body(title='Inside seven days')
+    restamp(db, repo.import_project(ACTOR, TOKEN, inside)['manifest_hash'], NOW - 7 * DAY)
+    outside = body(title='Just past seven days')
+    restamp(db, repo.import_project(ACTOR, TOKEN, outside)['manifest_hash'], NOW - 7 * DAY - 1)
+    listing = repo.list_projects(ACTOR, TOKEN)
+    assert [(item['title'], item['state']) for item in listing['items']] == [
+        ('Inside seven days', 'active'), ('Just past seven days', 'dormant')]
+    # The same rows read one millisecond earlier are still inside the window.
+    earlier = fixed(db, clock=NOW - 1).list_projects(ACTOR, TOKEN)
+    assert [item['state'] for item in earlier['items']] == ['active', 'active']
+
+
+def test_revoked_project_is_absent_and_never_counted_as_hidden(db):
+    repo = fixed(db)
+    kept = body(title='Kept project')
+    repo.import_project(ACTOR, TOKEN, kept)
+    revoked = body(title='Revoked project')
+    receipt = repo.import_project(ACTOR, TOKEN, revoked)
+    head = manifest_id(db, receipt['manifest_hash'])
+    empty_project(db, repo, 'Empty project')
+    with closing(sqlite3.connect(db)) as conn, conn:
+        conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?', (head, ACTOR))
+    listing = repo.list_projects(ACTOR, TOKEN)
+    ids = [item['project_id'] for item in listing['items']]
+    assert kept['project_id'] in ids
+    assert revoked['project_id'] not in ids
+    # The revoked project is absent entirely; only the empty one is folded.
+    assert listing['hidden_count'] == 1
+
+
+def test_list_keeps_published_fields_and_adds_only_the_curation_pair(db):
+    request = body()
+    receipt = backend.ProjectRepo(db).import_project(ACTOR, TOKEN, request)
+    value = scene(db, request)
+    item = fixed(db).list_projects(ACTOR, TOKEN)['items'][0]
+    assert {key: item[key] for key in backend.IDENTITY_ITEM_FIELDS} == {
+        key: value[key] for key in backend.IDENTITY_ITEM_FIELDS}
+    assert item['manifest_hash'] == receipt['manifest_hash']
+    assert (item['material_count'], item['decision_count']) == (1, 0)
+    assert set(item) == set(backend.PUBLISHED_ITEM_FIELDS) | set(backend.CURATED_ITEM_FIELDS)
+    assert item['state'] == 'active' and item['last_activity_at'].endswith('Z')
+
