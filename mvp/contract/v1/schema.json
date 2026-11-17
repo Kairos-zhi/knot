@@ -1290,7 +1290,7 @@
               }
             }
           },
-          "maxItems": 20
+          "maxItems": 100
         },
         "hidden_count": {
           "type": "integer",

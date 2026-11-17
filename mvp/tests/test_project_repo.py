@@ -470,7 +470,9 @@ def test_missing_material_with_retained_source_import_event_still_suppresses_onl
     before = counts(db)
     value = scene(db, request)
     assert value['has_unavailable'] and value['materials'] == []
-    assert repo.list_projects(ACTOR, TOKEN) == {'items': [], 'hidden_count': 1}
+    listing = repo.list_projects(ACTOR, TOKEN)
+    assert [item['state'] for item in listing['items']] == ['empty']
+    assert listing['hidden_count'] == 1
     assert counts(db) == before
 
 
@@ -547,7 +549,7 @@ def test_actual_100_project_limit_and_101st_refused_atomically(db):
     for index in range(100):
         repo.import_project(ACTOR, TOKEN, body(title=f'Project {index}'))
     listing = repo.list_projects(ACTOR, TOKEN)
-    assert len(listing['items']) == 20 and listing['hidden_count'] == 80
+    assert len(listing['items']) == 100 and listing['hidden_count'] == 0
     before = counts(db)
     assert_error('RESPONSE_LIMIT', lambda: repo.import_project(ACTOR, TOKEN, body(title='Project 101')))
     assert counts(db) == before
@@ -1141,17 +1143,19 @@ def test_list_orders_by_activity_folds_empty_and_hides_unknown_time_last(db):
     empty_project(db, repo, 'Empty two')
     listing = repo.list_projects(ACTOR, TOKEN)
     definition_validator('ProjectList').validate(listing)
-    assert [item['title'] for item in listing['items']] == [
+    assert [item['title'] for item in listing['items']][:4] == [
         'Recent alpha', 'Captured beta', 'Stale gamma', 'Timeless delta']
-    assert [item['state'] for item in listing['items']] == ['active', 'active', 'dormant', 'dormant']
+    assert [item['state'] for item in listing['items']][:4] == ['active', 'active', 'dormant', 'dormant']
+    assert {item['title'] for item in listing['items'][4:]} == {'Empty one', 'Empty two'}
+    assert all(item['state'] == 'empty' for item in listing['items'][4:])
     assert listing['hidden_count'] == 2
     # The captured message, not the later import stamp, is the real activity.
     assert listing['items'][1]['last_activity_at'] == '2026-11-14T09:00:00.000Z'
     assert listing['items'][3]['last_activity_at'] is None
-    assert [item['material_count'] for item in listing['items']] == [1, 1, 1, 1]
+    assert [item['material_count'] for item in listing['items']][:4] == [1, 1, 1, 1]
 
 
-def test_list_caps_main_list_at_twenty_and_folds_the_overflow(db):
+def test_list_publishes_every_row_and_leaves_folding_to_the_view(db):
     repo = fixed(db)
     for index in range(21):
         request = body(title=f'Active {index}')
@@ -1159,9 +1163,9 @@ def test_list_caps_main_list_at_twenty_and_folds_the_overflow(db):
                 NOW - (21 - index) * 60 * 1000)
     listing = repo.list_projects(ACTOR, TOKEN)
     definition_validator('ProjectList').validate(listing)
-    assert len(listing['items']) == 20 and listing['hidden_count'] == 1
+    assert len(listing['items']) == 21 and listing['hidden_count'] == 0
     assert [item['title'] for item in listing['items']] == [
-        f'Active {index}' for index in range(20, 0, -1)]
+        f'Active {index}' for index in range(20, -1, -1)]
     assert {item['state'] for item in listing['items']} == {'active'}
 
 
@@ -1190,8 +1194,10 @@ def test_revoked_project_is_absent_and_never_counted_as_hidden(db):
     with closing(sqlite3.connect(db)) as conn, conn:
         conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?', (head, ACTOR))
     listing = repo.list_projects(ACTOR, TOKEN)
-    assert [item['project_id'] for item in listing['items']] == [kept['project_id']]
-    # Only the empty project is folded; the revoked one is not counted at all.
+    ids = [item['project_id'] for item in listing['items']]
+    assert kept['project_id'] in ids
+    assert revoked['project_id'] not in ids
+    # The revoked project is absent entirely; only the empty one is folded.
     assert listing['hidden_count'] == 1
 
 

@@ -222,7 +222,7 @@ def project_response(kind, value, token, **bindings):
         if kind == 'list':
             decision.closed(bindings, set())
             decision.closed(result, {'items', 'hidden_count'})
-            if (type(result['items']) is not list or len(result['items']) > MAX_LISTED
+            if (type(result['items']) is not list or len(result['items']) > MAX_PROJECTS
                     or type(result['hidden_count']) is not int
                     or not 0 <= result['hidden_count'] <= MAX_PROJECTS):
                 raise ProjectError('INVALID_ARGUMENTS')

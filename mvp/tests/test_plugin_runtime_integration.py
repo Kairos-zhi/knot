@@ -38,7 +38,7 @@ def test_managed_backend_real_mcp_and_independent_stop(tmp_path,monkeypatch):
         async def check():
             async with Client(params) as client:
                 tools=await client.list_tools()
-                assert len(tools.tools) == 11
+                assert len(tools.tools) == 12
                 result=await client.call_tool('knot_list_explorations',{})
                 assert not result.is_error and result.structured_content == {'items':[]}
         asyncio.run(asyncio.wait_for(check(),10))

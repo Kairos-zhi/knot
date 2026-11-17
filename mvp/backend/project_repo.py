@@ -299,9 +299,10 @@ def _state(material_count, decision_count, instant, now):
 
 
 def _order(item):
-    """Newest activity first, unknown activity last, stable on equal instants."""
+    """Curated rows first, empty rows last; newest activity first, unknown last."""
     instant = item['last_activity_at_ms']
-    return (instant is None, -(instant or 0), -item['saved_at'], item['project_id'])
+    return (item['state'] == 'empty', instant is None, -(instant or 0),
+            -item['saved_at'], item['project_id'])
 
 
 def _listing(items, hidden_count, token):
@@ -409,13 +410,12 @@ class ProjectRepo:
                 state = _state(material_count, decision_count, instant, now)
                 if state == 'empty':
                     hidden += 1
-                    continue
                 candidates.append({k: scene[k] for k in IDENTITY_ITEM_FIELDS} | dict(
                     material_count=material_count, decision_count=decision_count,
                     last_activity_at=_instant(instant), state=state,
                     last_activity_at_ms=instant))
             candidates.sort(key=_order)
-            visible = candidates[:LIST_LIMIT]
+            visible = candidates[:policy.MAX_PROJECTS]
             hidden += len(candidates) - len(visible)
             return _listing(visible, hidden, token)
 

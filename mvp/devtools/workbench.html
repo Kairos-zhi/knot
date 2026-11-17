@@ -176,23 +176,31 @@ function projectRelativeActivity(value,now){
   return Math.max(1,Math.floor(days/30))+' 个月前';
 }
 function projectHiddenCountOf(value){return value&&Number.isSafeInteger(value.hidden_count)&&value.hidden_count>0?value.hidden_count:0;}
-function renderProjectHidden(){
-  const host=$('projects-hidden');host.replaceChildren();host.hidden=!(projectHiddenCount>0);
-  if(!(projectHiddenCount>0))return;
-  const toggle=text(host,'button','另有 '+projectHiddenCount+' 个项目没有留存内容','project-fold-toggle');
+function projectEmptyItems(){return projectItems.filter(item=>item&&item.state==='empty');}
+function renderProjectHidden(empties){
+  const folded=empties||projectEmptyItems();
+  const count=folded.length||projectHiddenCount;
+  const host=$('projects-hidden');host.replaceChildren();host.hidden=!(count>0);
+  if(!(count>0))return;
+  const toggle=text(host,'button','另有 '+count+' 个项目没有留存内容','project-fold-toggle');
   toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','projects-hidden-list');
   const list=text(host,'div','','project-fold-list');list.id='projects-hidden-list';list.hidden=true;
-  for(let index=0;index<projectHiddenCount;index++){
+  // Folded rows carry real titles when the backend publishes curated items.
+  for(let index=0;index<count;index++){
     const row=text(list,'div','','project-fold-row');
-    text(row,'span','未列出的项目','card-title');text(row,'small','没有留存材料或决定，暂不占用主列表');
+    const item=folded[index];
+    text(row,'span',item?item.title:'未列出的项目','card-title');
+    text(row,'small',item?'没有留存材料或决定':'没有留存材料或决定，暂不占用主列表');
   }
   // Expanding is local only: no route change, no card reorder, no new request.
   let open=false;
   toggle.addEventListener('click',()=>{open=!open;toggle.setAttribute('aria-expanded',String(open));list.hidden=!open;});
 }
 function renderProjectList(now=Date.now()){
+  const empties=projectEmptyItems();
   $('projects-list').replaceChildren();
   for(const item of projectItems){
+    if(item&&item.state==='empty')continue;
     const card=text($('projects-list'),'button','','project-card');
     text(card,'span',item.title,'card-title');
     text(card,'small','最近活动：'+projectRelativeActivity(item.last_activity_at,now),'card-activity');
@@ -200,9 +208,9 @@ function renderProjectList(now=Date.now()){
     if(item.state==='dormant')text(card,'small','超过 7 天没有新内容','card-state');
     card.addEventListener('click',()=>projectAction(()=>openProject(item.project_id)));
   }
-  renderProjectHidden();
+  renderProjectHidden(empties);
   $('projects-empty').textContent='还没有可看的项目。点上方「补充材料」导入第一份材料。';
-  $('projects-empty').hidden=!!projectItems.length||projectHiddenCount>0;
+  $('projects-empty').hidden=(projectItems.length-empties.length)>0||empties.length>0||projectHiddenCount>0;
 }
 async function refreshCapturedProjects(){
   const generation=projectListGeneration,now=Date.now();

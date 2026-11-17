@@ -442,7 +442,6 @@ def test_context_review_rejects_malformed_upstream_data():
         valid | {"ok": False},
         valid | {"contract_version": True},
         _envelope(value={"items": "no"}),
-        _envelope(value={"items": [project], "hidden_count": 0}),
         _envelope(project | {"title": "bad\x07title"}),
         _envelope(project | {"title": ""}),
         _envelope(project | {"project_id": "not-a-uuid"}),

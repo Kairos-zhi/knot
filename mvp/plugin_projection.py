@@ -349,7 +349,33 @@ _REVIEW_ACTIONS = {
 }
 _LIST_ITEM_FIELDS = {"project_id", "title", "revision", "manifest_hash",
                      "saved_at", "material_count", "decision_count"}
+# CONTEXT-LIST-001 adds curated activity fields; older backends omit them.
+_CURATED_ITEM_FIELDS = {"last_activity_at", "state"}
+_LIST_STATES = {"active", "dormant", "empty"}
 _REVISION_TEXT = re.compile(r"[1-9][0-9]{0,18}")
+
+
+def _review_instant(value):
+    """Accept the contract's UTC instant text (or None); reject anything else."""
+    if value is None:
+        return True
+    if type(value) is not str or not value.endswith("Z"):
+        return False
+    try:
+        datetime.fromisoformat(value[:-1] + "+00:00")
+    except ValueError:
+        return False
+    return True
+
+
+def _activity_stamp(item):
+    """Millisecond activity instant: curated field first, saved_at as fallback."""
+    if "last_activity_at" in item:
+        value = item["last_activity_at"]
+        if value is None:
+            return None
+        return int(round(datetime.fromisoformat(value[:-1] + "+00:00").timestamp() * 1000))
+    return item["saved_at"] or None
 
 
 def _review_text(value):
@@ -370,14 +396,23 @@ def project_list_view(envelope):
             or envelope["ok"] is not True):
         return {"error": "UPSTREAM_ERROR"}
     value = envelope["value"]
-    if type(value) is not dict or set(value) != {"items"}:
+    if type(value) is not dict or set(value) not in ({"items"}, {"items", "hidden_count"}):
+        return {"error": "UPSTREAM_ERROR"}
+    if "hidden_count" in value and (type(value["hidden_count"]) is not int
+                                    or not 0 <= value["hidden_count"] <= MAX_LIST_PROJECTS):
         return {"error": "UPSTREAM_ERROR"}
     items = value["items"]
     if type(items) is not list or len(items) > MAX_LIST_PROJECTS:
         return {"error": "UPSTREAM_ERROR"}
     seen = set()
     for item in items:
-        if type(item) is not dict or set(item) != _LIST_ITEM_FIELDS:
+        if (type(item) is not dict
+                or set(item) not in (_LIST_ITEM_FIELDS,
+                                     _LIST_ITEM_FIELDS | _CURATED_ITEM_FIELDS)):
+            return {"error": "UPSTREAM_ERROR"}
+        if _CURATED_ITEM_FIELDS <= set(item) and (
+                not _review_instant(item["last_activity_at"])
+                or item["state"] not in _LIST_STATES):
             return {"error": "UPSTREAM_ERROR"}
         project_id = item["project_id"]
         if (type(project_id) is not str or not re.fullmatch(ASSET_ID_PATTERN, project_id)
@@ -442,7 +477,8 @@ def project_context_review(envelope, now_ms, capture=None):
     items, seen = [], set()
     for item in listing["items"]:
         project_id = item["project_id"]
-        # A missing creation stamp stays unknown; it is never back-filled with now.
+        # Maintenance is measured by when the project itself last changed, so a
+        # newly imported old message does not make a stale project look alive.
         last_activity = item["saved_at"] or None
         reasons = []
         host_stamp = (watermarks or {}).get(project_id)

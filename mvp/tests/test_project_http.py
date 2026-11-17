@@ -140,8 +140,12 @@ def test_project_list_folds_empty_projects_and_reports_activity(env):
         conn.execute('DELETE FROM asset_readers WHERE asset_id=? AND actor=?',(ref['asset_id'],'A'))
     status,catalog,_=call(ui,'/api/projects')
     assert status==200 and catalog['hidden_count']==1
-    assert [p['project_id'] for p in catalog['items']]==[filled['project_id']]
-    assert catalog['items'][0]['state']=='active' and catalog['items'][0]['last_activity_at'].endswith('Z')
+    ids=[p['project_id'] for p in catalog['items']]
+    assert filled['project_id'] in ids
+    folded=[p for p in catalog['items'] if p['project_id']==filled_up['project_id']]
+    assert [p['state'] for p in folded]==['empty']
+    active=[p for p in catalog['items'] if p['project_id']==filled['project_id']][0]
+    assert active['state']=='active' and active['last_activity_at'].endswith('Z')
     definition_validator('ProjectList').validate(catalog)
     assert call(core,'/projects')[1]['value']['hidden_count']==1
 
