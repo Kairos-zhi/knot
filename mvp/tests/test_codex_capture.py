@@ -329,6 +329,20 @@ def watermark_path(root):
     return root / 'capture-state.json'
 
 
+def test_capture_state_needs_an_explicit_state_root(host, target, tmp_path):
+    """The follower publishes nothing unless an operator names a state root."""
+    _, repo = target
+    project(host, tmp_path, 'Synthetic silent')
+    thread(host, tmp_path, [stamped(1794700000.125, 'only-host-message')])
+    state = follower(host, repo).run_once()
+    assert state['phase'] == 'watching' and state['issues'] == []
+    assert not list(tmp_path.rglob('capture-state.json'))
+    root = tmp_path / 'state'
+    root.mkdir()
+    follower(host, repo, state_root=root).run_once()
+    assert watermark_path(root).exists()
+
+
 def test_watermark_file_publishes_host_maximum_and_never_sinks_to_retained(host, target, tmp_path):
     _, repo = target
     project(host, tmp_path, 'Synthetic alpha')

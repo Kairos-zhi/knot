@@ -347,7 +347,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--origin', required=True)
     parser.add_argument('--port', type=int, default=0)
-    parser.add_argument('--state-root', type=Path, help='explicit private save journal directory; absent means read-only')
+    parser.add_argument('--state-root', type=Path, help='explicit private directory for the save journal and the capture watermark; absent means read-only and no watermark')
     parser.add_argument('--packet-root',type=Path,help='existing local private export directory outside repository')
     parser.add_argument('--history-asset', help='explicit saved decision archive to show on entry')
     parser.add_argument('--history-hash', help='expected hash of that decision archive')
