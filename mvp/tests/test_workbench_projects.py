@@ -10,6 +10,8 @@ from test_workbench_usability import PAGE, Structure
 
 A = '11111111-1111-4111-8111-111111111111'
 B = '22222222-2222-4222-8222-222222222222'
+C = '33333333-3333-4333-8333-333333333333'
+D = '44444444-4444-4444-8444-444444444444'
 ASSET_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
 ASSET_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
 
@@ -370,6 +372,108 @@ assert.equal(execute('projectImport.serialized'),null);
 assert.equal(calls.length,1);
 assert(!els['project-import-status'].textContent.includes('PRIVATE'));
 ''')
+
+
+def test_project_cards_show_activity_dormant_marker_and_fold_without_refetch():
+    run_projects(r'''
+const day=86400000,now=Date.now();
+const card=(project_id,title,last_activity_at,state,materials,decisions)=>({project_id,title,revision:'2',manifest_hash:'c'.repeat(64),saved_at:now,
+  material_count:materials,decision_count:decisions,last_activity_at,state});
+respond=async(url)=>{assert.equal(url,'/api/projects');return {items:[
+  card(''' + json.dumps(A) + r''','A 项目',new Date(now).toISOString(),'active',2,1),
+  card(''' + json.dumps(B) + r''','B 项目',new Date(now-day).toISOString(),'active',2,0),
+  card(''' + json.dumps(C) + r''','C 项目',new Date(now-3*day).toISOString(),'active',1,0),
+  card(''' + json.dumps(D) + r''','D 项目',null,'dormant',1,0)],hidden_count:5};};
+await execute('loadProjects()');
+const cards=els['projects-list'].children;
+assert.equal(cards.length,4);
+assert.deepEqual(cards.map(item=>item.children[0].textContent),['A 项目','B 项目','C 项目','D 项目']);
+assert.equal(cards[0].children[1].textContent,'最近活动：今天');
+assert.equal(cards[1].children[1].textContent,'最近活动：昨天');
+assert.equal(cards[2].children[1].textContent,'最近活动：3 天前');
+assert.equal(cards[3].children[1].textContent,'最近活动：无时间记录');
+assert(!flat(cards[3]).includes('今天'));
+assert.equal(cards[0].children.length,3);
+assert.equal(cards[3].children.length,4);
+assert(flat(cards[0]).includes('已留存 2 条材料/原话 · 1 项决定'));
+assert(!flat(cards[1]).includes('项决定'));
+assert(flat(cards[3]).includes('超过 7 天没有新内容'));
+assert(!flat(cards[0]).includes('超过 7 天没有新内容'));
+const fold=els['projects-hidden'];
+assert.equal(fold.hidden,false);
+assert.equal(fold.children[0].textContent,'另有 5 个项目没有留存内容');
+assert.equal(fold.children[0].attrs['aria-expanded'],'false');
+assert.equal(fold.children[1].hidden,true);
+const before=calls.length;
+fold.children[0].events.click[0]();
+assert.equal(fold.children[0].attrs['aria-expanded'],'true');
+assert.equal(fold.children[1].hidden,false);
+assert.equal(fold.children[1].children.length,5);
+assert(flat(fold.children[1]).includes('未列出的项目'));
+assert.equal(calls.length,before); // Folding is local: no new /api/projects.
+assert.equal(els['projects-empty'].hidden,true);
+assert.equal(execute('projectItems.length'),4);
+''')
+
+
+def test_month_scale_activity_and_no_fold_row_when_nothing_is_hidden():
+    run_projects(r'''
+const day=86400000,now=Date.now();
+respond=async()=>({items:[{project_id:sceneA.project_id,title:'Earlier project',revision:'1',manifest_hash:'c'.repeat(64),saved_at:now,
+  material_count:1,decision_count:0,last_activity_at:new Date(now-70*day).toISOString(),state:'active'}],hidden_count:0});
+await execute('loadProjects()');
+assert.equal(els['projects-list'].children[0].children[1].textContent,'最近活动：2 个月前');
+assert.equal(els['projects-hidden'].children.length,0);
+assert.equal(els['projects-hidden'].hidden,true);
+assert.equal(execute('projectHiddenCount'),0);
+assert.equal(els['projects-empty'].hidden,true);
+''')
+
+
+def test_missing_activity_state_and_hidden_count_from_old_backend_still_render():
+    run_projects(r'''
+assert.deepEqual(calls.map(c=>c.url),['/api/projects']);
+const cards=els['projects-list'].children;
+assert.equal(cards.length,2);
+for(const card of cards){
+  assert.equal(card.children.length,3);
+  assert.equal(card.children[1].textContent,'最近活动：无时间记录');
+  assert(!flat(card).includes('今天'));
+  assert(!flat(card).includes('超过 7 天没有新内容'));
+  assert(flat(card).includes('已留存 1 条材料/原话'));
+}
+assert.equal(els['projects-hidden'].children.length,0);
+assert.equal(els['projects-hidden'].hidden,true);
+assert.equal(els['projects-empty'].hidden,true);
+''')
+
+
+def test_empty_state_needs_success_and_both_lists_empty():
+    run_projects(r'''
+assert.equal(els['projects-empty'].hidden,false);
+assert(flat(els['projects-empty']).includes('还没有可看的项目'));
+assert(flat(els['projects-empty']).includes('补充材料'));
+assert.equal(execute('projectHiddenCount'),0);
+respond=async()=>({syntheticError:'ACCESS_DENIED',status:403});
+await assert.rejects(execute('loadProjects()'));
+assert.equal(els['projects-empty'].hidden,true);
+assert.equal(els['projects-list'].children.length,0);
+assert.equal(els['projects-hidden'].hidden,true);
+assert.equal(els['projects-hidden'].children.length,0);
+assert(els['project-status'].textContent.length>0);
+assert.equal(els['project-status'].dataset.error,'true');
+''', listing={'items': [], 'hidden_count': 0})
+
+
+def test_folded_only_response_never_claims_the_empty_state():
+    run_projects(r'''
+assert.equal(els['projects-list'].children.length,0);
+assert.equal(els['projects-empty'].hidden,true);
+assert.equal(els['projects-hidden'].hidden,false);
+assert.equal(els['projects-hidden'].children[0].textContent,'另有 3 个项目没有留存内容');
+assert.equal(execute('projectHiddenCount'),3);
+assert.equal(calls.length,1);
+''', listing={'items': [], 'hidden_count': 3})
 
 
 def test_project_markup_has_no_inferred_edges_and_detail_is_a_sibling():
