@@ -23,7 +23,7 @@ GPT-6.1 实现与自测完成；独立 Checker 已限定通过，Human Gate 待�
 
 候选修改已完成。README 将共享临时目录用户名替换为 `<user>`，将 Git 锁文件错误中的仓库根替换为 `<repo-root>`。两处均标明路径已脱敏，原路径定向检查无命中，历史失败、数量与结论保留。`git diff --check` 通过。
 
-使用 `D:/Hermes/venvs/knot/Scripts/python.exe`，进程 PATH 前置 `D:/Hermes/git/bin`，并设 `PYTHONDONTWRITEBYTECODE=1`。两个套件各用独立的 `<suite-root>`，HOME 和 USERPROFILE 指向其 `home/`，TEMP 和 TMP 指向其 `temp/`。实际命令及结果：
+使用 `<venv>/Scripts/python.exe`，进程 PATH 前置 `<git>/bin`，并设 `PYTHONDONTWRITEBYTECODE=1`。两个套件各用独立的 `<suite-root>`，HOME 和 USERPROFILE 指向其 `home/`，TEMP 和 TMP 指向其 `temp/`。实际命令及结果：
 
 - `python -B -m pytest mvp/tests/test_repository_identity.py -q -p no:cacheprovider --basetemp <suite-root>/pytest`，2 passed in 1.19s，退出码 0。
 - `python -B -m pytest mvp/tests/ -q -p no:cacheprovider --basetemp <suite-root>/pytest`，501 passed、2 skipped in 255.63s，退出码 0。
