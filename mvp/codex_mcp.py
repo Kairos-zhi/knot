@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+from pathlib import Path
 import re
 import sys
 import time
@@ -54,6 +55,15 @@ _MAX_RESPONSE = 64 * 1024
 # of 85 Han characters; that line body is ~82 KiB escaped, so 64 KiB truncates it.
 _REVIEW_MAX_RESPONSE = 256 * 1024
 _TIMEOUT = 2
+# CONTEXT-MAINT-002: the optional capture watermark is a separate, content-free
+# file published by the local follower; these bounds mirror that writer.
+_CAPTURE_STATE_VERSION = "knot.capture-state/1"
+_CAPTURE_STATE_MAX_BYTES = 1024 * 1024
+_CAPTURE_STATE_MAX_AGE_MS = 300_000
+_CAPTURE_STATE_MAX_PROJECTS = 116
+_CAPTURE_STATE_PHASES = frozenset({"watching", "paused", "unavailable", "starting"})
+_CAPTURE_STATE_FIELDS = frozenset({"version", "updated_at_ms", "phase", "projects"})
+_CAPTURE_STATE_ITEM_FIELDS = frozenset({"project_id", "newest_user_message_ms"})
 _HASH_SCHEMA = {"type": "string", "pattern": f"^{SHA256_PATTERN}$", "maxLength": 64}
 _UUID_SCHEMA = {"type": "string", "pattern": f"^{ASSET_ID_PATTERN}$", "maxLength": 36}
 _REVISION_SCHEMA = {"type": "integer", "minimum": 1, "maximum": MAX_REVISION}
@@ -222,8 +232,8 @@ _CONTEXT_TOOL = Tool(name=_CONTEXT_NAME, description=(
     "在开始任何与 Knot 项目相关的工作（读材料、整理决定、写回顾）之前先调用本工具。"
     "把返回的待维护项原样呈现给用户，由用户决定是否处理。"
     "本工具只读，不修改数据库、不导入、不写入。"
-    "原因码为 NO_SOURCE、NO_DECISION、DORMANT；CAPTURE_STALE 需要宿主水位接入，"
-    "当前不评估，不会出现在结果里。"
+    "原因码为 CAPTURE_STALE、NO_SOURCE、NO_DECISION、DORMANT；CAPTURE_STALE 只在"
+    "宿主水位可用且比已保存更新时出现，水位缺失或过期时该项不评估。"
     "suggested_action 取优先级最高的原因给出的动作；没有待维护项时 items 为空。"), input_schema={
     "type": "object", "additionalProperties": False, "properties": {}})
 
@@ -441,7 +451,48 @@ async def search_assets(origin, arguments, token):
     return project_asset_search(envelope, limit)
 
 
-async def context_review(origin, arguments, token):
+def read_capture_watermarks(path, now_ms):
+    """Content-free host watermarks, or None when no usable state file exists.
+
+    The projection treats ``None`` as "not observable", so every failure here
+    degrades to the CONTEXT-MAINT-001 behaviour: CAPTURE_STALE is not evaluated,
+    the other reasons are still reported, and no upstream error is invented.
+    """
+    if path is None:
+        return None
+    try:
+        with open(path, "rb") as stream:
+            if os.fstat(stream.fileno()).st_size > _CAPTURE_STATE_MAX_BYTES:
+                return None
+            raw = stream.read(_CAPTURE_STATE_MAX_BYTES + 1)
+        if len(raw) > _CAPTURE_STATE_MAX_BYTES:
+            return None
+        value = strict_json(raw)
+        if (type(value) is not dict or value.keys() != _CAPTURE_STATE_FIELDS
+                or value["version"] != _CAPTURE_STATE_VERSION
+                or type(value["updated_at_ms"]) is not int
+                or not 0 <= value["updated_at_ms"] <= 2**63 - 1
+                or abs(now_ms - value["updated_at_ms"]) > _CAPTURE_STATE_MAX_AGE_MS
+                or type(value["phase"]) is not str or value["phase"] not in _CAPTURE_STATE_PHASES
+                or type(value["projects"]) is not list
+                or len(value["projects"]) > _CAPTURE_STATE_MAX_PROJECTS):
+            return None
+        watermarks = {}
+        for entry in value["projects"]:
+            if (type(entry) is not dict or entry.keys() != _CAPTURE_STATE_ITEM_FIELDS
+                    or type(entry["project_id"]) is not str
+                    or not re.fullmatch(ASSET_ID_PATTERN, entry["project_id"])
+                    or type(entry["newest_user_message_ms"]) is not int
+                    or not 0 <= entry["newest_user_message_ms"] <= 2**63 - 1
+                    or entry["project_id"] in watermarks):
+                return None
+            watermarks[entry["project_id"]] = entry["newest_user_message_ms"]
+    except (OSError, TypeError, ValueError, UnicodeError, RecursionError):
+        return None
+    return {"enabled": True, "newest_user_message_ms": watermarks}
+
+
+async def context_review(origin, arguments, token, capture_state=None):
     """Report project maintenance items from the existing read-only project list."""
     if type(arguments) is not dict or arguments:
         return {"error": "INVALID_ARGUMENTS"}
@@ -454,7 +505,8 @@ async def context_review(origin, arguments, token):
     if status != 200:
         return {"error": "UPSTREAM_ERROR"}
     # One clock read per response; the projection derives every stamp from it.
-    result = project_context_review(envelope, time.time_ns() // 1_000_000)
+    now_ms = time.time_ns() // 1_000_000
+    result = project_context_review(envelope, now_ms, read_capture_watermarks(capture_state, now_ms))
     if "error" not in result:
         inner = json.dumps(result)
         patterns = (token, json.dumps(token)[1:-1], json.dumps(token, ensure_ascii=False)[1:-1])
@@ -586,7 +638,7 @@ def tool_list(projects=True):
     return tools + [_CONTEXT_TOOL]
 
 
-async def serve(origin, token, projects=True):
+async def serve(origin, token, projects=True, capture_state=None):
     async def list_tools(ctx, params):
         return ListToolsResult(tools=tool_list(projects))
 
@@ -619,7 +671,7 @@ async def serve(origin, token, projects=True):
             return CallToolResult(content=[TextContent(type="text", text=json.dumps(result))],
                                   structured_content=result, is_error=True)
         if params.name == _CONTEXT_NAME:
-            result = await context_review(origin, arguments, token)
+            result = await context_review(origin, arguments, token, capture_state)
         elif params.name == _READ_TOOL_NAME:
             result = await read_asset(origin, arguments, token)
         elif params.name == _SEARCH_TOOL_NAME:
@@ -649,8 +701,11 @@ async def serve(origin, token, projects=True):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--origin", required=True, type=loopback_origin)
+    parser.add_argument("--capture-state", type=Path, metavar="PATH",
+                        help="optional read-only capture watermark file published by the local Codex follower; "
+                             "absent means CAPTURE_STALE is not evaluated")
     args = parser.parse_args()
-    anyio.run(serve, args.origin, os.environ.get("KNOT_TOKEN"))
+    anyio.run(serve, args.origin, os.environ.get("KNOT_TOKEN"), True, args.capture_state)
 
 
 if __name__ == "__main__":

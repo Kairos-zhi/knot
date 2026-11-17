@@ -51,6 +51,13 @@ def human(text='我希望先保留真实选择。\r\n', mid=None, **changes):
             content_item_metadata=[dict(provenance=dict(type='user'))])), **changes)
 
 
+def stamped(instant, text='我希望先保留真实选择。\r\n', mid=None):
+    """A human message whose host create_time is explicit for watermark checks."""
+    record = human(text, mid)
+    record['payload']['internal_chat_message_metadata_passthrough']['create_time'] = instant
+    return record
+
+
 def thread(host, root, messages=None, pid=None, source='vscode', updated=1, archived=0):
     tid = str(uuid4()); path = host / 'sessions' / (tid + '.jsonl')
     values = [dict(type='session_meta', payload=dict(id=tid))] + (messages if messages is not None else [human()])
@@ -316,3 +323,118 @@ def test_http_existing_service_capture_status_controls_and_close(host, target, t
         with running(create_server(core, TOKEN, projects_enabled=True)) as disabled:
             assert call(disabled, '/api/capture-state')[0] == 400
             assert call(disabled, '/api/capture-control', dict(explicit=True, paused=True), broker=True)[0] == 405
+
+
+def watermark_path(root):
+    return root / 'capture-state.json'
+
+
+def test_watermark_file_publishes_host_maximum_and_never_sinks_to_retained(host, target, tmp_path):
+    _, repo = target
+    project(host, tmp_path, 'Synthetic alpha')
+    first = stamped(1794700000.125, 'first-host-message')
+    second = stamped(1794700600.5, 'second-host-message')
+    t = thread(host, tmp_path, [first, second])
+    root = tmp_path / 'state'
+    root.mkdir()
+    f = follower(host, repo, state_root=root)
+    state = f.run_once()
+    assert state['phase'] == 'watching' and state['added_sources'] == 2 and state['issues'] == []
+    pid = state['discovered'][0]['project_id']
+    document = json.loads(watermark_path(root).read_text('utf-8'))
+    assert document == {'version': 'knot.capture-state/1', 'updated_at_ms': state['scanned_at'],
+                        'phase': 'watching',
+                        'projects': [dict(project_id=pid, newest_user_message_ms=1794700600500)]}
+    scene = repo.read_project(ACTOR, TOKEN, pid)
+    assert [o['message_time_ms'] for o in scene['observations']] == [1794700000125, 1794700600500]
+    assert scene['saved_at'] > 1794700600500
+
+    # Both host messages are retained now. A fresh-only watermark would fall back
+    # to the level already saved, so CAPTURE_STALE could never fire again; the
+    # host-side maximum must survive the retention cycle unchanged.
+    assert f.run_once()['added_sources'] == 0
+    assert json.loads(watermark_path(root).read_text('utf-8'))['projects'] == document['projects']
+
+    with Path(t['path']).open('ab') as out:
+        out.write(json.dumps(stamped(1794700660.0, 'third-host-message', mid='third')).encode() + b'\n')
+    assert f.run_once()['added_sources'] == 1
+    assert json.loads(watermark_path(root).read_text('utf-8'))['projects'] == [
+        dict(project_id=pid, newest_user_message_ms=1794700660000)]
+
+    # Content-free by construction: no message text, title, path, thread id or
+    # leftover temporary file in the state directory.
+    raw = watermark_path(root).read_bytes()
+    for forbidden in ('first-host-message', 'third-host-message', 'Synthetic alpha',
+                      t['thread_id'], str(host), str(tmp_path), '\\', '.jsonl'):
+        assert forbidden.encode('utf-8') not in raw
+    assert [p.name for p in root.iterdir()] == ['capture-state.json']
+
+
+def test_watermark_write_failure_is_an_issue_never_a_failed_scan(host, target, tmp_path):
+    db, repo = target
+    project(host, tmp_path)
+    thread(host, tmp_path)
+    absent = tmp_path / 'absent'
+    state = follower(host, repo, state_root=absent).run_once()
+    assert state['phase'] == 'watching' and state['added_sources'] == 1
+    assert state['issues'] == [dict(code='STATE_UNAVAILABLE', count=1)]
+    assert not absent.exists() and counts(db) != (0, 0, 0)
+    # The new code must survive the closed HTTP projection.
+    projected = capture.project_capture_state(state, TOKEN)
+    assert projected['issues'] == [dict(code='STATE_UNAVAILABLE', count=1)]
+
+    root = tmp_path / 'state'
+    root.mkdir()
+    f = follower(host, repo, state_root=root)
+    assert f.run_once()['issues'] == []
+    before = watermark_path(root).read_bytes()
+    actual = capture.os.replace
+
+    def refuse(*_args, **_kwargs):
+        raise OSError('synthetic replace failure')
+
+    capture.os.replace = refuse
+    try:
+        blocked = f.run_once()
+    finally:
+        capture.os.replace = actual
+    assert blocked['phase'] == 'watching' and blocked['added_sources'] == 0
+    assert blocked['issues'] == [dict(code='STATE_UNAVAILABLE', count=1)]
+    # Atomic publish: the last complete document is untouched and no temporary
+    # file survives a failed rename.
+    assert watermark_path(root).read_bytes() == before
+    assert [p.name for p in root.iterdir()] == ['capture-state.json']
+
+
+def test_watermark_does_not_advance_while_paused(host, target, tmp_path):
+    _, repo = target
+    project(host, tmp_path)
+    t = thread(host, tmp_path)
+    root = tmp_path / 'state'
+    root.mkdir()
+    f = follower(host, repo, state_root=root)
+    assert f.run_once()['phase'] == 'watching'
+    before = watermark_path(root).read_bytes()
+    assert f.control(dict(explicit=True, paused=True))['phase'] == 'paused'
+    settled = f.state()
+    with Path(t['path']).open('ab') as out:
+        out.write(json.dumps(stamped(1794700900.0, 'paused-host-message', mid='paused')).encode() + b'\n')
+    paused = f.run_once()
+    # Paused means no scan, no import, and no watermark advance: the whole
+    # published state, including updated_at_ms, stays byte-identical.
+    assert paused == settled and paused['scanned_at'] == json.loads(before)['updated_at_ms']
+    assert watermark_path(root).read_bytes() == before
+
+
+def test_published_document_is_closed_ordered_and_bounded(tmp_path):
+    watermarks = {f'00000000-0000-4000-8000-{n:012x}': 1794700000000 + n
+                  for n in range(capture.MAX_CAPTURE_PROJECTS + 14, 0, -1)}
+    assert capture.publish_capture_state(tmp_path, watermarks, 1794700100000) is True
+    document = json.loads(watermark_path(tmp_path).read_text('utf-8'))
+    assert set(document) == {'version', 'updated_at_ms', 'phase', 'projects'}
+    assert document['version'] == 'knot.capture-state/1'
+    assert document['updated_at_ms'] == 1794700100000 and document['phase'] == 'watching'
+    assert len(document['projects']) == capture.MAX_CAPTURE_PROJECTS == 116
+    assert [entry['project_id'] for entry in document['projects']] == sorted(watermarks)[:116]
+    assert all(set(entry) == {'project_id', 'newest_user_message_ms'} for entry in document['projects'])
+    assert capture.publish_capture_state(None, watermarks, 1794700100000) is True
