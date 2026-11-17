@@ -12,6 +12,8 @@
 .project-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px;margin:24px 0}.project-card,.decision-card{display:block;width:100%;text-align:left;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow-wrap:anywhere}.project-card .card-title,.decision-card .card-title{display:block;font-size:18px;font-weight:500;line-height:1.6}.project-card small,.decision-card .card-reason{display:block;margin-top:12px;font-size:14px;color:var(--muted);line-height:1.8}.decision-card[aria-expanded=true]{border-color:var(--accent);box-shadow:inset 3px 0 var(--knot-accent)}.project-scene-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}.project-decisions{display:grid;gap:16px;margin:20px 0}.project-detail{position:sticky;top:24px;background:var(--panel);padding:24px;border:1px solid var(--line);border-radius:12px;min-width:0;overflow-wrap:anywhere}.project-detail h2{outline-offset:4px}.project-detail blockquote{margin:16px 0;border-left:2px solid var(--accent);padding-left:12px;white-space:pre-wrap}.project-detail pre{line-height:1.9}.project-detail .detail-label{font-size:12px;color:var(--muted);margin-top:24px}.project-import{margin:24px 0;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-width:760px}.project-import ul{padding-left:20px}.project-import li{overflow-wrap:anywhere;margin:8px 0}.project-import label{margin:16px 0}.project-timeline{margin:24px 0}.project-timeline label{flex:1;min-width:160px}.project-timeline input{padding:0;accent-color:var(--accent)}#project-status{font-size:14px;min-height:1.65em}#project-status[data-error=true]{color:var(--accent)}#project-materials-section{border-top:1px solid var(--line);padding-top:20px;margin-top:32px}#project-material-query{margin:16px 0}#project-material-list{margin-top:16px}#project-import-status{white-space:pre-wrap}#project-navigation{margin-top:24px}#project-navigation button{width:100%}@media(max-width:900px){.project-scene-grid{grid-template-columns:minmax(0,1fr)}.project-detail{position:static}.project-detail:not(.has-content){display:none}}@media(max-width:700px){.project-import,.project-card,.decision-card,.project-detail{padding:18px}.project-cards{gap:16px}.project-timeline{align-items:start}}
 .capture-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:8px 0}.capture-line button{border:0;background:transparent;padding:4px 8px;min-height:32px;font-size:13px}.capture-details{margin:0 0 16px;font-size:13px}.capture-details p{font-size:13px}.capture-details ul{padding-left:20px}.choice-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.choice-sections.single-section{grid-template-columns:minmax(0,1fr)}.card-origin{display:block;font-size:12px;color:var(--muted);margin-top:12px}.observation-card .card-title{font-size:17px}.project-detail pre{white-space:pre-wrap;overflow-wrap:anywhere}#project-latest{font-size:13px}@media(max-width:1150px){.choice-sections{grid-template-columns:minmax(0,1fr)}}@media(max-width:900px){.project-detail{display:none}.project-detail.has-content{display:block;position:fixed;inset:16px 16px 16px auto;width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;z-index:10;box-shadow:0 12px 48px #0003}.project-detail .bar{align-items:start}}
 .observation-match{flex-basis:100%;margin:0;color:var(--ink);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.decision-order{font-size:13px;max-width:64ch}.decision-path{padding-left:24px;gap:20px}.decision-path>.decision-card{position:relative}.decision-path>.decision-card::before{content:"";position:absolute;left:-20px;top:30px;width:8px;height:8px;border-radius:50%;border:1px solid var(--muted);background:var(--bg)}.decision-path>.decision-card:not(:last-child)::after{content:"";position:absolute;left:-17px;top:39px;bottom:-50px;border-left:1px solid var(--line);pointer-events:none}.decision-path>.decision-card[aria-expanded=true]::before{background:var(--accent);border-color:var(--accent)}.decision-card .card-date{display:block;margin:8px 0 16px;font-size:12px}.decision-card .card-field{display:block;margin-top:12px;font-size:14px;white-space:pre-wrap}.decision-card .card-field-label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.work-review{border-top:1px solid var(--line);padding-top:20px;margin-top:24px}.work-review label{margin:16px 0}.work-review .reading-text{max-height:360px;overflow:auto}.work-review-reference{border-top:1px solid var(--line);padding:12px 0}.work-review-reference blockquote{margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}#work-review-existing button{margin-top:12px}#work-review-status{font-size:14px}#work-review-share-text{background:var(--panel)}
 </style></head><body>
 <div class="app-shell"><aside class="app-sidebar"><div class="wordmark">Knot<span class="brand-dot" aria-hidden="true"></span></div><p class="sidebar-caption">个人思考空间</p><nav id="legacy-navigation" class="entry-actions" aria-label="工作导航"><div class="nav-group"><p class="nav-group-title">回顾与查找</p><button id="nav-history" class="entry" aria-pressed="false" hidden>决定回顾<small>重要决定与原话</small></button><button id="nav-search" class="entry" aria-pressed="false">找一份材料<small>查找并阅读</small></button></div><div class="nav-group"><p class="nav-group-title">思考与整理</p><button id="nav-continue" class="entry" aria-pressed="true">继续上次思考<small>回到保存的现场</small></button><button id="nav-write" class="entry" aria-pressed="false">留下这次想法<span id="nav-write-state" class="nav-state" hidden></span><small id="nav-write-help">写下并检查保存</small></button></div></nav><nav id="project-navigation" aria-label="项目导航" hidden><button id="nav-projects" class="entry" aria-pressed="true">我的项目</button></nav><p id="sidebar-mode" class="sidebar-note">阅读、加入草稿和保存是三个不同动作。<br>写入前，会请你确认。</p></aside><div class="workspace"><header class="workspace-toolbar"><div><h1 id="focus-title" tabindex="-1">继续上次思考</h1><p id="focus-subtitle">打开一次保存，回到当时的材料和想法。</p></div><span id="focus-status" class="focus-status">尚未打开内容</span></header>
 <div id="notice" role="status" aria-live="polite">第一次来？先点下面的“查看保存的思考”。目前还没有读取材料。</div>
@@ -33,9 +35,10 @@
 <div id="projects-overview"><div id="projects-list" class="project-cards"></div><p id="projects-empty" hidden>还没有已留存项目。</p></div>
 <section id="project-scene" hidden>
 <div class="bar project-timeline"><label>留存现场<input id="project-timeline" type="range" min="0" max="0" value="0" disabled></label><small id="project-snapshot-label"></small><button id="project-latest" hidden>有新留存 · 回到最新</button></div>
-<div class="project-scene-grid"><div><div id="project-choice-sections" class="choice-sections single-section"><section id="project-observations-section" hidden><h2>自动整理<span class="section-kicker">原话</span></h2><div id="project-observations" class="project-decisions"></div><p id="project-observations-empty" hidden>最近原话中暂无精选。</p></section><section><h2 id="project-decisions-heading">重要决定</h2><div id="project-decisions" class="project-decisions"></div><p id="project-decisions-empty" hidden></p></section></div>
+<div class="project-scene-grid"><div><div id="project-choice-sections" class="choice-sections single-section"><section id="project-observations-section" hidden><h2>自动整理<span class="section-kicker">原话</span></h2><div id="project-observations" class="project-decisions"></div><p id="project-observations-empty" hidden>最近原话中暂无精选。</p></section><section aria-labelledby="project-decisions-heading"><h2 id="project-decisions-heading">决定来路</h2><p id="project-decision-order" class="decision-order" hidden>按原消息日期排列 · 日期未知另列</p><p id="project-decision-order-detail" hidden>日期未知项保留回顾包整理顺序，归档日不作原消息日。连线仅表示阅读／整理顺序，不表示因果或依赖。</p><div id="project-decisions" class="project-decisions decision-path" role="group" aria-labelledby="project-decisions-heading" aria-describedby="project-decision-order-detail"></div><p id="project-decisions-empty" hidden></p></section></div>
 <details id="project-background" hidden><summary>路线背景</summary><div id="project-background-cards" class="project-decisions"></div></details>
-<details id="project-materials-section"><summary id="project-materials-summary">项目材料与原话</summary><label>查找原话或材料<input id="project-material-query" type="search" placeholder="搜索当前项目已留存原话正文与材料名"></label><div id="project-material-list"></div><button id="project-import-append">补充材料</button></details></div>
+<details id="project-materials-section"><summary id="project-materials-summary">项目材料与原话</summary><label>查找原话或材料<input id="project-material-query" type="search" placeholder="搜索当前项目已留存原话正文与材料名"></label><div id="project-material-list"></div><button id="project-import-append">补充材料</button></details>
+<details id="work-review" class="work-review"><summary>工作回顾</summary><div id="work-review-existing" class="bar"></div><div id="work-review-fields"><label>日期<input id="work-review-day" type="date"></label><label>今天完成了什么<textarea id="work-review-completed" rows="3" placeholder="只记录实际完成的内容"></textarea></label><label>卡在哪里<textarea id="work-review-blocked" rows="3" placeholder="尚未解决的问题，可留空"></textarea></label><label>下次接着做什么<textarea id="work-review-next" rows="3" placeholder="下一步，可留空"></textarea></label><details><summary>添加出处 · 最多8条原话</summary><label>已留存原话<select id="work-review-sources"></select></label><pre id="work-review-source-text" class="reading-text"></pre><label>逐字摘录<textarea id="work-review-quote" rows="3" placeholder="从上方原文摘录，不改写"></textarea></label><button id="work-review-add">加入出处</button><div id="work-review-evidence"></div></details></div><p id="work-review-status" role="status" aria-live="polite"></p><div class="bar"><button id="work-review-prepare">生成预览</button><button id="work-review-save" hidden disabled>确认保存回顾</button><button id="work-review-edit" hidden>返回修改</button><button id="work-review-refresh" hidden>保留内容，更新到最新再检查</button></div><p id="work-review-source-warning" role="status" hidden></p><div id="work-review-preview-area" hidden><h3>回顾预览</h3><pre id="work-review-preview" class="reading-text"></pre><label class="check-label"><input id="work-review-checked" type="checkbox" disabled><span>已检查这份回顾与出处</span></label><button id="work-review-share" disabled>准备本地分享文本</button><div id="work-review-share-area" hidden><label>分享文本<textarea id="work-review-share-text" rows="8" readonly></textarea></label><small>可复制后自行分享，尚未发送给任何人。</small></div></div></details></div>
 <aside id="project-detail" class="project-detail" aria-label="决定与材料详情"><p id="project-detail-empty">选择一张决定，查看原话与来源。</p><div id="project-detail-view" hidden><div class="bar"><h2 id="project-detail-title" class="grow" tabindex="-1"></h2><button id="project-detail-close">关闭详情</button></div><div id="project-detail-content"></div></div></aside></div>
 </section></section>
 <section id="history-pane" class="panel" hidden><div class="bar"><div class="grow"><h2 id="history-title">我的重要决定</h2><p id="history-state" role="status" aria-live="polite">尚未读取回顾。</p></div><button id="history-refresh">刷新回顾</button></div><div class="section-actions" role="group" aria-label="回顾操作"><button id="history-expand" disabled>展开决定原话</button><button id="history-collapse" disabled>收起决定原话</button><button id="history-background-toggle" aria-controls="history-background" aria-expanded="false" disabled>查看路线背景</button></div><div class="recall-layout"><aside class="recall-rail" aria-label="决定回溯条"><h2>回溯条</h2><nav id="history-rail" aria-label="定位决定区块"></nav></aside><div class="recall-content"><p id="history-position" role="status">选择一条记录，定位对应决定。</p><div class="work-section history-overview" role="region" aria-labelledby="history-personal-title"><div class="section-heading"><h2 id="history-personal-title">个人重要决定</h2><small id="history-count">尚未读取</small></div><div id="history-list"></div></div><details id="history-background" hidden><summary>更早的路线背景（文档方案）</summary><h2 id="history-background-title" tabindex="-1">历史路线背景</h2><div id="history-plans"></div></details></div></div><p class="history-caption">回溯整理 · 新对话持续采集尚未接入</p></section>
@@ -84,6 +87,9 @@ let projectUnavailableMaterials=new Set();
 let projectImport=null;
 let projectPreparation=0;
 let projectsLoad=null;
+let workReview=null;
+let workReviewGeneration=0;
+const workReviewSaves=new Map();
 const canWrite=document.body?.dataset?.write==='enabled';
 const canContext=document.body?.dataset?.context==='enabled';
 const autoHistory=document.body?.dataset?.history==='enabled';
@@ -230,7 +236,7 @@ function observationSearchSnippet(source,query){
 function renderProjectObservations(){
   const sources=projectObservations(),host=$('project-observations');host.replaceChildren();
   const present=Array.isArray(projectScene.observations);$('project-observations-section').hidden=!present;
-  $('project-choice-sections').className='choice-sections'+(present?'':' single-section');$('project-decisions-heading').textContent=present?'原回顾 · 重要决定':'重要决定';
+  $('project-choice-sections').className='choice-sections'+(present?'':' single-section');$('project-decisions-heading').textContent=present?'原回顾 · 决定来路':'决定来路';
   const seen=new Set();let count=0;
   for(const source of [...sources].sort((a,b)=>b.message_time_ms-a.message_time_ms))for(const excerpt of observationExcerpts(source)){
     if(count>=3||seen.has(excerpt.quote))continue;seen.add(excerpt.quote);
@@ -270,9 +276,10 @@ function clearProjectDetail(moveFocus=false){
   if(moveFocus)projectDetailFocus?.focus?.({preventScroll:true});projectDetailFocus=null;
 }
 function clearProjectScene(){
+  clearWorkReview();
   clearProjectDetail();projectScene=null;projectCards=[];projectSnapshots=[];projectUnavailableMaterials.clear();
   for(const id of ['project-decisions','project-background-cards','project-material-list','project-observations'])$(id).replaceChildren();
-  $('project-observations-section').hidden=true;$('project-latest').hidden=true;
+  $('project-observations-section').hidden=true;$('project-latest').hidden=true;$('project-decision-order').hidden=true;
   $('project-material-query').value='';$('project-materials-section').open=false;$('project-background').hidden=true;$('project-background').open=false;
   $('project-timeline').disabled=true;$('project-snapshot-label').textContent='';$('project-decisions-empty').hidden=true;$('project-import-append').disabled=true;
 }
@@ -284,23 +291,40 @@ async function loadProjects(){
     renderProjectList();projectMessage('');syncProjectWorkspace();return true;
   }catch(error){if(generation!==projectListGeneration||projectRoute!=='overview')return false;projectMessage(error.message,true);throw error;}
 }
+// Only direct-message dates establish dated reading order. Archive/document
+// dates never fill an unknown message date; ties retain curated package order.
+function projectDecisionDay(item){return item.kind==='direct_user_message'&&/^\d{4}-\d{2}-\d{2}$/.test(item.occurred_on||'')?item.occurred_on:null;}
+function projectDecisionOrder(items){
+  return items.map((item,index)=>({item,index,day:projectDecisionDay(item)})).sort((a,b)=>a.day&&b.day?(a.day<b.day?-1:a.day>b.day?1:a.index-b.index):a.day?-1:b.day?1:a.index-b.index).map(entry=>entry.item);
+}
+function projectDecisionDate(item){
+  return item.kind==='direct_user_message'?(projectDecisionDay(item)?'原消息日期 '+item.occurred_on:'原消息日期未知'):historyDate(item);
+}
+function projectDecisionFields(host,item){
+  for(const [key,label] of [['before','此前'],['after',item.kind==='document_plan'?'方案':'决定'],['reason','原因']]){
+    if(typeof item[key]!=='string'||!item[key].trim())continue;
+    text(host,'p',label,'detail-label');text(host,'p',item[key]);
+  }
+}
 function projectDecisionCard(item,host){
   const card=text(host,'button','','decision-card');card.setAttribute('aria-controls','project-detail-view');card.setAttribute('aria-expanded','false');text(card,'span',item.title,'card-title');
-  if(item.reason)text(card,'span',item.reason.slice(0,120)+(item.reason.length>120?'…':''),'card-reason');
+  text(card,'small',projectDecisionDate(item),'card-date');
+  if(typeof item.reason==='string'&&item.reason.trim()){const reason=Array.from(item.reason);text(card,'span',reason.length<120?item.reason:reason.slice(0,118).join('')+'…','card-reason');}
+  card.setAttribute('aria-describedby','project-decision-order-detail');
   projectCards.push({id:item.id,button:card,item});card.addEventListener('click',()=>selectProjectDecision(item.id));
 }
 function renderProjectScene(){
   const scene=projectScene;projectCards=[];$('project-decisions').replaceChildren();$('project-background-cards').replaceChildren();
-  const items=(scene.decisions?.items||[]).filter(item=>item.evidence.every(ref=>!projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash)));const decisions=items.filter(item=>item.kind!=='document_plan'),background=items.filter(item=>item.kind==='document_plan');
+  const items=(scene.decisions?.items||[]).filter(item=>item.evidence.every(ref=>!projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash)));const decisions=projectDecisionOrder(items.filter(item=>item.kind!=='document_plan')),background=items.filter(item=>item.kind==='document_plan');
   for(const item of decisions)projectDecisionCard(item,$('project-decisions'));for(const item of background)projectDecisionCard(item,$('project-background-cards'));
   renderProjectObservations();
-  $('project-background').hidden=!background.length;$('project-decisions-empty').hidden=!!decisions.length;
+  $('project-background').hidden=!background.length;$('project-decisions-empty').hidden=!!decisions.length;$('project-decision-order').hidden=!decisions.length;
   $('project-decisions-empty').textContent=scene.has_unavailable||scene.decisions?.has_unavailable||projectUnavailableMaterials.size?'部分来源当前不可读，相关决定已隐藏。':Array.isArray(scene.observations)?'暂无原回顾决定。':scene.decisions?'这个留存现场尚无个人决定。':'材料已导入，尚未整理决定';
   projectSnapshots=[...scene.snapshots].sort((a,b)=>compareProjectRevisions(a.revision,b.revision));const index=projectSnapshots.findIndex(s=>s.revision===scene.revision);
   $('project-timeline').min='0';$('project-timeline').max=String(Math.max(0,projectSnapshots.length-1));$('project-timeline').value=String(Math.max(0,index));$('project-timeline').disabled=projectSnapshots.length<2;
   $('project-snapshot-label').textContent=projectSavedAt(scene.saved_at)+(projectSnapshots.length<2?' · 仅一个留存版本':' · 仅回看实际留存版本');
   const head=projectSnapshots[projectSnapshots.length-1];$('project-import-append').disabled=!head||head.revision!==scene.revision;
-  renderProjectMaterials();syncProjectWorkspace();
+  renderProjectMaterials();renderWorkReview();syncProjectWorkspace();
 }
 async function openProject(projectId,revision=null){
   requireProjects();const generation=++projectGeneration;projectListGeneration++;clearProjectScene();projectRoute='scene';syncProjectWorkspace();projectMessage('正在打开现场…');
@@ -315,8 +339,9 @@ function openProjectDetail(title,origin=null){
 }
 function selectProjectDecision(id){
   requireProjects();const selected=projectCards.find(card=>card.id===id&&card.item);if(!selected)return false;clearProjectDetail();openProjectDetail(selected.item.title,selected.button);selected.button.setAttribute('aria-expanded','true');
-  const item=selected.item,host=$('project-detail-content');text(host,'small',historyDate(item));
-  for(const [key,label] of [['before','此前'],['after',item.kind==='document_plan'?'方案':'决定'],['reason','原因'],['caution','来源说明']])if(item[key]){text(host,'p',label,'detail-label');text(host,'p',item[key]);}
+  const item=selected.item,host=$('project-detail-content');text(host,'small',projectDecisionDate(item));projectDecisionFields(host,item);
+  text(host,'small',$('project-decision-order-detail').textContent);
+  if(item.caution){text(host,'p','来源说明','detail-label');text(host,'p',item.caution);}
   for(const evidence of item.evidence){text(host,'blockquote',evidence.quote);text(host,'small',evidence.title);const material=projectScene.materials.find(ref=>ref.asset_id===evidence.asset_id&&ref.content_hash===evidence.content_hash);if(material){const readButton=text(host,'button','阅读这份材料');readButton.addEventListener('click',()=>projectAction(()=>readProjectMaterial(material,selected.button)));}}
   return true;
 }
@@ -381,6 +406,126 @@ async function confirmProjectImport(){
   }catch(error){session.phase=error.uncertain?'unknown':'rejected';$('project-import-status').textContent=error.message;syncProjectImport();return false;}
 }
 async function projectAction(handler){try{return await handler();}catch(error){projectMessage(error.message,true);return false;}}
+const workReviewFields=['day','completed','blocked','next'];
+function workReviewKey(scene){return scene.project_id+':'+scene.revision+':'+scene.manifest_hash;}
+function workReviewSources(){return projectObservations().filter(source=>projectScene.materials.some(ref=>ref.asset_id===source.asset_id&&ref.content_hash===source.content_hash));}
+function workReviewEvidenceAllowed(ref){return workReviewSources().some(source=>source.asset_id===ref.asset_id&&source.content_hash===ref.content_hash&&source.text.includes(ref.quote));}
+function workReviewMessage(message){$('work-review-status').textContent=message;}
+function clearWorkReview(){
+  workReviewGeneration++;workReview=null;$('work-review').open=false;
+  for(const name of workReviewFields)$('work-review-'+name).value='';
+  for(const id of ['work-review-sources','work-review-evidence','work-review-existing'])$(id).replaceChildren();
+  $('work-review-source-text').textContent='';$('work-review-quote').value='';$('work-review-preview').textContent='';
+  $('work-review-preview-area').hidden=true;$('work-review-checked').checked=false;$('work-review-share-text').value='';$('work-review-share-area').hidden=true;workReviewMessage('');
+  $('work-review-source-warning').textContent='';$('work-review-source-warning').hidden=true;$('work-review-refresh').hidden=true;
+}
+function renderWorkReview(){
+  if(!projectScene)return;
+  if(!workReview){workReview={key:workReviewKey(projectScene),binding:{project_id:projectScene.project_id,revision:projectScene.revision,manifest_hash:projectScene.manifest_hash},title:projectScene.title,evidence:[],preview:null,request:null,phase:'editing'};$('work-review-day').value=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'});}
+  const select=$('work-review-sources'),previous=select.value;select.replaceChildren();const empty=text(select,'option','选择已留存原话');empty.value='';
+  for(const source of workReviewSources()){const option=text(select,'option',source.title+' · '+captureDate(source.message_time_ms));option.value=source.asset_id+':'+source.content_hash;}
+  select.value=workReviewSources().some(source=>source.asset_id+':'+source.content_hash===previous)?previous:'';
+  if(!select.value){$('work-review-source-text').textContent='';$('work-review-quote').value='';}
+  if(workReview.evidence.some(ref=>!workReviewEvidenceAllowed(ref))){workReview.evidence=workReview.evidence.filter(workReviewEvidenceAllowed);workReviewChanged();}
+  const existing=$('work-review-existing');existing.replaceChildren();
+  for(const ref of projectScene.materials.filter(ref=>ref.title.endsWith('工作回顾.md')&&!projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash))){const button=text(existing,'button','阅读 '+ref.title);button.addEventListener('click',()=>projectAction(()=>readProjectMaterial(ref,button)));}
+  renderWorkReviewEvidence();syncWorkReview();
+}
+function workReviewChanged(){
+  if(!workReview)return;workReviewGeneration++;workReview.preview=null;workReview.request=null;workReview.phase='editing';
+  const save=workReviewSaves.get(workReview.key);if(save?.phase==='rejected')workReviewSaves.delete(workReview.key);
+  $('work-review-checked').checked=false;$('work-review-share-text').value='';$('work-review-share-area').hidden=true;workReviewMessage('内容已变化，请重新生成预览并检查。');syncWorkReview();
+}
+function workReviewSelectSource(){
+  const source=workReviewSources().find(source=>source.asset_id+':'+source.content_hash===$('work-review-sources').value);
+  $('work-review-source-text').textContent=source?.text||'';$('work-review-quote').value='';
+}
+function addWorkReviewEvidence(){
+  requireProjects();if(!workReview||workReviewSaves.has(workReview.key))throw projectError('INVALID_ARGUMENTS');
+  const source=workReviewSources().find(source=>source.asset_id+':'+source.content_hash===$('work-review-sources').value),quote=$('work-review-quote').value;
+  if(!source||!quote.trim()||projectUtf8Size(quote)>2048||!source.text.includes(quote))throw Error('请从所选原文逐字摘录，不超过2048字节。');
+  if(workReview.evidence.length>=8)throw Error('一次最多选择8条出处。');
+  if(workReview.evidence.some(ref=>ref.asset_id===source.asset_id&&ref.content_hash===source.content_hash&&ref.quote===quote))throw Error('这条原话已加入。');
+  workReview.evidence.push({asset_id:source.asset_id,content_hash:source.content_hash,quote});workReviewChanged();renderWorkReviewEvidence();
+}
+function renderWorkReviewEvidence(){
+  const host=$('work-review-evidence');host.replaceChildren();if(!workReview)return;
+  for(const [index,ref] of workReview.evidence.entries()){const row=text(host,'div','','work-review-reference');text(row,'blockquote',ref.quote);const source=workReviewSources().find(source=>source.asset_id===ref.asset_id&&source.content_hash===ref.content_hash);text(row,'small',source?.title||'出处暂不可读');const remove=text(row,'button','移除出处');remove.disabled=workReviewSaves.has(workReview.key);remove.addEventListener('click',()=>{if(workReviewSaves.has(workReview.key))return;workReview.evidence.splice(index,1);workReviewChanged();renderWorkReviewEvidence();});}
+}
+function syncWorkReview(){
+  const state=workReview,save=state&&workReviewSaves.get(state.key),frozen=!!save,preparing=state?.phase==='preparing',refreshing=state?.phase==='refreshing',conflict=save?.phase==='rejected'&&save.code==='REVISION_CONFLICT';
+  $('work-review-fields').hidden=frozen;
+  for(const name of workReviewFields)$('work-review-'+name).disabled=!state||frozen;
+  for(const id of ['work-review-sources','work-review-quote','work-review-add'])$(id).disabled=!state||frozen;
+  $('work-review-prepare').disabled=!state||frozen||preparing;$('work-review-prepare').hidden=frozen;
+  const preview=save?.document||state?.preview,allowed=!!preview&&(save?.input.evidence||state?.request?.evidence||[]).every(workReviewEvidenceAllowed);
+  $('work-review-preview-area').hidden=!allowed;$('work-review-preview').textContent=allowed?preview.text:'';
+  $('work-review-save').hidden=!preview||conflict;$('work-review-save').disabled=!state||preparing||refreshing||save?.phase==='sending'||(!save&&!allowed);
+  $('work-review-save').textContent=save?.phase==='sending'?'正在保存…':save?.phase==='unknown'||save?.phase==='rejected'?'重试同一次保存':save?.phase==='saved'?'查看已保存版本':'确认保存回顾';
+  $('work-review-edit').hidden=save?.phase!=='rejected'||conflict;
+  $('work-review-refresh').hidden=!conflict;$('work-review-refresh').disabled=refreshing;
+  $('work-review-checked').disabled=!allowed;$('work-review-share').disabled=!allowed||!$('work-review-checked').checked;
+  if(!allowed){$('work-review-checked').checked=false;$('work-review-share-text').value='';$('work-review-share-area').hidden=true;}
+  if(save)workReviewMessage(save.message);
+}
+function workReviewBody(){
+  requireProjects();if(!workReview||!projectScene||workReview.key!==workReviewKey(projectScene))throw projectError('INVALID_ARGUMENTS');
+  const body={...workReview.binding};for(const name of workReviewFields)body[name]=$('work-review-'+name).value;
+  const date=new Date(body.day+'T00:00:00Z');if(!/^\d{4}-\d{2}-\d{2}$/.test(body.day)||!Number.isFinite(date.getTime())||date.toISOString().slice(0,10)!==body.day)throw Error('请选择有效的回顾日期。');
+  if(!['completed','blocked','next'].some(name=>body[name].trim())||['completed','blocked','next'].some(name=>projectUtf8Size(body[name])>8192))throw Error('请至少填写一段，每段不超过8192字节。');
+  body.evidence=workReview.evidence.map(ref=>({...ref}));if(body.evidence.length>8||body.evidence.some(ref=>!ref.quote.trim()||projectUtf8Size(ref.quote)>2048||!workReviewEvidenceAllowed(ref)))throw projectError('ACCESS_DENIED');
+  if(projectUtf8Size(JSON.stringify(body))>131072)throw projectError('INVALID_ARGUMENTS');return body;
+}
+async function prepareWorkReview(){
+  requireProjects();const state=workReview;if(!state||workReviewSaves.has(state.key))throw projectError('INVALID_ARGUMENTS');
+  const body=workReviewBody(),serialized=JSON.stringify(body);workReviewChanged();const generation=workReviewGeneration;state.phase='preparing';syncWorkReview();workReviewMessage('正在生成预览，尚未保存…');
+  try{const value=await projectRequest('work-review-prepare',{},serialized);if(state!==workReview||generation!==workReviewGeneration)return false;
+    if(value?.project_id!==body.project_id||value.revision!==body.revision||value.manifest_hash!==body.manifest_hash||typeof value.document?.title!=='string'||!value.document.title.trim()||projectUtf8Size(value.document.title)>256||typeof value.document.text!=='string'||projectUtf8Size(value.document.text)>65536)throw projectError('CONTENT_MISMATCH');
+    state.preview={title:value.document.title,text:value.document.text};state.request=body;state.phase='ready';workReviewMessage('预览已生成，尚未保存。');syncWorkReview();return true;
+  }catch(error){if(state!==workReview||generation!==workReviewGeneration)return false;state.phase='editing';workReviewMessage(error.uncertain?'预览未生成，请重新生成；尚未发送保存。':error.message);syncWorkReview();return false;}
+}
+async function saveWorkReview(){
+  requireProjects();const state=workReview;if(!state||!projectScene||state.key!==workReviewKey(projectScene))throw projectError('INVALID_ARGUMENTS');
+  if(state.phase==='refreshing')return false;
+  let session=workReviewSaves.get(state.key);if(session?.phase==='saved')return openProject(session.receipt.project_id,session.receipt.revision);
+  if(!session){if(!state.preview||!state.request||JSON.stringify(workReviewBody())!==JSON.stringify(state.request))throw Error('请先重新生成并核对预览。');
+    const body={project_id:state.binding.project_id,title:state.title,expected_revision:state.binding.revision,request_id:crypto.randomUUID(),documents:[{...state.preview}],archive_ref:null};
+    session={body,serialized:JSON.stringify(body),input:state.request,document:state.preview,phase:'ready',receipt:null,message:''};workReviewSaves.set(state.key,session);
+  }
+  if(!['ready','unknown','rejected'].includes(session.phase))return false;
+  session.phase='sending';session.message='正在保存这份回顾…';renderWorkReviewEvidence();syncWorkReview();
+  try{const value=await projectRequest('project-import',{},session.serialized);
+    if(value?.project_id!==session.body.project_id||!projectRevision(value.revision)||typeof value.manifest_hash!=='string'||!/^[0-9a-f]{64}$/.test(value.manifest_hash))throw projectError('READ_UNAVAILABLE',true);
+    session.phase='saved';session.receipt=value;session.message='工作回顾已保存 · 留存版本 '+value.revision+'。';if(state===workReview)syncWorkReview();return true;
+  }catch(error){session.phase=error.uncertain?'unknown':'rejected';session.code=error.code;session.message=error.uncertain?'保存结果尚未确认，原回顾和请求已保留，请重试同一次保存。':error.message;if(state===workReview)syncWorkReview();return false;}
+}
+function editWorkReview(){
+  if(!workReview)return;const session=workReviewSaves.get(workReview.key);if(session?.phase!=='rejected'||session.code==='REVISION_CONFLICT')return;
+  for(const name of workReviewFields)$('work-review-'+name).value=session.input[name];workReview.evidence=session.input.evidence.map(ref=>({...ref}));workReviewSaves.delete(workReview.key);workReviewChanged();renderWorkReviewEvidence();
+}
+async function refreshWorkReview(){
+  requireProjects();const state=workReview,session=state&&workReviewSaves.get(state.key);
+  if(!state||state.phase==='refreshing'||session?.phase!=='rejected'||session.code!=='REVISION_CONFLICT')throw projectError('INVALID_ARGUMENTS');
+  const generation=projectGeneration,input=session.input;state.phase='refreshing';session.message='正在读取同项目最新现场，原内容已保留…';syncWorkReview();
+  try{const value=await projectRequest('project',{project_id:input.project_id});if(state!==workReview||generation!==projectGeneration||projectRoute!=='scene')return false;
+    if(value?.project_id!==input.project_id||!projectRevision(value.revision)||typeof value.manifest_hash!=='string'||!/^[0-9a-f]{64}$/.test(value.manifest_hash)||!Array.isArray(value.materials)||!Array.isArray(value.snapshots)||value.snapshots.some(s=>!projectRevision(s.revision))||(value.decisions!==null&&!Array.isArray(value.decisions?.items)))throw projectError('READ_UNAVAILABLE');
+    const other=workReviewSaves.get(workReviewKey(value));if(other&&other!==session)throw Error('最新现场还有一份已保留的保存请求，请先处理它。');
+    projectGeneration++;projectListGeneration++;clearProjectScene();projectScene=value;renderProjectScene();
+    const dropped=[];workReview.evidence=input.evidence.filter((ref,index)=>{if(workReviewEvidenceAllowed(ref))return true;dropped.push(index+1);return false;}).map(ref=>({...ref}));
+    for(const name of workReviewFields)$('work-review-'+name).value=input[name];workReviewSaves.delete(state.key);workReviewChanged();renderWorkReviewEvidence();syncWorkReview();$('work-review').open=true;
+    if(dropped.length){$('work-review-source-warning').textContent='第 '+dropped.join('、')+' 条出处在最新现场已失效（材料成员、内容校验或逐字原话不再匹配），未加入新回顾；请重新核对。';$('work-review-source-warning').hidden=false;}
+    workReviewMessage('内容已保留并更新到最新留存版本 '+value.revision+'，请重新生成预览并检查。');return true;
+  }catch(error){if(state!==workReview||generation!==projectGeneration)return false;state.phase='editing';session.message='更新未完成，原回顾仍保留。'+error.message;syncWorkReview();return false;}
+}
+function checkWorkReview(){
+  $('work-review-share-text').value='';$('work-review-share-area').hidden=true;syncWorkReview();
+}
+function shareWorkReview(){
+  requireProjects();if(!workReview||!$('work-review-checked').checked)throw Error('请先检查并勾选这份预览。');
+  const session=workReviewSaves.get(workReview.key),preview=session?.document||workReview.preview,input=session?.input||workReview.request;
+  if(!preview||!input||!input.evidence.every(workReviewEvidenceAllowed)||(!session&&JSON.stringify(workReviewBody())!==JSON.stringify(input)))throw Error('内容已变化，请重新生成并检查。');
+  $('work-review-share-text').value=preview.text;$('work-review-share-area').hidden=false;return preview.text;
+}
 function startProjectMode(){syncProjectWorkspace();projectsLoad=projectAction(loadProjects);if(canCapture){captureLoad=pollCapture(false);captureLoad.then(scheduleCapturePoll);}}
 function notice(message, error=false){$('notice').textContent=message;$('notice').dataset.error=String(error);}
 function text(parent, tag, value, cls){const node=document.createElement(tag);node.textContent=value;if(cls)node.className=cls;parent.append(node);return node;}
@@ -644,6 +789,16 @@ $('history-collapse').addEventListener('click',()=>{if(!busy)setHistoryEvidence(
 $('history-background-toggle').addEventListener('click',()=>{if(!busy)toggleHistoryBackground();});
 $('history-background').addEventListener('toggle',syncHistoryControls);
 if(canProjects){
+  for(const name of workReviewFields)$('work-review-'+name).addEventListener('input',workReviewChanged);
+  $('work-review-sources').addEventListener('change',()=>{workReviewSelectSource();workReviewChanged();});
+  $('work-review-quote').addEventListener('input',workReviewChanged);
+  $('work-review-add').addEventListener('click',()=>projectAction(addWorkReviewEvidence));
+  $('work-review-prepare').addEventListener('click',()=>projectAction(prepareWorkReview));
+  $('work-review-save').addEventListener('click',()=>projectAction(saveWorkReview));
+  $('work-review-edit').addEventListener('click',()=>projectAction(editWorkReview));
+  $('work-review-refresh').addEventListener('click',()=>projectAction(refreshWorkReview));
+  $('work-review-checked').addEventListener('change',checkWorkReview);
+  $('work-review-share').addEventListener('click',()=>projectAction(shareWorkReview));
   $('nav-projects').addEventListener('click',()=>projectAction(showProjectOverview));
   $('projects-back').addEventListener('click',()=>projectAction(showProjectOverview));
   $('projects-refresh').addEventListener('click',()=>projectAction(loadProjects));

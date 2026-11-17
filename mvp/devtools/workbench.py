@@ -232,10 +232,11 @@ class Handler(BaseHTTPRequestHandler):
         context_actions={'/api/context-prepare':'prepare','/api/context-export':'export'}
         context_request=self.path in context_actions
         project_request=self.path == '/api/project-import'
+        review_request=self.path == '/api/work-review-prepare'
         capture_request=self.path == '/api/capture-control'
         target=self.server.context if context_request else self.server.writer
         if capture_request: target=self.server.capture
-        if (project_request and not self.server.projects_enabled) or (not project_request and target is None):
+        if ((project_request or review_request) and not self.server.projects_enabled) or (not project_request and not review_request and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
         if (self.headers.get('Host') != host or self.headers.get('Origin') != 'http://' + host
@@ -256,7 +257,7 @@ class Handler(BaseHTTPRequestHandler):
                        '/api/recover':'recover','/api/cancel':'cancel'}
             if context_request: actions=context_actions
             if capture_request: actions={'/api/capture-control':'control'}
-            if not project_request and self.path not in actions: raise Invalid()
+            if not project_request and not review_request and self.path not in actions: raise Invalid()
             lengths = self.headers.get_all('Content-Length',[])
             if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,6}' if project_request else '[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
             size = int(lengths[0])
@@ -265,8 +266,16 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            result = (project_import(self.server.backend_port,self.server.token,body)
-                      if project_request else getattr(target,actions[self.path])(body))
+            if review_request:
+                from mvp.devtools.work_review import prepare_review
+                result=prepare_review(body,self.server.token,
+                    lambda pid,rev:project_get(self.server.backend_port,self.server.token,'scene',
+                        dict(project_id=pid,revision=rev)),
+                    lambda pid,rev,aid,digest:project_get(self.server.backend_port,self.server.token,'material',
+                        dict(project_id=pid,revision=rev,asset_id=aid,expected_hash=digest)))
+            else:
+                result = (project_import(self.server.backend_port,self.server.token,body)
+                          if project_request else getattr(target,actions[self.path])(body))
             if capture_request:
                 from mvp.devtools.codex_capture import project_capture_state
                 result=project_capture_state(result,self.server.token)
