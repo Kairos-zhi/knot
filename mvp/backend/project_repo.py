@@ -253,7 +253,6 @@ def _check_message_identities(sources, existing_refs, candidates):
         identities[key] = raw
 
 
-LIST_LIMIT = policy.MAX_LISTED
 ACTIVE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
 IDENTITY_ITEM_FIELDS = ('project_id', 'title', 'revision', 'manifest_hash', 'saved_at')
 PUBLISHED_ITEM_FIELDS = IDENTITY_ITEM_FIELDS + ('material_count', 'decision_count')

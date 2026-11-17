@@ -17,8 +17,7 @@ MAX_IMPORT_TEXT_BYTES = 256 * 1024
 MAX_READ_BYTES = 8 * 1024 * 1024
 MAX_MANIFEST_BYTES = 64 * 1024
 MAX_RESPONSE_BYTES = 1024 * 1024
-# Main-list curation: 20 visible rows, seven-day activity window, three states.
-MAX_LISTED = 20
+# Main-list curation: seven-day activity window, three states, view-side folding.
 LIST_STATES = frozenset({'active', 'dormant', 'empty'})
 INSTANT = re.compile('[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{3})?Z')
 ERRORS = frozenset({'INVALID_ARGUMENTS', 'ACCESS_DENIED', 'REVISION_CONFLICT',

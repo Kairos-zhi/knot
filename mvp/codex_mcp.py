@@ -50,6 +50,9 @@ _LOAD_V2_NAME = "knot_load_exploration_v2"
 _FORK_NAME = "knot_fork_exploration"
 _CONTEXT_NAME = "knot_context_review"
 _MAX_RESPONSE = 64 * 1024
+# The review reads the whole project list, whose contract allows up to 100 rows
+# of 85 Han characters; that line body is ~82 KiB escaped, so 64 KiB truncates it.
+_REVIEW_MAX_RESPONSE = 256 * 1024
 _TIMEOUT = 2
 _HASH_SCHEMA = {"type": "string", "pattern": f"^{SHA256_PATTERN}$", "maxLength": 64}
 _UUID_SCHEMA = {"type": "string", "pattern": f"^{ASSET_ID_PATTERN}$", "maxLength": 36}
@@ -219,7 +222,8 @@ _CONTEXT_TOOL = Tool(name=_CONTEXT_NAME, description=(
     "在开始任何与 Knot 项目相关的工作（读材料、整理决定、写回顾）之前先调用本工具。"
     "把返回的待维护项原样呈现给用户，由用户决定是否处理。"
     "本工具只读，不修改数据库、不导入、不写入。"
-    "原因码固定为 CAPTURE_STALE、NO_SOURCE、NO_DECISION、DORMANT，"
+    "原因码为 NO_SOURCE、NO_DECISION、DORMANT；CAPTURE_STALE 需要宿主水位接入，"
+    "当前不评估，不会出现在结果里。"
     "suggested_action 取优先级最高的原因给出的动作；没有待维护项时 items 为空。"), input_schema={
     "type": "object", "additionalProperties": False, "properties": {}})
 
@@ -443,7 +447,8 @@ async def context_review(origin, arguments, token):
         return {"error": "INVALID_ARGUMENTS"}
     if type(token) is not str or not token.strip():
         return {"error": "ACCESS_DENIED"}
-    status, envelope = await get_envelope(origin, "/projects", {}, token)
+    status, envelope = await request_envelope(
+        origin, "/projects", {}, token, max_response=_REVIEW_MAX_RESPONSE)
     if status in (401, 403):
         return {"error": "ACCESS_DENIED"}
     if status != 200:

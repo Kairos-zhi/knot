@@ -364,13 +364,13 @@ def test_context_review_reports_fixed_reasons_in_priority_order():
         "checked_at": _iso(NOW),
         "items": [
             {"project_id": source, "title": "Source project", "reasons": ["NO_SOURCE"],
-             "suggested_action": "import_material", "last_activity_at": _iso(NOW - 900_000)},
+             "suggested_action": "import_material", "project_saved_at": _iso(NOW - 900_000)},
             {"project_id": decision, "title": "Decision project", "reasons": ["NO_DECISION"],
-             "suggested_action": "curate_decision", "last_activity_at": _iso(NOW - 1_200_000)},
+             "suggested_action": "curate_decision", "project_saved_at": _iso(NOW - 1_200_000)},
             {"project_id": dormant, "title": "Dormant project", "reasons": ["DORMANT"],
-             "suggested_action": "archive_or_merge", "last_activity_at": _iso(NOW - 40 * DAY)},
+             "suggested_action": "archive_or_merge", "project_saved_at": _iso(NOW - 40 * DAY)},
             {"project_id": every, "title": "Every reason", "reasons": ["NO_SOURCE", "DORMANT"],
-             "suggested_action": "import_material", "last_activity_at": _iso(NOW - 41 * DAY)},
+             "suggested_action": "import_material", "project_saved_at": _iso(NOW - 41 * DAY)},
         ],
     }
     assert project_context_review(
@@ -401,7 +401,7 @@ def test_context_review_dormant_boundary_unknown_time_and_twenty_cap():
 
     boundary, over, unknown = _project(1), _project(2), _project(3)
     assert [
-        (item["reasons"], item["last_activity_at"])
+        (item["reasons"], item["project_saved_at"])
         for item in project_context_review(_envelope(
             _listing_item(boundary, "Boundary", NOW - 30 * DAY, 1, 0),
             _listing_item(over, "Over", NOW - 30 * DAY - 1, 1, 0),
@@ -562,13 +562,13 @@ def test_context_review_reads_project_list_without_writing(tmp_path, monkeypatch
                 assert payload["items"] == [
                     {"project_id": no_source["project_id"], "title": "No source project",
                      "reasons": ["NO_SOURCE"], "suggested_action": "import_material",
-                     "last_activity_at": _iso(now - 60_000)},
+                     "project_saved_at": _iso(now - 60_000)},
                     {"project_id": no_decision["project_id"], "title": "No decision project",
                      "reasons": ["NO_DECISION"], "suggested_action": "curate_decision",
-                     "last_activity_at": _iso(now - 120_000)},
+                     "project_saved_at": _iso(now - 120_000)},
                     {"project_id": dormant["project_id"], "title": "Dormant project",
                      "reasons": ["DORMANT"], "suggested_action": "archive_or_merge",
-                     "last_activity_at": _iso(now - 40 * DAY)},
+                     "project_saved_at": _iso(now - 40 * DAY)},
                 ]
                 rejected = await client.call_tool(CONTEXT_TOOL, {"limit": 1})
                 assert rejected.structured_content == {"error": "INVALID_ARGUMENTS"}

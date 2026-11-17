@@ -368,16 +368,6 @@ def _review_instant(value):
     return True
 
 
-def _activity_stamp(item):
-    """Millisecond activity instant: curated field first, saved_at as fallback."""
-    if "last_activity_at" in item:
-        value = item["last_activity_at"]
-        if value is None:
-            return None
-        return int(round(datetime.fromisoformat(value[:-1] + "+00:00").timestamp() * 1000))
-    return item["saved_at"] or None
-
-
 def _review_text(value):
     """Titles are display data: bounded, encodable and free of control characters."""
     if type(value) is not str or not 1 <= len(value) <= 256:
@@ -477,28 +467,30 @@ def project_context_review(envelope, now_ms, capture=None):
     items, seen = [], set()
     for item in listing["items"]:
         project_id = item["project_id"]
-        # Maintenance is measured by when the project itself last changed, so a
-        # newly imported old message does not make a stale project look alive.
-        last_activity = item["saved_at"] or None
+        # Maintenance is measured by when the project was last saved. The list
+        # publishes content activity instead, so the two fields are named
+        # differently on purpose: one project can read "active" there and still
+        # need maintenance here.
+        project_saved = item["saved_at"] or None
         reasons = []
         host_stamp = (watermarks or {}).get(project_id)
-        if host_stamp is not None and last_activity is not None and host_stamp > last_activity:
+        if host_stamp is not None and project_saved is not None and host_stamp > project_saved:
             reasons.append("CAPTURE_STALE")
         if item["material_count"] == 0:
             reasons.append("NO_SOURCE")
         elif item["decision_count"] == 0:
             reasons.append("NO_DECISION")
-        if last_activity is not None and now_ms - last_activity > DORMANT_AFTER_MS:
+        if project_saved is not None and now_ms - project_saved > DORMANT_AFTER_MS:
             reasons.append("DORMANT")
         if not reasons or project_id in seen:
             continue
         seen.add(project_id)
-        items.append((last_activity, {
+        items.append((project_saved, {
             "project_id": project_id,
             "title": item["title"],
             "reasons": reasons,
             "suggested_action": _REVIEW_ACTIONS[reasons[0]],
-            "last_activity_at": _review_timestamp(last_activity),
+            "project_saved_at": _review_timestamp(project_saved),
         }))
 
     items.sort(key=lambda pair: (pair[0] is None, -(pair[0] or 0), pair[1]["project_id"]))
