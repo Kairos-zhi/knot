@@ -370,7 +370,8 @@ def main():
             capture = CodexCapture(Path.home()/'.codex',
                 listing=lambda:project_get(backend_port,token,'list',{}),
                 reading=lambda pid:project_get(backend_port,token,'scene',dict(project_id=pid)),
-                importing=lambda body:project_import(backend_port,token,body),bindings=bindings)
+                importing=lambda body:project_import(backend_port,token,body),bindings=bindings,
+                state_root=args.state_root)
         elif args.capture_binding:
             raise ValueError('CAPTURE_NOT_ENABLED')
         server = create_server(backend_port, token, args.port,args.state_root,args.packet_root,
