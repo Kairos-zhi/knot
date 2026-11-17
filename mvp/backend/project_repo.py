@@ -1,7 +1,9 @@
 """Revisioned project manifests over the existing append-only asset authority."""
 
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from hashlib import sha256
+import time
 
 from mvp import decision_policy as decision
 from mvp import project_policy as policy
@@ -251,9 +253,73 @@ def _check_message_identities(sources, existing_refs, candidates):
         identities[key] = raw
 
 
+LIST_LIMIT = policy.MAX_LISTED
+ACTIVE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
+IDENTITY_ITEM_FIELDS = ('project_id', 'title', 'revision', 'manifest_hash', 'saved_at')
+PUBLISHED_ITEM_FIELDS = IDENTITY_ITEM_FIELDS + ('material_count', 'decision_count')
+CURATED_ITEM_FIELDS = ('last_activity_at', 'state')
+
+
+def _instant(stamp):
+    """Render an epoch-millisecond instant as the contract's UTC date-time."""
+    if stamp is None:
+        return None
+    value = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(milliseconds=stamp)
+    return value.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+
+def _activity(selected, sources):
+    """Latest real instant of the selected version, or None when unknowable.
+
+    The manifest asset's own created_at counts; a stamp of zero is the schema's
+    "unset" sentinel rather than 1970, and sources without a message time
+    contribute nothing. Unreadable sources are excluded, matching material_count.
+    """
+    stamps = [selected['saved_at']] if type(selected['saved_at']) is int and selected['saved_at'] > 0 else []
+    for ref in selected['value']['materials']:
+        try:
+            source = sources.get(ref)
+        except policy.ProjectError as exc:
+            if exc.code == 'RESPONSE_LIMIT':
+                raise
+            continue
+        instant = source['message_time_ms']
+        if type(instant) is int and instant > 0:
+            stamps.append(instant)
+    return max(stamps) if stamps else None
+
+
+def _state(material_count, decision_count, instant, now):
+    """Classify one project; only retained decisions keep a material-less row."""
+    if material_count == 0 and decision_count == 0:
+        return 'empty'
+    if material_count and instant is not None and now - instant <= ACTIVE_WINDOW_MS:
+        return 'active'
+    return 'dormant'
+
+
+def _order(item):
+    """Newest activity first, unknown activity last, stable on equal instants."""
+    instant = item['last_activity_at_ms']
+    return (instant is None, -(instant or 0), -item['saved_at'], item['project_id'])
+
+
+def _listing(items, hidden_count, token):
+    """Publish the curated rows through the one closed ProjectList contract."""
+    return policy.project_response('list', {
+        'items': [{field: item[field] for field in PUBLISHED_ITEM_FIELDS + CURATED_ITEM_FIELDS}
+                  for item in items],
+        'hidden_count': hidden_count}, token)
+
+
 class ProjectRepo:
-    def __init__(self, db_path):
+    def __init__(self, db_path, clock=None):
         self.db_path = db_path
+        self.clock = clock
+
+    def _now(self):
+        """One clock read per response, so every state shares the same instant."""
+        return int(time.time() * 1000) if self.clock is None else int(self.clock())
 
     @_boundary(writing=True)
     def import_project(self, actor, token, body):
@@ -324,20 +390,34 @@ class ProjectRepo:
     @_boundary()
     def list_projects(self, actor, token):
         _authorize(actor, token)
+        now = self._now()
         with read_snapshot(self.db_path, timeout=0.1) as conn:
             projects, _ = _scan(conn, token)
-            sources, items = _Sources(conn, actor, token), []
-            for project_id, history in sorted(projects.items()):
+            sources, candidates, hidden = _Sources(conn, actor, token), [], 0
+            for _, history in sorted(projects.items()):
                 try:
                     _grant(conn, history[-1], actor)
                 except policy.ProjectError:
                     continue
+                # Revoked, unreadable and corrupt projects never reach this line,
+                # so they cannot inflate hidden_count either.
                 scene = _scene(conn, history, history[-1], actor, token, sources)
-                items.append({k: scene[k] for k in ('project_id', 'title', 'revision',
-                    'manifest_hash', 'saved_at')} | dict(material_count=len(scene['materials']),
-                    decision_count=sum(item['kind'] != 'document_plan'
-                        for item in scene['decisions']['items']) if scene['decisions'] else 0))
-            return policy.project_response('list', {'items': items}, token)
+                material_count = len(scene['materials'])
+                decision_count = sum(item['kind'] != 'document_plan'
+                    for item in scene['decisions']['items']) if scene['decisions'] else 0
+                instant = _activity(history[-1], sources)
+                state = _state(material_count, decision_count, instant, now)
+                if state == 'empty':
+                    hidden += 1
+                    continue
+                candidates.append({k: scene[k] for k in IDENTITY_ITEM_FIELDS} | dict(
+                    material_count=material_count, decision_count=decision_count,
+                    last_activity_at=_instant(instant), state=state,
+                    last_activity_at_ms=instant))
+            candidates.sort(key=_order)
+            visible = candidates[:LIST_LIMIT]
+            hidden += len(candidates) - len(visible)
+            return _listing(visible, hidden, token)
 
     @_boundary()
     def read_project(self, actor, token, project_id, revision=None):

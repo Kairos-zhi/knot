@@ -46,7 +46,7 @@ EXP_SUMMARY = {"exploration_id": EXP_ID, "revision": 1, "saved_at": 0}
 VALID = {
     "ProjectImportRequest": {"project_id":EXP_ID,"title":"Synthetic project","expected_revision":"0","request_id":EXP_EVENT,"documents":[{"title":"note.md","text":"Synthetic source"}],"archive_ref":None},
     "ProjectImportReceipt": {"project_id":EXP_ID,"revision":"1","manifest_hash":"a"*64},
-    "ProjectList": {"items":[{"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"material_count":1,"decision_count":0}]},
+    "ProjectList": {"items":[{"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"material_count":1,"decision_count":0,"last_activity_at":None,"state":"dormant"}],"hidden_count":0},
     "ProjectScene": {"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"snapshots":[{"revision":"1","manifest_hash":"a"*64,"saved_at":0}],"materials":[{"asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md"}],"decisions":None,"has_unavailable":False},
     "ProjectMaterial": {"project_id":EXP_ID,"revision":"1","asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md","text":"Synthetic source"},
     "DecisionHistory": {"archive_id": EXP_ID, "archive_hash": "a" * 64,

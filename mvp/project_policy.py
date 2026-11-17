@@ -17,6 +17,10 @@ MAX_IMPORT_TEXT_BYTES = 256 * 1024
 MAX_READ_BYTES = 8 * 1024 * 1024
 MAX_MANIFEST_BYTES = 64 * 1024
 MAX_RESPONSE_BYTES = 1024 * 1024
+# Main-list curation: 20 visible rows, seven-day activity window, three states.
+MAX_LISTED = 20
+LIST_STATES = frozenset({'active', 'dormant', 'empty'})
+INSTANT = re.compile('[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{3})?Z')
 ERRORS = frozenset({'INVALID_ARGUMENTS', 'ACCESS_DENIED', 'REVISION_CONFLICT',
                     'IDEMPOTENCY_CONFLICT', 'NOT_FOUND', 'CONTENT_MISMATCH',
                     'SENSITIVE_CONTENT', 'RESPONSE_LIMIT', 'READ_UNAVAILABLE',
@@ -175,6 +179,12 @@ def _stamp(value):
         raise ProjectError('INVALID_ARGUMENTS')
 
 
+def _instant(value):
+    """A list row's activity instant: absent, or the contract's UTC text form."""
+    if value is not None and (type(value) is not str or not INSTANT.fullmatch(value)):
+        raise ProjectError('INVALID_ARGUMENTS')
+
+
 def _identity(value):
     decision.uuid(value['project_id'])
     revision(value['revision'])
@@ -211,16 +221,22 @@ def project_response(kind, value, token, **bindings):
         result = decision.decode_json(decision.canonical(value))
         if kind == 'list':
             decision.closed(bindings, set())
-            decision.closed(result, {'items'})
-            if type(result['items']) is not list or len(result['items']) > MAX_PROJECTS:
+            decision.closed(result, {'items', 'hidden_count'})
+            if (type(result['items']) is not list or len(result['items']) > MAX_LISTED
+                    or type(result['hidden_count']) is not int
+                    or not 0 <= result['hidden_count'] <= MAX_PROJECTS):
                 raise ProjectError('INVALID_ARGUMENTS')
             seen = set()
             for item in result['items']:
                 decision.closed(item, {'project_id', 'title', 'revision', 'manifest_hash',
-                                      'saved_at', 'material_count', 'decision_count'})
+                                      'saved_at', 'material_count', 'decision_count',
+                                      'last_activity_at', 'state'})
                 _identity(item)
                 decision.text(item['title'], 256, nonempty=True)
                 _stamp(item['saved_at'])
+                _instant(item['last_activity_at'])
+                if item['state'] not in LIST_STATES:
+                    raise ProjectError('INVALID_ARGUMENTS')
                 for field, limit in (('material_count', MAX_MATERIALS), ('decision_count', decision.MAX_ITEMS)):
                     if type(item[field]) is not int or not 0 <= item[field] <= limit:
                         raise ProjectError('INVALID_ARGUMENTS')
