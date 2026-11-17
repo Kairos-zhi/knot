@@ -587,3 +587,103 @@ def test_context_review_reads_project_list_without_writing(tmp_path, monkeypatch
     assert after_rows == before_rows
     assert set(payload) == {"checked_at", "items"}
     assert started <= _epoch_ms(payload["checked_at"]) <= finished
+
+
+def test_capture_watermark_reader_fails_closed(tmp_path):
+    from mvp.codex_mcp import read_capture_watermarks
+
+    project = _project(7)
+    path = tmp_path / "capture-state.json"
+
+    def document(**changes):
+        return {"version": "knot.capture-state/1", "updated_at_ms": NOW, "phase": "watching",
+                "projects": [{"project_id": project, "newest_user_message_ms": NOW - 1}]} | changes
+
+    def read(value):
+        path.write_text(json.dumps(value), "utf-8")
+        return read_capture_watermarks(path, NOW)
+
+    assert read(document()) == {"enabled": True, "newest_user_message_ms": {project: NOW - 1}}
+    # phase is advisory: a paused follower still publishes a usable watermark.
+    assert read(document(phase="paused")) == read(document())
+    # The five-minute window is inclusive on both sides.
+    assert read(document(updated_at_ms=NOW - 300_000)) == read(document())
+    assert read(document(updated_at_ms=NOW + 300_000)) == read(document())
+    assert read_capture_watermarks(None, NOW) is None
+    assert read_capture_watermarks(tmp_path / "absent.json", NOW) is None
+    for bad in (
+        document(version="knot.capture-state/2"),
+        document(version=1),
+        document(updated_at_ms=NOW - 300_001),
+        document(updated_at_ms=NOW + 300_001),
+        document(updated_at_ms=str(NOW)),
+        document(updated_at_ms=True),
+        document(phase="invented"),
+        document(projects="none"),
+        document(projects=[{"project_id": ASSET.upper(), "newest_user_message_ms": NOW}]),
+        document(projects=[{"project_id": "not-a-uuid", "newest_user_message_ms": NOW}]),
+        document(projects=[{"project_id": project, "newest_user_message_ms": NOW}] * 2),
+        document(projects=[{"project_id": project, "newest_user_message_ms": NOW}] * 117),
+        document(projects=[{"project_id": project, "newest_user_message_ms": "now"}]),
+        document(projects=[{"project_id": project, "newest_user_message_ms": True}]),
+        document(projects=[{"project_id": project, "newest_user_message_ms": -1}]),
+        document(projects=[{"project_id": project, "newest_user_message_ms": NOW, "extra": 1}]),
+        document(extra=True),
+        document(updated_at_ms=NOW, version=None),
+    ):
+        assert read(bad) is None
+    path.write_text("{not json", "utf-8")
+    assert read_capture_watermarks(path, NOW) is None
+    path.write_text("[" * 20_000, "utf-8")
+    assert read_capture_watermarks(path, NOW) is None
+    path.write_bytes(b"x" * (1024 * 1024 + 1))
+    assert read_capture_watermarks(path, NOW) is None
+
+
+def test_context_review_reports_capture_stale_only_while_the_watermark_is_usable(upstream, tmp_path):
+    from mvp.devtools.codex_capture import publish_capture_state
+
+    origin, requests, responses = upstream
+    now = time.time_ns() // 1_000_000
+    stale, source = _project(31), _project(32)
+    listing = _envelope(
+        _listing_item(stale, "Capture project", now - 600_000, 2, 1),
+        _listing_item(source, "Source project", now - 900_000, 0, 0),
+    )
+    responses.extend([(200, json.dumps(listing).encode(), {}, 0)] * 5)
+    state = tmp_path / "capture-state.json"
+    assert publish_capture_state(tmp_path, {stale: now - 1_000}, now)
+    params = StdioServerParameters(
+        command=sys.executable,
+        args=["-B", "-m", "mvp.codex_mcp", "--origin", origin, "--capture-state", str(state)],
+        cwd=Path(__file__).resolve().parents[2], env={"KNOT_TOKEN": PRIVATE},
+    )
+    stale_item = {"project_id": stale, "title": "Capture project", "reasons": ["CAPTURE_STALE"],
+                  "suggested_action": "review_capture", "project_saved_at": _iso(now - 600_000)}
+    source_item = {"project_id": source, "title": "Source project", "reasons": ["NO_SOURCE"],
+                   "suggested_action": "import_material", "project_saved_at": _iso(now - 900_000)}
+
+    async def check():
+        async with Client(params) as client:
+            async def items():
+                result = await client.call_tool(CONTEXT_TOOL, {})
+                # A missing, stale or corrupt watermark is never an upstream
+                # error: the other reasons are still reported.
+                assert not result.is_error
+                return result.structured_content["items"]
+
+            assert await items() == [stale_item, source_item]
+            # Corrupt file: the whole document is unusable, nothing is guessed.
+            state.write_text("{not json", "utf-8")
+            assert await items() == [source_item]
+            # Older than five minutes: a stopped follower must not report stale.
+            assert publish_capture_state(tmp_path, {stale: now - 1_000}, now - 300_001)
+            assert await items() == [source_item]
+            state.unlink()
+            assert await items() == [source_item]
+            # The flag is re-read on every call, not cached at startup.
+            assert publish_capture_state(tmp_path, {stale: now - 1_000}, time.time_ns() // 1_000_000)
+            assert await items() == [stale_item, source_item]
+
+    asyncio.run(check())
+    assert len(responses) == 0

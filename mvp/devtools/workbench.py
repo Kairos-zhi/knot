@@ -347,7 +347,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--origin', required=True)
     parser.add_argument('--port', type=int, default=0)
-    parser.add_argument('--state-root', type=Path, help='explicit private save journal directory; absent means read-only')
+    parser.add_argument('--state-root', type=Path, help='explicit private directory for the save journal and the capture watermark; absent means read-only and no watermark')
     parser.add_argument('--packet-root',type=Path,help='existing local private export directory outside repository')
     parser.add_argument('--history-asset', help='explicit saved decision archive to show on entry')
     parser.add_argument('--history-hash', help='expected hash of that decision archive')
@@ -370,7 +370,8 @@ def main():
             capture = CodexCapture(Path.home()/'.codex',
                 listing=lambda:project_get(backend_port,token,'list',{}),
                 reading=lambda pid:project_get(backend_port,token,'scene',dict(project_id=pid)),
-                importing=lambda body:project_import(backend_port,token,body),bindings=bindings)
+                importing=lambda body:project_import(backend_port,token,body),bindings=bindings,
+                state_root=args.state_root)
         elif args.capture_binding:
             raise ValueError('CAPTURE_NOT_ENABLED')
         server = create_server(backend_port, token, args.port,args.state_root,args.packet_root,

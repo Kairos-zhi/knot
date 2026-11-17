@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import sqlite3
 import threading
-from tempfile import TemporaryDirectory
+from tempfile import TemporaryDirectory, mkstemp
 from time import time_ns
 from uuid import UUID, NAMESPACE_URL, uuid5
 
@@ -23,10 +23,15 @@ MAX_LOG = 64 * 1024 * 1024
 MAX_LINE = 2 * 1024 * 1024
 MAX_CYCLE = 128 * 1024 * 1024
 MAX_REGISTRY = 64 * 1024 * 1024
+# CONTEXT-MAINT-002: the published watermark is content-free and bounded by the
+# same discovery cap, so the reader can validate it closed.
+CAPTURE_STATE_NAME = 'capture-state.json'
+CAPTURE_STATE_VERSION = 'knot.capture-state/1'
+MAX_CAPTURE_PROJECTS = 116
 ISSUES = frozenset({'REGISTRY_UNAVAILABLE', 'REGISTRY_LIMIT', 'ROLLOUT_UNAVAILABLE',
     'ROLLOUT_LIMIT', 'ROLLOUT_INVALID', 'UNSUPPORTED_MESSAGES', 'INCOMPLETE_MESSAGE',
     'MESSAGE_CONFLICT', 'PROJECT_LIMIT', 'IMPORT_UNAVAILABLE', 'ACCESS_DENIED',
-    'AMBIGUOUS_PROJECT'})
+    'AMBIGUOUS_PROJECT', 'STATE_UNAVAILABLE'})
 
 
 class CaptureError(ValueError):
@@ -304,11 +309,53 @@ def project_capture_state(value, token):
     return decision.decode_json(decision.canonical(value))
 
 
+def publish_capture_state(state_root, watermarks, updated_at_ms, phase='watching'):
+    """Atomically replace <state_root>/capture-state.json with a closed watermark.
+
+    ``watermarks`` maps Knot project_id to the newest host user-message instant.
+    The document carries project identity and instants only: no title, path,
+    text or thread id. It is replaced through a temporary file in the same
+    directory, so a reader never observes a partial document. Publication is
+    best effort: a scan must not fail because this file cannot be written, so
+    failures return False and the caller reports them as an issue.
+    """
+    if state_root is None:
+        return True
+    document = dict(version=CAPTURE_STATE_VERSION, updated_at_ms=updated_at_ms, phase=phase,
+        projects=[dict(project_id=pid, newest_user_message_ms=ms)
+                  for pid, ms in sorted(watermarks.items())[:MAX_CAPTURE_PROJECTS]])
+    temporary = None
+    try:
+        payload = decision.canonical(document)
+        handle, temporary = mkstemp(prefix='.capture-state.', suffix='.tmp', dir=str(state_root))
+        with os.fdopen(handle, 'wb') as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, Path(state_root) / CAPTURE_STATE_NAME)
+        temporary = None
+        return True
+    except (OSError, TypeError, ValueError, RecursionError):
+        return False
+    finally:
+        if temporary is not None:
+            try:
+                os.unlink(temporary)
+            except OSError:
+                pass
+
+
 class CodexCapture:
     """Lifecycle-owned local follower, composed with the existing service API."""
-    def __init__(self, home, *, listing, reading, importing, bindings=None, interval=30):
+    def __init__(self, home, *, listing, reading, importing, bindings=None, interval=30, state_root=None):
         if type(interval) not in (int, float) or interval < 0.01:
             raise ValueError('INTERVAL_INVALID')
+        try:
+            # Publication is opt-in: without an explicit private state root this
+            # process stays read-only, exactly as before.
+            self.state_root = None if state_root is None else Path(os.path.abspath(os.fspath(state_root)))
+        except (TypeError, ValueError, OSError):
+            raise ValueError('STATE_ROOT_INVALID') from None
         self.home, self.bindings = Path(home), bindings or {}
         self.listing, self.reading, self.importing = listing, reading, importing
         self.interval = interval
@@ -356,6 +403,7 @@ class CodexCapture:
             if self.paused or self.stop_event.is_set():
                 return self.state()
         issues, added, retained, remaining, discovered = Counter(), 0, 0, MAX_CYCLE, []
+        stamps = {}
         try:
             projects, notices = discover(self.home, self.bindings)
             issues.update(notices)
@@ -385,6 +433,13 @@ class CodexCapture:
                         except CaptureError as exc:
                             remaining -= exc.charged
                             issues[exc.code] += 1
+                    if messages:
+                        # The published watermark is the host-side maximum for
+                        # the project, computed before any retention decision.
+                        # A fresh-only stamp would sink to the level already
+                        # saved once the cycle's messages are imported, so the
+                        # maintenance review could never see it as stale.
+                        stamps[pid] = max(m['message_time_ms'] for m in messages)
                     scene = self.reading(pid) if pid in listed else None
                     # A retained opaque source is not repaired or bypassed.
                     if scene and scene['has_unavailable']:
@@ -448,7 +503,13 @@ class CodexCapture:
             issues['IMPORT_UNAVAILABLE'] += 1
             stamp, phase = None, 'unavailable'
         with self.lock:
-            self.view.update(phase='paused' if self.paused else phase,
+            phase = 'paused' if self.paused else phase
+            if stamp is not None and phase == 'watching':
+                # A failed publication is an observation, never a scan failure:
+                # the watermark simply does not advance until the next success.
+                if not publish_capture_state(self.state_root, stamps, stamp):
+                    issues['STATE_UNAVAILABLE'] += 1
+            self.view.update(phase=phase,
                 scanned_at=stamp if stamp is not None else self.view['scanned_at'],
                 discovered=discovered, added_sources=added, retained_sources=retained,
                 issues=[dict(code=k, count=n) for k, n in sorted(issues.items())], limited=bool(issues))
