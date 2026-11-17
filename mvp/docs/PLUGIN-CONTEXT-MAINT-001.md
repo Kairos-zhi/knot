@@ -43,6 +43,8 @@
 
 优先级：`CAPTURE_STALE` > `NO_SOURCE` > `NO_DECISION` > `DORMANT`。
 
+> 依赖 CONTEXT-LIST-001 **发布**空项目行：若列表只给 `hidden_count` 而不返回 `empty` 行，本工具将看不见空项目，`NO_SOURCE` 永不触发。这是两张卡之间的硬依赖。
+
 `capture` 未启用时**不得**报 `CAPTURE_STALE`，也不得因此返回空结果冒充「一切正常」——此时该原因不参与评估，其余原因照常给出。
 
 ### 工具描述（agent 唤醒的关键，必须逐字落地）
