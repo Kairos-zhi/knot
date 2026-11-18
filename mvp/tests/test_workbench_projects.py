@@ -81,6 +81,7 @@ const execute=code=>vm.runInContext(code,ctx);
 const sceneA=payload.sceneA,sceneB=payload.sceneB;ctx.sceneA=sceneA;ctx.sceneB=sceneB;
 const copy=value=>JSON.parse(JSON.stringify(value));
 const flat=node=>[node.textContent,...node.children.flatMap(flat)].join('\n');
+const originalRows=()=>{const rows=[];const visit=node=>{if(node.className==='original-record')rows.push(node);for(const child of node.children)visit(child);};visit(els['project-observations']);return rows;};
 function file(name,text){const bytes=new TextEncoder().encode(text);return {name,size:bytes.byteLength,arrayBuffer:async()=>bytes.buffer};}
 function selectFile(title='Synthetic project',name='source.md',content='# Synthetic source\r\nLiteral <script>text</script>'){
   els['project-import-name'].value=title;els['project-import-files'].files=[file(name,content)];
@@ -107,14 +108,14 @@ def run_projects(body, dataset=None, listing=None):
 def test_project_mode_priority_is_one_list_and_never_reads_old_history():
     run_projects(r'''
 assert.deepEqual(calls.map(c=>c.url),['/api/projects']);
-assert.equal(els['projects-list'].children.length,2);
-assert.equal(els['legacy-navigation'].hidden,true);
+assert.equal(els['projects-list'].children.filter(node=>node.tagName==='BUTTON').length,2);
+assert.equal(els['legacy-navigation'].hidden,false); // Nested under the secondary material/thought entry.
 assert.equal(els['context-panel'].hidden,true);
 assert.equal(els['projects-pane'].hidden,false);
 assert.equal(els['history-pane'].hidden,true);
 assert.equal(els['project-import-new'].disabled,false);
 assert.equal(execute('canWrite'),false);
-assert(flat(els['projects-list']).includes('1 项决定'));
+assert(flat(els['projects-list']).includes('1 项整理回顾'));
 ''', dict(projects='enabled', history='enabled', write='disabled', context='enabled'))
 
 
@@ -142,7 +143,7 @@ assert.equal(els['projects-pane'].hidden,true);
 
 def test_no_synthetic_project_or_choice_is_inserted_for_empty_list():
     run_projects(r'''
-assert.equal(els['projects-list'].children.length,0);
+assert.equal(els['projects-list'].children.filter(node=>node.tagName==='BUTTON').length,0);
 assert.equal(els['projects-empty'].hidden,false);
 assert.equal(execute('projectItems.length'),0);
 assert.equal(calls.length,1);

@@ -5,7 +5,7 @@ from hashlib import sha256
 
 from mvp import decision_policy as decision
 from mvp import project_policy as policy
-from .decision_archive import _DecisionRepo, _asset, _authorize, _require_schema, _store
+from .decision_archive import _DecisionRepo, _asset, _authorize, _require_schema, _store, _store_package
 from .timeline_query import read_snapshot
 
 
@@ -178,6 +178,63 @@ def _snapshot(entry):
                 saved_at=entry['saved_at'])
 
 
+def _chronology(scene, sources):
+    """Project appearance is a cited retained fact, never an inferred birth."""
+    observations = scene.get('observations', [])
+    candidates = [(s['message_time_ms'], 'first_message',
+                   {k: s[k] for k in ('asset_id', 'content_hash')}) for s in observations]
+    for ref in scene['materials']:
+        source = sources.get(ref)  # _scene already checked permission, hash and budget.
+        if source['kind'] != 'document' or not (source['title'] == 'project-registration.json'
+                or source['title'].startswith('历史窗口日回顾索引·')):
+            continue
+        try:
+            record = decision.decode_json(source['text'].encode('utf-8'))
+            if (type(record) is dict and record.get('version') == 'knot.history-window-days/0.1'
+                    and record.get('project_id') == scene['project_id']):
+                days = record.get('days')
+                if type(days) is not list or len(days) > 366:
+                    continue
+                stamps = []
+                for day in days:
+                    if type(day) is not dict or type(day.get('windows')) is not list:
+                        raise decision.DecisionError('INVALID_ARGUMENTS')
+                    decision.day(day.get('on'))
+                    for window in day['windows']:
+                        if type(window) is not dict or type(window.get('excerpts')) is not list:
+                            raise decision.DecisionError('INVALID_ARGUMENTS')
+                        for excerpt in window['excerpts']:
+                            if type(excerpt) is not dict or excerpt.get('time_basis') != 'turn_started_at':
+                                raise decision.DecisionError('INVALID_ARGUMENTS')
+                            stamp = excerpt.get('turn_time_ms')
+                            if decision.message_day(stamp) != day['on']:
+                                raise decision.DecisionError('CONTENT_MISMATCH')
+                            stamps.append(stamp)
+                if stamps:
+                    candidates.append((min(stamps), 'first_window_record',
+                                       {k: ref[k] for k in ('asset_id', 'content_hash')}))
+                continue
+            if (type(record) is not dict or record.get('version') != 'knot.project-registration/0.1'
+                    or record.get('source') != 'codex_project_registry'
+                    or record.get('project_id') != scene['project_id']):
+                continue
+            decision.uuid(record.get('source_id'))
+            decision.message_day(record.get('created_at_ms'))
+        except decision.DecisionError:
+            continue  # Ordinary documents with this title remain ordinary documents.
+        candidates.append((record['created_at_ms'], 'registry_created',
+                           {k: ref[k] for k in ('asset_id', 'content_hash')}))
+    result = dict(observation_times=sorted({s['message_time_ms'] for s in observations}),
+                  observation_count=len(observations))
+    if candidates:
+        stamp, basis, ref = min(candidates, key=lambda candidate: (candidate[0], candidate[1]))
+        result.update(appearance_at=stamp, appearance_basis=basis, appearance_source=ref)
+    else:
+        result.update(appearance_at=min(s['saved_at'] for s in scene['snapshots']),
+                      appearance_basis='first_saved')
+    return result
+
+
 def _scene(conn, history, selected, actor, token, sources=None):
     sources = sources or _Sources(conn, actor, token)
     manifest = selected['value']
@@ -286,6 +343,14 @@ class ProjectRepo:
             materials = list(head['value']['materials']) if head else []
             archive_ref = body['archive_ref'] or (head['value']['archive_ref'] if head else None)
             sources = _Sources(conn, actor, token)
+            if 'recap' in body:
+                _check_message_identities(sources, materials, list(body['recap']['sources'].values()))
+                receipt = _store_package(repo, body['recap'], actor, token)
+                archive_ref = dict(asset_id=receipt['archive_id'], content_hash=receipt['archive_hash'])
+                view, refs = _archive(sources, archive_ref)
+                if view['has_unavailable']:
+                    raise policy.ProjectError('CONTENT_MISMATCH')
+                materials.extend(refs)
             if body['archive_ref'] is not None:
                 view, refs = _archive(sources, archive_ref)
                 if view['has_unavailable']:
@@ -336,7 +401,9 @@ class ProjectRepo:
                 items.append({k: scene[k] for k in ('project_id', 'title', 'revision',
                     'manifest_hash', 'saved_at')} | dict(material_count=len(scene['materials']),
                     decision_count=sum(item['kind'] != 'document_plan'
-                        for item in scene['decisions']['items']) if scene['decisions'] else 0))
+                        for item in scene['decisions']['items']) if scene['decisions'] else 0,
+                    chronology=_chronology(scene, sources),
+                    visibility_hash=sha256(decision.canonical(scene)).hexdigest()))
             return policy.project_response('list', {'items': items}, token)
 
     @_boundary()
@@ -368,6 +435,6 @@ class ProjectRepo:
                 raise policy.ProjectError('CONTENT_MISMATCH')
             source = _Sources(conn, actor, token).get(ref)
             return policy.project_response('material', dict(project_id=project_id,
-                revision=revision, **ref, title=source['title'], text=source['text']), token,
+                revision=revision, **ref, title=source['title'], text=source['text'], source=source), token,
                 project_id=project_id, revision=revision, asset_id=asset_id,
                 expected_hash=expected_hash)

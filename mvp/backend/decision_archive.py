@@ -80,6 +80,26 @@ def _store(repo, value, mime, actor):
     return asset_id, digest, True
 
 
+def _store_package(repo, package, actor, token):
+    """Append a validated recap using the caller's existing transaction."""
+    sources, created, unique = {}, 0, set()
+    for key, source in package['sources'].items():
+        aid, digest, added = _store(repo, source, SOURCE_MIME, actor)
+        sources[key] = {'asset_id': aid, 'content_hash': digest}
+        if added and aid not in unique:
+            created += 1
+            unique.add(aid)
+    archive = package['archive'] | {'items': [item | {'evidence': [
+        sources[ref['source_key']] | {'quote': ref['quote']} for ref in item['evidence']
+    ]} for item in package['archive']['items']]}
+    validate_archive(archive, token)
+    aid, digest, added = _store(repo, archive, ARCHIVE_MIME, actor)
+    result = dict(archive_id=aid, archive_hash=digest,
+                  sources_created=created, archive_created=added)
+    sensitive(result, token)
+    return result
+
+
 def import_decisions(db_path, package, actor, token):
     """Validate first; append sources, grants, archive and import events atomically."""
     error, result = None, None
@@ -90,21 +110,7 @@ def import_decisions(db_path, package, actor, token):
         with repo.session(), repo.transaction():
             with repo._connection() as conn:
                 _require_schema(conn)
-            sources, created, unique = {}, 0, set()
-            for key, source in package['sources'].items():
-                aid, digest, added = _store(repo, source, SOURCE_MIME, actor)
-                sources[key] = {'asset_id': aid, 'content_hash': digest}
-                if added and aid not in unique:
-                    created += 1
-                    unique.add(aid)
-            archive = package['archive'] | {'items': [item | {'evidence': [
-                sources[ref['source_key']] | {'quote': ref['quote']} for ref in item['evidence']
-            ]} for item in package['archive']['items']]}
-            validate_archive(archive, token)
-            aid, digest, added = _store(repo, archive, ARCHIVE_MIME, actor)
-            result = dict(archive_id=aid, archive_hash=digest,
-                          sources_created=created, archive_created=added)
-            sensitive(result, token)
+            result = _store_package(repo, package, actor, token)
     except DecisionError as exc:
         error = exc.code
     except Exception:

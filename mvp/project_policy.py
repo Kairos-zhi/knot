@@ -87,7 +87,7 @@ def validate_import(body, token):
         _token(token)
         result = decision.decode_json(decision.canonical(body))
         fields = {'project_id', 'title', 'expected_revision', 'request_id', 'documents', 'archive_ref'}
-        decision.closed(result, fields | ({'sources'} if type(result) is dict and 'sources' in result else set()))
+        decision.closed(result, fields | {key for key in ('sources', 'recap') if type(result) is dict and key in result})
         decision.uuid(result['project_id'])
         decision.uuid(result['request_id'])
         decision.text(result['title'], 256, nonempty=True)
@@ -113,11 +113,18 @@ def validate_import(body, token):
             if key in identities and identities[key] != raw:
                 raise ProjectError('CONTENT_MISMATCH')
             identities[key] = raw
+        if 'recap' in result:
+            if result['archive_ref'] is not None:
+                raise ProjectError('INVALID_ARGUMENTS')
+            recap = decision.validate_package(result['recap'], token)
+            size += sum(len(source['text'].encode('utf-8')) for source in recap['sources'].values())
+            if len(documents) + len(sources) + len(recap['sources']) > MAX_DOCUMENTS:
+                raise ProjectError('INVALID_ARGUMENTS')
         if size > MAX_IMPORT_TEXT_BYTES:
             raise ProjectError('INVALID_ARGUMENTS')
         if result['archive_ref'] is not None:
             _ref(result['archive_ref'])
-        if result['expected_revision'] == '0' and not documents and not sources and result['archive_ref'] is None:
+        if result['expected_revision'] == '0' and not documents and not sources and result['archive_ref'] is None and 'recap' not in result:
             raise ProjectError('INVALID_ARGUMENTS')
         decision.sensitive(result, token)
     except decision.DecisionError as exc:
@@ -194,6 +201,30 @@ def _material(value):
     decision.text(value['title'], 256, nonempty=True)
 
 
+def _chronology(value):
+    fields = {'appearance_at', 'appearance_basis', 'observation_times', 'observation_count'}
+    if type(value) is not dict or value.get('appearance_basis') not in ('registry_created', 'first_message', 'first_saved', 'first_window_record'):
+        raise ProjectError('INVALID_ARGUMENTS')
+    cited = value['appearance_basis'] != 'first_saved'
+    decision.closed(value, fields | ({'appearance_source'} if cited else set()))
+    decision.message_day(value['appearance_at'])
+    if cited:
+        _ref(value['appearance_source'])
+    times, count = value['observation_times'], value['observation_count']
+    if (type(times) is not list or len(times) > MAX_MATERIALS
+            or type(count) is not int or not len(times) <= count <= MAX_MATERIALS
+            or (count == 0) != (len(times) == 0)):
+        raise ProjectError('INVALID_ARGUMENTS')
+    for stamp in times:
+        decision.message_day(stamp)
+    if times != sorted(set(times)) or (times and value['appearance_at'] > times[0]):
+        raise ProjectError('INVALID_ARGUMENTS')
+    if value['appearance_basis'] == 'first_message' and (not times or value['appearance_at'] != times[0]):
+        raise ProjectError('INVALID_ARGUMENTS')
+    if value['appearance_basis'] == 'first_saved' and times:
+        raise ProjectError('INVALID_ARGUMENTS')
+
+
 def project_response(kind, value, token, **bindings):
     """Validate and bind a value, charging the actual ASCII OkEnvelope.
 
@@ -216,8 +247,9 @@ def project_response(kind, value, token, **bindings):
                 raise ProjectError('INVALID_ARGUMENTS')
             seen = set()
             for item in result['items']:
-                decision.closed(item, {'project_id', 'title', 'revision', 'manifest_hash',
-                                      'saved_at', 'material_count', 'decision_count'})
+                fields = {'project_id', 'title', 'revision', 'manifest_hash',
+                          'saved_at', 'material_count', 'decision_count'}
+                decision.closed(item, fields | ({key for key in ('chronology', 'visibility_hash') if key in item} if type(item) is dict else set()))
                 _identity(item)
                 decision.text(item['title'], 256, nonempty=True)
                 _stamp(item['saved_at'])
@@ -227,6 +259,10 @@ def project_response(kind, value, token, **bindings):
                 if item['project_id'] in seen:
                     raise ProjectError('INVALID_ARGUMENTS')
                 seen.add(item['project_id'])
+                if 'chronology' in item:
+                    _chronology(item['chronology'])
+                if 'visibility_hash' in item:
+                    decision.content_hash(item['visibility_hash'])
         elif kind in ('scene', 'material', 'receipt'):
             allowed = {'project_id'} | ({'revision'} if kind == 'scene' else
                        {'revision', 'asset_id', 'expected_hash'} if kind == 'material' else {'expected_revision'})
@@ -239,6 +275,8 @@ def project_response(kind, value, token, **bindings):
                 {'project_id', 'revision', 'asset_id', 'content_hash', 'title', 'text'})
             if kind == 'scene' and type(result) is dict and 'observations' in result:
                 fields |= {'observations'}
+            if kind == 'material' and type(result) is dict and 'source' in result:
+                fields |= {'source'}
             decision.closed(result, fields)
             decision.uuid(result['project_id'])
             revision(result['revision'])
@@ -267,6 +305,12 @@ def project_response(kind, value, token, **bindings):
                             or result['content_hash'] != bindings['expected_hash']):
                         raise ProjectError('CONTENT_MISMATCH')
                     decision.text(result['text'], MAX_DOCUMENT_BYTES)
+                    decision.sensitive(result,token)
+                    if 'source' in result:
+                        source=decision.validate_source(result['source'],token)
+                        if (source['title']!=result['title'] or source['text']!=result['text']
+                                or sha256(decision.canonical(source)).hexdigest()!=result['content_hash']):
+                            raise ProjectError('CONTENT_MISMATCH')
                 else:
                     _identity(result)
                     _stamp(result['saved_at'])

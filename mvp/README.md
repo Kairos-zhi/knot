@@ -2,6 +2,12 @@
 
 当前代码在 `mvp/`。开工先读[开发基准](docs/development-baseline.md)、根[状态](../STATE.md)／[队列](../QUEUE.md)和当前任务卡。本文不单独维护另一套进度。
 
+## 项目整理
+
+在 Knot 工作台打开项目，点「整理这个项目」生成完整指令。把指令和[短启动词](docs/agent/knot-project-review/短启动词.md)交给已经加载 [Knot 项目整理 Skill](docs/agent/knot-project-review/SKILL.md) 的 Agent，再把结果粘回工作台核对和保存。也可以直接将 Skill 全文粘贴到 Agent 窗口。
+
+开发环境的 Codex 接入见[插件候选构建说明](codex_plugin/README.md)。
+
 ## 数据与操作入口
 
 - [数据模型和迁移](docs/SCHEMA.md)：本候选的新空库为 schema 1.9；已有库须显式迁移。

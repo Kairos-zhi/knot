@@ -19,6 +19,10 @@ from mvp.decision_policy import DecisionError, project_decision_history
 from mvp.project_policy import ProjectError
 from mvp.devtools.project_transport import project_get, project_import
 
+PROJECT_EVIDENCE_ACTIONS = frozenset((
+    '/api/project-evidence-prompt', '/api/project-evidence-prepare', '/api/project-evidence-share',
+))
+
 
 class Invalid(ValueError):
     pass
@@ -117,6 +121,36 @@ def project(port, action, args, token):
     raise Invalid()
 
 
+def project_review_root(server, project_id):
+    """Resolve only installed ranges or one exact registered business identity."""
+    if project_id in server.review_roots:
+        return server.review_roots[project_id], None
+    from mvp.devtools.codex_capture import CodexCapture, CaptureError, discover
+    capture = server.capture
+    if not isinstance(capture, CodexCapture):
+        return None, None
+    try:
+        aliases = dict(capture.project_aliases or {}) | server.project_aliases
+        projects, _ = discover(capture.home, capture.bindings, aliases)
+        roots = set()
+        for project in projects:
+            if project['project_id'] != project_id:
+                continue
+            from mvp.devtools.project_review_collect import collection_root
+            for raw in project.get('raw_roots', project['roots']):
+                try:
+                    roots.add(collection_root(raw))
+                except (ProjectError, OSError):
+                    continue
+        if len(roots) == 1:
+            return roots.pop(), None
+        if roots:
+            return None, '此项目对应多个可用的已登记工程根目录，未猜选；可继续整理已留存资料。'
+        return None, '未找到此项目唯一可用的已登记工程根目录；可继续整理已留存资料。'
+    except (CaptureError, OSError, ValueError):
+        return None, '本机工程登记暂不可读，未选择采集范围；可继续整理已留存资料。'
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
@@ -129,8 +163,8 @@ class Handler(BaseHTTPRequestHandler):
             try:self.rfile.read(int(lengths[0]))
             except OSError:pass
 
-    def reply(self, status, value, html=False):
-        raw = value if html else json.dumps(value, ensure_ascii=True).encode('utf-8')
+    def reply(self, status, value, html=False, utf8=False):
+        raw = value if html else json.dumps(value, ensure_ascii=not utf8).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'text/html; charset=utf-8' if html else 'application/json')
         self.send_header('Content-Length', str(len(raw)))
@@ -191,6 +225,9 @@ class Handler(BaseHTTPRequestHandler):
                 if not self.server.projects_enabled: raise Invalid()
                 value = project_get(self.server.backend_port, self.server.token,
                                     project_actions[path.path], {k:v[0] for k,v in query.items()})
+                if path.path == '/api/projects' and self.server.project_aliases:
+                    from mvp.devtools.project_association import associated_listing
+                    value=associated_listing(value,self.server.project_aliases)
             elif path.path == '/api/decisions':
                 if query or self.server.history_asset is None: raise Invalid()
                 value = project(self.server.backend_port, 'decisions',
@@ -233,10 +270,14 @@ class Handler(BaseHTTPRequestHandler):
         context_request=self.path in context_actions
         project_request=self.path == '/api/project-import'
         review_request=self.path == '/api/work-review-prepare'
+        recap_request=self.path == '/api/recap-prepare'
+        project_review_request=self.path in ('/api/project-review-collect', '/api/project-review-prompt', '/api/project-review-prepare')
+        project_evidence_request=self.path in PROJECT_EVIDENCE_ACTIONS
         capture_request=self.path == '/api/capture-control'
         target=self.server.context if context_request else self.server.writer
         if capture_request: target=self.server.capture
-        if ((project_request or review_request) and not self.server.projects_enabled) or (not project_request and not review_request and target is None):
+        project_action = project_request or review_request or recap_request or project_review_request or project_evidence_request
+        if (project_action and not self.server.projects_enabled) or (not project_action and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
         if (self.headers.get('Host') != host or self.headers.get('Origin') != 'http://' + host
@@ -257,7 +298,7 @@ class Handler(BaseHTTPRequestHandler):
                        '/api/recover':'recover','/api/cancel':'cancel'}
             if context_request: actions=context_actions
             if capture_request: actions={'/api/capture-control':'control'}
-            if not project_request and not review_request and self.path not in actions: raise Invalid()
+            if not project_action and self.path not in actions: raise Invalid()
             lengths = self.headers.get_all('Content-Length',[])
             if len(lengths) != 1 or not re.fullmatch('[1-9][0-9]{0,6}' if project_request else '[1-9][0-9]{0,5}',lengths[0]): raise Invalid()
             size = int(lengths[0])
@@ -266,9 +307,48 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            if review_request:
-                from mvp.devtools.work_review import prepare_review
-                result=prepare_review(body,self.server.token,
+            if project_evidence_request:
+                from mvp.devtools import project_evidence
+
+                def read_evidence_scene(pid, revision):
+                    params = dict(project_id=pid)
+                    if revision is not None:
+                        params['revision'] = revision
+                    return project_get(self.server.backend_port, self.server.token, 'scene', params)
+
+                def read_evidence_source(pid, revision, asset_id, digest):
+                    return project_get(self.server.backend_port, self.server.token, 'material',
+                        dict(project_id=pid, revision=revision, asset_id=asset_id, expected_hash=digest))
+
+                args = (body, self.server.token, read_evidence_scene, read_evidence_source)
+                if self.path == '/api/project-evidence-prompt':
+                    result = project_evidence.prepare_prompt(*args)
+                else:
+                    result = project_evidence.prepare_card(*args, share=self.path == '/api/project-evidence-share')
+            elif project_review_request:
+                from mvp.devtools.project_review import validate_binding, prepare_prompt, prepare_review
+                read_scene = lambda pid,rev:project_get(self.server.backend_port,self.server.token,'scene',
+                    dict(project_id=pid,revision=rev))
+                read_material = lambda pid,rev,aid,digest:project_get(self.server.backend_port,self.server.token,'material',
+                    dict(project_id=pid,revision=rev,asset_id=aid,expected_hash=digest))
+                if self.path == '/api/project-review-collect':
+                    binding = validate_binding(body,self.server.token)
+                    from mvp.devtools.project_review_collect import prepare_collection
+                    root, message = project_review_root(self.server,binding['project_id'])
+                    result = prepare_collection(binding,self.server.token,read_scene,root)
+                    if message is not None:
+                        result['message'] = message
+                else:
+                    prepare = prepare_prompt if self.path == '/api/project-review-prompt' else prepare_review
+                    result = prepare(body,self.server.token,read_scene,read_material)
+                from mvp.devtools.project_review import _response
+                result = _response(result,self.server.token)
+            elif review_request or recap_request:
+                if recap_request:
+                    from mvp.devtools.recap_edit import prepare_recap as prepare
+                else:
+                    from mvp.devtools.work_review import prepare_review as prepare
+                result=prepare(body,self.server.token,
                     lambda pid,rev:project_get(self.server.backend_port,self.server.token,'scene',
                         dict(project_id=pid,revision=rev)),
                     lambda pid,rev,aid,digest:project_get(self.server.backend_port,self.server.token,'material',
@@ -279,7 +359,7 @@ class Handler(BaseHTTPRequestHandler):
             if capture_request:
                 from mvp.devtools.codex_capture import project_capture_state
                 result=project_capture_state(result,self.server.token)
-            self.reply(200,result)
+            self.reply(200,result,utf8=project_review_request or project_evidence_request)
         except ProjectError as exc:
             self.project_error(exc)
         except (WriteError,PacketError) as exc:
@@ -303,8 +383,22 @@ class Handler(BaseHTTPRequestHandler):
     do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_HEAD = reject
 
 
-def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None, projects_enabled=False, capture=None):
+def create_server(backend_port, token, port=0, state_root=None,packet_root=None, *, history_asset=None, history_hash=None, projects_enabled=False, capture=None, project_aliases=None, review_roots=None):
     if type(projects_enabled) is not bool: raise ValueError('PROJECTS_FLAG_INVALID')
+    if review_roots is not None:
+        from collections.abc import Mapping
+        if not isinstance(review_roots, Mapping) or len(review_roots)>100 or not projects_enabled:
+            raise ValueError('REVIEW_ROOTS_INVALID')
+        for project_id, root in review_roots.items():
+            validate_uuid(project_id)
+            if not isinstance(root, Path) or not root.is_absolute():
+                raise ValueError('REVIEW_ROOTS_INVALID')
+    if project_aliases is not None:
+        if type(project_aliases) is not dict or len(project_aliases)>100 or not projects_enabled:
+            raise ValueError('PROJECT_ALIASES_INVALID')
+        for source,target in project_aliases.items():
+            validate_uuid(source);validate_uuid(target)
+            if target in project_aliases:raise ValueError('PROJECT_ALIASES_INVALID')
     if capture is not None and not projects_enabled: raise ValueError('CAPTURE_REQUIRES_PROJECTS')
     if (history_asset is None) != (history_hash is None): raise ValueError('HISTORY_BINDING_REQUIRED')
     if history_asset is not None:
@@ -316,6 +410,8 @@ def create_server(backend_port, token, port=0, state_root=None,packet_root=None,
     server.backend_port, server.token = backend_port, token
     server.history_asset, server.history_hash = history_asset, history_hash
     server.projects_enabled = projects_enabled
+    server.project_aliases = dict(project_aliases or {})
+    server.review_roots = dict(review_roots or {})
     server.capture = capture
     server.writer = None
     server.context = None

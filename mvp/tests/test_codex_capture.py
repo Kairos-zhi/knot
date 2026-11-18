@@ -100,6 +100,21 @@ def test_registry_identity_longest_root_same_name_and_explicit_binding(host, tmp
     assert byid[outside['thread_id']]['project_id'] == target
 
 
+def test_registry_creation_date_is_optional_retained_fact_without_paths(host, tmp_path):
+    pid = project(host, tmp_path)
+    with sqlite3.connect(host / 'state_5.sqlite') as conn:
+        conn.execute('ALTER TABLE projects ADD COLUMN created_at_ms INTEGER')
+        conn.execute('UPDATE projects SET created_at_ms=? WHERE id=?', (1790000000000, pid))
+    alias = str(uuid4())
+    values, issues = capture.discover(host, {}, {str(capture.uuid5(capture.NAMESPACE_URL, 'knot:codex-project:' + pid)): alias})
+    assert not issues and values[0]['created_at_ms'] == 1790000000000
+    record = json.loads(capture.registration_document(values[0])['text'])
+    assert record['project_id'] == alias and record['source_id'] == pid
+    assert record['created_at_ms'] == 1790000000000 and 'roots' not in record and 'threads' not in record
+    values[0].pop('created_at_ms')
+    assert 'created_at_ms' not in json.loads(capture.registration_document(values[0])['text'])
+
+
 def test_ambiguous_root_is_not_assigned_by_name(host, tmp_path):
     project(host, tmp_path, 'Same'); project(host, tmp_path, 'Same'); thread(host, tmp_path)
     projects, issues = capture.discover(host, {})
@@ -107,11 +122,11 @@ def test_ambiguous_root_is_not_assigned_by_name(host, tmp_path):
     assert issues == {'AMBIGUOUS_PROJECT': 1}
 
 
-def test_recent_three_and_registry_bound_are_explicit(host, tmp_path, monkeypatch):
+def test_all_registered_threads_and_registry_bound_are_explicit(host, tmp_path, monkeypatch):
     project(host, tmp_path)
     ts = [thread(host, tmp_path, updated=i) for i in range(5)]
     ps, _ = capture.discover(host, {})
-    assert ps[0]['threads'] == list(reversed(ts[-3:])) and ps[0]['eligible_threads'] == 5
+    assert ps[0]['threads'] == list(reversed(ts)) and ps[0]['eligible_threads'] == 5
     monkeypatch.setattr(capture, 'MAX_THREADS', 4)
     with pytest.raises(capture.CaptureError, match='REGISTRY_LIMIT'):
         capture.discover(host, {})
@@ -248,12 +263,151 @@ def test_unknown_submission_retries_exact_request_then_restart_dedup(host, targe
     assert follower(host, repo).run_once()['added_sources'] == 0 and counts(db) == before
 
 
-def test_project_over_budget_does_not_partially_write(host, target, tmp_path, monkeypatch):
+def test_project_remaining_slots_save_complete_sources_and_report_remainder(host, target, tmp_path, monkeypatch):
     db, repo = target; project(host, tmp_path); thread(host, tmp_path, [human(), human()])
     monkeypatch.setattr(policy, 'MAX_MATERIALS', 1)
+    f = follower(host, repo); state = f.run_once()
+    assert state['issues'] == [dict(code='PROJECT_LIMIT', count=1)]
+    assert state['added_sources'] == state['retained_sources'] == 1
+    assert state['discovered'][0]['retained']
+    scene = repo.read_project(ACTOR, TOKEN, state['discovered'][0]['project_id'])
+    assert len(scene['observations']) == 1 and scene['observations'][0]['text'] == '我希望先保留真实选择。\r\n'
+    before = counts(db)
+    assert f.run_once()['added_sources'] == 0 and counts(db) == before
+    assert follower(host, repo).run_once()['added_sources'] == 0 and counts(db) == before
+
+
+def test_threads_rotate_past_cycle_budget_and_recent_three(host, target, tmp_path, monkeypatch):
+    db, repo = target; project(host, tmp_path)
+    logs = [thread(host, tmp_path, [human(str(i))], updated=i) for i in range(7)]
+    amount = Path(logs[0]['path']).stat().st_size
+    assert all(Path(t['path']).stat().st_size == amount for t in logs)
+    monkeypatch.setattr(capture, 'MAX_CYCLE', amount * 2)
+    f = follower(host, repo)
+    first = f.run_once()
+    assert first['added_sources'] == 2
+    assert first['issues'] == [dict(code='ROLLOUT_LIMIT', count=5)]
+    assert first['discovered'][0]['eligible_threads'] == 7
+    assert capture.project_capture_state(first, TOKEN) == first
+    for _ in range(3): f.run_once()
+    pid = first['discovered'][0]['project_id']
+    assert {s['text'] for s in repo.read_project(ACTOR, TOKEN, pid)['observations']} == set(map(str, range(7)))
+    before = counts(db)
+    for _ in range(4): assert f.run_once()['added_sources'] == 0
+    assert counts(db) == before
+
+
+def test_projects_and_threads_both_rotate_without_lockstep_starvation(host, target, tmp_path, monkeypatch):
+    _, repo = target
+    logs = []
+    for i in range(3):
+        root = tmp_path / str(i); project(host, root)
+        logs.extend(thread(host, root, [human(str(j))], updated=j) for j in range(2))
+    monkeypatch.setattr(capture, 'MAX_CYCLE', Path(logs[0]['path']).stat().st_size)
+    f = follower(host, repo)
+    for _ in range(6): state = f.run_once()
+    assert len(state['discovered']) == 3 and state['retained_sources'] == 6
+    assert all(len(repo.read_project(ACTOR, TOKEN, p['project_id'])['observations']) == 2
+               for p in state['discovered'])
+
+
+def test_budget_remainder_defers_large_log_then_reads_it_first_next_cycle(host, target, tmp_path, monkeypatch):
+    _, repo = target; project(host, tmp_path)
+    older = thread(host, tmp_path, [human('longer source')], updated=0)
+    newer = thread(host, tmp_path, [human('x')], updated=1)
+    monkeypatch.setattr(capture, 'MAX_CYCLE', Path(older['path']).stat().st_size)
+    f = follower(host, repo)
+    assert f.run_once()['added_sources'] == 1
+    state = f.run_once()
+    assert state['added_sources'] == 1 and state['retained_sources'] == 2
+    assert state['issues'] == [dict(code='ROLLOUT_LIMIT', count=1)]
+
+
+def test_missing_logs_report_count_and_do_not_starve_readable_history(host, target, tmp_path):
+    _, repo = target; project(host, tmp_path)
+    for i in range(5):
+        t = thread(host, tmp_path, updated=i)
+        if i: Path(t['path']).unlink()
     state = follower(host, repo).run_once()
-    assert state['issues'] == [dict(code='PROJECT_LIMIT', count=1)] and counts(db) == (0, 0, 0)
-    assert not state['discovered'][0]['retained']
+    assert state['added_sources'] == state['retained_sources'] == 1
+    assert state['issues'] == [dict(code='ROLLOUT_UNAVAILABLE', count=4)] and state['limited']
+    assert state['discovered'][0]['eligible_threads'] == 5
+
+
+def test_text_budget_batches_and_single_oversize_do_not_block_smaller_complete_source(host, target, tmp_path, monkeypatch):
+    db, repo = target; project(host, tmp_path)
+    thread(host, tmp_path, [human('大大', mid='a'), human('甲', mid='b'), human('乙', mid='c')])
+    monkeypatch.setattr(policy, 'MAX_IMPORT_TEXT_BYTES', 4)
+    f = follower(host, repo); calls = []; actual = f.importing
+    def checked(body):
+        calls.append(deepcopy(body))
+        assert sum(len(s['text'].encode('utf8')) for s in body['sources']) <= 4
+        return actual(body)
+    f.importing = checked
+    state = f.run_once()
+    assert len(calls) == 2 and state['added_sources'] == state['retained_sources'] == 2
+    assert state['issues'] == [dict(code='PROJECT_LIMIT', count=1)]
+    scene = repo.read_project(ACTOR, TOKEN, state['discovered'][0]['project_id'])
+    assert {s['text'] for s in scene['observations']} == {'甲', '乙'}
+    before = counts(db)
+    assert f.run_once()['added_sources'] == 0 and counts(db) == before
+
+
+def test_two_explicit_bindings_one_project_count_latest_scene_once(host, target, tmp_path):
+    db, repo = target
+    a = thread(host, tmp_path / 'a', [human('first')])
+    b = thread(host, tmp_path / 'b', [human('second')])
+    pid = str(uuid4())
+    bindings = {t['thread_id']: dict(project_id=pid, title='Bound') for t in (a, b)}
+    f = follower(host, repo, bindings=bindings)
+    state = f.run_once()
+    assert len(state['discovered']) == 2 and all(p['retained'] for p in state['discovered'])
+    assert state['added_sources'] == state['retained_sources'] == 2
+    assert state['retained_sources'] == len(repo.read_project(ACTOR, TOKEN, pid)['observations'])
+    before = counts(db)
+    assert f.run_once()['retained_sources'] == 2 and counts(db) == before
+    assert follower(host, repo, bindings=bindings).run_once()['added_sources'] == 0 and counts(db) == before
+
+
+def test_explicit_project_alias_routes_capture_preserves_history_and_ignores_third_same_name(host, target, tmp_path):
+    db, repo = target
+    roots = [tmp_path / str(i) for i in range(3)]
+    for root in roots: project(host, root, 'Same')
+    thread(host, roots[0], [human('old project')])
+    thread(host, roots[1], [human('target project')])
+    before = follower(host, repo).run_once()
+    discovered = capture.discover(host, {})[0]
+    # Select by the exact registered root, never by a shared project name.
+    ids = {str(p['roots'][0]): p['project_id'] for p in discovered}
+    old, target_pid, empty = (ids[str(root.resolve())] for root in roots)
+    old_scene = repo.read_project(ACTOR, TOKEN, old)
+    thread(host, roots[0], [human('new redirected source')])
+    f = follower(host, repo, project_aliases={old: target_pid})
+    state = f.run_once()
+    assert state['added_sources'] == 2
+    assert state['retained_sources'] == 3
+    assert repo.read_project(ACTOR, TOKEN, old) == old_scene
+    assert {s['text'] for s in repo.read_project(ACTOR, TOKEN, target_pid)['observations']} == {
+        'old project', 'target project', 'new redirected source'}
+    assert {p['project_id'] for p in state['discovered']} == {target_pid, empty}
+    assert not next(p for p in state['discovered'] if p['project_id'] == empty)['retained']
+    assert {p['project_id'] for p in repo.list_projects(ACTOR, TOKEN)['items']} == {old, target_pid}
+    saved = counts(db)
+    assert f.run_once()['added_sources'] == 0 and counts(db) == saved
+    # No alias means the old exact registry identity is still the default.
+    assert {p['project_id'] for p in capture.discover(host, {})[0]} == {old, target_pid, empty}
+
+
+def test_mixed_image_message_remains_unsupported_without_losing_adjacent_text(host, tmp_path):
+    mixed = human('annotation with image')
+    payload = mixed['payload']; meta = payload['internal_chat_message_metadata_passthrough']
+    payload['content'].append(dict(type='input_image', image_url='synthetic://image'))
+    meta['content_item_kinds'].append('user.image')
+    meta['content_item_metadata'].append(dict(provenance=dict(type='user')))
+    t = thread(host, tmp_path, [mixed, human('complete text')])
+    sources, _, issues = capture.read_rollout(host, t, capture.MAX_CYCLE)
+    assert [s['text'] for s in sources] == ['complete text']
+    assert issues == {'UNSUPPORTED_MESSAGES': 1}
 
 
 def test_failed_logs_consume_whole_cycle_budget(host, target, tmp_path, monkeypatch):

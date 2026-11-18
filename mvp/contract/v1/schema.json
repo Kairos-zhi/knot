@@ -1089,6 +1089,7 @@
     "ProjectImportRequest": {
       "type": "object",
       "additionalProperties": false,
+      "allOf": [{"if": {"required": ["recap"]}, "then": {"properties": {"archive_ref": {"type": "null"}}}}],
       "required": [
         "project_id",
         "title",
@@ -1098,6 +1099,69 @@
         "archive_ref"
       ],
       "properties": {
+        "recap": {
+          "type": "object", "additionalProperties": false,
+          "required": ["version", "sources", "archive"],
+          "properties": {
+            "version": {"const": "knot.decision-import/0.1"},
+            "sources": {
+              "type": "object", "maxProperties": 20,
+              "additionalProperties": {
+                "type": "object", "additionalProperties": false,
+                "required": ["version", "kind", "title", "text", "text_sha256", "message_time_ms", "document_on", "archived_on", "locator"],
+                "properties": {
+                  "version": {"const": "knot.decision-source/0.1"},
+                  "kind": {"enum": ["user_message", "document"]},
+                  "title": {"type": "string", "minLength": 1, "maxLength": 256},
+                  "text": {"type": "string", "maxLength": 65536},
+                  "text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                  "message_time_ms": {"type": ["integer", "null"], "minimum": 0},
+                  "document_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+                  "archived_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+                  "locator": {
+                    "type": "object", "additionalProperties": false,
+                    "required": ["channel", "thread_id", "message_id", "section"],
+                    "properties": {
+                      "channel": {"enum": ["codex", "chatgpt", "file"]},
+                      "thread_id": {"type": ["string", "null"], "maxLength": 2048},
+                      "message_id": {"type": ["string", "null"], "maxLength": 2048},
+                      "section": {"type": ["string", "null"], "maxLength": 2048}
+                    }
+                  }
+                }
+              }
+            },
+            "archive": {
+              "type": "object", "additionalProperties": false,
+              "required": ["version", "title", "method", "items"],
+              "properties": {
+                "version": {"const": "knot.decision-archive/0.1"},
+                "title": {"type": "string", "minLength": 1, "maxLength": 256},
+                "method": {"const": "curated_recap"},
+                "items": {"type": "array", "maxItems": 20, "items": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["id", "kind", "title", "before", "after", "reason", "occurred_on", "archived_on", "document_on", "caution", "evidence"],
+                  "properties": {
+                    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,79}$"},
+                    "kind": {"enum": ["direct_user_message", "archived_user_excerpt", "document_plan"]},
+                    "title": {"type": "string", "minLength": 1, "maxLength": 256},
+                    "before": {"type": ["string", "null"], "maxLength": 2048},
+                    "after": {"type": ["string", "null"], "maxLength": 2048},
+                    "reason": {"type": ["string", "null"], "maxLength": 2048},
+                    "caution": {"type": ["string", "null"], "maxLength": 2048},
+                    "occurred_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+                    "archived_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+                    "document_on": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+                    "evidence": {"type": "array", "minItems": 1, "maxItems": 4, "items": {
+                      "type": "object", "additionalProperties": false, "required": ["source_key", "quote"],
+                      "properties": {"source_key": {"type": "string", "minLength": 1, "maxLength": 256}, "quote": {"type": "string", "minLength": 1, "maxLength": 4096}}
+                    }}
+                  }
+                }}
+              }
+            }
+          }
+        },
         "sources": {
           "type": "array", "maxItems": 20,
           "items": {
@@ -1263,6 +1327,33 @@
                 "minimum": 0,
                 "maximum": 128
               },
+              "visibility_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "chronology": {
+                "type": "object", "additionalProperties": false,
+                "required": ["appearance_at", "appearance_basis", "observation_times", "observation_count"],
+                "properties": {
+                  "appearance_at": {"type": "integer", "minimum": 0},
+                  "appearance_basis": {"enum": ["registry_created", "first_message", "first_saved", "first_window_record"]},
+                  "appearance_source": {
+                    "type": "object", "additionalProperties": false,
+                    "required": ["asset_id", "content_hash"],
+                    "properties": {
+                      "asset_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+                      "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                    }
+                  },
+                  "observation_times": {
+                    "type": "array", "maxItems": 128, "uniqueItems": true,
+                    "items": {"type": "integer", "minimum": 0}
+                  },
+                  "observation_count": {"type": "integer", "minimum": 0, "maximum": 128}
+                },
+                "allOf": [{
+                  "if": {"properties": {"appearance_basis": {"const": "first_saved"}}},
+                  "then": {"not": {"required": ["appearance_source"]}},
+                  "else": {"required": ["appearance_source"]}
+                }]
+              },
               "decision_count": {
                 "type": "integer",
                 "minimum": 0,
@@ -1408,6 +1499,7 @@
         "text"
       ],
       "properties": {
+        "source": {"$ref": "#/$defs/ProjectImportRequest/properties/recap/properties/sources/additionalProperties"},
         "project_id": {
           "type": "string",
           "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"

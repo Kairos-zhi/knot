@@ -220,19 +220,21 @@ assert.equal(execute('workReviewSaves.get('+JSON.stringify(key)+').serialized'),
 ''')
 
 
-def test_late_prepare_and_edit_during_prepare_are_suppressed_and_versions_clear_form():
+def test_late_prepare_is_suppressed_and_only_explicit_end_allows_navigation():
     run_review(r'''
 await openReview();let release,payload;
 respond=(url,options)=>{payload=JSON.parse(options.body);return new Promise(resolve=>release=resolve);};
 let pending=execute('prepareWorkReview()');fields({completed:'Changed while preparing'});release(reply(payload));await pending;
 assert.equal(execute('workReview.preview'),null);
 respond=(url,options)=>{payload=JSON.parse(options.body);return new Promise(resolve=>release=resolve);};
-pending=execute('prepareWorkReview()');respond=()=>sceneB;await execute('openProject(sceneB.project_id)');
+pending=execute('prepareWorkReview()');respond=()=>sceneB;assert.equal(await execute('openProject(sceneB.project_id)'),false);
+assert.equal(els['work-review-completed'].value,'Changed while preparing');execute('endProjectEditing()');await execute('openProject(sceneB.project_id)');
 release(reply(payload));await pending;
 assert.equal(els['work-review-completed'].value,'');assert.equal(els['work-review'].open,false);
 assert.equal(els['work-review-preview'].textContent,'');assert.equal(els['work-review-evidence'].children.length,0);
 fields();await prepareReview();checkReview();execute('shareWorkReview()');
-respond=()=>({...sceneB,...sceneB.snapshots[0]});await execute('selectProjectSnapshot(0)');
+respond=()=>({...sceneB,...sceneB.snapshots[0]});assert.equal(await execute('selectProjectSnapshot(0)'),false);
+assert(els['work-review-share-text'].value);execute('endProjectEditing()');await execute('selectProjectSnapshot(0)');
 assert.equal(els['work-review-completed'].value,'');assert.equal(els['work-review-share-text'].value,'');
 assert.equal(els['work-review-checked'].checked,false);assert.equal(execute('workReview.binding.revision'),'1');
 ''')
@@ -247,7 +249,8 @@ const previewB=els['work-review-preview'].textContent,statusB=els['work-review-s
 release({syntheticError:'IMPORT_UNAVAILABLE',status:503});await pending;
 assert.equal(els['work-review-preview'].textContent,previewB);assert.equal(els['work-review-status'].textContent,statusB);
 assert.equal(execute('projectScene.project_id'),sceneB.project_id);
-respond=()=>({...sceneA,...sceneA.snapshots[0]});await execute('openProject(sceneA.project_id,"1")');
+respond=()=>({...sceneA,...sceneA.snapshots[0]});assert.equal(await execute('openProject(sceneA.project_id,"1")'),false);
+assert.equal(els['work-review-preview'].textContent,previewB);execute('endProjectEditing()');await execute('openProject(sceneA.project_id,"1")');
 assert.equal(els['work-review-fields'].hidden,false);assert.equal(els['work-review-preview-area'].hidden,true);
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
 assert.equal(els['work-review-completed'].value,'');assert.equal(els['work-review-fields'].hidden,true);

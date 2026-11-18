@@ -98,7 +98,7 @@ assert(flat(els['capture-status']).includes('最近对话'));
 assert(flat(els['capture-discovered']).includes('Discovered only · 已发现，尚未留存'));
 assert(!flat(els['projects-list']).includes('Discovered only'));
 assert(!flat(els['capture-discovered']).includes('Registered A'));
-assert(flat(els['projects-list']).includes('1 项决定'));
+assert(flat(els['projects-list']).includes('1 项整理回顾'));
 ''', timers=timers)
 
 
@@ -138,7 +138,7 @@ def test_invalid_state_is_not_presented_as_success(change):
 assert(flat(els['capture-status']).includes('待核对'));
 assert.equal(els['capture-control'].disabled,false);
 assert(!flat(els['capture-status']).includes('已暂停'));
-assert.equal(els['projects-list'].children.length,2);
+assert.equal(els['projects-list'].children.filter(node=>node.tagName==='BUTTON').length,2);
 ''', state=state)
 
 
@@ -150,7 +150,7 @@ def test_discovery_limit_includes_sixteen_explicit_bindings(count, accepted):
                                 title=f'Registered {index}', retained=False, eligible_threads=0)
                            for index in range(count)]
     run_capture('assert.equal(execute("captureFailure"),' + json.dumps(not accepted) + ');'
-                'assert.equal(els["projects-list"].children.length,2);', state=state)
+                'assert.equal(els["projects-list"].children.filter(node=>node.tagName==="BUTTON").length,2);', state=state)
 
 
 def test_source_counts_do_not_turn_captured_messages_into_curated_decisions():
@@ -158,14 +158,14 @@ def test_source_counts_do_not_turn_captured_messages_into_curated_decisions():
 respond=url=>url==='/api/capture-state'?{...payload.state,limited:true}:
   {items:payload.list.items.map((item,index)=>({...item,title:index?'KNOT':'Knot',material_count:index?14:37,decision_count:index?0:4}))};
 await execute('pollCapture()');
-const cards=els['projects-list'].children;
+const cards=els['projects-list'].children.filter(node=>node.tagName==='BUTTON');
 assert.equal(cards.length,2);assert.equal(cards[0].children[0].textContent,'Knot');assert.equal(cards[1].children[0].textContent,'KNOT');
-assert(flat(cards[0]).includes('已留存 37 条材料/原话 · 4 项决定'));
-assert(flat(cards[1]).includes('已留存 14 条材料/原话'));
+assert(flat(cards[0]).includes('当前留存 37 份材料 · 4 项整理回顾'));
+assert(flat(cards[1]).includes('当前留存 14 份材料'));
 assert(!flat(cards[1]).includes('决定'));
 const scene=copy(sceneA);scene.decisions=null;respond=()=>scene;await execute('openProject(sceneA.project_id)');
 assert.equal(els['project-decisions-empty'].textContent,'暂无原回顾决定。');
-assert.equal(els['project-observations'].children.length,1);
+assert.equal(originalRows().length,1);
 ''')
 
 
@@ -195,7 +195,7 @@ assert.equal(calls.length,before);
 def test_failed_control_recovers_controls_and_requires_state_check_without_repost():
     run_capture(r'''
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
-const card=els['project-observations'].children[0];
+const card=originalRows()[0];
 execute('selectProjectObservation(projectCards.find(c=>c.observation).id)');
 const detail=[...els['project-detail-content'].children];
 respond=()=>{throw Error('PRIVATE NETWORK PATH');};
@@ -205,13 +205,14 @@ assert.equal(els['capture-control'].textContent,'核对状态');
 assert(flat(els['capture-status']).includes('待核对'));
 assert(!flat(els['capture-status']).includes('已暂停'));
 assert(!flat(els['capture-status']).includes('PRIVATE'));
-assert.equal(els['project-observations'].children[0],card);
+assert.equal(originalRows()[0],card);
 assert.deepEqual(els['project-detail-content'].children,detail);
 respond=(url,options)=>{assert(!options.method);return url==='/api/projects'?payload.list:{...payload.state,phase:'paused'};};
 await execute('controlCapture()');
 assert.equal(els['capture-control'].textContent,'恢复');
 assert.equal(calls.filter(c=>c.options.method==='POST').length,1);
-assert.deepEqual(els['project-detail-content'].children,detail);
+assert.equal(els['project-detail-content'].children.length,0);
+assert.equal(execute('projectSceneInvalidated'),true); // Legacy list cannot reauthorize cached originals.
 ''')
 
 
@@ -228,22 +229,22 @@ assert(flat(els['capture-status']).includes('已暂停'));
 ''')
 
 
-def test_timer_refresh_preserves_scene_card_sidebar_query_and_original_time():
+def test_timer_refresh_invalidates_legacy_reading_and_preserves_query_and_target():
     run_capture(r'''
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
 execute('selectProjectObservation(projectCards.find(c=>c.observation).id)');
 els['project-material-query'].value='my query';
-const card=els['project-observations'].children[0],old=execute('projectScene');
+const card=originalRows()[0],old=execute('projectScene');
 const sidebar=[...els['project-detail-content'].children],focus=els['project-detail-title'].focused;
 respond=url=>url==='/api/capture-state'?{...payload.state,last_saved_at:1794900000000}:
   {items:payload.list.items.map(item=>item.project_id===sceneA.project_id?{...item,revision:'3',manifest_hash:'f'.repeat(64)}:item)};
 await timers.shift().fn();
 assert.equal(timers.length,1);assert.equal(timers[0].delay,30000);
-assert.equal(execute('projectScene'),old);assert.equal(els['project-observations'].children[0],card);
-assert.deepEqual(els['project-detail-content'].children,sidebar);
+assert.equal(execute('projectScene'),old);assert.equal(originalRows().length,0);
+assert.equal(els['project-detail-content'].children.length,0);assert.equal(execute('projectSceneInvalidated'),true);
 assert.equal(els['project-detail-title'].focused,focus);assert.equal(els['project-material-query'].value,'my query');
 assert.equal(els['project-latest'].hidden,false);
-assert.equal(calls.filter(c=>c.url.startsWith('/api/project?')).length,1);
+assert.equal(calls.filter(c=>c.url.startsWith('/api/project?')).length,2);
 respond=()=>({...sceneA,revision:'3',manifest_hash:'f'.repeat(64),snapshots:[...sceneA.snapshots,{revision:'3',manifest_hash:'f'.repeat(64),saved_at:1794900000000}]});
 await els['project-latest'].events.click[0]();
 // The event handler starts the explicit project action; settle its fetch and render.
@@ -285,12 +286,12 @@ def test_overview_only_updates_on_real_list_change_and_never_invents_discovered_
 const original=[...els['projects-list'].children];
 await execute('pollCapture()');assert.deepEqual(els['projects-list'].children,original);
 respond=url=>url==='/api/capture-state'?payload.state:{items:[payload.list.items[0]]};
-await execute('pollCapture()');assert.equal(els['projects-list'].children.length,1);
+await execute('pollCapture()');assert.equal(els['projects-list'].children.filter(node=>node.tagName==='BUTTON').length,1);
 assert(!flat(els['projects-list']).includes('Discovered only'));
 ''')
 
 
-def test_selection_is_at_most_three_exact_excerpts_separate_from_all_recap_decisions():
+def test_all_originals_are_readable_without_three_excerpt_cap_or_keyword_classification():
     sources = [observation(f'我希望首页呈现重要选择与短原因，版本{i}。', i) for i in range(5)]
     sources += [observation('继续推进下一步并运行测试。', 10),
                 observation('运行日志：我希望这一行不成为卡片。', 11),
@@ -298,17 +299,20 @@ def test_selection_is_at_most_three_exact_excerpts_separate_from_all_recap_decis
     run_capture(r'''
 const scene=copy(sceneA);scene.decisions.items=Array.from({length:4},(_,i)=>({...scene.decisions.items[0],id:'decision-'+i}));
 respond=()=>scene;await execute('openProject(sceneA.project_id)');
-assert.equal(els['project-observations'].children.length,3);
+assert.equal(originalRows().length,scene.observations.length);
 assert.equal(els['project-decisions'].children.length,4);
-assert(!flat(els['project-observations']).includes('运行日志'));
-assert(!flat(els['project-observations']).includes('继续推进'));
+assert(flat(els['project-observations']).includes('运行日志'));
+assert(flat(els['project-observations']).includes('继续推进'));
 assert(!flat(els['project-observations']).includes('原因未知'));
 for(const card of execute('projectCards.filter(c=>c.observation)')){
-  assert(card.observation.text.includes(card.excerpt.quote));
-  assert.equal(card.button.children[0].textContent,card.excerpt.quote);
-  assert.equal(card.button.children[1].textContent,'自动整理·原话');
+  assert.equal(card.excerpt,null);
+  assert(flat(els['project-observations']).includes(card.observation.text));
   assert.equal(card.item,undefined); // sources never become archive/user-confirm records
 }
+els['project-read-mode'].value='clues';execute('setProjectReadMode()');
+assert.equal(originalRows().length,0); // Preference words alone establish no candidate.
+assert.equal(execute('projectScene.decisions.items.length'),4);
+execute('restoreProjectRecords()');assert.equal(originalRows().length,scene.observations.length);
 ''', observations=sources)
 
 
@@ -318,22 +322,23 @@ def test_form_answer_is_verbatim_question_only_in_sidebar_full_source_and_time_l
     run_capture(r'''
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
 const source=sceneA.observations[0],answer=JSON.parse(source.text.split('\n')[1])[0].answer;
-const original=[...els['project-observations'].children],recap=[...els['project-decisions'].children];
-assert.equal(original[0].children[0].textContent,answer);
+const original=[...originalRows()],recap=[...els['project-decisions'].children];
+assert.equal(original[0].children.find(node=>node.tagName==='PRE').textContent,answer);
 assert(!flat(original[0]).includes('你希望首页'));
 const selected=execute('projectCards.find(c=>c.observation)');execute('selectProjectObservation('+JSON.stringify(selected.id)+')');
-assert.deepEqual(els['project-observations'].children,original);assert.deepEqual(els['project-decisions'].children,recap);
+assert.deepEqual(originalRows(),original);assert.deepEqual(els['project-decisions'].children,recap);
 const detail=els['project-detail-content'];
-assert(detail.children.some(node=>node.tagName==='PRE'&&node.textContent===source.text));
+assert(detail.children.some(node=>node.tagName==='PRE'&&node.textContent===answer));
 assert(flat(detail).includes('你希望首页第一眼'));
 assert(flat(detail).includes('原消息时间：'+execute('captureDate(projectScene.observations[0].message_time_ms)')));
 for(const value of [source.asset_id,source.content_hash,source.thread_id,source.message_id])assert(flat(detail).includes(value));
 const record=detail.children.find(node=>node.tagName==='DETAILS');
 assert(record);assert.equal(record.open,false);assert.equal(record.children[0].textContent,'来源记录');
+assert(record.children.some(node=>node.tagName==='PRE'&&node.textContent===source.text));
 assert.equal(record.children.filter(node=>node.tagName==='CODE').length,4);
 assert(!detail.children.some(node=>node.tagName==='CODE'));
 assert(!flat(detail).includes('原因'));assert(!flat(detail).includes('user_confirm'));
-execute('clearProjectDetail(true)');assert.equal(original[0].focused,1);
+execute('clearProjectDetail(true)');assert.equal(selected.button.focused,1);
 assert.equal(calls.filter(c=>c.options.method==='POST').length,0);
 ''', observations=sources)
 
@@ -347,14 +352,19 @@ assert.equal(calls.filter(c=>c.options.method==='POST').length,0);
     '<send_user_message_question_reply>[{"question":"q","answer":"几张重要决定卡片"}]</send_user_message_question_reply>',
     '<send_user_message_question_reply>{"questionItemId":"x","question":"q","answer":"几张重要决定卡片"}</send_user_message_question_reply>',
     '<send_user_message_question_reply>not json 我希望不能用普通原话兜底。</send_user_message_question_reply>',
-    reply('继续推进下一步并运行测试。'), reply('x'*181),
+    reply('继续推进下一步并运行测试。'),
 ])
-def test_non_preferences_and_malformed_form_never_fill_cards(text):
+def test_commands_questions_and_malformed_forms_remain_readable_but_make_no_candidates(text):
     run_capture(r'''
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
-assert.equal(els['project-observations'].children.length,0);
-assert.equal(els['project-observations-empty'].hidden,false);
+assert.equal(originalRows().length,1);
+assert(flat(els['project-observations']).includes(execute('observationNaturalText(projectScene.observations[0])')));
 assert.equal(els['project-decisions'].children.length,1);
+els['project-read-mode'].value='clues';execute('setProjectReadMode()');
+assert.equal(originalRows().length,0);
+assert.equal(els['project-observations-empty'].hidden,false);
+assert.equal(execute('projectScene.decisions.items.length'),2);
+execute('restoreProjectRecords()');assert.equal(originalRows().length,1);
 ''', observations=[observation(text)])
 
 
@@ -363,9 +373,9 @@ def test_search_covers_unselected_body_and_progress_messages_but_not_other_scene
         observation(f'我希望首页呈现几张重要选择卡片，条目{i}。', i+1) for i in range(4)]
     run_capture(r'''
 respond=()=>sceneA;await execute('openProject(sceneA.project_id)');
-const cards=[...els['project-observations'].children],before=calls.length;
+const cards=[...originalRows()],before=calls.length;
 els['project-material-query'].value='独特检索词';execute('renderProjectMaterials()');
-assert.equal(calls.length,before);assert.deepEqual(els['project-observations'].children,cards);
+assert.equal(calls.length,before);assert.deepEqual(originalRows(),cards);
 const result=els['project-material-list'].children[0],reader=result.children.find(node=>node.tagName==='BUTTON');
 reader.events.click[0]();assert(flat(els['project-detail-content']).includes('独特检索词'));
 respond=()=>({...sceneA,revision:'1',observations:[]});await execute('openProject(sceneA.project_id,"1")');
@@ -374,7 +384,7 @@ assert(!flat(els['project-material-list']).includes('Original source'));
 assert(!flat(els['project-detail-content']).includes('独特检索词'));
 respond=()=>sceneB;await execute('openProject(sceneB.project_id)');reader.events.click[0]();
 assert.equal(els['project-detail-content'].children.length,0);
-assert.equal(els['project-observations'].children.length,0);
+assert.equal(originalRows().length,0);
 ''', observations=sources)
 
 
@@ -415,7 +425,9 @@ for(const [query,expected] of [['首页',item.answer],['第一眼',item.question
   const row=els['project-material-list'].children[0];
   assert.equal(row.children.find(node=>node.className==='observation-match').textContent,expected);
   row.children.find(node=>node.tagName==='BUTTON').events.click[0]();
-  assert(els['project-detail-content'].children.some(node=>node.tagName==='PRE'&&node.textContent===source.text));
+  const record=els['project-detail-content'].children.find(node=>node.tagName==='DETAILS');
+  assert(record.children.some(node=>node.tagName==='PRE'&&node.textContent===source.text));
+  assert(els['project-detail-content'].children.some(node=>node.tagName==='PRE'&&node.textContent===item.answer));
 }
 for(const query of ['包装标识-99','questionItemId','send_user_message_question_reply']){
   els['project-material-query'].value=query;execute('renderProjectMaterials()');
@@ -445,7 +457,7 @@ respond=()=>scene;await execute('openProject(sceneA.project_id)');
 const id=execute('projectCards.find(c=>c.observation).id');execute('selectProjectObservation('+JSON.stringify(id)+')');
 assert(flat(els['project-detail-content']).includes('<img src=x onerror=alert(1)>'));
 respond=()=>({syntheticError:'ACCESS_DENIED'});await execute('readProjectMaterial(projectScene.materials[0])');
-assert.equal(els['project-observations'].children.length,0);
+assert.equal(originalRows().length,0);
 assert(!flat(els['project-detail-content']).includes('<img'));
 assert(!execute('selectProjectObservation('+JSON.stringify(id)+')'));
 ''')
@@ -455,7 +467,7 @@ def test_observations_are_optional_and_bad_identity_hash_or_time_are_not_display
     run_capture(r'''
 const scene=copy(sceneA),source=scene.observations[0];
 scene.observations=[{...source,asset_id:'bad'},{...source,content_hash:'bad'},{...source,message_time_ms:null},{...source,message_id:''}];
-respond=()=>scene;await execute('openProject(sceneA.project_id)');assert.equal(els['project-observations'].children.length,0);
+respond=()=>scene;await execute('openProject(sceneA.project_id)');assert.equal(originalRows().length,0);
 delete scene.observations;await execute('openProject(sceneA.project_id)');
 assert.equal(els['project-observations-section'].hidden,true);assert.equal(els['project-decisions'].children.length,1);
 ''')

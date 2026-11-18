@@ -30,9 +30,10 @@ ISSUES = frozenset({'REGISTRY_UNAVAILABLE', 'REGISTRY_LIMIT', 'ROLLOUT_UNAVAILAB
 
 
 class CaptureError(ValueError):
-    def __init__(self, code, charged=0):
+    def __init__(self, code, charged=0, *, deferred=False):
         self.code = code if code in ISSUES else 'REGISTRY_UNAVAILABLE'
         self.charged = charged
+        self.deferred = deferred
         super().__init__(self.code)
 
 
@@ -91,8 +92,12 @@ def _registry_snapshot(home):
         yield root / 'state_5.sqlite'
 
 
-def discover(home, bindings):
-    """Return registry identities and selected recent primary threads, no text."""
+def discover(home, bindings, project_aliases=None):
+    """Return all bounded registered primary threads, without reading text.
+
+    Aliases are explicit business project IDs, never inferred from titles or
+    roots. They redirect future capture only; retained history stays intact.
+    """
     home = Path(home).resolve()
     if type(bindings) is not dict or len(bindings) > 16:
         raise CaptureError('REGISTRY_LIMIT')
@@ -101,12 +106,21 @@ def discover(home, bindings):
         raise CaptureError('REGISTRY_UNAVAILABLE')
     conn, snapshot = None, None
     try:
+        aliases = {} if project_aliases is None else project_aliases
+        if type(aliases) is not dict or len(aliases) > 116:
+            raise CaptureError('REGISTRY_LIMIT')
+        for source, target in aliases.items():
+            decision.uuid(source); decision.uuid(target)
+            if target in aliases:
+                raise CaptureError('AMBIGUOUS_PROJECT')
         snapshot = _registry_snapshot(home)
         private_db = snapshot.__enter__()
         conn = sqlite3.connect(private_db.as_uri() + '?mode=ro', uri=True, timeout=0.2)
         conn.execute('PRAGMA query_only=ON')
         conn.execute('BEGIN')
-        rows = conn.execute('SELECT id,name FROM projects ORDER BY id LIMIT 101').fetchall()
+        columns = {row[1] for row in conn.execute('PRAGMA table_info(projects)')}
+        created = 'created_at_ms' if 'created_at_ms' in columns else 'NULL'
+        rows = conn.execute('SELECT id,name,' + created + ' FROM projects ORDER BY id LIMIT 101').fetchall()
         roots = conn.execute('SELECT project_id,path FROM project_roots LIMIT 401').fetchall()
         threads = conn.execute('SELECT id,cwd,project_id,rollout_path,source,agent_nickname,'
             'agent_role,updated_at_ms FROM threads WHERE archived=0 '
@@ -114,16 +128,20 @@ def discover(home, bindings):
         if len(rows) > 100 or len(roots) > 400 or len(threads) > MAX_THREADS:
             raise CaptureError('REGISTRY_LIMIT')
         projects = {}
-        for pid, title in rows:
+        for pid, title, created_at in rows:
             decision.uuid(pid)
             decision.text(title, 256, nonempty=True)
             projects[pid] = dict(source_id=pid, title=title,
                 project_id=str(uuid5(NAMESPACE_URL, 'knot:codex-project:' + pid)),
-                roots=[], threads=[], eligible_threads=0)
+                roots=[], raw_roots=[], threads=[], eligible_threads=0)
+            if created_at is not None:
+                decision.message_day(created_at)
+                projects[pid]['created_at_ms'] = created_at
         for pid, root in roots:
             if pid not in projects:
                 raise CaptureError('REGISTRY_UNAVAILABLE')
             projects[pid]['roots'].append(_path(root))
+            projects[pid]['raw_roots'].append(Path(root.removeprefix('\\\\?\\')))
         for tid, binding in bindings.items():
             decision.uuid(tid)
             decision.closed(binding, {'project_id', 'title'})
@@ -159,8 +177,9 @@ def discover(home, bindings):
                     continue
                 selected = projects[identities.pop()]
             selected['eligible_threads'] += 1
-            if len(selected['threads']) < 3 or tid in bindings:
-                selected['threads'].append(dict(thread_id=tid, path=rollout))
+            selected['threads'].append(dict(thread_id=tid, path=rollout))
+        for p in projects.values():
+            p['project_id'] = aliases.get(p['project_id'], p['project_id'])
         return sorted(projects.values(), key=lambda p: (p['source_id'] not in bindings, p['source_id'])), issues
     except CaptureError:
         raise
@@ -173,6 +192,21 @@ def discover(home, bindings):
             snapshot.__exit__(None, None, None)
 
 
+def registration_document(registration):
+    """Retain registry facts as a normal project document, without host paths."""
+    record = dict(version='knot.project-registration/0.1', source='codex_project_registry',
+                  source_id=registration['source_id'], project_id=registration['project_id'],
+                  title=registration['title'], status='registration_only',
+                  note='仅保存真实项目登记；未据此认定原始对话已留存。')
+    for field in ('source_id', 'project_id'):
+        decision.uuid(record[field])
+    decision.text(record['title'], 256, nonempty=True)
+    if 'created_at_ms' in registration:
+        decision.message_day(registration['created_at_ms'])
+        record['created_at_ms'] = registration['created_at_ms']
+    return dict(title='project-registration.json', text=decision.canonical(record).decode('utf-8'))
+
+
 def read_rollout(home, thread, remaining, stop=None):
     """Only allowlisted, complete human text; read a fixed prefix of a live log."""
     issues, charged = Counter(), 0
@@ -183,8 +217,10 @@ def read_rollout(home, thread, remaining, stop=None):
             raise CaptureError('ROLLOUT_UNAVAILABLE')
         with path.open('rb') as stream:
             size = os.fstat(stream.fileno()).st_size
-            if size > MAX_LOG or size > remaining:
+            if size > MAX_LOG:
                 raise CaptureError('ROLLOUT_LIMIT')
+            if size > remaining:
+                raise CaptureError('ROLLOUT_LIMIT', deferred=size <= MAX_CYCLE)
             charged = size
             left, messages, seen, session_checked = size, [], {}, False
             while left:
@@ -306,15 +342,20 @@ def project_capture_state(value, token):
 
 class CodexCapture:
     """Lifecycle-owned local follower, composed with the existing service API."""
-    def __init__(self, home, *, listing, reading, importing, bindings=None, interval=30):
+    def __init__(self, home, *, listing, reading, importing, bindings=None, interval=30,
+                 project_aliases=None):
         if type(interval) not in (int, float) or interval < 0.01:
             raise ValueError('INTERVAL_INVALID')
         self.home, self.bindings = Path(home), bindings or {}
+        self.project_aliases = project_aliases
         self.listing, self.reading, self.importing = listing, reading, importing
         self.interval = interval
         self.lock = threading.RLock()
         self.stop_event, self.wake = threading.Event(), threading.Event()
         self.paused, self.thread, self.pending = False, None, {}
+        # Scheduling hints only. The service's retained hashes remain the
+        # authority, including after a restart without these in-memory hints.
+        self.next_project, self.next_threads = None, {}
         self.view = dict(phase='starting', scanned_at=None, last_saved_at=None,
             discovered=[], added_sources=0, retained_sources=0, issues=[], limited=False)
 
@@ -355,28 +396,46 @@ class CodexCapture:
         with self.lock:
             if self.paused or self.stop_event.is_set():
                 return self.state()
-        issues, added, retained, remaining, discovered = Counter(), 0, 0, MAX_CYCLE, []
+        issues, added, remaining, discovered = Counter(), 0, MAX_CYCLE, []
+        retained = {}
         try:
-            projects, notices = discover(self.home, self.bindings)
+            projects, notices = discover(self.home, self.bindings, self.project_aliases)
             issues.update(notices)
             listed = {p['project_id']: p for p in self.listing()['items']}
+            grouped = {}
             for p in projects:
-                if self.stop_event.is_set():
-                    break
                 pid = p['project_id']
                 entry = {k: p[k] for k in ('source_id', 'title', 'project_id', 'eligible_threads')}
                 entry['retained'] = pid in listed
                 discovered.append(entry)
-                if not p['threads']:
-                    continue
-                if p['eligible_threads'] > len(p['threads']):
-                    issues['ROLLOUT_LIMIT'] += 1
+                group = grouped.setdefault(pid, dict(project_id=pid, title=p['title'], threads=[], entries=[]))
+                group['threads'].extend(p['threads'])
+                group['entries'].append(entry)
+            order = list(grouped)
+            if self.next_project in order:
+                offset = order.index(self.next_project)
+                order = order[offset:] + order[:offset]
+            self.next_project = order[1 % len(order)] if order else None
+            self.next_threads = {pid: tid for pid, tid in self.next_threads.items() if pid in grouped}
+            for pid in order:
+                if self.stop_event.is_set():
+                    break
+                p = grouped[pid]
+                threads = p['threads']
+                tids = [t['thread_id'] for t in threads]
+                if self.next_threads.get(pid) in tids:
+                    offset = tids.index(self.next_threads[pid])
+                    threads = threads[offset:] + threads[:offset]
                 try:
                     messages = []
-                    for thread in p['threads']:
+                    for index, thread in enumerate(threads):
                         with self.lock:
                             if self.paused or self.stop_event.is_set():
                                 break
+                        if remaining <= 0:
+                            self.next_threads[pid] = thread['thread_id']
+                            issues['ROLLOUT_LIMIT'] += len(threads) - index
+                            break
                         try:
                             sources, used, notices = read_rollout(self.home, thread, remaining, stop=self.stop_event)
                             remaining -= used
@@ -384,12 +443,18 @@ class CodexCapture:
                             issues.update(notices)
                         except CaptureError as exc:
                             remaining -= exc.charged
+                            if exc.deferred:
+                                self.next_threads[pid] = thread['thread_id']
+                                issues['ROLLOUT_LIMIT'] += len(threads) - index
+                                break
                             issues[exc.code] += 1
+                        self.next_threads[pid] = threads[(index + 1) % len(threads)]['thread_id']
                     scene = self.reading(pid) if pid in listed else None
                     # A retained opaque source is not repaired or bypassed.
                     if scene and scene['has_unavailable']:
                         raise CaptureError('ACCESS_DENIED')
                     if scene:
+                        retained[pid] = len(scene.get('observations', []))
                         with self.lock:
                             self.view['last_saved_at'] = max(self.view['last_saved_at'] or 0, scene['saved_at'])
                     existing = {r['content_hash'] for r in scene['materials']} if scene else set()
@@ -398,22 +463,26 @@ class CodexCapture:
                         digest = sha256(decision.canonical(source)).hexdigest()
                         if digest not in existing:
                             fresh[digest] = source
-                    if len(existing) + len(fresh) > policy.MAX_MATERIALS:
-                        raise CaptureError('PROJECT_LIMIT')
                     queue = sorted(fresh.values(), key=lambda s: (s['message_time_ms'], s['locator']['thread_id'], s['locator']['message_id']))
+                    blocked, batch_cap = set(), policy.MAX_DOCUMENTS
                     while queue or pid in self.pending:
                         with self.lock:
                             if self.paused or self.stop_event.is_set():
                                 break
                             body = self.pending.get(pid)
                             if body is None:
+                                slots = policy.MAX_MATERIALS - len(scene['materials'] if scene else [])
                                 batch, size = [], 0
                                 for source in queue:
                                     amount = len(source['text'].encode('utf-8'))
-                                    if len(batch) == policy.MAX_DOCUMENTS or size + amount > policy.MAX_IMPORT_TEXT_BYTES:
+                                    if len(batch) >= min(batch_cap, slots):
                                         break
+                                    if size + amount > policy.MAX_IMPORT_TEXT_BYTES:
+                                        continue
                                     batch.append(source)
                                     size += amount
+                                if not batch:
+                                    break
                                 revision = scene['revision'] if scene else '0'
                                 request = dict(project_id=pid, title=scene['title'] if scene else p['title'],
                                     expected_revision=revision, documents=[], sources=batch, archive_ref=None)
@@ -424,16 +493,28 @@ class CodexCapture:
                             except policy.ProjectError as exc:
                                 if exc.code not in ('READ_UNAVAILABLE', 'IMPORT_UNAVAILABLE'):
                                     self.pending.pop(pid, None)
+                                if exc.code == 'RESPONSE_LIMIT':
+                                    # A known transactional refusal may be retried
+                                    # smaller. Unknown outcomes always keep the
+                                    # exact original request above.
+                                    if len(body['sources']) > 1:
+                                        batch_cap = len(body['sources']) // 2
+                                    else:
+                                        blocked.update(sha256(decision.canonical(s)).hexdigest() for s in body['sources'])
+                                        queue = [s for s in queue if sha256(decision.canonical(s)).hexdigest() not in blocked]
+                                    continue
                                 raise
                             self.pending.pop(pid, None)
                             scene = self.reading(pid)
+                            retained[pid] = len(scene.get('observations', []))
                             added += sum(sha256(decision.canonical(s)).hexdigest() not in existing for s in body['sources'])
                             self.view['last_saved_at'] = max(self.view['last_saved_at'] or 0, scene['saved_at'])
-                            entry['retained'] = True
+                            for entry in p['entries']:
+                                entry['retained'] = True
                             existing = {r['content_hash'] for r in scene['materials']}
                             queue = [s for s in queue if sha256(decision.canonical(s)).hexdigest() not in existing]
-                    if scene:
-                        retained += len(scene.get('observations', []))
+                    if queue or blocked:
+                        issues['PROJECT_LIMIT'] += len(queue) + len(blocked)
                 except CaptureError as exc:
                     issues[exc.code] += 1
                 except policy.ProjectError as exc:
@@ -450,6 +531,6 @@ class CodexCapture:
         with self.lock:
             self.view.update(phase='paused' if self.paused else phase,
                 scanned_at=stamp if stamp is not None else self.view['scanned_at'],
-                discovered=discovered, added_sources=added, retained_sources=retained,
+                discovered=discovered, added_sources=added, retained_sources=sum(retained.values()),
                 issues=[dict(code=k, count=n) for k, n in sorted(issues.items())], limited=bool(issues))
             return self.state()
