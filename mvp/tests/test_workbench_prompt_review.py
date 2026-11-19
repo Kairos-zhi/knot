@@ -148,7 +148,14 @@ assert.equal(pack('refresh').hidden,false);
 for(const label of pack('materials').children){
   const input=label.children[0];input.checked=true;input.events.change[0]();
 }
+respond=()=>{throw Error('Temporary failure');};
+await assert.rejects(run('refresh()'));
+assert.equal(pack().hidden,false);
+assert.equal(pack('materials').children.length,0);
+assert.equal(pack('refresh').disabled,false);
+assert(pack('status').textContent.includes('原选择已保留'));
 latest={...sceneA,...receipt,snapshots:latest.snapshots};
+respond=respondNormally;
 await run('refresh()');
 assert.equal(pack().open,true);
 assert.equal(pack('refresh').hidden,true);
@@ -157,6 +164,13 @@ assert.equal(pack('prepare').disabled,false);
 assert.equal(pack('materials').children.length,sceneA.materials.length);
 assert.equal(pack('materials').children[0].children[0].checked,true);
 assert(pack('status').textContent.includes('1 份材料'));
+execute('invalidateProjectScene()');
+assert.equal(pack('materials').children.length,0);
+assert.equal(pack('refresh').hidden,false);
+assert.equal(pack('preview').hidden,true);
+await run('refresh()');
+assert.equal(pack('materials').children[0].children[0].checked,true);
+assert.equal(pack('refresh').hidden,true);
 ''')
 
 

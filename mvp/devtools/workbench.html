@@ -734,8 +734,8 @@ function clearProjectDetail(moveFocus=false){
   for(const card of projectCards)card.button.setAttribute('aria-expanded','false');
   if(moveFocus)projectDetailFocus?.focus?.({preventScroll:true});projectDetailFocus=null;
 }
-function clearProjectScene(preserveEvidenceFor=null){
-  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.leave(preserveEvidenceFor);}
+function clearProjectScene(preserveDraftsFor=null){
+  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.leave(preserveDraftsFor);projectContinuationUI.leave(preserveDraftsFor);}
   projectDateObserver?.disconnect();projectDateObserver=null;projectScrollTarget=null;
   clearWorkReview();
   clearProjectDetail();projectScene=null;projectSceneInvalidated=false;projectPending=null;projectCards=[];projectSnapshots=[];projectReadMode='all';projectUnavailableMaterials.clear();$('project-read-stale').hidden=true;
@@ -2236,15 +2236,22 @@ const projectContinuationUI=(()=>{
   const el=id=>$('project-continuation'+(id?'-'+id:''));
   const key=ref=>ref.asset_id+':'+ref.content_hash;
   const internal=new Set(['项目主动回顾.json','project-registration.json','项目关联.json']);
-  let scene=null,unavailableCount=-1,hasReview=false,preview=null,sequence=0;
-  let busy=false,historical=false,needsRefresh=false,selected=new Map(),checks=new Map();
+  let owner=null,scene=null,unavailableCount=-1,hasReview=false,preview=null,sequence=0;
+  let busy=false,refreshing=false,historical=false,unavailable=false,needsRefresh=false;
+  let selected=new Map(),checks=new Map();
 
   function say(message){el('status').textContent=message;}
+  function leave(preserveFor){
+    if(owner===preserveFor)return;
+    owner=null;selected.clear();el().open=false;
+    el('review').checked=el('gaps').checked=true;
+  }
   function actions(){
     const includeReview=hasReview&&el('review').checked;
     el('gaps').disabled=!includeReview;
-    el('prepare').hidden=historical||needsRefresh;
+    el('prepare').hidden=historical||unavailable||needsRefresh;
     el('refresh').hidden=!el('prepare').hidden;
+    el('refresh').disabled=refreshing;
     el('prepare').disabled=busy||(!includeReview&&!selected.size);
     el('copy').disabled=el('download').disabled=busy;
     for(const input of checks.values())input.disabled=!input.checked&&selected.size===6;
@@ -2252,28 +2259,30 @@ const projectContinuationUI=(()=>{
   function clear(){
     sequence++;busy=false;preview=null;
     el('preview').hidden=true;el('markdown').value='';
-    say(historical?'正在查看旧版本。切到最新后可以预览续接包。':
-      needsRefresh?'项目版本或材料已变化，请切到最新后重试。':'');
+    say(refreshing&&unavailable?'正在读取最新项目…':
+      historical?'正在查看旧版本。切到最新后可以预览续接包。':
+      (unavailable||needsRefresh)?'项目版本或材料已变化，请切到最新后重试。':'');
     actions();
   }
   function sync(){
     const next=projectRoute==='scene'&&!projectSceneInvalidated?projectScene:null;
+    if(next&&owner!==next.project_id){leave(null);owner=next.project_id;}
+    const pending=projectRoute==='scene'&&!!owner&&!next;
     const latest=projectItems.find(item=>item.project_id===next?.project_id);
     const outdated=!!next&&[latest,projectSnapshots.at(-1)].some(item=>
       projectRevision(item?.revision)&&compareProjectRevisions(item.revision,next.revision)>0);
-    if(next===scene&&unavailableCount===projectUnavailableMaterials.size&&historical===outdated)return;
-    if(next?.project_id!==scene?.project_id){
-      selected.clear();el().open=false;el('review').checked=el('gaps').checked=true;
-    }
+    if(next===scene&&unavailableCount===projectUnavailableMaterials.size&&historical===outdated&&unavailable===pending)return;
     if(next!==scene)needsRefresh=false;
-    historical=outdated;
+    historical=outdated;unavailable=pending;
     scene=next;unavailableCount=projectUnavailableMaterials.size;
     const refs=(scene?.materials||[]).filter(ref=>!projectUnavailableMaterials.has(key(ref)));
     hasReview=refs.some(ref=>ref.title==='项目主动回顾.json');
     const choices=refs.filter(ref=>!internal.has(ref.title)&&!ref.title.startsWith('历史窗口日回顾索引·'));
     const keys=new Set(choices.map(key));
-    selected=new Map([...selected].filter(([id])=>keys.has(id)));
+    const previousCount=selected.size;
+    if(scene)selected=new Map([...selected].filter(([id])=>keys.has(id)));
     el('options').hidden=!hasReview;
+    el('selection').hidden=unavailable;
     const originals=new Map(projectObservations().map(source=>[key(source),source]));
     const host=el('materials');host.replaceChildren();
     checks=new Map(choices.map(ref=>{
@@ -2294,8 +2303,10 @@ const projectContinuationUI=(()=>{
       });
       return [id,input];
     }));
-    el().hidden=!scene||(!hasReview&&!choices.length);
+    el().hidden=!(unavailable||hasReview||choices.length||previousCount);
     clear();
+    const removed=previousCount-selected.size;
+    if(removed)say('已保留仍可读的选择。'+removed+' 份材料当前不可读。');
   }
   function valid(result,body){
     return result?.project_id===body.project_id&&result.revision===body.revision&&
@@ -2315,16 +2326,17 @@ const projectContinuationUI=(()=>{
     say(messages[error?.code]||'续接包暂未生成，请检查本机服务后重试。');
   }
   async function refresh(){
-    if(!scene)return;
-    const owner=scene.project_id,previous=new Map(selected);
-    const review=el('review').checked,gaps=el('gaps').checked;
-    if(!await openProject(owner)||scene?.project_id!==owner)return;
-    selected=new Map([...previous].filter(([id])=>checks.has(id)));
-    for(const [id,input] of checks)input.checked=selected.has(id);
-    el('review').checked=review;el('gaps').checked=gaps;
-    el().open=true;clear();
-    const removed=previous.size-selected.size;
-    if(removed)say('已切到最新。'+removed+' 份材料当前不可读，请核对余下选择。');
+    if(!owner||refreshing)return;
+    const target=owner;
+    refreshing=true;el().open=true;actions();
+    try{
+      await openProject(target);
+    }catch(error){
+      if(owner===target)say('读取最新项目未完成，原选择已保留。请重试。');
+      throw error;
+    }finally{
+      refreshing=false;actions();
+    }
   }
   async function prepare(){
     if(!scene||busy||el('prepare').hidden||el('prepare').disabled)return;
@@ -2380,7 +2392,7 @@ const projectContinuationUI=(()=>{
     el('copy').addEventListener('click',()=>exportPack());
     el('download').addEventListener('click',()=>exportPack(true));
   }
-  return {mount,sync,refresh,prepare,exportPack};
+  return {mount,sync,leave,refresh,prepare,exportPack};
 })();
 
 if(canProjects){
