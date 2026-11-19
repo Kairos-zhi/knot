@@ -1487,6 +1487,28 @@
         }
       }
     },
+    "ProjectReviewPrompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "revision", "manifest_hash", "prompt", "collection_prompt", "coverage"],
+      "properties": {
+        "project_id": {"type": "string", "pattern": "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"},
+        "revision": {"type": "string", "pattern": "^[1-9][0-9]{0,18}$"},
+        "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "prompt": {"type": "string", "minLength": 1, "maxLength": 1048576},
+        "collection_prompt": {"type": "string", "minLength": 1, "maxLength": 1048576},
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["readable_sources", "has_unavailable", "unavailable_count"],
+          "properties": {
+            "readable_sources": {"type": "integer", "minimum": 0, "maximum": 128},
+            "has_unavailable": {"type": "boolean"},
+            "unavailable_count": {"type": "null"}
+          }
+        }
+      }
+    },
     "ProjectMaterial": {
       "type": "object",
       "additionalProperties": false,

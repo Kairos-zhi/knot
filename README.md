@@ -6,6 +6,10 @@ Knot 为人和 Agent 提供共同的工作环境：材料、想法、会话和�
 
 ---
 
+## 运行公开 Demo
+
+在仓库根目录运行 `python -m mvp.devtools.demo`，浏览器打开 [项目工作台](http://127.0.0.1:4974/) 或[开发贡献与需求推荐](http://127.0.0.1:4974/demo/capabilities/)。演示包含可读的项目原话、按日回顾、CSV 成品及跨项目能力样例。操作顺序和资料见 [Demo 指南](mvp/demo/README.md)。
+
 ## MVP Development (2026-10-28 onwards)
 
 **当前主线开发位于 `mvp/` 目录。** 开工先读 [开发基准](mvp/docs/development-baseline.md)、[状态](STATE.md) 与 [队列](QUEUE.md)；历史桌面文档不作为当前执行入口。

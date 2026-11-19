@@ -39,6 +39,16 @@ const scheduled=[],windowEvents={};
 ctx.setTimeout=(fn,delay)=>{scheduled.push({fn,delay});return scheduled.length;};ctx.clearTimeout=id=>{if(scheduled[id-1])scheduled[id-1].fn=null;};
 const flushTimers=delay=>{for(const task of scheduled.slice())if(task.fn&&task.delay<=delay){const fn=task.fn;task.fn=null;fn();}};
 ctx.addEventListener=(event,fn)=>(windowEvents[event]??=[]).push(fn);
+let notifyCalendarResize;
+if(payload.extra?.observeCalendar)ctx.ResizeObserver=class{
+  constructor(callback){notifyCalendarResize=callback;}
+  observe(){}
+};
+const calendarFrames=new Map();let nextCalendarFrame=0;
+if(payload.extra?.calendarFrames){
+  ctx.requestAnimationFrame=callback=>{calendarFrames.set(++nextCalendarFrame,callback);return nextCalendarFrame;};
+  ctx.cancelAnimationFrame=id=>calendarFrames.delete(id);
+}
 ctx.matchMedia=mediaQuery;ctx.navigator={clipboard:{writeText:async value=>{if(clipboardFailure)throw Error('Denied');clipboard.push(value);}}};
 '''
 REVIEW_HARNESS = HARNESS.replace(
@@ -307,6 +317,92 @@ assert(flat(els['project-activity-context']).includes(payload.list.items[1].titl
 assert.deepEqual(seen,[second]);
 move(first);viewport.events.wheel[0]();flushTimers(100);
 assert.equal(execute('projectCutoff'),first);assert.deepEqual(seen,[second,first]);
+''')
+
+
+def test_small_wheel_scrolls_keep_the_existing_calendar_rows():
+    run_review(r'''
+source.message_time_ms=Date.parse('2026-10-03T08:00:00Z');await open();
+const rail=els['project-calendar-viewport'],host=els['project-calendar-rows'];
+execute('selectProjectDate(12,{locate:false})');
+const original=host.children.slice(),top=rail.scrollTop;
+assert(original.length>3);
+let replacements=0;const replace=host.replaceChildren.bind(host);
+host.replaceChildren=(...rows)=>{replacements++;replace(...rows);};
+for(let pixel=1;pixel<=10;pixel++){
+  rail.events.wheel[0]();
+  rail.scrollTop=top+pixel;
+  rail.events.scroll[0]();
+}
+assert.equal(replacements,0);
+assert.deepEqual(host.children,original);
+flushTimers(100);
+assert.equal(execute('projectCutoff'),'2026-10-15');
+''')
+
+
+def test_continuous_wheel_coalesces_paints_and_does_not_rebuild_project_work():
+    run_review(r'''
+source.message_time_ms=Date.parse('2026-01-03T08:00:00Z');await open();
+execute('selectProjectDate(30,{locate:false})');
+const track=els['project-calendar-viewport'],host=els['project-calendar-rows'];
+const spacer=els['project-calendar-before'],height=spacer.style.height;
+const start=track.scrollTop,nav=els['project-sidebar-list'].children.slice();
+let replacements=0,geometryReads=0;
+const replace=host.replaceChildren.bind(host);
+host.replaceChildren=(...rows)=>{replacements++;replace(...rows);};
+Object.defineProperty(track,'clientHeight',{get(){geometryReads++;return 288;}});
+for(let delta=3;delta<=360;delta+=3){
+  track.events.wheel[0]();
+  track.scrollTop=start+delta;
+  track.events.scroll[0]();
+}
+assert.equal(calendarFrames.size,1);
+assert.equal(replacements,0);
+assert.equal(geometryReads,0);
+assert.equal(spacer.style.height,height);
+const [id,paint]=calendarFrames.entries().next().value;
+calendarFrames.delete(id);paint();
+assert.equal(execute('projectCalendarUI.state().previewDay'),'2026-02-12');
+assert.equal(execute('projectCutoff'),'2026-02-02');
+assert.equal(replacements,1);
+flushTimers(100);
+assert.equal(execute('projectCutoff'),'2026-02-12');
+assert.deepEqual(els['project-sidebar-list'].children,nav);
+''', extra={'calendarFrames': True})
+
+
+def test_calendar_resize_observer_uses_dates_not_resize_entries():
+    run_review(r'''
+source.message_time_ms=Date.parse('2026-10-03T08:00:00Z');await open();
+const track=els['project-calendar-viewport'];track.clientHeight=224;
+notifyCalendarResize([{target:track}]);
+assert(els['project-calendar-rows'].children.length>0);
+assert(els['project-calendar-rows'].children.every(row=>/^\d{4}-\d{2}-\d{2}$/.test(row.dataset.day)));
+''', extra={'observeCalendar': True})
+
+
+def test_calendar_cancels_wheel_preview_when_evidence_source_is_unavailable():
+    run_review(r'''
+const lost='2026-10-03',kept='2026-10-10',stamp=day=>Date.parse(day+'T08:00:00Z');
+source.message_time_ms=stamp(lost);
+sceneA.observations=[source,{...source,asset_id:'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',message_time_ms:stamp(kept),message_id:'later'}];
+payload.list.items[0].chronology={appearance_at:stamp(lost),appearance_basis:'first_saved',
+  observation_times:[stamp(lost),stamp(kept)],observation_count:2};
+respond=respondNormally;await execute('loadProjects()');await open();
+const rail=execute('projectCalendarUI'),track=els['project-calendar-viewport'];
+const draft=execute('projectEvidenceUI');els['project-evidence-return'].value=JSON.stringify({
+  items:[{criterion:'Proof',contribution:'Work',status:'pending',asset_id:source.asset_id,
+    content_hash:source.content_hash,quote:'Exact original',link:''}],gaps:''});
+assert(draft.importDraft());
+track.events.wheel[0]();track.scrollTop=72;track.events.scroll[0]();
+assert.equal(rail.state().previewDay,'2026-10-05');
+respond=()=>({syntheticError:'CONTENT_MISMATCH',status:400});
+assert.equal(await draft.readSource(0),false);
+assert.equal(rail.state().previewDay,null);
+flushTimers(100);
+assert.equal(execute('projectCutoff'),null);
+assert(!els['project-calendar-rows'].children.some(row=>row.dataset.day===lost&&row.dataset.recorded==='true'));
 ''')
 
 

@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+from urllib.parse import urlencode
 from uuid import uuid4, uuid5, NAMESPACE_URL
 
 import pytest
@@ -258,6 +259,40 @@ def test_revoked_source_is_excluded_from_prompt_and_rejected_by_prepare(env):
     assert b'Synthetic exact source quotation.' not in raw
     assert call(ui, '/api/project-review-prepare', supplied, broker=True)[:2] == (403, {'error':'ACCESS_DENIED'})
     assert counts(db) == before
+
+
+def test_prompt_uses_one_project_scan_and_matches_legacy_output(env, monkeypatch):
+    from mvp.backend import project_repo
+    from mvp.devtools import workbench
+    from test_contract_schema import definition_validator
+
+    db, core, ui = env
+    imported = body('Review with several materials', 'First source.')
+    imported['documents'] += [dict(title=f'note-{i}.md', text=f'Source number {i}.') for i in range(8)]
+    assert call(ui, '/api/project-import', imported, broker=True)[0] == 200
+    scene = call(ui, '/api/project?project_id='+imported['project_id'])[1]
+    binding = {key: scene[key] for key in review.BINDING}
+    scan = project_repo._scan
+    calls = []
+
+    def count_scan(*args):
+        calls.append(True)
+        return scan(*args)
+
+    monkeypatch.setattr(project_repo, '_scan', count_scan)
+    status, optimized, _ = call(ui, '/api/project-review-prompt', binding, broker=True)
+    assert status == 200 and len(calls) == 1
+    assert optimized['coverage']['readable_sources'] == 9
+    definition_validator('ProjectReviewPrompt').validate(optimized)
+    assert call(core, '/project-review-prompt?'+urlencode(binding), token=None)[0] == 403
+    mismatch = binding | {'manifest_hash': 'f' * 64}
+    assert call(ui, '/api/project-review-prompt', mismatch, broker=True)[0] == 400
+
+    def older_core(*_):
+        raise policy.ProjectError('NOT_FOUND')
+
+    monkeypatch.setattr(workbench, 'project_review_prompt', older_core)
+    assert call(ui, '/api/project-review-prompt', binding, broker=True)[:2] == (200, optimized)
 
 
 @pytest.mark.parametrize('route', ROUTES)

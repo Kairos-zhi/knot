@@ -17,7 +17,7 @@ from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
 from mvp.decision_policy import DecisionError, project_decision_history
 from mvp.project_policy import ProjectError
-from mvp.devtools.project_transport import project_get, project_import
+from mvp.devtools.project_transport import project_get, project_import, project_review_prompt
 
 PROJECT_EVIDENCE_ACTIONS = frozenset((
     '/api/project-evidence-prompt', '/api/project-evidence-prepare', '/api/project-evidence-share',
@@ -338,11 +338,18 @@ class Handler(BaseHTTPRequestHandler):
                     result = prepare_collection(binding,self.server.token,read_scene,root)
                     if message is not None:
                         result['message'] = message
+                elif self.path == '/api/project-review-prompt':
+                    try:
+                        result = project_review_prompt(self.server.backend_port, self.server.token, body)
+                    except ProjectError as exc:
+                        if exc.code != 'NOT_FOUND':
+                            raise
+                        result = prepare_prompt(body, self.server.token, read_scene, read_material)
                 else:
-                    prepare = prepare_prompt if self.path == '/api/project-review-prompt' else prepare_review
-                    result = prepare(body,self.server.token,read_scene,read_material)
-                from mvp.devtools.project_review import _response
-                result = _response(result,self.server.token)
+                    result = prepare_review(body,self.server.token,read_scene,read_material)
+                if self.path == '/api/project-review-collect':
+                    from mvp.devtools.project_review import _response
+                    result = _response(result,self.server.token)
             elif review_request or recap_request:
                 if recap_request:
                     from mvp.devtools.recap_edit import prepare_recap as prepare

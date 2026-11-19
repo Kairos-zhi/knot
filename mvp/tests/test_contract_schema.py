@@ -49,6 +49,7 @@ VALID = {
     "ProjectList": {"items":[{"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"material_count":1,"decision_count":0}]},
     "ProjectScene": {"project_id":EXP_ID,"title":"Synthetic project","revision":"1","manifest_hash":"a"*64,"saved_at":0,"snapshots":[{"revision":"1","manifest_hash":"a"*64,"saved_at":0}],"materials":[{"asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md"}],"decisions":None,"has_unavailable":False},
     "ProjectMaterial": {"project_id":EXP_ID,"revision":"1","asset_id":EXP_EVENT,"content_hash":"b"*64,"title":"note.md","text":"Synthetic source"},
+    "ProjectReviewPrompt": {"project_id":EXP_ID,"revision":"1","manifest_hash":"a"*64,"prompt":"Synthetic prompt","collection_prompt":"Collect","coverage":{"readable_sources":1,"has_unavailable":False,"unavailable_count":None}},
     "DecisionHistory": {"archive_id": EXP_ID, "archive_hash": "a" * 64,
                         "title": "Saved history", "method": "curated_recap", "items": [], "has_unavailable": False},
     "AssetSource": {"asset_id": EXP_ID, "content_hash": "a" * 64,
@@ -144,6 +145,7 @@ INVALID_OVERRIDES = {
     "ProjectList": ("items",{}),
     "ProjectScene": ("has_unavailable",1),
     "ProjectMaterial": ("content_hash","A"*64),
+    "ProjectReviewPrompt": ("manifest_hash","A"*64),
     "DecisionHistory": ("method", "user_confirmed"),
     "AssetSource": ("provenance_verified", True),
     "ExplorationSaveV2": ("snapshot_version", 1),
@@ -203,7 +205,7 @@ def test_command_result_requires_status():
 
 
 def test_every_definition_has_both_examples():
-    assert len(SCHEMA["$defs"]) == 41
+    assert len(SCHEMA["$defs"]) == 42
     assert set(SCHEMA["$defs"]) == set(VALID) == set(INVALID_OVERRIDES)
 
 
@@ -269,7 +271,7 @@ def test_error_rejects_code_outside_closed_set():
 
 
 def test_endpoint_response_definitions_exist():
-    assert len(ENDPOINTS["routes"]) == 27
+    assert len(ENDPOINTS["routes"]) == 28
     for route in ENDPOINTS["routes"]:
         for name in route["response"].split("|"):
             assert name in SCHEMA["$defs"], (route["path"], name)

@@ -30,7 +30,8 @@
 .app-sidebar{display:flex;flex-direction:column;height:100dvh;min-height:0;gap:12px}.sidebar-caption{margin:0 12px 8px}#project-navigation{margin-top:0;flex:none}.project-date-browser{display:flex;flex-direction:column;flex:1;min-height:240px;margin:0;padding-top:12px}.project-date-track{flex:1;align-items:stretch;min-height:120px}.project-date-track label{flex:1;font-size:0}.project-date-track input{height:100%;min-height:120px;width:32px;transition:filter .14s ease}.project-date-track>div{font-size:12px;flex:none}.project-date-track span{margin:0}#project-date-scope{font-size:15px;font-weight:600;color:var(--ink);padding:8px 0;transition:background-color .14s ease}#project-date-browser[data-dragging=true] #project-date-scope{background:var(--soft)}#project-date-help{font-size:12px;margin:4px 0}#project-date-status{font-size:12px}#project-other-projects{margin:0;flex:none}#project-sidebar-list{max-height:26vh;overflow:auto}#capture-details{margin:0;font-size:12px}#project-review-launch{margin-left:auto}.project-day{scroll-margin-top:88px;min-height:96px;padding:16px 0;border-bottom:1px solid var(--line)}.project-day-title{font-size:17px;font-weight:600;margin:0 0 12px}.project-day-records{margin:0}.project-day-records>summary{min-height:44px;padding:10px 0}.project-day[data-loaded=false]{min-height:112px}.project-day:has(details[open]){background:var(--panel);border-radius:8px;padding:16px}.project-day-records .original-record:last-child{border-bottom:0}.project-detail{scroll-margin-top:88px}.project-view-nav{scroll-margin-top:64px}#project-review-container p{max-width:76ch}@media(max-width:759px){.app-sidebar{display:grid;height:auto;gap:12px}.project-date-browser{min-height:0;display:block}.project-date-track{min-height:0;height:100px;margin:6px 0}.project-date-track input{min-height:0;height:88px}.project-date-track label{font-size:0}#project-date-scope{font-size:13px;padding:4px 0}#project-date-status{font-size:11px}#project-review-launch{width:auto;margin:0}.workspace-toolbar{gap:12px}#project-other-projects{min-width:0}.project-day{scroll-margin-top:24px}}@media(prefers-reduced-motion:reduce){.project-date-track input,#project-date-scope{transition:none}}
 .app-shell{grid-template-columns:256px minmax(0,1fr)}main{max-width:960px}.review-layout{grid-template-columns:168px minmax(0,1fr)}.app-sidebar{overflow:hidden}#project-sidebar-list{max-height:min(34vh,calc(100dvh - 360px));min-height:36px;overflow-y:auto}#project-sidebar-list .entry{min-height:36px;padding:6px 10px;margin:0;font-size:14px}#project-sidebar-list .entry small{display:none}#project-sidebar-list .future-project{color:var(--muted)}#project-sidebar-list h3{margin:8px 10px 4px}.project-date-browser{min-height:192px}.project-date-track{min-height:0;position:relative;overflow:hidden;flex:1}#project-calendar-viewport{display:block;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:var(--accent) transparent;touch-action:none;cursor:grab;user-select:none}#project-date-browser[data-dragging=true] #project-calendar-viewport{cursor:grabbing}.project-date-track::after{content:"";position:absolute;left:0;right:10px;top:calc(50% - 18px);height:36px;background:var(--soft);border-left:2px solid var(--knot-accent);pointer-events:none;border-radius:4px}.calendar-day{position:relative;z-index:1;height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px;gap:8px;transition:color .1s ease}.calendar-day span{white-space:nowrap}.calendar-day::before{content:"";width:4px;height:4px;border-radius:50%;background:transparent;flex:none}.calendar-day[data-recorded=true]::before{background:var(--accent)}.calendar-day[data-selected=true]{font-weight:600;color:var(--accent)}.calendar-day small{font-size:11px}.project-date-track label{position:absolute;right:0;top:0;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.project-date-track label:focus-within{clip-path:none;width:24px;height:100%;z-index:3}.project-date-track input{height:100%;min-height:0}.project-date-track>div:not(#project-calendar-viewport){display:none}#project-date-help{display:none}#project-date-scope{font-size:13px}#project-date-all{min-height:36px;margin-top:8px;padding:6px}#project-review-legacy{margin:0;font-size:13px}#project-review-legacy>summary{min-height:36px;padding:6px 10px}#project-review-legacy[open]{max-height:25vh;overflow:auto}.project-digest #project-review-launch{margin:12px 0 0}.project-day[data-current=true]{border-left:2px solid var(--knot-accent);padding-left:14px}.project-day-title{position:sticky;top:12px;background:var(--bg);z-index:1;line-height:1.6}#project-review-work-title{transition:opacity .1s ease}.project-review-view-note{font-size:13px}@media(min-width:760px) and (max-width:959px){.app-shell{grid-template-columns:224px minmax(0,1fr)}main{padding:24px}.review-layout{grid-template-columns:minmax(0,1fr)}}@media(max-width:759px){.app-shell{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:start}.app-sidebar{display:contents;height:auto;overflow:visible}.wordmark{grid-column:1/-1;grid-row:1;padding:12px 16px}.sidebar-caption,.sidebar-note{display:none}#project-navigation{grid-column:1/-1;grid-row:2;display:flex;align-items:center;padding:0 12px;gap:8px}#project-navigation button{width:auto}#project-review-project-select-wrap{grid-column:1/-1;grid-row:3;margin:0;padding:4px 12px 12px;display:flex;font-size:13px}#project-review-project-select{min-height:44px;width:100%}#project-other-projects{display:none}.project-date-browser{grid-column:1;grid-row:4;position:sticky;top:0;height:calc(100dvh - 160px);min-height:192px;display:flex;padding:8px 4px 8px 2px;border:0;border-right:1px solid var(--line);margin:0}.project-date-track{height:auto;flex:1;min-height:0}.workspace{grid-column:2;grid-row:4;min-width:0}.workspace-toolbar{padding:16px;min-height:64px;gap:8px}main{padding:16px;max-width:none}#project-review-legacy{grid-column:1/-1;grid-row:5;margin:0 12px}.project-date-browser h2{font-size:12px}.calendar-day{padding:0 2px;font-size:11px;justify-content:center;gap:2px}.calendar-day small{display:none}.calendar-day::before{width:3px;height:3px}.calendar-day span{font-size:10px}.calendar-day span{max-width:45px;overflow:hidden;text-overflow:clip}#project-date-scope{font-size:10px;line-height:1.6;overflow-wrap:anywhere}#project-date-status{display:none}#project-date-all{font-size:12px;padding:4px 0;width:100%}.review-layout{grid-template-columns:minmax(0,1fr)}.review-work{padding:16px}.review-step{padding:10px 8px}.review-actions>*{flex-basis:100%}body,input,textarea,select{font-size:16px}.project-date-track::after{right:6px}.project-day-title{top:0}.project-card{padding:16px}.calendar-day{transition-duration:.08s}}
 @media(prefers-reduced-motion:reduce){.calendar-day,#project-review-work-title{transition:none}}
-#project-calendar-viewport{overflow-anchor:none}
+#project-calendar-viewport{position:relative;overflow-anchor:none}
+#project-calendar-rows{position:absolute;inset:0 0 auto}
 .calendar-day[data-other-record=true]::before{background:transparent;border:1px solid var(--muted);box-sizing:border-box}
 #project-activity-context{margin:0 0 16px}
 #project-activity-context button{margin:4px 8px 4px 0}
@@ -500,6 +501,13 @@ function projectObservations(){
   if(projectSceneInvalidated)return [];
   return (Array.isArray(projectScene?.observations)?projectScene.observations:[]).filter(item=>item&&captureUUID(item.asset_id)&&typeof item.content_hash==='string'&&/^[0-9a-f]{64}$/.test(item.content_hash)&&typeof item.title==='string'&&typeof item.text==='string'&&captureTime(item.message_time_ms)&&typeof item.thread_id==='string'&&!!item.thread_id&&typeof item.message_id==='string'&&!!item.message_id&&!projectUnavailableMaterials.has(item.asset_id+':'+item.content_hash));
 }
+function markProjectMaterialUnavailable(ref){
+  projectUnavailableMaterials.add(ref.asset_id+':'+ref.content_hash);
+  if(projectReviewReady){
+    projectCalendarUI.reset();
+    if(ref.title.startsWith('历史窗口日回顾索引·'))projectHistoryUI.invalidate();
+  }
+}
 function observationReply(raw){
   // A structured reply is accepted only as one closed envelope with a typed array.
   const match=raw.trim().match(/^<send_user_message_question_reply>\s*([\s\S]*?)\s*<\/send_user_message_question_reply>$/);if(!match)return null;
@@ -529,14 +537,15 @@ function renderProjectDates(){
   const sources=projectObservations(),days=projectDateDays(),editing=projectEditing();
   $('project-edit-warning').hidden=!editing;
   $('project-date-browser').hidden=!canProjects;
-  const range=$('project-date-range'),maximum=days.length?projectCalendarIndex(projectCalendarEnd()):0;range.min='0';range.max=String(maximum);range.step='1';range.value=String(projectCutoff?Math.max(0,Math.min(maximum,projectCalendarIndex(projectCutoff))):maximum);range.disabled=maximum<1||editing;
-  range.setAttribute('aria-valuetext',(projectCutoff||projectCalendarEnd())+(projectCutoff?' · 定位':' · 最新')+(days.includes(projectCutoff||projectCalendarEnd())?' · 有留存记录':''));
-  $('project-date-start').textContent=days[0]||'';$('project-date-end').textContent=days.length?projectCalendarEnd():'';
-  $('project-date-scope').textContent=days.length?(projectCutoff||projectCalendarEnd())+(projectCutoff?'':' · 最新'):'暂无可定位日期';
+  const range=$('project-date-range'),end=projectCalendarEnd(days),maximum=projectCalendarIndex(end,days);
+  range.min='0';range.max=String(maximum);range.step='1';range.value=String(projectCutoff?Math.max(0,Math.min(maximum,projectCalendarIndex(projectCutoff,days))):maximum);range.disabled=maximum<1||editing;
+  range.setAttribute('aria-valuetext',(projectCutoff||end)+(projectCutoff?' · 定位':' · 最新')+(days.includes(projectCutoff||end)?' · 有留存记录':''));
+  $('project-date-start').textContent=days[0]||'';$('project-date-end').textContent=days.length?end:'';
+  $('project-date-scope').textContent=days.length?(projectCutoff||end)+(projectCutoff?'':' · 最新'):'暂无可定位日期';
   $('project-date-status').textContent=editing?'请先完成或结束整理':projectScene?'当前留存 '+sources.length+' 条原话 · 实心点为本项目，空心点为其他项目':'截至此日 '+projectItems.filter(projectAppeared).length+' 个项目';
   $('project-date-all').disabled=editing;
   if(projectScene&&!projectSceneInvalidated){const sourceDays=[...new Set(sources.map(source=>projectMessageDay(source.message_time_ms)))].sort();projectCoverage.set(projectScene.project_id,{revision:projectScene.revision,label:sourceDays.length?'原话 '+sourceDays[0]+' — '+sourceDays.at(-1)+' · '+sources.length+' 条':projectIdentity(projectScene)+' · 此版本暂无可读原话'});}
-  if(projectReviewReady)projectCalendarUI.sync();
+  if(projectReviewReady)projectCalendarUI.sync(days);
 }
 function projectCalendarEnd(days=projectDateDays()){const first=days[0],today=projectMessageDay(Date.now());return first&&first>today?first:today;}
 function projectCalendarIndex(day,days=projectDateDays()){const first=days[0];return first?Math.round((Date.parse(day+'T00:00:00Z')-Date.parse(first+'T00:00:00Z'))/86400000):0;}
@@ -552,7 +561,23 @@ function selectProjectDate(index,{source='rail',locate=true}={}){
   requireProjects();if(!allowProjectNavigation())return false;const day=projectCalendarDay(index);
   if(!day)throw projectError('INVALID_ARGUMENTS');
   if(source!=='content'&&projectReviewReady)projectCalendarUI.cancelPending();
-  projectCutoff=day;if(source!=='content')clearProjectDetail();renderProjectList();if(projectScene)renderProjectAppearance();syncProjectWorkspace();
+  const previous=projectCutoff;
+  if(source!=='content'&&!$('project-detail-view').hidden)clearProjectDetail();
+  projectCutoff=day;
+  if(day!==previous){
+    const changedGroups=projectItems.some(item=>{
+      const chronology=projectChronology(item);
+      if(!chronology)return false;
+      const appeared=projectMessageDay(chronology.appearance_at);
+      return appeared===day||appeared===previous||(appeared<=day)!==(!previous||appeared<=previous);
+    });
+    if(changedGroups)renderProjectList();
+    if(projectScene&&(projectBeforeAppearance()||!$('project-before-appearance').hidden))renderProjectAppearance();
+    $('focus-subtitle').textContent=projectTimeLabel();
+    if(projectReviewReady)projectReviewUI.updateDigest();
+    renderProjectDateFocus();
+  }
+  renderProjectDates();
   if(locate){
     const group=visibleProjectDays().find(node=>node.dataset.day===day);
     const date=$('project-activity-date'),target=group||(!date.hidden?date:null);
@@ -564,7 +589,10 @@ function selectProjectDate(index,{source='rail',locate=true}={}){
 }
 function renderProjectDateFocus(){
   const day=projectSceneInvalidated?null:projectCutoff,groups=visibleProjectDays();
-  for(const group of groups)group.dataset.current=String(group.dataset.day===day);
+  for(const group of groups){
+    const current=String(group.dataset.day===day);
+    if(group.dataset.current!==current)group.dataset.current=current;
+  }
   const date=$('project-activity-date'),context=$('project-activity-context');
   date.hidden=!day||!projectScene||$('project-activity').hidden;
   context.hidden=true;context.replaceChildren();
@@ -790,7 +818,7 @@ async function readProjectMaterial(ref,origin=null){
     if(value?.project_id!==scene.project_id||value.revision!==scene.revision||value.asset_id!==ref.asset_id||value.content_hash!==ref.content_hash||typeof value.text!=='string'||typeof value.title!=='string')throw projectError('CONTENT_MISMATCH');
     $('project-detail-title').textContent=value.title;text($('project-detail-content'),'pre',value.text);return true;
   }catch(error){if(generation!==projectGeneration||readGeneration!==projectReadGeneration)return false;
-    projectUnavailableMaterials.add(ref.asset_id+':'+ref.content_hash);renderProjectScene();$('project-detail-title').textContent='材料暂不可读';$('project-detail-content').replaceChildren();text($('project-detail-content'),'p',error.message);return false;
+    markProjectMaterialUnavailable(ref);renderProjectScene();$('project-detail-title').textContent='材料暂不可读';$('project-detail-content').replaceChildren();text($('project-detail-content'),'p',error.message);return false;
   }
 }
 function syncProjectImport(){
@@ -1329,37 +1357,99 @@ $('history-background').addEventListener('toggle',syncHistoryControls);
 // Only native scheduling, interruption and cleanup patterns are reused; no site state/framework.
 const projectCalendarUI=(()=>{
   const rowHeight=36,clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
-  let frame=null,timer=null,contentTimer=null,token=0,drag=null,suppressClick=false,programTop=null,previewDay=null,mounted=false,contentActive=false;
+  let frame=null,railFrame=null,timer=null,contentTimer=null,token=0,drag=null,suppressClick=false,programTop=null,previewDay=null,mounted=false,contentActive=false;
+  let days=[],localDays=new Set(),otherDays=new Set(),visibleRows=new Map(),firstRenderedDay=null;
+  let height=288,padding=126,firstIndex=0,lastIndex=-1,paintedSelection=null;
   const viewport=()=>$('project-calendar-viewport');
   const later=fn=>globalThis.requestAnimationFrame?globalThis.requestAnimationFrame(fn):(fn(),null);
   const clearTimer=id=>{if(id!==null)globalThis.clearTimeout?.(id);};
   const maximum=()=>Number($('project-date-range').max)||0;
   const value=()=>Number($('project-date-range').value)||0;
-  function renderRows(){const node=viewport();if(!node)return;const height=node.clientHeight||288,padding=Math.max(0,(height-rowHeight)/2),start=clamp(Math.floor((node.scrollTop-padding)/rowHeight)-4,0,maximum()),end=clamp(Math.ceil((node.scrollTop+height-padding)/rowHeight)+4,0,maximum()),host=$('project-calendar-rows'),days=projectDateDays(),localDays=projectScene?currentProjectDays():new Set(days);
-    const otherDays=new Set(projectScene?projectItems.filter(item=>item.project_id!==projectScene.project_id).flatMap(listedProjectDays):[]);
-    host.replaceChildren();$('project-calendar-before').style.height=(padding+start*rowHeight)+'px';$('project-calendar-after').style.height=(padding+(maximum()-end)*rowHeight)+'px';
-    for(let index=start;index<=end;index++){const day=projectCalendarDay(index,days);if(!day)continue;const row=text(host,'div','','calendar-day');row.dataset.dayIndex=String(index);row.dataset.day=day;row.dataset.selected=String(previewDay?previewDay===day:index===value());row.dataset.recorded=String(localDays.has(day));row.dataset.otherRecord=String(otherDays.has(day)&&!localDays.has(day));row.setAttribute('aria-hidden','true');text(row,'span',day.slice(5)+(day.endsWith('-01')?' · '+day.slice(0,7):''));const weekday=new Date(day+'T00:00:00Z').getUTCDay();text(row,'small','日一二三四五六'[weekday]);}
-  }
-  function sync(){
-    if(!mounted)return;
-    const node=viewport();node.setAttribute('aria-disabled',String($('project-date-range').disabled));
-    size();renderRows();
-    if(!drag&&!previewDay){
-      const top=value()*rowHeight;
-      if(Math.abs((node.scrollTop||0)-top)>1){node.scrollTop=top;programTop=node.scrollTop;renderRows();}
+  function renderRows(top=viewport().scrollTop||0,refresh=false){
+    const max=maximum(),host=$('project-calendar-rows'),first=days[0];
+    const low=clamp(Math.floor((top-padding)/rowHeight),0,max);
+    const high=clamp(Math.ceil((top+height-padding)/rowHeight),0,max);
+    const selected=previewDay===null?value():projectCalendarIndex(previewDay,days);
+    const sameOrigin=first===firstRenderedDay;
+    const shift=!sameOrigin||low<firstIndex||high>lastIndex||lastIndex>max;
+    if(shift){
+      const next=new Map();
+      firstIndex=Math.max(0,low-5);lastIndex=Math.min(max,high+5);
+      for(let index=firstIndex;first&&index<=lastIndex;index++){
+        let row=sameOrigin?visibleRows.get(index):null;
+        if(!row){
+          const day=projectCalendarDay(index,days);
+          if(!day)continue;
+          row=document.createElement('div');row.className='calendar-day';
+          row.dataset.dayIndex=String(index);row.dataset.day=day;
+          row.setAttribute('aria-hidden','true');
+          text(row,'span',day.slice(5)+(day.endsWith('-01')?' · '+day.slice(0,7):''));
+          text(row,'small','日一二三四五六'[new Date(day+'T00:00:00Z').getUTCDay()]);
+        }
+        next.set(index,row);
+      }
+      host.style.transform='translateY('+(padding+firstIndex*rowHeight)+'px)';
+      host.replaceChildren(...next.values());
+      visibleRows=next;firstRenderedDay=first;
+    }else if(refresh){
+      host.style.transform='translateY('+(padding+firstIndex*rowHeight)+'px)';
     }
+    if(shift||refresh){
+      for(const [index,row] of visibleRows){
+        const recorded=localDays.has(row.dataset.day);
+        row.dataset.selected=String(index===selected);
+        row.dataset.recorded=String(recorded);
+        row.dataset.otherRecord=String(!recorded&&otherDays.has(row.dataset.day));
+      }
+    }else if(paintedSelection!==selected){
+      const before=visibleRows.get(paintedSelection),after=visibleRows.get(selected);
+      if(before)before.dataset.selected='false';
+      if(after)after.dataset.selected='true';
+    }
+    paintedSelection=selected;
   }
-  function size(){if(!globalThis.matchMedia?.('(max-width:759px)').matches)return;const main=$('workbench-main'),rect=main?.getBoundingClientRect?.();if(rect&&globalThis.innerHeight)$('project-date-browser').style.height=Math.max(192,globalThis.innerHeight-Math.max(0,rect.top))+'px';}
-  function cancelPending(){token++;clearTimer(timer);clearTimer(contentTimer);timer=null;contentTimer=null;previewDay=null;programTop=null;projectScrollTarget=null;contentActive=false;if(frame!==null)globalThis.cancelAnimationFrame?.(frame);frame=null;}
+  function sync(nextDays=projectDateDays()){
+    if(!mounted)return;
+    if(days[0]!==nextDays[0])reset();
+    days=nextDays;
+    localDays=projectScene?currentProjectDays():new Set(days);
+    otherDays=new Set(projectScene?projectItems.filter(item=>item.project_id!==projectScene.project_id).flatMap(listedProjectDays):[]);
+    const node=viewport();node.setAttribute('aria-disabled',String($('project-date-range').disabled));
+    height=node.clientHeight||288;padding=Math.max(0,(height-rowHeight)/2);
+    $('project-calendar-before').style.height=(maximum()*rowHeight+rowHeight+2*padding)+'px';
+    if(!drag&&!previewDay&&timer===null&&railFrame===null){
+      const top=value()*rowHeight;
+      if(Math.abs((node.scrollTop||0)-top)>1){node.scrollTop=top;programTop=node.scrollTop;}
+    }
+    renderRows(node.scrollTop||0,true);
+  }
+  function cancelPending(){
+    token++;clearTimer(timer);clearTimer(contentTimer);timer=null;contentTimer=null;
+    previewDay=null;programTop=null;projectScrollTarget=null;contentActive=false;
+    for(const pending of [frame,railFrame])if(pending!==null)globalThis.cancelAnimationFrame?.(pending);
+    frame=null;railFrame=null;
+  }
   function reset(){
     const id=drag?.id;drag=null;suppressClick=false;
     if(id!==undefined&&viewport().hasPointerCapture?.(id))viewport().releasePointerCapture?.(id);
     $('project-date-browser').dataset.dragging='false';cancelPending();
   }
-  function preview(index){index=clamp(Math.round(index),0,maximum());previewDay=projectCalendarDay(index);if(!previewDay)return;$('project-date-scope').textContent=previewDay;renderRows();}
+  function preview(top){
+    const index=clamp(Math.round(top/rowHeight),0,maximum()),day=projectCalendarDay(index,days);
+    if(day&&day!==previewDay){previewDay=day;$('project-date-scope').textContent=day;}
+    renderRows(top);
+  }
+  function paintRail(){
+    if(railFrame!==null)return;
+    railFrame=later(()=>{railFrame=null;preview(viewport().scrollTop||0);});
+  }
   function submit(index,source='rail',locate=true){if(projectEditing())return false;previewDay=null;return selectProjectDate(clamp(Math.round(index),0,maximum()),{source,locate});}
-  function scroll(){const node=viewport();if(projectEditing()){sync();return;}if(programTop!==null&&Math.abs(node.scrollTop-programTop)<1){renderRows();return;}if(drag){renderRows();return;}
-    cancelPending();preview(node.scrollTop/rowHeight);const transaction=token;
+  function scroll(){const node=viewport();
+    if(programTop!==null&&Math.abs(node.scrollTop-programTop)<1)return;
+    if(projectEditing()){sync();return;}
+    if(drag){paintRail();return;}
+    if(timer===null)cancelPending();
+    paintRail();clearTimer(timer);const transaction=token;
     timer=globalThis.setTimeout?.(()=>{if(transaction!==token)return;timer=null;if(!submit(node.scrollTop/rowHeight))sync();},100)??null;
   }
   function pointerDown(event){
@@ -1368,7 +1458,7 @@ const projectCalendarUI=(()=>{
       (rect&&node.clientWidth&&event.clientX>=rect.left+node.clientWidth))return;
     cancelPending();suppressClick=false;drag={id:event.pointerId,startY:event.clientY,top:node.scrollTop||0,moved:false};
   }
-  function pointerMove(event){if(!drag||event.pointerId!==drag.id)return;const delta=drag.startY-event.clientY;if(!drag.moved&&Math.abs(delta)<8)return;drag.moved=true;viewport().setPointerCapture?.(drag.id);event.preventDefault?.();$('project-date-browser').dataset.dragging='true';viewport().scrollTop=clamp(drag.top+delta,0,maximum()*rowHeight);const transaction=token;if(frame!==null)return;frame=later(()=>{frame=null;if(!drag||transaction!==token)return;preview(viewport().scrollTop/rowHeight);});}
+  function pointerMove(event){if(!drag||event.pointerId!==drag.id)return;const delta=drag.startY-event.clientY;if(!drag.moved&&Math.abs(delta)<8)return;if(!drag.moved){drag.moved=true;viewport().setPointerCapture?.(drag.id);$('project-date-browser').dataset.dragging='true';}event.preventDefault?.();viewport().scrollTop=clamp(drag.top+delta,0,maximum()*rowHeight);paintRail();}
   function finish(event,cancel=false){if(!drag||event&&event.pointerId!==undefined&&event.pointerId!==drag.id)return;const previous=drag,index=clamp(Math.round((viewport().scrollTop||0)/rowHeight),0,maximum());drag=null;cancelPending();$('project-date-browser').dataset.dragging='false';if(viewport().hasPointerCapture?.(previous.id))viewport().releasePointerCapture?.(previous.id);suppressClick=previous.moved;
     if(cancel){renderProjectDates();return false;}if(previous.moved)return submit(index);return false;
   }
@@ -1380,13 +1470,35 @@ const projectCalendarUI=(()=>{
       if(contentTimer!==null){token++;clearTimer(contentTimer);contentTimer=null;previewDay=null;renderProjectDates();}
       return false;
     }
-    clearTimer(contentTimer);previewDay=day;const index=projectCalendarIndex(day);programTop=index*rowHeight;viewport().scrollTop=programTop;renderRows();$('project-date-scope').textContent=day;
+    if(previewDay===day&&contentTimer!==null)return true;
+    clearTimer(contentTimer);previewDay=day;const index=projectCalendarIndex(day,days);programTop=index*rowHeight;viewport().scrollTop=programTop;renderRows(programTop);$('project-date-scope').textContent=day;
     const transaction=++token;
     contentTimer=globalThis.setTimeout?.(()=>{if(transaction!==token)return;contentTimer=null;previewDay=null;projectDateFromScroll(day);},100)??null;
     return true;
   }
-  function contentScroll(){size();if(!contentActive||frame!==null)return;frame=later(()=>{frame=null;if(!contentActive||drag||projectScrollTarget||projectEditing()||projectSceneInvalidated||!projectScene)return;const main=$('workbench-main'),rect=main?.getBoundingClientRect?.();if(!rect)return;const height=globalThis.innerHeight||rect.height,top=Math.max(0,rect.top),bottom=Math.min(height,rect.bottom),anchor=top+(bottom-top)*.3;let owner=null,below=null;for(const group of visibleProjectDays()){if(!group.dataset.day||group.hidden)continue;const r=group.getBoundingClientRect?.();if(!r)continue;if(r.top<=anchor){if(!owner||r.top>owner.top)owner={day:group.dataset.day,top:r.top};}else if(!below||r.top<below.top)below={day:group.dataset.day,top:r.top};}const day=(owner||below)?.day;if(day)contentPreview(day);});}
-  function userIntent(event){const main=$('workbench-main');if(event?.target&&main?.contains&&!main.contains(event.target))return;cancelPending();contentActive=true;}
+  function contentScroll(){
+    if(!contentActive||frame!==null)return;
+    frame=later(()=>{
+      frame=null;
+      if(!contentActive||drag||projectScrollTarget||projectEditing()||projectSceneInvalidated||!projectScene)return;
+      const rect=$('workbench-main')?.getBoundingClientRect?.();
+      if(!rect)return;
+      const top=Math.max(0,rect.top),bottom=Math.min(globalThis.innerHeight||rect.height,rect.bottom);
+      const anchor=top+(bottom-top)*.3,groups=visibleProjectDays().filter(group=>group.dataset.day&&!group.hidden);
+      let left=0,right=groups.length;
+      while(left<right){
+        const middle=Math.floor((left+right)/2);
+        if((groups[middle].getBoundingClientRect?.().top??Infinity)<=anchor)left=middle+1;
+        else right=middle;
+      }
+      const day=groups[Math.max(0,left-1)]?.dataset.day;
+      if(day)contentPreview(day);
+    });
+  }
+  function userIntent(event){
+    const main=$('workbench-main');if(event?.target&&main?.contains&&!main.contains(event.target))return;
+    if(!contentActive){cancelPending();contentActive=true;}
+  }
   function mount(){
     if(!canProjects||mounted)return;mounted=true;
     const node=viewport();
@@ -1399,7 +1511,8 @@ const projectCalendarUI=(()=>{
     globalThis.addEventListener?.('blur',()=>finish(null,true));
     globalThis.addEventListener?.('scroll',contentScroll,{passive:true});globalThis.addEventListener?.('wheel',userIntent,{passive:true});globalThis.addEventListener?.('touchstart',userIntent,{passive:true});
     globalThis.addEventListener?.('keydown',event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)&&!['INPUT','TEXTAREA','SELECT'].includes(event.target?.tagName))userIntent(event);});
-    globalThis.addEventListener?.('resize',sync);if(globalThis.ResizeObserver)new ResizeObserver(sync).observe(node);sync();
+    const resized=()=>sync();
+    globalThis.addEventListener?.('resize',resized);if(globalThis.ResizeObserver)new ResizeObserver(resized).observe(node);sync();
   }
   return {mount,sync,renderRows,pointerDown,pointerMove,finish,keyboard,submit,contentPreview,contentScroll,userIntent,cancelPending,reset,scroll,state:()=>({dragging:!!drag,previewDay,programTop})};
 })();
@@ -1408,7 +1521,8 @@ const projectCalendarUI=(()=>{
 const projectHistoryUI=(()=>{
   let key=null,records=[],phase='empty',generation=0,displayedScene=null,displayedUnavailable=0;
   const prefix='历史窗口日回顾索引·';
-  const refs=()=>projectScene?.materials.filter(ref=>ref.title.startsWith(prefix))||[];
+  const refs=()=>projectScene?.materials.filter(ref=>ref.title.startsWith(prefix)&&
+    !projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash))||[];
   const count=(value,max=1000000)=>Number.isSafeInteger(value)&&value>=0&&value<=max;
   const string=(value,max)=>typeof value==='string'&&Array.from(value).length<=max;
   function validate(value){
@@ -1686,7 +1800,7 @@ const projectReviewUI=(()=>{
     for(let n=1;n<=5;n++)el('step-'+n).addEventListener('click',()=>selectNode(n));for(const value of ['activity','flow','records'])$('project-view-'+value).addEventListener('click',()=>setView(value));
     const actions={launch,collect,use:useMaterials,adopt:adoptCollection,'collect-save':()=>saveDocument('collect'),'copy-collection':copyCollection,'add-collection':addCollection,refine,'copy-refine':()=>copyText(get().followup,el('refine-prompt'),get(),'已复制再核查指令。'),'refine-return':()=>selectNode(3),'prompt-action':copyPrompt,'go-return':goToReturn,prepare,ready,save:()=>saveDocument('review'),rebind,'view-saved':viewSaved,'new-round':newRound,abandon,'source-close':closeSource};for(const [id,fn] of Object.entries(actions))el(id).addEventListener('click',()=>action(fn));
     el('return').addEventListener('input',returnChanged);el('collection-input').addEventListener('input',collectionChanged);el('checked').addEventListener('change',()=>{const s=get();s.checked=el('checked').checked;s.ready=false;render();});compact?.addEventListener?.('change',moveWork);sync();}
-  return {mount,sync,launch,collect,useMaterials,adoptCollection,generatePrompt,copyPrompt,copyCollection,collectionChanged,addCollection,refine,selectNode,setView,returnChanged,prepare,ready,saveDocument,rebind,viewSaved,readSaved,readSource,closeSource,newRound,abandon,hasInput,invalidate,onInvalidated,moveWork,syncCompactProjects,state:()=>session,current:()=>session?current(session):1};
+  return {mount,sync,launch,collect,useMaterials,adoptCollection,generatePrompt,copyPrompt,copyCollection,collectionChanged,addCollection,refine,selectNode,setView,returnChanged,prepare,ready,saveDocument,rebind,viewSaved,readSaved,readSource,newRound,closeSource,abandon,hasInput,invalidate,onInvalidated,moveWork,syncCompactProjects,updateDigest,state:()=>session,current:()=>session?current(session):1};
 })();
 
 const projectEvidenceUI=(()=>{
@@ -2041,7 +2155,7 @@ const projectEvidenceUI=(()=>{
       if(!sourceError(error)){
         changed();
         if(error.code==='CONTENT_MISMATCH'){
-          projectUnavailableMaterials.add(refKey(ref));sync();
+          markProjectMaterialUnavailable(ref);renderProjectScene(true);
         }
         say('原文暂不可读，请重新核对来源。');
       }

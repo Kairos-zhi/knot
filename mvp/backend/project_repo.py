@@ -418,6 +418,21 @@ class ProjectRepo:
             return _scene(conn, history, selected, actor, token)
 
     @_boundary()
+    def read_review_prompt(self, actor, token, **params):
+        from mvp.project_review_prompt import build_prompt, validate_binding
+
+        _authorize(actor, token)
+        binding = validate_binding(params, token)
+        with read_snapshot(self.db_path, timeout=0.1) as conn:
+            projects, _ = _scan(conn, token)
+            history, selected = _select(conn, projects, actor, binding['project_id'], binding['revision'])
+            if selected['manifest_hash'] != binding['manifest_hash']:
+                raise policy.ProjectError('CONTENT_MISMATCH')
+            sources = _Sources(conn, actor, token)
+            scene = _scene(conn, history, selected, actor, token, sources)
+            return build_prompt(binding, token, scene, sources.get)
+
+    @_boundary()
     def read_material(self, actor, token, project_id, revision, asset_id, expected_hash):
         _authorize(actor, token)
         decision.uuid(project_id)

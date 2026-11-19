@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 
 from mvp.exploration_policy import strict_json, validate_uuid
 from mvp.project_policy import ProjectError, project_response, validate_import
+from mvp.project_review_prompt import validate_binding, validate_response
 from mvp.text_policy import has_credential_marker
 
 LIMIT = 1048576
@@ -71,6 +72,12 @@ def project_get(port, token, kind, args):
     else:
         raise ProjectError('INVALID_ARGUMENTS')
     return project_response(kind, _request(port, token, 'GET', path), token, **bindings)
+
+
+def project_review_prompt(port, token, body):
+    binding = validate_binding(body, token)
+    value = _request(port, token, 'GET', '/project-review-prompt?' + urlencode(binding))
+    return validate_response(value, binding, token)
 
 
 def project_import(port, token, body):

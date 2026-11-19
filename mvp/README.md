@@ -4,6 +4,8 @@
 
 ## 项目整理
 
+从 [公开 Demo](demo/README.md) 开始，可以运行工作台并使用准备好的合成项目走完时间轴、整理、证据卡和能力回顾。
+
 在 Knot 工作台打开项目，点「整理这个项目」生成完整指令。把指令和[短启动词](docs/agent/knot-project-review/短启动词.md)交给已经加载 [Knot 项目整理 Skill](docs/agent/knot-project-review/SKILL.md) 的 Agent，再把结果粘回工作台核对和保存。也可以直接将 Skill 全文粘贴到 Agent 窗口。
 
 开发环境的 Codex 接入见[插件候选构建说明](codex_plugin/README.md)。

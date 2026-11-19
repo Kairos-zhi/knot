@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+<title>Knot · 开发贡献回顾</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f6f4ed;
+    --card: #fffefa;
+    --ink: #202c24;
+    --muted: #505e53;
+    --edge: #d9ded3;
+    --accent: #23533d;
+    --mint: #e2eee4;
+    --amber: #f6eaca;
+    --brown: #67491f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); background: var(--paper); font: 16px/1.65 system-ui, "Microsoft YaHei", sans-serif; }
+  a { color: var(--accent); text-underline-offset: .24em; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .wrap { max-width: 1120px; margin: auto; padding-inline: clamp(18px, 5vw, 54px); }
+  .top { border-bottom: 1px solid var(--edge); }
+  .top .wrap, .hero, .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .top .wrap { min-height: 62px; align-items: center; flex-wrap: wrap; padding-block: 10px; }
+  .brand { color: var(--accent); font-size: 15px; font-weight: 750; letter-spacing: .06em; }
+  nav { display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; }
+  .hero { align-items: flex-end; flex-wrap: wrap; padding-block: 46px 34px; border-bottom: 1px solid var(--edge); }
+  h1, h2, h3, p { margin: 0; }
+  h1 { margin: 6px 0 8px; font-size: clamp(33px, 6vw, 56px); line-height: 1.16; letter-spacing: -.045em; }
+  h2 { font-size: 26px; line-height: 1.3; margin-bottom: 6px; }
+  h3 { font-size: 19px; line-height: 1.4; }
+  .muted { color: var(--muted); }
+  .badge { display: inline-block; background: var(--mint); color: var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .forming, .pilot { color: var(--brown); background: var(--amber); }
+  .missing { color: var(--muted); background: #eeeee8; }
+  .period { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  select { color: var(--ink); background: var(--card); border: 1px solid #8c9b8d; border-radius: 6px; padding: 8px; font: inherit; }
+  section { padding-block: 30px 8px; }
+  .intro { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+  .capabilities, .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .projects { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  article { min-width: 0; background: var(--card); border: 1px solid var(--edge); border-radius: 10px; padding: 18px; }
+  .project { border-top: 3px solid #9bb5a0; }
+  .project > p { margin-block: 8px 10px; font-size: 14px; }
+  .scope { color: var(--muted); font-size: 14px; margin-top: 5px; }
+  .coverage { display: flex; align-items: baseline; gap: 6px; color: var(--muted); font-size: 13px; margin-top: 10px; flex-wrap: wrap; }
+  .coverage strong { color: var(--ink); font-size: 24px; font-variant-numeric: tabular-nums; }
+  .coverage span { margin-left: auto; }
+  .trend { list-style: none; padding: 0; margin: 6px 0 12px; display: flex; gap: 5px; }
+  .trend li { flex: 1; min-width: 0; padding: 4px 6px; border-bottom: 3px solid #92af99; border-radius: 4px; background: #eef4eb; text-align: center; font-size: 12px; }
+  .trend li.zero { border-color: var(--edge); background: #f0f0e9; color: var(--muted); }
+  .trend li strong { display: block; font-size: 14px; font-variant-numeric: tabular-nums; }
+  details { border-top: 1px solid var(--edge); padding-block: 8px 2px; font-size: 14px; }
+  details + details { margin-top: 5px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 650; }
+  .cases { list-style: none; margin: 8px 0 0; padding: 0; }
+  .cases li { border-left: 2px solid var(--edge); padding: 0 0 0 9px; margin: 0 0 12px; overflow-wrap: anywhere; }
+  .source { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .quote { margin-bottom: 4px; }
+  .gap { color: var(--brown); font-size: 13px; margin-block: 6px; }
+  .requirement { display: block; font-size: 13px; }
+  footer { color: var(--muted); margin-top: 24px; border-top: 1px solid var(--edge); padding-block: 16px 26px; font-size: 13px; }
+  @media (max-width: 870px) { .projects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) {
+    .hero { padding-block: 30px 22px; }
+    .capabilities, .projects { grid-template-columns: 1fr; }
+    .card-head { gap: 8px; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <span class="brand">Knot / 贡献回顾</span>
+    <nav aria-label="页面导航"><a href="#traits">项目特质</a><a href="#capabilities">能力与趋势</a><a href="#projects">需求项目</a></nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="badge">公开合成演示</span>
+      <h1>从贡献看能力</h1>
+      <p class="muted">对照两种 Agent 宿主的模拟记录，回看能力如何在项目中积累。</p>
+    </div>
+    <label class="period" for="period">回顾截至 <select id="period"></select></label>
+  </div>
+  <p id="outcome" class="coverage" aria-live="polite"></p>
+  <noscript><p>请启用浏览器的 JavaScript 以生成回顾。</p></noscript>
+  <section id="traits" aria-labelledby="trait-heading">
+    <h2 id="trait-heading">在项目中展现的特质</h2>
+    <div id="trait-cards" class="projects"></div>
+  </section>
+  <section id="capabilities" aria-labelledby="capability-heading">
+    <h2 id="capability-heading">能力与趋势</h2>
+    <p class="intro">在至少两个不同项目有已核证据时，标为「跨项目已复现」。一个项目有证据时，标为「形成中」。</p>
+    <div id="capability-cards" class="capabilities"></div>
+  </section>
+  <section id="projects" aria-labelledby="project-heading">
+    <h2 id="project-heading">需求项目推荐</h2>
+    <p class="intro">按必需能力的证据覆盖排序。展开每项需求，查看对应案例和新项目仍需核对的条件。</p>
+    <div id="project-cards" class="projects"></div>
+  </section>
+  <footer>样例人物、项目、需求和来源均为虚构。回顾在本页本地生成。宿主历史与需求网站待接入。</footer>
+</main>
+<script id="fixture" type="application/json">
+{
+  "synthetic": true,
+  "subject": "演示开发者 A",
+  "stages": [
+    {"label":"起步","end":"2026-01-31"},
+    {"label":"复用","end":"2026-02-28"},
+    {"label":"拓展","end":"2026-03-31"}
+  ],
+  "projects": {
+    "lending":"社区器材借还表",
+    "roster":"志愿者值班表",
+    "inventory":"街角展览清单"
+  },
+  "hosts": {
+    "codex":"模拟 Codex",
+    "workspace":"模拟工作区 Agent"
+  },
+  "capabilities": [
+    {"id":"boundary","label":"边界用例验证","scope":"为缺失、重复或多行边界写出预期结果并核对。"},
+    {"id":"rerun","label":"可复跑交付","scope":"用说明和样例从空目录复跑并比对交付结果。"},
+    {"id":"recovery","label":"失败后恢复","scope":"保留失败前的有效状态，修正输入后核对重试结果。"},
+    {"id":"keyboard","label":"键盘可达性","scope":"凭走查记录核对键盘操作路径和焦点。"}
+  ],
+  "contributions": [
+    {
+      "id":"L-01","project":"lending","capability":"boundary",
+      "summary":"核对重复归还和未知编号。",
+      "gap":"待核跨日归还规则。",
+      "sources":[
+        {"id":"S01","host":"codex","on":"2026-01-12","kind":"test","reviewed":true,"ref":"借还测试回执 · 用例 2–3","quote":"重复归还保留首条归还记录；未知编号返回未找到。两条断言通过。"},
+        {"id":"S02","host":"workspace","on":"2026-01-15","kind":"review","reviewed":true,"ref":"借还复核单 · 条目 2","quote":"复核的是同一组归还用例，重复归还后的记录数仍为 1。"}
+      ]
+    },
+    {
+      "id":"L-02","project":"lending","capability":"rerun",
+      "summary":"从空目录按说明导入借还样例。",
+      "gap":"待核另一操作系统上的运行结果。",
+      "sources":[
+        {"id":"S03","host":"codex","on":"2026-01-19","kind":"review","reviewed":true,"ref":"交付复跑单 · 第 1 次","quote":"按说明从空目录运行，借出 2 件、归还 1 件，与样例预期一致。"}
+      ]
+    },
+    {
+      "id":"R-01","project":"roster","capability":"boundary",
+      "summary":"核对空班次和同一时段重复分配。",
+      "gap":"待核同一人跨多个相邻班次。",
+      "sources":[
+        {"id":"S04","host":"workspace","on":"2026-02-06","kind":"test","reviewed":true,"ref":"排班校验 · 用例 1、4","quote":"空班次显示待安排；同一时段重复分配时保留首条并标记冲突。"}
+      ]
+    },
+    {
+      "id":"R-02","project":"roster","capability":"recovery",
+      "summary":"报告修正班次后可重试。",
+      "gap":"待核失败前后的排班快照和实际重试回执。",
+      "sources":[
+        {"id":"S05","host":"workspace","on":"2026-02-11","kind":"agent","reviewed":false,"ref":"排班 Agent 小结 · 第 2 条","quote":"我已改好失败后重试，原排班应该还在。"}
+      ]
+    },
+    {
+      "id":"I-01","project":"inventory","capability":"boundary",
+      "summary":"核对缺少展品编号和多行备注。",
+      "gap":"待核连同旧版数据导入的边界用例。",
+      "sources":[
+        {"id":"S06","host":"codex","on":"2026-03-04","kind":"test","reviewed":true,"ref":"清单测试回执 · 用例 3、5","quote":"缺编号时给出行号；多行备注合成一条展品记录。两条断言通过。"}
+      ]
+    },
+    {
+      "id":"I-02","project":"inventory","capability":"rerun",
+      "summary":"按说明重新生成展品清单。",
+      "gap":"待核目标部署环境和真实清单规模。",
+      "sources":[
+        {"id":"S07","host":"workspace","on":"2026-03-08","kind":"review","reviewed":true,"ref":"清单复跑单 · 第 1 次","quote":"在空目录用同一输入运行两次，均输出 6 条，逐行一致。"}
+      ]
+    },
+    {
+      "id":"I-03","project":"inventory","capability":"recovery",
+      "summary":"核对导入失败回滚和修正后重试。",
+      "gap":"待核第二个项目的恢复，以及中断后重启。",
+      "sources":[
+        {"id":"S08","host":"codex","on":"2026-03-13","kind":"test","reviewed":true,"ref":"清单恢复回执 · 用例 8","quote":"第 3 行导入失败后原清单仍为 6 条；修正重试后为 7 条，无重复编号。"}
+      ]
+    },
+    {
+      "id":"I-04","project":"inventory","capability":"keyboard",
+      "summary":"提交键盘操作自述和待核走查记录。",
+      "gap":"待复核完整键盘路径、焦点可见性和退出操作。",
+      "sources":[
+        {"id":"S09","host":"workspace","on":"2026-03-18","kind":"agent","reviewed":false,"ref":"清单 Agent 小结 · 第 3 条","quote":"我添加了 Tab 导航和 Esc 关闭。"},
+        {"id":"S10","host":"codex","on":"2026-03-20","kind":"test","reviewed":false,"ref":"键盘走查草稿 · 步骤 1","quote":"用 Tab 到达第一条展品的详情按钮。"}
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "id":"workshop","title":"工作坊报名对账",
+      "scope":"整理报名表，定期生成可复跑的名额核对清单。",
+      "requirements":[
+        {"capability":"boundary","need":"核对重复报名和空场次。","gap":"用报名方确认的规则复测重复报名和空场次。"},
+        {"capability":"rerun","need":"交接可重复生成的核对清单。","gap":"由接手人按说明复跑，并比对清单和原始名额。"}
+      ]
+    },
+    {
+      "id":"archive","title":"馆藏批次导入",
+      "scope":"批量导入目录，并处理坏行和失败后重试。",
+      "requirements":[
+        {"capability":"boundary","need":"定位缺少编号的记录。","gap":"按目标编码和字段规则验证行号提示。"},
+        {"capability":"recovery","need":"导入失败时保留目录，修正后可以重试。","gap":"用多批合成馆藏数据核对失败回滚、重启和重复提交。"}
+      ]
+    },
+    {
+      "id":"kiosk","title":"展馆自助阅览终端",
+      "scope":"访客可只用键盘搜索、打开并关闭展品详情。",
+      "requirements":[
+        {"capability":"keyboard","need":"核对键盘导航、焦点和退出路径。","gap":"取得按完整任务路径执行的走查记录。"}
+      ]
+    }
+  ]
+}
+</script>
+<script id="review-engine">
+"use strict";
+
+const evidenceKinds = { test: "测试回执", review: "核对记录", agent: "Agent 自述" };
+const levels = {
+  repeated: { label: "跨项目已复现" },
+  forming: { label: "形成中", gap: "待核另一独立项目中的同类贡献。" },
+  missing: { label: "待补证据", gap: "待取得可归属且已核对的测试回执或核对记录。" }
+};
+const recommendations = { priority: "优先了解", pilot: "可先试做", missing: "暂缓匹配" };
+
+function isChecked(source) {
+  return source.reviewed === true && (source.kind === "test" || source.kind === "review");
+}
+
+function buildReview(data, through) {
+  const stages = data.stages.slice(0, through + 1);
+  const end = stages.at(-1).end;
+  const visible = data.contributions.map(record => ({
+    ...record,
+    sources: record.sources.filter(source => source.on <= end)
+  }));
+  const capabilities = data.capabilities.map(capability => {
+    const records = visible.filter(record => record.capability === capability.id);
+    const checked = [];
+    const pending = [];
+    const firstByProject = new Map();
+    for (const record of records) {
+      const verified = record.sources.filter(isChecked);
+      const unverified = record.sources.filter(source => !isChecked(source));
+      if (unverified.length) pending.push({ ...record, sources: unverified });
+      if (!verified.length) continue;
+      verified.sort((a, b) => a.on.localeCompare(b.on));
+      const first = verified[0].on;
+      checked.push({ ...record, first, sources: verified });
+      if (!firstByProject.has(record.project) || first < firstByProject.get(record.project)) {
+        firstByProject.set(record.project, first);
+      }
+    }
+    const dates = [...firstByProject.values()];
+    const trend = stages.map((stage, index) => ({
+      label: stage.label,
+      added: dates.filter(date => date <= stage.end && (index === 0 || date > stages[index - 1].end)).length,
+      total: dates.filter(date => date <= stage.end).length
+    }));
+    const level = dates.length >= 2 ? "repeated" : dates.length === 1 ? "forming" : "missing";
+    checked.sort((a, b) => b.first.localeCompare(a.first) || a.id.localeCompare(b.id));
+    const representative = new Map();
+    for (const record of checked) if (!representative.has(record.project)) representative.set(record.project, record);
+    const cases = [...representative.values()];
+    return { ...capability, level, count: dates.length, checked, pending, cases, trend };
+  });
+  const byCapability = new Map(capabilities.map(capability => [capability.id, capability]));
+  const matches = data.requests.map(request => {
+    const requirements = request.requirements.map(item => ({ ...item, capability: byCapability.get(item.capability) }));
+    const covered = requirements.filter(item => item.capability.level === "repeated").length;
+    const evidenced = requirements.filter(item => item.capability.count > 0).length;
+    const status = covered === requirements.length ? "priority" : evidenced === requirements.length ? "pilot" : "missing";
+    return { ...request, requirements, covered, evidenced, status };
+  });
+  matches.sort((a, b) =>
+    b.covered / b.requirements.length - a.covered / a.requirements.length ||
+    b.evidenced / b.requirements.length - a.evidenced / a.requirements.length ||
+    a.id.localeCompare(b.id));
+  const checkedProjects = new Set(capabilities.flatMap(capability => capability.checked.map(record => record.project)));
+  const checkedHosts = new Set(capabilities.flatMap(capability => capability.checked.flatMap(record => record.sources.map(source => source.host))));
+  return { end, capabilities, matches, projects: checkedProjects.size, hosts: checkedHosts.size };
+}
+</script>
+<script id="review-page">
+"use strict";
+
+const demo = JSON.parse(document.getElementById("fixture").textContent);
+const period = document.getElementById("period");
+
+function element(tag, content, className) {
+  const node = document.createElement(tag);
+  if (content !== undefined) node.textContent = content;
+  if (className) node.className = className;
+  return node;
+}
+
+function disclosure(label) {
+  const detail = element("details");
+  detail.append(element("summary", label));
+  return detail;
+}
+
+function evidenceList(records) {
+  const list = element("ul", undefined, "cases");
+  for (const record of records) {
+    const item = element("li");
+    item.append(element("strong", demo.projects[record.project]), element("p", record.summary));
+    for (const source of record.sources) {
+      const status = isChecked(source) ? "已核" : "待核";
+      const location = ["合成", status, source.id, demo.hosts[source.host], source.on, evidenceKinds[source.kind], source.ref].join(" · ");
+      item.append(element("p", location, "source"), element("p", "“" + source.quote + "”", "quote"));
+    }
+    item.append(element("p", "案例缺口 · " + record.gap, "gap"));
+    list.append(item);
+  }
+  return list;
+}
+
+function capabilityCard(capability) {
+  const level = levels[capability.level];
+  const card = element("article");
+  const head = element("div", undefined, "card-head");
+  head.append(element("h3", capability.label), element("span", level.label, "badge " + capability.level));
+  card.append(head, element("p", capability.scope, "scope"));
+
+  const coverage = element("p", undefined, "coverage");
+  coverage.append(element("strong", capability.count), "个项目有已核证据", element("span", "各阶段新增 / 累计"));
+  const trend = element("ol", undefined, "trend");
+  for (const stage of capability.trend) {
+    const cell = element("li", stage.label, stage.total ? "" : "zero");
+    cell.append(element("strong", "+" + stage.added + " / " + stage.total));
+    trend.append(cell);
+  }
+  card.append(coverage, trend);
+  if (level.gap) card.append(element("p", level.gap, "gap"));
+  if (capability.cases.length) {
+    const names = capability.cases.map(record => demo.projects[record.project]).join("、");
+    const detail = disclosure("代表案例 · " + names);
+    detail.append(evidenceList(capability.cases));
+    card.append(detail);
+  }
+  if (capability.checked.length > capability.cases.length) {
+    const detail = disclosure("更多已核贡献");
+    detail.append(evidenceList(capability.checked.filter(record => !capability.cases.includes(record))));
+    card.append(detail);
+  }
+  if (capability.pending.length) {
+    const detail = disclosure("待核线索 · " + capability.pending.length + " 条贡献");
+    detail.append(evidenceList(capability.pending));
+    card.append(detail);
+  }
+  return card;
+}
+
+function projectCard(match) {
+  const card = element("article", undefined, "project");
+  const head = element("div", undefined, "card-head");
+  head.append(element("h3", match.title), element("span", recommendations[match.status], "badge " + match.status));
+  card.append(head, element("p", match.scope, "muted"),
+    element("p", match.covered + " / " + match.requirements.length + " 项必需能力已跨项目复现", "muted"));
+  for (const item of match.requirements) {
+    const capability = item.capability;
+    const detail = disclosure(capability.label + " · " + levels[capability.level].label);
+    detail.querySelector("summary").append(element("span", item.need, "requirement"));
+    detail.append(element("p", "项目验证 · " + item.gap, "gap"));
+    if (levels[capability.level].gap) detail.append(element("p", levels[capability.level].gap, "gap"));
+    if (capability.cases.length) detail.append(evidenceList(capability.cases));
+    if (capability.pending.length) {
+      detail.append(element("p", "待核线索", "muted"), evidenceList(capability.pending));
+    }
+    card.append(detail);
+  }
+  return card;
+}
+
+function render(through) {
+  const review = buildReview(demo, through);
+  const outcome = document.getElementById("outcome");
+  outcome.textContent = demo.subject + " · " + review.projects + " 个项目 · " + review.hosts + " 个模拟宿主有已核来源";
+  const traits = Object.entries(demo.projects).flatMap(([project, title]) => {
+    const signals = review.capabilities.flatMap(capability => {
+      const evidence = capability.cases.find(record => record.project === project);
+      return evidence ? [{ evidence, capability }] : [];
+    });
+    if (!signals.length) return [];
+    const card = element("article");
+    card.append(element("h3", title));
+    for (const signal of signals) {
+      const detail = disclosure(signal.capability.label);
+      detail.append(evidenceList([signal.evidence]));
+      card.append(detail);
+    }
+    return [card];
+  });
+  document.getElementById("trait-cards").replaceChildren(...traits);
+  document.getElementById("capability-cards").replaceChildren(...review.capabilities.map(capabilityCard));
+  document.getElementById("project-cards").replaceChildren(...review.matches.map(projectCard));
+}
+
+for (const [index, stage] of demo.stages.entries()) {
+  const option = element("option", stage.label + " · " + stage.end);
+  option.value = String(index);
+  period.append(option);
+}
+period.value = String(demo.stages.length - 1);
+period.addEventListener("change", () => render(Number(period.value)));
+render(Number(period.value));
+</script>
+</body>
+</html>

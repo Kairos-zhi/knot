@@ -93,6 +93,20 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/project-review-prompt",
+      "params": [
+        {"name": "project_id", "type": "string", "required": true},
+        {"name": "revision", "type": "string", "required": true},
+        {"name": "manifest_hash", "type": "string", "required": true}
+      ],
+      "response": "ProjectReviewPrompt",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SERVER_BUSY"],
+      "status": [200]
+    },
+    {
       "method": "POST",
       "path": "/project-imports",
       "params": [],

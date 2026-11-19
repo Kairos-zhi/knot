@@ -54,7 +54,7 @@ COMMANDS = SCHEMA["$defs"]["CommandRequest"]["properties"]["command"]["enum"]
 CODES = SCHEMA["$defs"]["Error"]["properties"]["code"]["enum"]
 _EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList",
                           "ExplorationV2Receipt", "ExplorationCheckpointV2", "ExplorationForkReceipt"}
-_PROJECT_RESPONSES = {'ProjectList', 'ProjectScene', 'ProjectMaterial', 'ProjectImportReceipt'}
+_PROJECT_RESPONSES = {'ProjectList', 'ProjectScene', 'ProjectMaterial', 'ProjectImportReceipt', 'ProjectReviewPrompt'}
 
 
 class Fault(Exception):
@@ -400,7 +400,7 @@ class Handler(BaseHTTPRequestHandler):
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
             if is_history or is_project:
-                data = json.dumps(body, ensure_ascii=True).encode('utf-8')
+                data = json.dumps(body, ensure_ascii=route['response'] != 'ProjectReviewPrompt').encode('utf-8')
                 if len(data) > 1048576:
                     raise Fault('SERVER_BUSY', 503, reason='project_response_limit' if is_project else 'decision_response_limit')
                 return self.reply_bytes(200, data)
@@ -447,6 +447,8 @@ class Handler(BaseHTTPRequestHandler):
                 return repo.read_project(actor, token, params['project_id'], params.get('revision'))
             if kind == 'ProjectMaterial':
                 return repo.read_material(actor, token, **params)
+            if kind == 'ProjectReviewPrompt':
+                return repo.read_review_prompt(actor, token, **params)
             lengths = self.headers.get_all('Content-Length', [])
             if (len(lengths) != 1 or self.headers.get_all('Transfer-Encoding')
                     or self.headers.get('Content-Type') != 'application/json'

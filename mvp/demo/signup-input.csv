@@ -1,0 +1,5 @@
+registration_id,session,people,status
+S-01,上午,2,confirmed
+S-02,上午,1,confirmed
+S-03,上午,1,waitlist
+S-04,下午,2,confirmed
