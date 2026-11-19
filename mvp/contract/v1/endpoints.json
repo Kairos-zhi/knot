@@ -107,6 +107,42 @@
       "status": [200]
     },
     {
+      "method": "GET",
+      "path": "/project-claims",
+      "params": [
+        {"name": "project_id", "type": "string", "required": true},
+        {"name": "revision", "type": "string", "required": true},
+        {"name": "status", "type": "string", "enum": ["pending", "accepted", "rejected"]}
+      ],
+      "response": "ProjectClaims",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SERVER_BUSY"],
+      "status": [200]
+    },
+    {
+      "method": "POST",
+      "path": "/project-claims/extract",
+      "params": [],
+      "response": "ProjectClaimExtraction",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SERVER_BUSY"],
+      "status": [200],
+      "body": "ProjectClaimExtractionRequest"
+    },
+    {
+      "method": "POST",
+      "path": "/project-claims/review",
+      "params": [],
+      "response": "ProjectClaimReview",
+      "as_of": false,
+      "envelope": "plain",
+      "errors": ["BAD_REQUEST", "FORBIDDEN_VIEW", "NOT_FOUND", "SERVER_BUSY"],
+      "status": [200],
+      "body": "ProjectClaimReviewRequest"
+    },
+    {
       "method": "POST",
       "path": "/project-imports",
       "params": [],

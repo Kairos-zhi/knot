@@ -165,6 +165,7 @@
   </details>
   <nav class="project-view-nav" aria-label="项目内容">
     <button id="project-view-activity" aria-pressed="true" aria-controls="project-activity">项目动态</button>
+    <button id="project-view-claims" aria-pressed="false" aria-controls="project-claims">候选</button>
     <button id="project-view-flow" aria-pressed="false" aria-controls="project-review-flow">整理</button>
     <button id="project-view-records" aria-pressed="false" aria-controls="project-records">原话与资料</button>
   </nav>
@@ -177,6 +178,23 @@
     <div id="project-review-activity-prose" class="review-prose"></div>
     <section id="project-history" aria-label="按天回顾" hidden><h3>按天回顾</h3><p id="project-history-status" role="status" aria-live="polite"></p><button id="project-history-load" hidden>重试</button><div id="project-history-days"></div></section><div id="project-review-existing-decisions"></div>
     <div id="project-review-activity-detail"></div>
+  </section>
+  <section id="project-claims" hidden aria-labelledby="project-claims-title">
+    <h2 id="project-claims-title">候选</h2>
+    <div class="bar">
+      <button id="project-claims-extract">从项目材料提取候选</button>
+      <button id="project-claims-refresh">刷新候选</button>
+    </div>
+    <p id="project-claims-read-only" class="review-meta" hidden></p>
+    <div class="bar">
+      <label>状态<select id="project-claims-status-filter"><option value="">全部</option><option value="pending">待核对</option><option value="accepted">已确认</option><option value="rejected">已否决</option></select></label>
+      <label>类型<select id="project-claims-type"><option value="">全部</option><option value="decision">决定</option><option value="question">问题</option><option value="counterexample">反例</option><option value="relation">关系</option></select></label>
+      <label>检索<input id="project-claims-query" type="search" placeholder="编号、引文或材料名称"></label>
+    </div>
+    <p id="project-claims-scope" class="review-meta"></p>
+    <p id="project-claims-status" role="status" aria-live="polite"></p>
+    <div id="project-claims-detail"></div>
+    <div id="project-claims-list" class="review-prose"></div>
   </section>
   <section id="project-review-flow" hidden aria-labelledby="project-review-title">
     <h2 id="project-review-title">整理这个项目</h2>
@@ -396,7 +414,7 @@ function currentProjectDays(){
   if(!projectScene||projectSceneInvalidated)return new Set();
   const item=projectItems.find(item=>item.project_id===projectScene.project_id),appearance=projectChronology(item);
   return new Set([...projectObservations().map(source=>projectMessageDay(source.message_time_ms)),
-    ...(appearance?[projectMessageDay(appearance.appearance_at)]:[]),...projectHistoryUI.days()]);
+    ...(appearance?[projectMessageDay(appearance.appearance_at)]:[]),...projectHistoryUI.days(),...projectClaimsUI.days()]);
 }
 function projectTimeLabel(){return projectRoute==='scene'?(projectCutoff?'定位 '+projectCutoff:'最新')+' · 当前全部可读记录':projectCutoff?'截至 '+projectCutoff:'最新 · 全部时间';}
 function projectDateDays(){
@@ -405,7 +423,8 @@ function projectDateDays(){
   // subsequent successful list read invalidates that fallback, even unchanged.
   const current=projectItems.find(item=>item.project_id===projectScene?.project_id);
   const legacy=current&&!Object.hasOwn(current,'chronology')&&!projectSceneInvalidated?projectObservations().map(source=>source.message_time_ms):[];
-  return [...new Set([...times,...legacy].map(projectMessageDay).concat(projectReviewReady?projectHistoryUI.days():[]))].sort();
+  const loaded=projectReviewReady?[...projectHistoryUI.days(),...projectClaimsUI.days()]:[];
+  return [...new Set([...times,...legacy].map(projectMessageDay).concat(loaded))].sort();
 }
 function projectAuthorizationChanged(previous,current){
   if(!previous||!current||!Object.hasOwn(previous,'chronology')||!Object.hasOwn(current,'chronology'))return true;
@@ -420,7 +439,7 @@ function invalidateProjectScene(){
 }
 function renderInvalidProjectScene(){
   if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.sync();projectContinuationUI.sync();}
-  if(projectReviewReady){projectReviewUI.invalidate();projectHistoryUI.invalidate();}
+  if(projectReviewReady){projectReviewUI.invalidate();projectHistoryUI.invalidate();projectClaimsUI.invalidate();}
   for(const id of ['project-observations','project-decisions','project-background-cards','project-material-list','project-detail-content','project-appearance-info','project-day-projects','work-review-sources','work-review-existing','work-review-evidence','recap-edit-preview'])$(id).replaceChildren();
   for(const id of ['project-detail-title','work-review-source-text','work-review-preview'])$(id).textContent='';
   $('work-review-checked').checked=false;$('work-review-share-text').value='';$('work-review-share-area').hidden=true;
@@ -571,12 +590,12 @@ function renderProjectDates(){
   range.setAttribute('aria-valuetext',(projectCutoff||end)+(projectCutoff?' · 定位':' · 最新')+(days.includes(projectCutoff||end)?' · 有留存记录':''));
   $('project-date-start').textContent=days[0]||'';$('project-date-end').textContent=days.length?end:'';
   $('project-date-scope').textContent=days.length?(projectCutoff||end)+(projectCutoff?'':' · 最新'):'暂无可定位日期';
-  $('project-date-status').textContent=editing?'请先完成或结束整理':projectScene?'当前留存 '+sources.length+' 条原话 · 实心点为本项目，空心点为其他项目':'截至此日 '+projectItems.filter(projectAppeared).length+' 个项目';
+  $('project-date-status').textContent=editing?'请先完成或结束整理':projectReviewReady&&projectClaimsUI.active()?'选择日期筛选候选 · 实心点为本项目，空心点为其他项目':projectScene?'当前留存 '+sources.length+' 条原话 · 实心点为本项目，空心点为其他项目':'截至此日 '+projectItems.filter(projectAppeared).length+' 个项目';
   $('project-date-all').disabled=editing;
   if(projectScene&&!projectSceneInvalidated){const sourceDays=[...new Set(sources.map(source=>projectMessageDay(source.message_time_ms)))].sort();projectCoverage.set(projectScene.project_id,{revision:projectScene.revision,label:sourceDays.length?'原话 '+sourceDays[0]+' — '+sourceDays.at(-1)+' · '+sources.length+' 条':projectIdentity(projectScene)+' · 此版本暂无可读原话'});}
   if(projectReviewReady)projectCalendarUI.sync(days);
 }
-function projectCalendarEnd(days=projectDateDays()){const first=days[0],today=projectMessageDay(Date.now());return first&&first>today?first:today;}
+function projectCalendarEnd(days=projectDateDays()){const first=days[0],today=projectMessageDay(Date.now()),last=projectReviewReady&&projectClaimsUI.active()?days.at(-1):first;return last&&last>today?last:today;}
 function projectCalendarIndex(day,days=projectDateDays()){const first=days[0];return first?Math.round((Date.parse(day+'T00:00:00Z')-Date.parse(first+'T00:00:00Z'))/86400000):0;}
 function projectCalendarDay(index,days=projectDateDays()){if(!days.length||!Number.isInteger(index)||index<0||index>projectCalendarIndex(projectCalendarEnd(days),days))return null;return new Date(Date.parse(days[0]+'T00:00:00Z')+index*86400000).toISOString().slice(0,10);}
 function visibleProjectDays(){
@@ -609,7 +628,7 @@ function selectProjectDate(index,{source='rail',locate=true}={}){
   renderProjectDates();
   if(locate){
     const group=visibleProjectDays().find(node=>node.dataset.day===day);
-    const date=$('project-activity-date'),target=group||(!date.hidden?date:null);
+    const date=$('project-activity-date'),target=group||(!date.hidden?date:projectClaimsUI.active()?$('project-claims-title'):null);
     if(!target)return true;
     projectScrollTarget=day;
     target.scrollIntoView?.({block:'start',behavior:'instant'});
@@ -617,6 +636,7 @@ function selectProjectDate(index,{source='rail',locate=true}={}){
   return true;
 }
 function renderProjectDateFocus(){
+  if(projectReviewReady)projectClaimsUI.syncDate();
   const day=projectSceneInvalidated?null:projectCutoff,groups=visibleProjectDays();
   for(const group of groups){
     const current=String(group.dataset.day===day);
@@ -626,7 +646,7 @@ function renderProjectDateFocus(){
   date.hidden=!day||!projectScene||$('project-activity').hidden;
   context.hidden=true;context.replaceChildren();
   const recorded=groups.some(group=>group.dataset.day===day);
-  $('project-day-position').textContent=day&&projectScene?(recorded?'定位 '+day+' · 下方保留当前全部已留存原话':'定位 '+day+' · 这一天暂无已读取记录；下方保留真实日期的已留存原话'):'';
+  $('project-day-position').textContent=day&&projectScene?(projectClaimsUI.active()?'候选日期 '+day:recorded?'定位 '+day+' · 下方保留当前全部已留存原话':'定位 '+day+' · 这一天暂无已读取记录；下方保留真实日期的已留存原话'):'';
   if(date.hidden)return;
   const item=projectItems.find(item=>item.project_id===projectScene.project_id);
   if(recorded)date.textContent=day;
@@ -726,7 +746,7 @@ function syncProjectWorkspace(){
   $('projects-refresh').hidden=projectRoute!=='overview';$('project-import-new').hidden=projectRoute!=='overview';
   renderProjectNavigation();renderProjectDates();syncProjectLatest();
   if(projectRoute==='legacy'){for(const pane of ['continue','search','write','history'])$(pane+'-pane').hidden=pane!==projectLegacyPane;$('focus-title').textContent=({continue:'保存的思考',search:'找一份材料',write:'留下这次想法',history:'决定回顾'})[projectLegacyPane];}
-  if(projectReviewReady){projectHistoryUI.sync();projectReviewUI.sync();projectEvidenceUI.sync();projectContinuationUI.sync();renderProjectDateFocus();}
+  if(projectReviewReady){projectHistoryUI.sync();projectReviewUI.sync();projectEvidenceUI.sync();projectContinuationUI.sync();projectClaimsUI.sync();renderProjectDateFocus();}
 }
 function clearProjectDetail(moveFocus=false){
   if(moveFocus&&recapEditing()){allowProjectNavigation();return false;}
@@ -736,7 +756,7 @@ function clearProjectDetail(moveFocus=false){
   if(moveFocus)projectDetailFocus?.focus?.({preventScroll:true});projectDetailFocus=null;
 }
 function clearProjectScene(preserveDraftsFor=null){
-  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.leave(preserveDraftsFor);projectContinuationUI.leave(preserveDraftsFor);}
+  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.leave(preserveDraftsFor);projectContinuationUI.leave(preserveDraftsFor);projectClaimsUI.invalidate();}
   projectDateObserver?.disconnect();projectDateObserver=null;projectScrollTarget=null;
   clearWorkReview();
   clearProjectDetail();projectScene=null;projectSceneInvalidated=false;projectPending=null;projectCards=[];projectSnapshots=[];projectReadMode='all';projectUnavailableMaterials.clear();$('project-read-stale').hidden=true;
@@ -839,13 +859,24 @@ function renderProjectMaterials(){
   for(const {source,snippet} of observations){const row=text(host,'div','','material');text(row,'span',source.title);text(row,'small','已留存原话');const button=text(row,'button','阅读原话');button.addEventListener('click',()=>{if(datedProjectObservations().includes(source))showProjectObservation(source,null,button);});text(row,'p',snippet,'observation-match');}
   if(!materials.length&&!observations.length)text(host,'p',query?'没有匹配的可读材料或原话。':'暂无可读材料。');
 }
-async function readProjectMaterial(ref,origin=null){
+async function readProjectMaterial(ref,origin=null,location=null){
   if(projectSceneInvalidated)throw projectError('READ_UNAVAILABLE');
   requireProjects();if(recapEditing()){allowProjectNavigation();return false;}if(!projectScene?.materials.some(item=>item.asset_id===ref.asset_id&&item.content_hash===ref.content_hash)||projectUnavailableMaterials.has(ref.asset_id+':'+ref.content_hash))throw projectError('ACCESS_DENIED');
   const generation=projectGeneration,scene=projectScene;clearProjectDetail();const readGeneration=projectReadGeneration;openProjectDetail('正在阅读…',origin);
   try{const value=await projectRequest('project-material',{project_id:scene.project_id,revision:scene.revision,asset_id:ref.asset_id,expected_hash:ref.content_hash});if(generation!==projectGeneration||readGeneration!==projectReadGeneration)return false;
     if(value?.project_id!==scene.project_id||value.revision!==scene.revision||value.asset_id!==ref.asset_id||value.content_hash!==ref.content_hash||typeof value.text!=='string'||typeof value.title!=='string')throw projectError('CONTENT_MISMATCH');
-    $('project-detail-title').textContent=value.title;text($('project-detail-content'),'pre',value.text);return true;
+    const offset=location?Array.from(value.text).slice(0,location.quote_start).join('').length:0;
+    if(location&&!value.text.startsWith(location.quote,offset))throw projectError('CONTENT_MISMATCH');
+    $('project-detail-title').textContent=value.title;
+    const source=text($('project-detail-content'),'pre',location?'':value.text);
+    if(location){
+      text(source,'span',value.text.slice(0,offset));
+      const mark=text(source,'mark',location.quote);
+      text(source,'span',value.text.slice(offset+location.quote.length));
+      mark.setAttribute('tabindex','-1');
+      mark.focus?.({preventScroll:true});mark.scrollIntoView?.({block:'center',behavior:'instant'});
+    }
+    return true;
   }catch(error){if(generation!==projectGeneration||readGeneration!==projectReadGeneration)return false;
     markProjectMaterialUnavailable(ref);renderProjectScene();$('project-detail-title').textContent='材料暂不可读';$('project-detail-content').replaceChildren();text($('project-detail-content'),'p',error.message);return false;
   }
@@ -1670,7 +1701,18 @@ const projectReviewUI=(()=>{
   const documentValid=doc=>doc&&typeof doc.title==='string'&&!!doc.title.trim()&&typeof doc.text==='string'&&projectUtf8Size(doc.title)<=256&&projectUtf8Size(doc.text)<=65536;
   function moveWork(){const work=el('work');if(!work)return;const target=compact?.matches?el('node-'+(session?.selected||1)):el('layout');if(work.parentElement!==target)target.append(work);}
   function selectNode(number){const s=get();if(!Number.isInteger(number)||number<1||number>5)return false;s.selected=number;render();moveWork();el('work-title').focus?.({preventScroll:true});return true;}
-  function setView(value){if(!['activity','flow','records'].includes(value))return false;if(view!==value)projectCalendarUI.reset();view=value;if(value==='records')$('project-scene-grid').append($('project-detail'));sync();renderProjectDates();renderProjectDateFocus();return true;}
+  const views=['activity','claims','flow','records'];
+  function setView(value){
+    if(!views.includes(value))return false;
+    if(view!==value){
+      if((value==='claims'||view==='claims')&&!allowProjectNavigation())return false;
+      if(value==='claims'||view==='claims')clearProjectDetail();
+      projectCalendarUI.reset();
+    }
+    view=value;
+    if(value==='records')$('project-scene-grid').append($('project-detail'));
+    sync();projectClaimsUI.sync();renderProjectDates();renderProjectDateFocus();return true;
+  }
   function render(){
     if(!session)return;const s=session,step=current(s),isFrozen=frozen(s),isBusy=busy(s),available=fresh(),selected=s.selected;
     for(let n=1;n<=5;n++){const button=el('step-'+n);button.setAttribute('aria-pressed',String(selected===n));if(n===step)button.setAttribute('aria-current','step');else button.removeAttribute?.('aria-current');
@@ -1809,6 +1851,7 @@ const projectReviewUI=(()=>{
     if(activity?.sceneKey!==workReviewKey(projectScene)){activity=null;el('activity-prose').replaceChildren();}
     if(projectSceneInvalidated){if(!staleHandled)invalidate();}else staleHandled=false;if(!fresh())closeSource();
     $('project-activity').hidden=view!=='activity';el('flow').hidden=view!=='flow';$('project-records').hidden=view!=='records';
+    $('project-claims').hidden=view!=='claims';
     if(view==='activity'){
       projectHistoryUI.show();
       const latest=projectScene.materials.findLast(item=>item.title==='项目主动回顾.json');
@@ -1817,7 +1860,7 @@ const projectReviewUI=(()=>{
         if(requestedActivity!==key){requestedActivity=key;action(()=>readSaved(latest));}
       }
     }
-    for(const value of ['activity','flow','records'])$('project-view-'+value).setAttribute('aria-pressed',String(view===value));
+    for(const value of views)$('project-view-'+value).setAttribute('aria-pressed',String(view===value));
     el('launch').textContent=(session.prompt||session.returnText||session.collectionText)&&!saved(session)?'继续整理 · 第 '+Math.min(current(session),5)+' 步':'整理这个项目';updateDigest();renderActivity();render();
   }
   function invalidate(){staleHandled=true;readingGeneration++;sourceGeneration++;activity=null;requestedActivity=null;clearProse();el('source').hidden=true;el('source-text').textContent='';el('source-locator').replaceChildren();el('prompt').value='';if(session){session.serial++;session.preview=null;session.checked=false;session.ready=false;session.prompt=null;session.collectionPrompt=null;session.followup=null;session.needsRebind=!!session.returnText;session.busy=null;}updateDigest();render();}
@@ -1826,10 +1869,206 @@ const projectReviewUI=(()=>{
   function mount(){if(!canProjects)return;el('records-slot').append($('project-records-legacy'),$('project-versions'));el('digest').append(el('launch'));
     const navigation=$('project-navigation');if(navigation?.parentElement){const wrapper=text(navigation.parentElement,'label','项目');wrapper.id='project-review-project-select-wrap';const select=text(wrapper,'select');select.id='project-review-project-select';select.addEventListener('change',()=>{const id=select.value;projectAction(()=>projectItems.some(item=>item.project_id===id)?openProject(id):showDiscoveredProject(id));});
       const legacy=text(navigation.parentElement,'details');legacy.id='project-review-legacy';text(legacy,'summary','材料与思考');legacy.append($('legacy-navigation'),$('capture-details'));navigation.parentElement.insertBefore?.($('project-other-projects'),$('project-date-browser'));navigation.parentElement.insertBefore?.(legacy,$('project-date-browser'));}
-    for(let n=1;n<=5;n++)el('step-'+n).addEventListener('click',()=>selectNode(n));for(const value of ['activity','flow','records'])$('project-view-'+value).addEventListener('click',()=>setView(value));
+    for(let n=1;n<=5;n++)el('step-'+n).addEventListener('click',()=>selectNode(n));for(const value of views)$('project-view-'+value).addEventListener('click',()=>setView(value));
     const actions={launch,collect,use:useMaterials,adopt:adoptCollection,'collect-save':()=>saveDocument('collect'),'copy-collection':copyCollection,'add-collection':addCollection,refine,'copy-refine':()=>copyText(get().followup,el('refine-prompt'),get(),'已复制再核查指令。'),'refine-return':()=>selectNode(3),'prompt-action':copyPrompt,'go-return':goToReturn,prepare,ready,save:()=>saveDocument('review'),rebind,'view-saved':viewSaved,'new-round':newRound,abandon,'source-close':closeSource};for(const [id,fn] of Object.entries(actions))el(id).addEventListener('click',()=>action(fn));
     el('return').addEventListener('input',returnChanged);el('collection-input').addEventListener('input',collectionChanged);el('checked').addEventListener('change',()=>{const s=get();s.checked=el('checked').checked;s.ready=false;render();});compact?.addEventListener?.('change',moveWork);sync();}
   return {mount,sync,launch,collect,useMaterials,adoptCollection,generatePrompt,copyPrompt,copyCollection,collectionChanged,addCollection,refine,selectNode,setView,returnChanged,prepare,ready,saveDocument,rebind,viewSaved,readSaved,readSource,newRound,closeSource,abandon,hasInput,invalidate,onInvalidated,moveWork,syncCompactProjects,updateDigest,state:()=>session,current:()=>session?current(session):1};
+})();
+
+const projectClaimsUI=(()=>{
+  const el=id=>$('project-claims'+(id?'-'+id:''));
+  const statuses={pending:'待核对',accepted:'已确认',rejected:'已否决'};
+  const types={decision:'决定',question:'问题',counterexample:'反例',relation:'关系'};
+  let state=null;
+  const active=()=>projectRoute==='scene'&&!!projectScene&&!projectSceneInvalidated&&!el().hidden;
+  const live=s=>active()&&state===s&&s.scene===projectScene;
+  const binding=({project_id,revision})=>({project_id,revision});
+  const key=ref=>ref.asset_id+':'+ref.content_hash;
+  const readable=ref=>!projectUnavailableMaterials.has(key(ref));
+  const isDate=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&
+    Number.isFinite(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value;
+  function sourceDate(item){
+    if(item.message_time_ms!==null)return [projectMessageDay(item.message_time_ms),'原话日期'];
+    if(item.document_on!==null)return [item.document_on,'文档日期'];
+    return [projectMessageDay(item.saved_at),'留存日期'];
+  }
+  function atHead(s){
+    const latest=projectItems.find(item=>item.project_id===s.scene.project_id),head=s.scene.snapshots.at(-1);
+    return [latest,head].every(item=>!projectRevision(item?.revision)||compareProjectRevisions(item.revision,s.scene.revision)<=0);
+  }
+  function valid(value,s){
+    const refs=new Set(s.scene.materials.map(key));
+    return value?.project_id===s.scene.project_id&&value.revision===s.scene.revision&&
+      typeof value.has_unavailable==='boolean'&&typeof value.can_write==='boolean'&&Array.isArray(value.items)&&value.items.every(item=>
+        item&&captureUUID(item.claim_id)&&Object.hasOwn(statuses,item.status)&&
+        Object.hasOwn(types,item.claim_type)&&refs.has(key(item))&&
+        [item.atom,item.title,item.quote].every(part=>typeof part==='string'&&!!part.trim())&&
+        captureCount(item.quote_start)&&captureTime(item.saved_at)&&
+        (item.message_time_ms===null||captureTime(item.message_time_ms))&&
+        (item.document_on===null||isDate(item.document_on)));
+  }
+  function days(){
+    return state&&live(state)?state.items.filter(readable).map(item=>sourceDate(item)[0]):[];
+  }
+  function matching(items,status,type,query,day){
+    const term=query.trim().toLocaleLowerCase();
+    return items.filter(item=>readable(item)&&(!status||item.status===status)&&
+      (!type||item.claim_type===type)&&(!day||sourceDate(item)[0]===day)&&
+      (!term||[item.claim_id,item.atom,item.title,item.quote].some(part=>part.toLocaleLowerCase().includes(term))));
+  }
+  function render(){
+    if(!state||!live(state))return;
+    const s=state,head=atHead(s),writable=head&&s.canWrite,host=el('list');
+    s.day=projectCutoff;
+    host.replaceChildren();
+    el('extract').disabled=!writable||s.busy;
+    el('refresh').disabled=s.busy;
+    el('read-only').hidden=head&&s.canWrite!==false;
+    el('read-only').textContent=head?'仅项目所有者可提取和核对候选。':'显示此版本所收录材料的当前核对状态。提取和核对请回到最新版本。';
+    el('scope').textContent=projectCutoff?'日期 '+projectCutoff:'全部日期';
+    const items=matching(s.items,el('status-filter').value,el('type').value,el('query').value,projectCutoff);
+    el('status').textContent=[
+      s.message,
+      s.loaded?items.length+' 条候选':'',
+      s.unavailable||s.items.some(item=>!readable(item))?'部分来源当前不可读。':'',
+    ].filter(Boolean).join(' · ');
+    if(s.loaded&&!items.length&&!s.busy){
+      const empty=s.items.length?'没有符合当前筛选的候选。':
+        writable?'暂无候选。可从项目材料提取，规则识别「决定：…」「待确认：…」等标记及研究编号。':'暂无候选。';
+      text(host,'p',empty);
+    }
+    const grouped=new Map();
+    for(const item of items){
+      const [day,basis]=sourceDate(item);
+      if(!grouped.has(day))grouped.set(day,[]);
+      grouped.get(day).push({item,basis});
+    }
+    for(const day of [...grouped.keys()].sort().reverse()){
+      const group=text(host,'section','','project-day');
+      group.dataset.day=day;
+      text(group,'h3',day,'project-day-title');
+      for(const {item,basis} of grouped.get(day)){
+        const row=text(group,'article','','original-record');
+        text(row,'h4',types[item.claim_type]+' · '+item.atom);
+        text(row,'p',statuses[item.status]+' · '+item.title+' · '+basis,'review-meta');
+        text(row,'blockquote',item.quote);
+        const controls=text(row,'div','','bar');
+        const read=text(controls,'button','定位原文');
+        read.addEventListener('click',()=>projectAction(()=>readSource(s,item,read)));
+        if(!writable)continue;
+        for(const [decision,target,label] of [
+          ['accept','accepted',item.status==='rejected'?'重新确认':'确认'],
+          ['reject','rejected',item.status==='accepted'?'撤销确认':'否决'],
+        ]){
+          if(item.status===target)continue;
+          const review=text(controls,'button',label);
+          review.disabled=s.busy;
+          review.addEventListener('click',()=>mutate('review',s,item,decision));
+        }
+      }
+    }
+  }
+  function readSource(s,item,origin){
+    if(!live(s)||!s.items.includes(item)||!readable(item))return false;
+    el('detail').append($('project-detail'));
+    return readProjectMaterial(item,origin,item);
+  }
+  async function fetchItems(s){
+    const value=await projectRequest('project-claims',binding(s.scene));
+    if(!live(s))return false;
+    if(!valid(value,s))throw projectError('CONTENT_MISMATCH');
+    s.items=value.items;
+    s.unavailable=value.has_unavailable;
+    s.canWrite=value.can_write;
+    s.loaded=true;
+    return true;
+  }
+  function failed(s,error){
+    clearProjectDetail();
+    s.items=[];s.loaded=false;s.unavailable=false;s.canWrite=null;
+    s.message=error.code==='REVISION_CONFLICT'?'项目已有新版本。请打开最新版本后重新核对。':
+      error.uncertain?'操作结果暂未确认，请刷新候选。':
+      error.code==='READ_UNAVAILABLE'?'候选暂不可读，请刷新。':error.message;
+  }
+  async function load(s=state){
+    if(!s||!live(s)||s.busy)return false;
+    clearProjectDetail();
+    s.busy=true;s.message='正在读取候选…';render();
+    try{
+      const ok=await fetchItems(s);
+      if(ok)s.message='';
+      return ok;
+    }catch(error){
+      if(live(s))failed(s,error);
+      return false;
+    }finally{
+      s.busy=false;
+      if(live(s)){render();renderProjectDates();}
+    }
+  }
+  async function mutate(action,s,item=null,decision=null){
+    if(!s||!live(s)||s.busy||!s.canWrite||!atHead(s)||!allowProjectNavigation()||
+      (item&&(!s.items.includes(item)||!readable(item))))return false;
+    const body={...binding(s.scene),...(item?{claim_id:item.claim_id,decision}:{})};
+    let receiptMessage='';
+    s.busy=true;s.message=action==='extract'?'正在提取候选…':'正在保存核对结果…';render();
+    try{
+      const result=await projectRequest('project-claims-'+action,{},JSON.stringify(body));
+      if(!live(s))return false;
+      if(action==='extract'){
+        if(result?.project_id!==body.project_id||result.revision!==body.revision||
+          !captureCount(result.inserted)||!captureCount(result.unchanged)||typeof result.has_unavailable!=='boolean'){
+          throw projectError('CONTENT_MISMATCH');
+        }
+        receiptMessage='新增 '+result.inserted+' 条 · 已有 '+result.unchanged+' 条';
+      }else{
+        const expected=decision==='accept'?['confirmed','restored','already_accepted']:['revoked','already_rejected'];
+        if(result?.claim_id!==item.claim_id||result.decision!==decision||!expected.includes(result.status)){
+          throw projectError('CONTENT_MISMATCH');
+        }
+        receiptMessage=decision==='accept'?'已确认候选。':'已否决候选。';
+      }
+      s.message=receiptMessage;
+      return await fetchItems(s);
+    }catch(error){
+      if(live(s)){
+        failed(s,error);
+        if(receiptMessage)s.message=receiptMessage+' '+s.message;
+      }
+      return false;
+    }finally{
+      s.busy=false;
+      if(live(s)){render();renderProjectDates();}
+    }
+  }
+  function invalidate(){
+    state=null;
+    el('list').replaceChildren();
+    el('status').textContent='';el('scope').textContent='';
+    el('extract').disabled=true;el('refresh').disabled=true;
+    el('read-only').hidden=true;
+  }
+  function sync(){
+    if(!active()){if(state)invalidate();return;}
+    if(state?.scene===projectScene){
+      if(state.unavailableCount!==projectUnavailableMaterials.size||state.head!==atHead(state)){
+        state.unavailableCount=projectUnavailableMaterials.size;state.head=atHead(state);
+        render();
+      }
+      return;
+    }
+    state={scene:projectScene,items:[],loaded:false,busy:false,message:'',unavailable:false,canWrite:null,
+      unavailableCount:projectUnavailableMaterials.size};
+    state.head=atHead(state);
+    load(state);
+  }
+  function syncDate(){if(state&&state.day!==projectCutoff)render();}
+  function mount(){
+    el('refresh').addEventListener('click',()=>load());
+    el('extract').addEventListener('click',()=>mutate('extract',state));
+    for(const id of ['status-filter','type','query'])el(id).addEventListener(id==='query'?'input':'change',render);
+  }
+  return {mount,active,days,sync,syncDate,invalidate,load,mutate,readSource,render,state:()=>state};
 })();
 
 const projectEvidenceUI=(()=>{
@@ -2397,7 +2636,7 @@ const projectContinuationUI=(()=>{
 })();
 
 if(canProjects){
-  projectReviewReady=true;projectCalendarUI.mount();projectHistoryUI.mount();projectReviewUI.mount();projectEvidenceUI.mount();projectContinuationUI.mount();
+  projectReviewReady=true;projectCalendarUI.mount();projectHistoryUI.mount();projectReviewUI.mount();projectClaimsUI.mount();projectEvidenceUI.mount();projectContinuationUI.mount();
   for(const name of recapEditFields)$('recap-edit-'+name).addEventListener('input',recapEditChanged);
   $('recap-edit-prepare').addEventListener('click',()=>projectAction(prepareRecapEdit));
   $('recap-edit-save').addEventListener('click',()=>projectAction(saveRecapEdit));

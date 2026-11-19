@@ -127,6 +127,8 @@ def run(argv=None):
                 path = path.replace("{project_id}", "00000000-0000-0000-0000-000000000000")
                 if route["response"] == "ProjectMaterial":
                     path += "?project_id="+asset+"&revision=1&asset_id="+asset+"&expected_hash="+"0"*64
+                if route["response"] == "ProjectClaims":
+                    path += "?project_id=" + asset + "&revision=1"
                 if route["response"] == "ProjectReviewPrompt":
                     path += "?project_id="+asset+"&revision=1&manifest_hash="+"0"*64
                 path = path.replace("{exploration_id}", "00000000-0000-0000-0000-000000000000")

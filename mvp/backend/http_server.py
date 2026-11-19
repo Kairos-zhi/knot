@@ -27,7 +27,7 @@ from .exploration_repo import ExplorationRepo
 from .migrate_schema_v1_6 import SchemaDriftError
 from .http_lock import owner_guard
 from .bundle_jobs import BundleJobs
-from .claim_review import review_claim
+from .claim_review import PROJECT_CLAIM_LABEL, project_confirmation_ids, review_claim
 from .claim_support import claim_support_many
 from .timeline_query import read_snapshot, events_range, asset_by_hash
 from mvp.transport_views import metadata, claim_item, trace_view, event_rows
@@ -41,6 +41,7 @@ from .support_view import compute_support
 from .decision_archive import read_decision_history
 from mvp.decision_policy import DecisionError
 from .project_repo import ProjectRepo
+from .project_claims import ProjectClaims
 from mvp.project_policy import ProjectError
 from .traceback import trace_claim
 
@@ -54,7 +55,8 @@ COMMANDS = SCHEMA["$defs"]["CommandRequest"]["properties"]["command"]["enum"]
 CODES = SCHEMA["$defs"]["Error"]["properties"]["code"]["enum"]
 _EXPLORATION_RESPONSES = {"ExplorationReceipt", "ExplorationCheckpoint", "ExplorationList",
                           "ExplorationV2Receipt", "ExplorationCheckpointV2", "ExplorationForkReceipt"}
-_PROJECT_RESPONSES = {'ProjectList', 'ProjectScene', 'ProjectMaterial', 'ProjectImportReceipt', 'ProjectReviewPrompt'}
+_PROJECT_RESPONSES = {'ProjectList', 'ProjectScene', 'ProjectMaterial', 'ProjectImportReceipt',
+                      'ProjectReviewPrompt', 'ProjectClaims', 'ProjectClaimExtraction', 'ProjectClaimReview'}
 
 
 class Fault(Exception):
@@ -400,7 +402,8 @@ class Handler(BaseHTTPRequestHandler):
             if route["envelope"] == "timed":
                 body["as_of"] = values["as_of"]
             if is_history or is_project:
-                data = json.dumps(body, ensure_ascii=route['response'] != 'ProjectReviewPrompt').encode('utf-8')
+                data = json.dumps(body, ensure_ascii=route['response'] not in (
+                    'ProjectReviewPrompt', 'ProjectClaims', 'ProjectClaimExtraction', 'ProjectClaimReview')).encode('utf-8')
                 if len(data) > 1048576:
                     raise Fault('SERVER_BUSY', 503, reason='project_response_limit' if is_project else 'decision_response_limit')
                 return self.reply_bytes(200, data)
@@ -449,6 +452,8 @@ class Handler(BaseHTTPRequestHandler):
                 return repo.read_material(actor, token, **params)
             if kind == 'ProjectReviewPrompt':
                 return repo.read_review_prompt(actor, token, **params)
+            if kind == 'ProjectClaims':
+                return ProjectClaims(self.server.db).list(actor, token, **params)
             lengths = self.headers.get_all('Content-Length', [])
             if (len(lengths) != 1 or self.headers.get_all('Transfer-Encoding')
                     or self.headers.get('Content-Type') != 'application/json'
@@ -468,6 +473,10 @@ class Handler(BaseHTTPRequestHandler):
             with self.server.changed:
                 if self.server.journal.get('pending') or self.server.jobs.failed or self.server.stopping:
                     raise Fault('SERVER_BUSY', 409, reason='server_read_only')
+                if kind == 'ProjectClaimExtraction':
+                    return ProjectClaims(self.server.db).extract(actor, token, body)
+                if kind == 'ProjectClaimReview':
+                    return ProjectClaims(self.server.db).review(actor, token, body)
                 return repo.import_project(actor, token, body)
         except ProjectError as exc:
             if exc.code == 'ACCESS_DENIED':
@@ -632,7 +641,7 @@ class Handler(BaseHTTPRequestHandler):
         with read_snapshot(self.server.db) as conn:
             if kind == "Timeline":
                 return dict(start=p["start"], end=p["end"], items=event_rows(events_range(
-                    conn, start=p["start"], end=p["end"], limit=p["limit"])))
+                    conn, start=p["start"], end=p["end"], limit=p["limit"], include_project_reviews=False)))
             if kind == "AssetList":
                 content_hash = p["content_hash"]
                 if len(content_hash) != 64 or any(c not in "0123456789abcdefABCDEF" for c in content_hash):
@@ -655,20 +664,27 @@ class Handler(BaseHTTPRequestHandler):
                             context_text=row["context_text"] if p["view"] == "content" else None,
                             export_path=relative(row["bundle_id"] + ".md") if row["exported"] else None)
             if kind == "Snapshot":
-                support = compute_support(conn, p["as_of"], rule_version=p["rule_version"])
+                private = project_confirmation_ids(conn)
+                support = compute_support(conn, p["as_of"], rule_version=p["rule_version"],
+                                          excluded_events=private)
                 atoms = support["atoms"]
                 if p["view"] == "boolean":
                     atoms = {a: {"boolean": v["boolean"]} for a, v in atoms.items()}
+                counts = {table: conn.execute("SELECT COUNT(*) FROM " + table).fetchone()[0]
+                          for table in ("assets", "history_events")}
+                claims = conn.execute("SELECT COUNT(*) FROM claims_candidates WHERE source_label IS NOT ?",
+                                      (PROJECT_CLAIM_LABEL,)).fetchone()[0]
                 return dict(as_of=p["as_of"], rule_version=p["rule_version"], view=p["view"], atoms=atoms,
-                            counts={key: conn.execute("SELECT COUNT(*) FROM " + table).fetchone()[0]
-                                    for key, table in (("assets", "assets"), ("events", "history_events"), ("claims", "claims_candidates"))})
+                            counts=dict(assets=counts["assets"], events=counts["history_events"] - len(private),
+                                        claims=claims))
             if kind in ("Claim", "ClaimList"):
-                rows = {r["claim_id"]: dict(r) for r in conn.execute("SELECT * FROM claims_candidates")}
+                rows = {r["claim_id"]: dict(r) for r in conn.execute(
+                    "SELECT * FROM claims_candidates WHERE source_label IS NOT ?", (PROJECT_CLAIM_LABEL,))}
                 cid = p.get("claim_id")
                 if cid is not None and cid not in rows:
                     raise Fault("NOT_FOUND", 404)
-                views = claim_support_many(conn, at=p["as_of"], claim_ids=[cid] if cid else None,
-                                           status=p.get("status"))["claims"]
+                views = claim_support_many(conn, at=p["as_of"], claim_ids=[cid] if cid else list(rows),
+                                           status=p.get("status"), excluded_events=project_confirmation_ids(conn))["claims"]
                 items = []
                 allowed = SCHEMA["$defs"]["Claim"]["properties"]
                 for v in views:
@@ -685,7 +701,8 @@ class Handler(BaseHTTPRequestHandler):
                 return dict(as_of=p["as_of"], items=items[offset:offset + limit],
                             next_cursor=str(offset + limit) if offset + limit < len(items) else None)
             if kind == "Trace":
-                if conn.execute("SELECT 1 FROM claims_candidates WHERE claim_id=?", (p["claim_id"],)).fetchone() is None:
+                if conn.execute("SELECT 1 FROM claims_candidates WHERE claim_id=? AND source_label IS NOT ?",
+                                (p["claim_id"], PROJECT_CLAIM_LABEL)).fetchone() is None:
                     raise Fault("NOT_FOUND", 404)
                 result = trace_claim(conn, p["claim_id"], max_depth=p["max_depth"])
                 return trace_view(result)

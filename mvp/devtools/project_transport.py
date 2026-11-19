@@ -80,6 +80,36 @@ def project_review_prompt(port, token, body):
     return validate_response(value, binding, token)
 
 
+def project_claims(port, token, action, params):
+    binding = {'project_id', 'revision'}
+    if type(params) is not dict:
+        raise ProjectError('INVALID_ARGUMENTS')
+    keys = set(params)
+    if action == 'list' and keys in (binding, binding | {'status'}):
+        if 'status' in params and params['status'] not in ('pending', 'accepted', 'rejected'):
+            raise ProjectError('INVALID_ARGUMENTS')
+        method, path, body = 'GET', '/project-claims?' + urlencode(params), None
+    elif action == 'extract' and keys == binding:
+        method, path, body = 'POST', '/project-claims/extract', params
+    elif action == 'review' and keys == binding | {'claim_id', 'decision'}:
+        validate_uuid(params['claim_id'])
+        if params['decision'] not in ('accept', 'reject'):
+            raise ProjectError('INVALID_ARGUMENTS')
+        method, path, body = 'POST', '/project-claims/review', params
+    else:
+        raise ProjectError('INVALID_ARGUMENTS')
+    validate_uuid(params['project_id'])
+    if type(params['revision']) is not str or not re.fullmatch('[1-9][0-9]{0,18}', params['revision']):
+        raise ProjectError('INVALID_ARGUMENTS')
+    value = _request(port, token, method, path, body)
+    expected = {'claim_id', 'decision'} if action == 'review' else binding
+    if not isinstance(value, dict) or any(value.get(key) != params[key] for key in expected):
+        raise ProjectError('READ_UNAVAILABLE')
+    if has_credential_marker(json.dumps(value, ensure_ascii=False), token):
+        raise ProjectError('SENSITIVE_CONTENT')
+    return value
+
+
 def project_import(port, token, body):
     body = validate_import(body, token)
     value = _request(port, token, 'POST', '/project-imports', body)

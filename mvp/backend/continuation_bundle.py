@@ -6,6 +6,7 @@ import time
 from uuid import uuid4
 
 from .claim_support import claim_support_many
+from .claim_review import PROJECT_CLAIM_LABEL, project_confirmation_ids
 from .asset_access import readable
 from .traceback import trace_claim
 
@@ -58,7 +59,8 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
         imports = dict(conn.execute("SELECT event_id,subject FROM history_events WHERE event_type='import'"))
         candidates = []
         for row in _rows(conn, 'SELECT claim_id,claim_type,source_label,atom,support_sources '
-                              'FROM claims_candidates ORDER BY source_label,claim_id'):
+                              'FROM claims_candidates WHERE source_label IS NOT ? ORDER BY source_label,claim_id',
+                         (PROJECT_CLAIM_LABEL,)):
             refs = json.loads(row['support_sources'] or '[]')
             if not isinstance(refs, list) or any(not isinstance(r, str) for r in refs):
                 raise ValueError('invalid candidate support_sources')
@@ -76,7 +78,8 @@ def generate_bundle(conn, asset_ids: list[str], *, include_open_questions: bool 
                 missing[candidate['claim_id']] = dict(atom=candidate['atom'], status='confirmed',
                     boolean=False, minimal_roots=[], atom_view={'boolean': False})
         views = claim_support_many(conn, at=now,
-            claim_ids=[c['claim_id'] for c in candidates if c['claim_id'] not in missing])['claims']
+            claim_ids=[c['claim_id'] for c in candidates if c['claim_id'] not in missing],
+            excluded_events=project_confirmation_ids(conn))['claims']
         views = {v['claim_id']: v for v in views}
         views.update(missing)
         sections = {name: [] for name in ('已确认决策', '条件性定理', '反例', '未决问题')}

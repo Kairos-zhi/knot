@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 
 from ._db import validate_limit
+from .claim_review import PROJECT_CLAIM_LABEL
 
 
 @contextmanager
@@ -35,7 +36,7 @@ def _rows(cursor):
     return [dict(zip(names, row)) for row in cursor]
 
 
-def events_range(conn, *, start: int, end: int, limit: int = 200) -> list[dict]:
+def events_range(conn, *, start: int, end: int, limit: int = 200, include_project_reviews=True) -> list[dict]:
     """Return [start, end) ordered by event_time then insertion rowid.
 
     An empty interval returns []; a reversed interval is invalid (AC-1).
@@ -45,10 +46,13 @@ def events_range(conn, *, start: int, end: int, limit: int = 200) -> list[dict]:
     if end < start:
         raise ValueError("end must be greater than or equal to start")
     validate_limit(limit)
-    return _rows(conn.execute(
-        "SELECT * FROM history_events WHERE event_time>=? AND event_time<? "
-        "ORDER BY event_time,rowid LIMIT ?", (start, end, limit),
-    ))
+    sql = "SELECT * FROM history_events WHERE event_time>=? AND event_time<? "
+    params = (start, end)
+    if not include_project_reviews:
+        sql += ("AND NOT (event_type='user_confirm' AND EXISTS (SELECT 1 FROM claims_candidates "
+                "WHERE claim_id=history_events.subject AND source_label=?)) ")
+        params += (PROJECT_CLAIM_LABEL,)
+    return _rows(conn.execute(sql + "ORDER BY event_time,rowid LIMIT ?", (*params, limit)))
 
 
 def asset_by_hash(conn, content_hash: str) -> dict | None:

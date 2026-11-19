@@ -131,12 +131,46 @@ def reference(source):
     return {key: source[key] for key in ('asset_id', 'content_hash')}
 
 
+def verify_project_claims(port, project, *, review):
+    selected = {key: project[key] for key in ('project_id', 'revision')}
+    listing = '/api/project-claims?' + urlencode(selected)
+    check(request(port, listing)['items'] == [], 'New project already has candidates')
+    extraction = request(port, '/api/project-claims-extract', selected)
+    check(extraction['inserted'] == 2, 'The two dated sources did not yield their candidates')
+    retry = request(port, '/api/project-claims-extract', selected)
+    check(retry['inserted'] == 0 and retry['unchanged'] == 2, 'Candidate extraction duplicated rows')
+    items = request(port, listing + '&status=pending')['items']
+    check({item['claim_type'] for item in items} == {'decision', 'question'},
+          'Both unverified candidates must be visible')
+    for item in items:
+        source = material(port, project, item)['source']
+        start = item['quote_start']
+        check(source['text'][start:start + len(item['quote'])] == item['quote'] and
+              item['message_time_ms'] == source['message_time_ms'] and item['event_id'] and
+              item['event_time'] == item['saved_at'],
+              'Candidate source quote or time differs from the original')
+    check(len({item['message_time_ms'] for item in items}) == 2, 'Candidates must span two days')
+    if review:
+        pending = {item['claim_type']: item for item in items}
+        for kind, decision, expected in (('decision', 'accept', 'accepted'),
+                                         ('question', 'reject', 'rejected')):
+            claim_id = pending[kind]['claim_id']
+            request(port, '/api/project-claims-review', dict(selected, claim_id=claim_id, decision=decision))
+            filtered = request(port, listing + '&status=' + expected)['items']
+            check([item['claim_id'] for item in filtered] == [claim_id], 'Candidate review filter is inconsistent')
+        check(request(port, listing + '&status=pending')['items'] == [], 'Reviewed candidates remain pending')
+    else:
+        # The live demo starts with two unverified candidates for hands-on review.
+        check(all(item['status'] == 'pending' for item in items), 'Demo must start unverified')
+
+
 def review_draft(port, project, fixture):
     prompt = request(port, '/api/project-review-prompt', binding(project))
     citations = []
     for _, quote in fixture['messages']:
         source = next(ref for ref in project['observations'] if ref['text'] == quote)
-        check(quote in prompt['prompt'], 'Review prompt is missing a retained source')
+        check(json.dumps(quote, ensure_ascii=False) in prompt['prompt'],
+              'Review prompt is missing a retained source')
         check(material(port, project, source)['text'] == quote, 'Original text differs from the fixture')
         citations.append(dict(**reference(source), quote=quote))
     start, finish = citations
@@ -174,7 +208,7 @@ def evidence_example(port, project, output):
     (output / 'evidence-card.md').write_text(share['markdown'], encoding='utf-8')
 
 
-def seed_and_verify(repo, token, port, output):
+def seed_and_verify(repo, token, port, output, *, review_claims=False):
     fixtures = json.loads((FIXTURES / 'projects.json').read_text(encoding='utf-8'))
     stamps = {}
     for fixture in fixtures:
@@ -200,6 +234,7 @@ def seed_and_verify(repo, token, port, output):
         (output / f"review-{case['slug']}.json").write_text(
             json.dumps(current, ensure_ascii=False, indent=2), encoding='utf-8')
         if case['slug'] == 'signup':
+            verify_project_claims(port, latest, review=review_claims)
             evidence_example(port, latest, output)
             selected = next(ref for ref in latest['materials'] if ref['title'] == LOG_TITLE)
             pack = dict(**binding(latest), sources=[reference(selected)], include_review=True, include_gaps=True)
@@ -247,8 +282,8 @@ def main():
                                           projects_enabled=True)
                 workbench.RequestHandlerClass = DemoHandler
                 with running(workbench) as port:
-                    seed_and_verify(ProjectRepo(db), token, port, output)
-                    print('OK: projects, dates, prompts, saved reviews, continuation pack, evidence card, CSV and capability assets', flush=True)
+                    seed_and_verify(ProjectRepo(db), token, port, output, review_claims=args.check)
+                    print('OK: projects, dated candidates, sources, prompts, saved reviews, continuation pack, evidence card, CSV and capability assets', flush=True)
                     if not args.check:
                         print(f'Workbench: http://127.0.0.1:{port}/\n'
                               f'Capability demo: http://127.0.0.1:{port}/demo/capabilities/\n'

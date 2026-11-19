@@ -4,7 +4,7 @@ from .frontier17 import evaluate_scc_full
 from .frontier17_db import load_state
 
 
-def compute_support(conn, snapshot_time, *, rule_version=1) -> dict:
+def compute_support(conn, snapshot_time, *, rule_version=1, excluded_events=frozenset()) -> dict:
     """Return native JSON-compatible support at T, using carry-forward state.
 
     The caller owns the connection and its consistent read transaction.
@@ -18,6 +18,7 @@ def compute_support(conn, snapshot_time, *, rule_version=1) -> dict:
     atoms, mapping, eligible, rules = load_state(
         conn, snapshot_time, rule_version=rule_version,
     )
+    eligible = eligible - excluded_events
     support = evaluate_scc_full(atoms, mapping, eligible, rules)
     return {
         "snapshot_time": snapshot_time,

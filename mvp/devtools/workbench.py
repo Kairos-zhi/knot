@@ -17,11 +17,15 @@ from mvp.search_policy import query_terms
 from mvp.text_policy import has_credential_marker
 from mvp.decision_policy import DecisionError, project_decision_history
 from mvp.project_policy import ProjectError
-from mvp.devtools.project_transport import project_get, project_import, project_review_prompt
+from mvp.devtools.project_transport import project_claims, project_get, project_import, project_review_prompt
 
 PROJECT_EVIDENCE_ACTIONS = frozenset((
     '/api/project-evidence-prompt', '/api/project-evidence-prepare', '/api/project-evidence-share',
 ))
+PROJECT_CLAIM_ACTIONS = {
+    '/api/project-claims-extract': 'extract',
+    '/api/project-claims-review': 'review',
+}
 
 
 class Invalid(ValueError):
@@ -220,6 +224,12 @@ class Handler(BaseHTTPRequestHandler):
                 if self.server.capture is None: raise Invalid()
                 from mvp.devtools.codex_capture import project_capture_state
                 return self.reply(200, project_capture_state(self.server.capture.state(), self.server.token))
+            if path.path == '/api/project-claims':
+                if not self.server.projects_enabled:
+                    raise Invalid()
+                value = project_claims(self.server.backend_port, self.server.token, 'list',
+                                       {key: values[0] for key, values in query.items()})
+                return self.reply(200, value, utf8=True)
             project_actions = {'/api/projects':'list', '/api/project':'scene', '/api/project-material':'material'}
             if path.path in project_actions:
                 if not self.server.projects_enabled: raise Invalid()
@@ -274,10 +284,12 @@ class Handler(BaseHTTPRequestHandler):
         project_review_request=self.path in ('/api/project-review-collect', '/api/project-review-prompt', '/api/project-review-prepare')
         continuation_request=self.path in ('/api/project-continuation', '/api/project-continuation-export')
         project_evidence_request=self.path in PROJECT_EVIDENCE_ACTIONS
+        project_claim_action=PROJECT_CLAIM_ACTIONS.get(self.path)
         capture_request=self.path == '/api/capture-control'
         target=self.server.context if context_request else self.server.writer
         if capture_request: target=self.server.capture
-        project_action = project_request or review_request or recap_request or project_review_request or project_evidence_request or continuation_request
+        project_action = (project_request or review_request or recap_request or project_review_request
+                          or project_evidence_request or continuation_request or project_claim_action)
         if (project_action and not self.server.projects_enabled) or (not project_action and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
@@ -308,7 +320,9 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            if project_evidence_request or continuation_request:
+            if project_claim_action:
+                result = project_claims(self.server.backend_port, self.server.token, project_claim_action, body)
+            elif project_evidence_request or continuation_request:
                 from mvp.devtools import project_continuation, project_evidence
 
                 def read_selected_scene(pid, revision):

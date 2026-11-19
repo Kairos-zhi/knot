@@ -10,6 +10,16 @@ from uuid import uuid4
 from .asset_repo import AssetRepo
 
 
+PROJECT_CLAIM_LABEL = "knot.project-claim/0.1"
+
+
+def project_confirmation_ids(conn):
+    return frozenset(row[0] for row in conn.execute(
+        "SELECT e.event_id FROM history_events e JOIN claims_candidates c ON c.claim_id=e.subject "
+        "WHERE e.event_type='user_confirm' AND c.source_label=?", (PROJECT_CLAIM_LABEL,),
+    ))
+
+
 def _vocabulary(conn):
     atoms = set()
     for row in conn.execute("SELECT head,body FROM horn_rules WHERE active=1 AND rule_version=1"):
@@ -53,11 +63,13 @@ def _append_snapshot(conn, event_id, now, *, eligible, label):
     return snapshot_id, True
 
 
-def _review(conn, claim_id, decision, now):
+def _review(conn, claim_id, decision, now, *, project_actor=None):
     if conn.execute("SELECT 1 FROM schema_version WHERE version='1.4'").fetchone() is None:
         raise ValueError("schema v1.4 required; migrate explicitly")
     claim = conn.execute("SELECT * FROM claims_candidates WHERE claim_id=?", (claim_id,)).fetchone()
     if claim is None:
+        raise ValueError("claim does not exist")
+    if claim["source_label"] == PROJECT_CLAIM_LABEL and project_actor is None:
         raise ValueError("claim does not exist")
     atom = claim["atom"]
     if atom not in _vocabulary(conn):
@@ -105,13 +117,15 @@ def _review(conn, claim_id, decision, now):
             if not isinstance(references, list) or not all(isinstance(ref, str) for ref in references):
                 raise ValueError("support_sources must be a JSON array of event IDs or NULL")
         event_id = str(uuid4())
-        payload = json.dumps(dict(claim_type=claim["claim_type"], source_label=claim["source_label"],
-                                  atom=atom, decision="accept"), ensure_ascii=True)
+        payload = dict(claim_type=claim["claim_type"], source_label=claim["source_label"],
+                       atom=atom, decision="accept")
+        if project_actor is not None:
+            payload["actor"] = project_actor
         conn.execute(
             "INSERT INTO history_events "
             "(event_id,event_type,subject,source,event_time,recorded_at,evidence_refs,payload_json) "
             "VALUES (?,'user_confirm',?,'user_review',?,?,?,?)",
-            (event_id, claim_id, now, now, claim["support_sources"], payload),
+            (event_id, claim_id, now, now, claim["support_sources"], json.dumps(payload, ensure_ascii=True)),
         )
         conn.execute(
             "INSERT INTO event_atom_map (event_id,atom,origin,created_at) "

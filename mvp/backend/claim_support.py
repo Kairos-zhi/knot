@@ -17,7 +17,7 @@ def _claim_id(value):
         raise ValueError("claim_id must be a non-empty string")
 
 
-def _views(conn, at, claim_ids, status):
+def _views(conn, at, claim_ids, status, excluded_events):
     # Fix the database view before reading events, snapshots and atom inputs.
     candidates = conn.execute(
         "SELECT claim_id,source_label,atom FROM claims_candidates "
@@ -45,7 +45,9 @@ def _views(conn, at, claim_ids, status):
     mappings = {}
     for event_id, atom in conn.execute("SELECT event_id,atom FROM event_atom_map"):
         mappings.setdefault(event_id, []).append(atom)
-    atom_views = compute_support(conn, at)["atoms"]
+    support = (compute_support(conn, at, excluded_events=excluded_events)
+               if excluded_events else compute_support(conn, at))
+    atom_views = support["atoms"]
     claims = []
     for claim_id, label, atom in candidates:
         confirmations = events.get(claim_id, [])
@@ -75,7 +77,7 @@ def _views(conn, at, claim_ids, status):
 
 
 def claim_support_many(conn, *, at: int, claim_ids: list[str] | None = None,
-                       status: str | None = None) -> dict:
+                       status: str | None = None, excluded_events=frozenset()) -> dict:
     """Read one consistent view; join an existing transaction without ending it.
 
     Otherwise own a BEGIN read transaction and release it with ROLLBACK on
@@ -95,7 +97,7 @@ def claim_support_many(conn, *, at: int, claim_ids: list[str] | None = None,
     if owned:
         conn.execute("BEGIN")
     try:
-        return _views(conn, at, claim_ids, status)
+        return _views(conn, at, claim_ids, status, excluded_events)
     finally:
         if owned:
             conn.rollback()
