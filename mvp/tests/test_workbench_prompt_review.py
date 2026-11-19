@@ -153,6 +153,9 @@ await assert.rejects(run('refresh()'));
 assert.equal(pack().hidden,false);
 assert.equal(pack('materials').children.length,0);
 assert.equal(pack('refresh').disabled,false);
+assert.equal(pack().open,true);
+for(let ancestor=pack('refresh');ancestor;ancestor=ancestor.parentElement)
+  assert(!ancestor.hidden,`hidden retry ancestor: ${ancestor.id||ancestor.tagName}`);
 assert(pack('status').textContent.includes('原选择已保留'));
 latest={...sceneA,...receipt,snapshots:latest.snapshots};
 respond=respondNormally;

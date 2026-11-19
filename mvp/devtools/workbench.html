@@ -91,8 +91,7 @@
 <aside id="project-detail" class="project-detail" aria-label="决定与材料详情"><p id="project-detail-empty">选择一张决定，查看原话与来源。</p><div id="project-detail-view" hidden><div class="bar"><h2 id="project-detail-title" class="grow" tabindex="-1"></h2><button id="project-detail-close">关闭详情</button></div><div id="project-detail-content"></div>
 <section id="recap-edit" class="work-review" hidden aria-labelledby="recap-edit-heading"><h3 id="recap-edit-heading">修订这条整理</h3><p>修改整理文字，原原因、日期和出处保留。保存后可回看旧版本。</p><div id="recap-edit-fields"><label>整理标题<input id="recap-edit-title"></label><label>整理后的方向<textarea id="recap-edit-after" rows="4"></textarea></label><label>本次整理备注<textarea id="recap-edit-note" rows="3"></textarea></label><p>备注追加到来源说明，不作为历史原因。</p></div><button id="recap-edit-prepare">预览修订</button><div id="recap-edit-preview-area" hidden><h3>修订预览 · 尚未保存</h3><div id="recap-edit-preview"></div></div><p id="recap-edit-status" role="status" aria-live="polite"></p><div class="bar"><button id="recap-edit-save" hidden>确认保存修订</button><button id="recap-edit-revise" hidden>返回修改</button><button id="recap-edit-refresh" hidden>读取最新版本并重新检查</button></div></section>
 </div></aside></div>
-</section><div id="project-review-container" hidden>
-  <section id="project-review-digest" class="project-digest" aria-label="项目概况"><p id="project-review-current">尚未整体整理</p><p id="project-review-next">可请 Agent 根据当前可读资料整体整理。</p></section>
+</section>
   <details id="project-continuation" hidden>
     <summary>生成续接包</summary>
     <p>把项目进展和选中的原文带到下一个 Agent 窗口。来源取自项目的最新可读版本。</p>
@@ -116,6 +115,8 @@
       </div>
     </section>
   </details>
+<div id="project-review-container" hidden>
+  <section id="project-review-digest" class="project-digest" aria-label="项目概况"><p id="project-review-current">尚未整体整理</p><p id="project-review-next">可请 Agent 根据当前可读资料整体整理。</p></section>
   <details id="project-evidence" hidden>
     <summary>为这条需求生成项目证据</summary>
     <p id="project-evidence-status" role="status" aria-live="polite"></p>
