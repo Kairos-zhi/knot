@@ -35,8 +35,12 @@
 .calendar-day[data-other-record=true]::before{background:transparent;border:1px solid var(--muted);box-sizing:border-box}
 #project-activity-context{margin:0 0 16px}
 #project-activity-context button{margin:4px 8px 4px 0}
-#project-evidence{margin:16px 0 24px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow-wrap:anywhere}
-#project-evidence>summary{font-weight:600;color:var(--ink)}
+#project-evidence,#project-continuation{margin:16px 0 24px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow-wrap:anywhere}
+#project-evidence>summary,#project-continuation>summary{font-weight:600;color:var(--ink)}
+#project-continuation-materials{max-height:16rem;overflow:auto;margin:8px 0 16px}
+#project-continuation-materials label{padding:8px 4px}
+#project-continuation-materials small{display:block;margin-top:3px}
+#project-continuation-preview textarea{width:100%;box-sizing:border-box}
 .evidence-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
 .evidence-layout:has(#project-evidence-preview:not([hidden])){grid-template-columns:repeat(2,minmax(0,1fr))}
 .evidence-inputs,.evidence-item{display:grid;gap:12px;min-width:0}
@@ -89,6 +93,29 @@
 </div></aside></div>
 </section><div id="project-review-container" hidden>
   <section id="project-review-digest" class="project-digest" aria-label="项目概况"><p id="project-review-current">尚未整体整理</p><p id="project-review-next">可请 Agent 根据当前可读资料整体整理。</p></section>
+  <details id="project-continuation" hidden>
+    <summary>生成续接包</summary>
+    <p>把项目进展和选中的原文带到下一个 Agent 窗口。来源取自项目的最新可读版本。</p>
+    <div id="project-continuation-options" hidden>
+      <label class="check-label"><input id="project-continuation-review" type="checkbox" checked><span>附上已保存的项目回顾</span></label>
+      <label class="check-label"><input id="project-continuation-gaps" type="checkbox" checked><span>附上待核问题</span></label>
+    </div>
+    <p id="project-continuation-selection">选取项目材料，最多 6 份。长材料会标为摘录。</p>
+    <div id="project-continuation-materials" role="group" aria-labelledby="project-continuation-selection"></div>
+    <div class="bar">
+      <button id="project-continuation-prepare" class="primary">预览续接包</button>
+      <button id="project-continuation-refresh" class="primary" hidden>切到最新并保留选择</button>
+    </div>
+    <p id="project-continuation-status" role="status"></p>
+    <section id="project-continuation-preview" hidden>
+      <h3>续接包预览</h3>
+      <textarea id="project-continuation-markdown" aria-label="续接包 Markdown" rows="12" readonly></textarea>
+      <div class="bar">
+        <button id="project-continuation-copy" class="primary">复制到下一个窗口</button>
+        <button id="project-continuation-download">下载 Markdown</button>
+      </div>
+    </section>
+  </details>
   <details id="project-evidence" hidden>
     <summary>为这条需求生成项目证据</summary>
     <p id="project-evidence-status" role="status" aria-live="polite"></p>
@@ -391,7 +418,7 @@ function invalidateProjectScene(){
   renderInvalidProjectScene();
 }
 function renderInvalidProjectScene(){
-  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.sync();}
+  if(projectReviewReady){projectCalendarUI.reset();projectEvidenceUI.sync();projectContinuationUI.sync();}
   if(projectReviewReady){projectReviewUI.invalidate();projectHistoryUI.invalidate();}
   for(const id of ['project-observations','project-decisions','project-background-cards','project-material-list','project-detail-content','project-appearance-info','project-day-projects','work-review-sources','work-review-existing','work-review-evidence','recap-edit-preview'])$(id).replaceChildren();
   for(const id of ['project-detail-title','work-review-source-text','work-review-preview'])$(id).textContent='';
@@ -505,6 +532,7 @@ function markProjectMaterialUnavailable(ref){
   projectUnavailableMaterials.add(ref.asset_id+':'+ref.content_hash);
   if(projectReviewReady){
     projectCalendarUI.reset();
+    projectContinuationUI.sync();
     if(ref.title.startsWith('历史窗口日回顾索引·'))projectHistoryUI.invalidate();
   }
 }
@@ -697,7 +725,7 @@ function syncProjectWorkspace(){
   $('projects-refresh').hidden=projectRoute!=='overview';$('project-import-new').hidden=projectRoute!=='overview';
   renderProjectNavigation();renderProjectDates();syncProjectLatest();
   if(projectRoute==='legacy'){for(const pane of ['continue','search','write','history'])$(pane+'-pane').hidden=pane!==projectLegacyPane;$('focus-title').textContent=({continue:'保存的思考',search:'找一份材料',write:'留下这次想法',history:'决定回顾'})[projectLegacyPane];}
-  if(projectReviewReady){projectHistoryUI.sync();projectReviewUI.sync();projectEvidenceUI.sync();renderProjectDateFocus();}
+  if(projectReviewReady){projectHistoryUI.sync();projectReviewUI.sync();projectEvidenceUI.sync();projectContinuationUI.sync();renderProjectDateFocus();}
 }
 function clearProjectDetail(moveFocus=false){
   if(moveFocus&&recapEditing()){allowProjectNavigation();return false;}
@@ -2204,8 +2232,159 @@ const projectEvidenceUI=(()=>{
   return {mount,sync,leave,add,importDraft,buildPrompt,prepare,share,readSource,copyText};
 })();
 
+const projectContinuationUI=(()=>{
+  const el=id=>$('project-continuation'+(id?'-'+id:''));
+  const key=ref=>ref.asset_id+':'+ref.content_hash;
+  const internal=new Set(['项目主动回顾.json','project-registration.json','项目关联.json']);
+  let scene=null,unavailableCount=-1,hasReview=false,preview=null,sequence=0;
+  let busy=false,historical=false,needsRefresh=false,selected=new Map(),checks=new Map();
+
+  function say(message){el('status').textContent=message;}
+  function actions(){
+    const includeReview=hasReview&&el('review').checked;
+    el('gaps').disabled=!includeReview;
+    el('prepare').hidden=historical||needsRefresh;
+    el('refresh').hidden=!el('prepare').hidden;
+    el('prepare').disabled=busy||(!includeReview&&!selected.size);
+    el('copy').disabled=el('download').disabled=busy;
+    for(const input of checks.values())input.disabled=!input.checked&&selected.size===6;
+  }
+  function clear(){
+    sequence++;busy=false;preview=null;
+    el('preview').hidden=true;el('markdown').value='';
+    say(historical?'正在查看旧版本。切到最新后可以预览续接包。':
+      needsRefresh?'项目版本或材料已变化，请切到最新后重试。':'');
+    actions();
+  }
+  function sync(){
+    const next=projectRoute==='scene'&&!projectSceneInvalidated?projectScene:null;
+    const latest=projectItems.find(item=>item.project_id===next?.project_id);
+    const outdated=!!next&&[latest,projectSnapshots.at(-1)].some(item=>
+      projectRevision(item?.revision)&&compareProjectRevisions(item.revision,next.revision)>0);
+    if(next===scene&&unavailableCount===projectUnavailableMaterials.size&&historical===outdated)return;
+    if(next?.project_id!==scene?.project_id){
+      selected.clear();el().open=false;el('review').checked=el('gaps').checked=true;
+    }
+    if(next!==scene)needsRefresh=false;
+    historical=outdated;
+    scene=next;unavailableCount=projectUnavailableMaterials.size;
+    const refs=(scene?.materials||[]).filter(ref=>!projectUnavailableMaterials.has(key(ref)));
+    hasReview=refs.some(ref=>ref.title==='项目主动回顾.json');
+    const choices=refs.filter(ref=>!internal.has(ref.title)&&!ref.title.startsWith('历史窗口日回顾索引·'));
+    const keys=new Set(choices.map(key));
+    selected=new Map([...selected].filter(([id])=>keys.has(id)));
+    el('options').hidden=!hasReview;
+    const originals=new Map(projectObservations().map(source=>[key(source),source]));
+    const host=el('materials');host.replaceChildren();
+    checks=new Map(choices.map(ref=>{
+      const id=key(ref);
+      const label=text(host,'label','','check-label');
+      const input=text(label,'input','');input.type='checkbox';input.checked=selected.has(id);
+      const caption=text(label,'span',ref.title);
+      const original=originals.get(id);
+      if(original){
+        const time=new Date(original.message_time_ms).toLocaleTimeString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false});
+        const excerpt=observationNaturalText(original).trim().replace(/\s+/g,' ').slice(0,100);
+        text(caption,'small',time+(excerpt?' · '+excerpt:''));
+      }
+      input.addEventListener('change',()=>{
+        if(input.checked)selected.set(id,{asset_id:ref.asset_id,content_hash:ref.content_hash});
+        else selected.delete(id);
+        clear();
+      });
+      return [id,input];
+    }));
+    el().hidden=!scene||(!hasReview&&!choices.length);
+    clear();
+  }
+  function valid(result,body){
+    return result?.project_id===body.project_id&&result.revision===body.revision&&
+      result.manifest_hash===body.manifest_hash&&result.source_count===body.sources.length&&
+      typeof result.markdown==='string'&&!!result.markdown&&/^[0-9a-f]{64}$/.test(result.digest)&&
+      ['verified','missing','unavailable','excluded'].includes(result.review_state);
+  }
+  function requestError(error){
+    const messages={
+      REVISION_CONFLICT:'项目有了新版本，请切到最新，再预览一次。',
+      ACCESS_DENIED:'材料权限已变化，请切到最新并确认所选材料。',
+      CONTENT_MISMATCH:'内容已变化，请重新预览续接包。',
+      READ_UNAVAILABLE:'没有可核对的项目回顾，请选取可读材料后重试。',
+      RESPONSE_LIMIT:'本次内容太长，请减少所选材料。',
+    };
+    if(['REVISION_CONFLICT','ACCESS_DENIED'].includes(error?.code)){needsRefresh=true;actions();}
+    say(messages[error?.code]||'续接包暂未生成，请检查本机服务后重试。');
+  }
+  async function refresh(){
+    if(!scene)return;
+    const owner=scene.project_id,previous=new Map(selected);
+    const review=el('review').checked,gaps=el('gaps').checked;
+    if(!await openProject(owner)||scene?.project_id!==owner)return;
+    selected=new Map([...previous].filter(([id])=>checks.has(id)));
+    for(const [id,input] of checks)input.checked=selected.has(id);
+    el('review').checked=review;el('gaps').checked=gaps;
+    el().open=true;clear();
+    const removed=previous.size-selected.size;
+    if(removed)say('已切到最新。'+removed+' 份材料当前不可读，请核对余下选择。');
+  }
+  async function prepare(){
+    if(!scene||busy||el('prepare').hidden||el('prepare').disabled)return;
+    clear();
+    const id=sequence;
+    const {project_id,revision,manifest_hash}=scene;
+    const include_review=hasReview&&el('review').checked;
+    const body={project_id,revision,manifest_hash,sources:[...selected.values()],
+      include_review,include_gaps:include_review&&el('gaps').checked};
+    busy=true;actions();say('正在核对所选材料…');
+    try{
+      const result=await projectRequest('project-continuation',{},JSON.stringify(body));
+      if(id!==sequence)return;
+      if(!valid(result,body))throw projectError('CONTENT_MISMATCH');
+      preview={body,result};
+      el('markdown').value=result.markdown;el('preview').hidden=false;
+      say(result.review_state==='unavailable'?'项目回顾暂时无法核对。续接包已附上所选原文。':'续接包已准备好。');
+    }catch(error){if(id===sequence)requestError(error);}
+    finally{if(id===sequence){busy=false;actions();}}
+  }
+  function download(markdown){
+    const url=URL.createObjectURL(new Blob([markdown],{type:'text/markdown;charset=utf-8'}));
+    const link=document.createElement('a');
+    link.href=url;link.download='Knot-project-continuation.md';link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  async function exportPack(asFile=false){
+    if(!preview||busy)return;
+    const id=sequence,{body,result}=preview;
+    busy=true;actions();
+    try{
+      const latest=await projectRequest('project-continuation-export',{},JSON.stringify({...body,digest:result.digest}));
+      if(id!==sequence)return;
+      if(!valid(latest,body)||latest.markdown!==result.markdown||latest.digest!==result.digest)
+        throw projectError('CONTENT_MISMATCH');
+      if(asFile){download(latest.markdown);say('已准备下载 Markdown。');return;}
+      try{
+        await navigator.clipboard.writeText(latest.markdown);
+        if(id===sequence)say('已复制。在下一个 Agent 窗口粘贴即可。');
+      }catch(_){
+        if(id!==sequence)return;
+        el('markdown').focus();el('markdown').select();
+        say('已选中续接包，请按 Ctrl+C 或 ⌘C 复制。');
+      }
+    }catch(error){if(id===sequence){clear();requestError(error);}}
+    finally{if(id===sequence){busy=false;actions();}}
+  }
+  function mount(){
+    el('review').addEventListener('change',clear);
+    el('gaps').addEventListener('change',clear);
+    el('prepare').addEventListener('click',prepare);
+    el('refresh').addEventListener('click',()=>projectAction(refresh));
+    el('copy').addEventListener('click',()=>exportPack());
+    el('download').addEventListener('click',()=>exportPack(true));
+  }
+  return {mount,sync,refresh,prepare,exportPack};
+})();
+
 if(canProjects){
-  projectReviewReady=true;projectCalendarUI.mount();projectHistoryUI.mount();projectReviewUI.mount();projectEvidenceUI.mount();
+  projectReviewReady=true;projectCalendarUI.mount();projectHistoryUI.mount();projectReviewUI.mount();projectEvidenceUI.mount();projectContinuationUI.mount();
   for(const name of recapEditFields)$('recap-edit-'+name).addEventListener('input',recapEditChanged);
   $('recap-edit-prepare').addEventListener('click',()=>projectAction(prepareRecapEdit));
   $('recap-edit-save').addEventListener('click',()=>projectAction(saveRecapEdit));

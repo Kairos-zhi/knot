@@ -272,11 +272,12 @@ class Handler(BaseHTTPRequestHandler):
         review_request=self.path == '/api/work-review-prepare'
         recap_request=self.path == '/api/recap-prepare'
         project_review_request=self.path in ('/api/project-review-collect', '/api/project-review-prompt', '/api/project-review-prepare')
+        continuation_request=self.path in ('/api/project-continuation', '/api/project-continuation-export')
         project_evidence_request=self.path in PROJECT_EVIDENCE_ACTIONS
         capture_request=self.path == '/api/capture-control'
         target=self.server.context if context_request else self.server.writer
         if capture_request: target=self.server.capture
-        project_action = project_request or review_request or recap_request or project_review_request or project_evidence_request
+        project_action = project_request or review_request or recap_request or project_review_request or project_evidence_request or continuation_request
         if (project_action and not self.server.projects_enabled) or (not project_action and target is None):
             return self.reject()
         host = f'127.0.0.1:{self.server.server_port}'
@@ -307,21 +308,23 @@ class Handler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size: raise Invalid()
             body = strict_json(raw)
-            if project_evidence_request:
-                from mvp.devtools import project_evidence
+            if project_evidence_request or continuation_request:
+                from mvp.devtools import project_continuation, project_evidence
 
-                def read_evidence_scene(pid, revision):
+                def read_selected_scene(pid, revision):
                     params = dict(project_id=pid)
                     if revision is not None:
                         params['revision'] = revision
                     return project_get(self.server.backend_port, self.server.token, 'scene', params)
 
-                def read_evidence_source(pid, revision, asset_id, digest):
+                def read_selected_source(pid, revision, asset_id, digest):
                     return project_get(self.server.backend_port, self.server.token, 'material',
                         dict(project_id=pid, revision=revision, asset_id=asset_id, expected_hash=digest))
 
-                args = (body, self.server.token, read_evidence_scene, read_evidence_source)
-                if self.path == '/api/project-evidence-prompt':
+                args = (body, self.server.token, read_selected_scene, read_selected_source)
+                if continuation_request:
+                    result = project_continuation.prepare(*args, export=self.path == '/api/project-continuation-export')
+                elif self.path == '/api/project-evidence-prompt':
                     result = project_evidence.prepare_prompt(*args)
                 else:
                     result = project_evidence.prepare_card(*args, share=self.path == '/api/project-evidence-share')
@@ -366,7 +369,7 @@ class Handler(BaseHTTPRequestHandler):
             if capture_request:
                 from mvp.devtools.codex_capture import project_capture_state
                 result=project_capture_state(result,self.server.token)
-            self.reply(200,result,utf8=project_review_request or project_evidence_request)
+            self.reply(200,result,utf8=project_review_request or project_evidence_request or continuation_request)
         except ProjectError as exc:
             self.project_error(exc)
         except (WriteError,PacketError) as exc:

@@ -100,6 +100,66 @@ const ready=()=>{ui('checked').checked=true;ui('checked').events.change[0]();api
 '''
 
 
+def test_continuation_selection_preview_copy_and_late_response():
+    run_review(r'''
+const pack=name=>els['project-continuation'+(name?'-'+name:'')];
+const run=code=>execute('projectContinuationUI.'+code);
+await open();
+assert.equal(pack().hidden,false);
+assert.equal(pack('prepare').disabled,true);
+const check=pack('materials').children[0].children[0];
+assert(pack('materials').children[0].children[1].children[0].textContent.includes(source.text.split('\n')[0]));
+function select(on){check.checked=on;check.events.change[0]();}
+select(true);
+const markdown='# Selected context\n> Exact original';
+const result={...bind(sceneA),source_count:1,review_state:'excluded',markdown,digest:'a'.repeat(64)};
+let resolve;
+respond=(url,options)=>{
+  const input=JSON.parse(options.body);
+  assert.deepEqual(input.sources,[{asset_id:source.asset_id,content_hash:source.content_hash}]);
+  assert.equal(input.include_review,false);
+  if(url==='/api/project-continuation')return new Promise(done=>{resolve=done;});
+  assert.equal(url,'/api/project-continuation-export');assert.equal(input.digest,result.digest);
+  return result;
+};
+let pending=run('prepare()');
+select(false);resolve(result);await pending;
+assert.equal(pack('preview').hidden,true);assert.equal(pack('markdown').value,'');
+select(true);pending=run('prepare()');resolve(result);await pending;
+assert.equal(pack('preview').hidden,false);
+await run('exportPack()');assert.deepEqual(clipboard,[markdown]);
+respond=respondNormally;
+await execute('showProjectOverview()');
+assert.equal(pack().hidden,true);assert.equal(pack('markdown').value,'');
+''')
+
+
+def test_continuation_reopens_latest_with_only_still_readable_selections():
+    run_review(r'''
+const pack=name=>els['project-continuation'+(name?'-'+name:'')];
+const run=code=>execute('projectContinuationUI.'+code);
+const removed={asset_id:'dddddddd-dddd-4ddd-8ddd-dddddddddddd',content_hash:'e'.repeat(64),title:'Old document'};
+latest={...sceneA,materials:[...sceneA.materials,removed],snapshots:[
+  {revision:sceneA.revision,saved_at:sceneA.saved_at},{revision:'3',saved_at:sceneA.saved_at}
+]};
+await open();
+assert.equal(pack('prepare').hidden,true);
+assert.equal(pack('refresh').hidden,false);
+for(const label of pack('materials').children){
+  const input=label.children[0];input.checked=true;input.events.change[0]();
+}
+latest={...sceneA,...receipt,snapshots:latest.snapshots};
+await run('refresh()');
+assert.equal(pack().open,true);
+assert.equal(pack('refresh').hidden,true);
+assert.equal(pack('prepare').hidden,false);
+assert.equal(pack('prepare').disabled,false);
+assert.equal(pack('materials').children.length,sceneA.materials.length);
+assert.equal(pack('materials').children[0].children[0].checked,true);
+assert(pack('status').textContent.includes('1 份材料'));
+''')
+
+
 def test_entry_immediately_shows_real_prompt_and_nodes_do_not_run_requests():
     run_review(r'''
 assert.equal(calls.length,1);assert.equal(ui('launch').hidden,true);

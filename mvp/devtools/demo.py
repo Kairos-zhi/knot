@@ -201,6 +201,14 @@ def seed_and_verify(repo, token, port, output):
             json.dumps(current, ensure_ascii=False, indent=2), encoding='utf-8')
         if case['slug'] == 'signup':
             evidence_example(port, latest, output)
+            selected = next(ref for ref in latest['materials'] if ref['title'] == LOG_TITLE)
+            pack = dict(**binding(latest), sources=[reference(selected)], include_review=True, include_gaps=True)
+            preview = request(port, '/api/project-continuation', pack)
+            exported = request(port, '/api/project-continuation-export', dict(pack, digest=preview['digest']))
+            check(exported == preview and preview['review_state'] == 'verified' and
+                  all(text in preview['markdown'] for text in ('下次接着做什么', '卡在哪里', CSV_QUOTE)),
+                  'Continuation export differs from the checked project context')
+            (output / 'continuation-signup.md').write_text(exported['markdown'], encoding='utf-8')
         stamps[case['title']] = sorted(source['message_time_ms'] for source in sources)
     catalog = request(port, '/api/projects')['items']
     check({project['title']: project['chronology']['observation_times'] for project in catalog} == stamps,
@@ -240,7 +248,7 @@ def main():
                 workbench.RequestHandlerClass = DemoHandler
                 with running(workbench) as port:
                     seed_and_verify(ProjectRepo(db), token, port, output)
-                    print('OK: projects, dates, prompts, saved reviews, evidence card, CSV and capability assets', flush=True)
+                    print('OK: projects, dates, prompts, saved reviews, continuation pack, evidence card, CSV and capability assets', flush=True)
                     if not args.check:
                         print(f'Workbench: http://127.0.0.1:{port}/\n'
                               f'Capability demo: http://127.0.0.1:{port}/demo/capabilities/\n'
